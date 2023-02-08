@@ -1,0 +1,9 @@
+.root{
+  background: white;
+  border-radius: 15px;
+  padding: 3rem;
+}
+.title{
+  font-weight: bold;
+  color: #0050b3;
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "key": "/",
+    "icon": "HomeOutlined",
+    "label": "Inicio"
+  },
+  {
+    "key": "listadopas",
+    "icon": "KeyOutlined",
+    "label": "Listado de PAS"
+  }
+]

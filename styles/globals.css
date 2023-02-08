@@ -1,0 +1,113 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+body,html{
+}
+
+body{
+  background: url('../public/assets/images/logo-login.png');
+  /* background: linear-gradient(0deg, rgba(19,17,55,1) 0%, rgba(31,48,99,1) 100%); */
+}
+.ant-layout{
+  background: inherit!important;
+}
+.ant-layout-header{
+  background: white!important;
+  
+  line-height: normal!important;
+}
+.ant-layout-footer{
+  color: white!important;
+}
+.header-content{
+  display: flex;
+  justify-content: space-between;
+  align-items: center!important;
+  height: 100%;
+}
+.user-header{
+  display: flex;
+  align-items: center;
+}
+.data-user{
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  margin-right: 1rem;
+  font-size: 0.8rem;
+}
+.name-user{
+  font-weight: bold;
+  font-size: 1.02rem;
+}
+.icon-user{
+  width: 40px;
+  height: 40px;
+  background: #002A5E;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  font-weight: bold;
+  justify-content: center;
+  align-items: center;
+}
+.close-session{
+  cursor: pointer;
+}
+
+.ant-breadcrumb li:last-child {
+  color: rgba(255, 255, 255, 0.85)!important;
+}
+.ant-breadcrumb-separator {
+  color: rgba(255, 255, 255, 0.45)!important;
+}
+
+.logo{
+  text-align: center;
+}
+.wrapper-login{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.contener-login{
+  background: white;
+  min-width: 315px;
+  max-width: 375px;
+  border-radius: 10px;
+  padding: 1.2rem;
+}
+.login_head{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.login_head h1{
+  margin: 1rem 0;
+  color: #002A5E;
+  font-size: 1.4rem;
+}
+
+/* @media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    color: white;
+  }
+} */
