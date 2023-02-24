@@ -9,7 +9,8 @@ import {
   DesktopOutlined,
   ContactsOutlined,
   KeyOutlined,
-  SafetyCertificateOutlined
+  SafetyCertificateOutlined,
+  FileSearchOutlined
 } from '@ant-design/icons';
 import IconOnpe from "@components/icons/IconOnpe";
 import { ModalDrawer } from "@components/ui";
@@ -24,7 +25,8 @@ const icons: { [P in string]: ComponentType<any> | string } = {
   SafetyCertificateOutlined: SafetyCertificateOutlined,
   DesktopOutlined:DesktopOutlined,
   ContactsOutlined:ContactsOutlined,
-  KeyOutlined:KeyOutlined
+  KeyOutlined:KeyOutlined,
+  FileSearchOutlined:FileSearchOutlined
 }
 
 const items: MenuProps['items'] = menu.map((item, _) => ({

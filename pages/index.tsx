@@ -162,19 +162,19 @@ const Home: NextPageWithLayout = () => {
       
       <script 
         defer 
-        nomodule
+        noModule
         src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js">
       </script>
 
       <table key='1'>
-        <tbody key='1'>
-          <tr key='1'>
-          <td key='1' style={{ width:'50%'}}>
+        <tbody key='2'>
+          <tr key='3'>
+          <td key='4' style={{ width:'50%'}}>
         <Card>
-        <div key='1'>
-          <h2 key='1'>Resumen</h2>
+        <div key='5'>
+          <h2 key='6'>Resumen</h2>
         </div>
-        <div key='2'><canvas id="myChart" ref={canvas}></canvas></div>
+        <div key='7'><canvas id="myChart" ref={canvas}></canvas></div>
         
         {/* <div style={{ width:'100%', height:'300px'}}>
           <Pie data = {data} options = {opciones}/>
@@ -182,10 +182,10 @@ const Home: NextPageWithLayout = () => {
       </Card>
       </td>
 
-      <td key='2' style={{ width:'50%'}}>
+      <td key='8' style={{ width:'50%'}}>
       <Card>
-        <div key='3'>
-          <h2 key='2'>Próximos procesos por concluir</h2>
+        <div key='9'>
+          <h2 key='10'>Próximos procesos por concluir</h2>
         </div>
         
         <Table  columns={column} rowKey='id' dataSource={dataSource}/>

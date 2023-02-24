@@ -103,7 +103,7 @@ const Listadopas:NextPageWithLayout<ListadopasProps> = ({pageNum, pageSize, tota
       
       <script 
         defer 
-        nomodule
+        noModule
         src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js">
       </script>
 

@@ -6,7 +6,17 @@
   },
   {
     "key": "listadopas",
-    "icon": "KeyOutlined",
+    "icon": "FileSearchOutlined",
     "label": "Listado de PAS"
+  },
+  {
+    "key": "nuevoacceso",
+    "icon": "UserOutlined",
+    "label": "Nuevo acceso"
+  },
+  {
+    "key": "listadoacceso",
+    "icon": "KeyOutlined",
+    "label": "Listado de accesos"
   }
 ]
