@@ -1,9 +1,9 @@
-import { clientSave } from "@components/ui/ModalClient/ModalClient"
 import { Access, AccessSave, AccessStatus, AccessUpdate, auth, Certificate, Clients, ClientsSave, Process, ProcessSave, ProcessStatus, ProcessUpdate, response, responseLogin, User, UserSave, UserUpdate } from "@framework/types"
 import { getCookie } from "cookies-next"
 
 const api = {
   login:async (body:auth):Promise<responseLogin> => {
+    console.log(body)
     const reqInit = {
       method: 'POST',
       headers: {
@@ -13,7 +13,9 @@ const api = {
       body: JSON.stringify(body)        
     }
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_AGENTE_EC}/auth/login`, reqInit)
+      //const response = await fetch(`${process.env.NEXT_PUBLIC_API_AGENTE_EC}/auth/login`, reqInit)
+      
+      const response = await fetch('192.168.48.47:5000/login/', reqInit)
       return response.json()
     } catch (error) {
       return { success:false, message:'', token:''}
@@ -137,24 +139,6 @@ const api = {
         return response.json()
       } catch (error) {
         return { data: [] } 
-      }
-    },
-    save:async (client:clientSave) => {
-      const token = getCookie('tokenApi');
-      const reqInit = {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json', 
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(client)        
-      }
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_SECURITY_CLIENT}/web/client/save`,reqInit)
-        return response.json()
-      } catch (error) {
-        return null
       }
     },
     update:async (client:ClientsSave) => {

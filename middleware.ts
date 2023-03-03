@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
 
   const jwt = request.cookies.get("tokenApi");
 
-  //if (!jwt) return NextResponse.redirect(new URL("/auth", request.url));
+  if (!jwt) return NextResponse.redirect(new URL("/auth", request.url));
 
   try {
     //const { payload } = await jwtVerify( jwt, new TextEncoder().encode("secret") );

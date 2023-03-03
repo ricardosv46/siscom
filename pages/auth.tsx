@@ -70,7 +70,7 @@ const Home = () => {
             autoComplete="off"
           >
             <Form.Item
-              name="user"
+              name="username"
               rules={[{ required: true, message: '¡Por favor ingrese un usuario' }]}
             >
               <Input size='large' placeholder='Usuario' />

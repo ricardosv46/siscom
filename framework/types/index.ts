@@ -7,17 +7,17 @@ export interface response<T>{
 }
 
 export interface auth{
-  user:string
+  username:string
   password:string
 }
 export interface responseLogin{
-  success:boolean
-  message:string
   token:string
+  message:string
+  success:boolean
 }
 
 export interface UserSave{
-  user: string
+  username: string
   password: string
   profile: string
   status?: 'enabled' | 'disabled'|string
