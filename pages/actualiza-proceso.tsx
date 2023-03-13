@@ -12,7 +12,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { RightCard } from "./components/right";
 import { LeftCard } from "./components/left";
-import { Button } from "antd";
+import { Button, Modal } from "antd";
 
 interface IPropsItem {
   actualizacion: string;
@@ -32,6 +32,7 @@ let tipo = ''
 const Actualizaproceso: NextPageWithLayout= ({}) => {
   const [item, setItem] = useState<IPropsItem>();
   const router = useRouter();
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
     let itemprop = history?.state?.item;
@@ -53,11 +54,9 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
   const [gerenciaSelectedOption, setGerenciaSelectedOption] = useState("");
   const [comentarioTextareaValue, setComentarioTextareaValue] = useState("");
 
-  const onGotoBack = (page: string) => {
-    router.push({pathname:page, })
-  }
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    setShowAlert(true);
+
     event.preventDefault();
     const formData = new FormData();
     formData.append('comment', comentarioTextareaValue);
@@ -65,18 +64,23 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
     formData.append('document', documentoRelacionadoinputValue);
     formData.append('new_responsible', gerenciaSelectedOption);
     formData.append('resolution_number', resolucion_gerencial);
-    formData.append('start_at', fechaInicioInputValue);
+    formData.append('start_at', '2023-01-19 12:00:00'/*fechaInicioInputValue*/);
     formData.append('type_document', tipoDocumentoSelectedOption);
     formData.append('type', tipo);
     formData.append('status', operationSelectedOption);
-    
+
     try {
-      const response = await axios.post(`http://192.168.48.47:5000/processes/${id}/tracking/create`, formData);
+      const response = await axios.post(`http://192.168.48.47:5000/processes/${id}/tracking/create/`, formData);
       console.log(response.data);
+      router.push('/listadopas')
     } catch (error) {
       console.log(error);
     }
   };
+
+  const onGotoBack = (page: string) => {
+    router.push({pathname:page, })
+  }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDocumentoRelacionadoinputValue(event.target.value);
@@ -195,13 +199,16 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
         
         <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }}/>
         <div style={{display:'flex', gap:'50px'}}>
-          <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'4px',cursor:'pointer',fontSize:'1rem', padding:'10px 20px'}} type="submit">Actualizar</button>
-          <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'4px',cursor:'pointer',fontSize:'1rem', padding:'10px 20px'}} type="submit" onClick={()=> onGotoBack('/listadopas')} >Cancelar</button>
+          <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} type="submit">Actualizar</button>
+          <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} onClick={()=> onGotoBack('/listadopas')} >Cancelar</button>
         </div>
+
+        {showAlert && (<div style={{color:'#fff', backgroundColor:'#f0ad4e', borderColor: '#eea236', borderRadius:'5px', marginTop:'10px', padding:'10px'}} role="alert">El registro del proceso se ha enviado correctamente.</div>)}
       </Card>
-    </form>
+    </form>    
   );
 };
+
 
 Actualizaproceso.getLayout = function getLayout(page: ReactElement) {
   return <LayoutFirst>{page}</LayoutFirst>;

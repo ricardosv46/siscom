@@ -19,13 +19,13 @@ const Home: NextPageWithLayout = () => {
 
   const processGroupedApi = async() => {
     const {data} = await api.home.getProcessesGrouped()
-    const newData = data.map(item=>({...item, estado: 
-          item.estado === 'day_30_less'?<ion-icon style={{color:'rgb(232,52,44)'}} name="ellipse"></ion-icon>:
-          item.estado === 'day_60_less'?<ion-icon style={{color:'rgb(256,188,28)'}}  name="ellipse"></ion-icon>:
-          item.estado === 'day_60_more'?<ion-icon style={{color:'rgb(120,188,68)'}}  name="ellipse"></ion-icon>:
-          item.estado === 'finalizado'?<ion-icon style={{color:'rgb(136,132,132)'}}  name="ellipse"></ion-icon>:
-          item.estado === 'out_of_date'?<ion-icon style={{color:'rgb(5,5,5,255)'}}  name="ellipse"></ion-icon>:
-          item.estado === 'to_start'?<ion-icon name="ellipse-outline"></ion-icon>:''
+    const newData = data.map((item: { estado: string; })=>({...item, estado: 
+          item.estado === 'day_30_less'?<img src='assets/images/day_30_less.png'/>:
+          item.estado === 'day_60_less'?<img src='assets/images/day_60_less.png'/>:
+          item.estado === 'day_60_more'?<img src='assets/images/day_60_more.png'/>:
+          item.estado === 'finalizado'?<img src='assets/images/finalizado.png'/>:
+          item.estado === 'out_of_date'?<img src='assets/images/out_of_date.png'/>:
+          item.estado === 'to_start'?<img src='assets/images/to_start.png'/>:''
     }))
     setProcessGrouped(newData) 
   }
@@ -141,18 +141,6 @@ const Home: NextPageWithLayout = () => {
         </h2>
       </Breadcrumb>
 
-      <script 
-        defer 
-        type="module" 
-        src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js">
-      </script>
-      
-      <script 
-        defer 
-        noModule
-        src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js">
-      </script>
-
       <div style={{display:'flex', gap:'20px'}}>
         <Card>
           <div style={{ marginBottom: "0.4rem" }}>
@@ -161,15 +149,16 @@ const Home: NextPageWithLayout = () => {
             </h2>
           </div>
           <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
+          
           <div style={{display:'flex', gap:'20px'}}>
-            <p>{<ion-icon name="ellipse-outline"></ion-icon>} Por iniciar</p>
-            <p>{<ion-icon style={{color:'rgb(5,5,5,255)'}} name="ellipse"></ion-icon>} Fuera de fecha</p>
-            <p>{<ion-icon style={{color:'rgb(136,132,132)'}} name="ellipse"></ion-icon>} Finalizado</p>
+            <p><img src='assets/images/to_start.png'/> Por iniciar</p>
+            <p><img src='assets/images/out_of_date.png'/> Fuera de fecha</p>
+            <p><img src='assets/images/finalizado.png'/> Finalizado</p>
           </div>
           <div style={{display:'flex', gap:'20px'}}>
-            <p>{<ion-icon style={{color:'rgb(120,188,68)'}} name="ellipse"></ion-icon>} Más de 6 meses</p>
-            <p>{<ion-icon style={{color:'rgb(256,188,28)'}} name="ellipse"></ion-icon>} De 3 a 6 meses</p>
-            <p>{<ion-icon style={{color:'rgb(232,52,44)'}} name="ellipse"></ion-icon>} Menos de 3 meses</p>
+            <p><img src='assets/images/day_60_more.png'/> Más de 6 meses</p>
+            <p><img src='assets/images/day_60_less.png'/> De 3 a 6 meses</p>
+            <p><img src='assets/images/day_30_less.png'/> Menos de 3 meses</p>
           </div>
           {/* <Input style={{ marginBottom: 8, display: 'block' }} width={12} placeholder='Buscar' prefix={<SearchOutlined />}/> */}
        
