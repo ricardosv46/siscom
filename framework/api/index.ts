@@ -2,23 +2,17 @@ import { Access, AccessSave, AccessStatus, AccessUpdate, auth, Certificate, Clie
 import { getCookie } from "cookies-next"
 
 const api = {
-  login:async (body:auth):Promise<responseLogin> => {
+  login:async (body: any):Promise<responseLogin> => {
     console.log(body)
     const reqInit = {
       method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)        
+      body: body      
     }
     try {
-      //const response = await fetch(`${process.env.NEXT_PUBLIC_API_AGENTE_EC}/auth/login`, reqInit)
-      
-      const response = await fetch('192.168.48.47:5000/login/', reqInit)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/login/`, reqInit)
       return response.json()
     } catch (error) {
-      return { success:false, message:'', token:''}
+      return { success:false, message:'', token:'', data: null}
     }
   },
   user:{
@@ -104,6 +98,80 @@ const api = {
         return response.json()
       } catch (error) {
         return null
+      }
+    }
+  },
+  home:{
+    getProcessesGrouped: async () => {
+      const token = getCookie('tokenApi');
+      console.log(token)
+      const reqInit = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-tokens': `${token}`
+        } 
+      }
+      try {
+        const response =  await fetch(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/grouped/`,reqInit)
+        return response.json()
+      } catch (error) {
+        return { data: [] } 
+      }
+    },
+    getProcessesSummary: async () => {
+      const token = getCookie('tokenApi');
+      console.log(token)
+      const reqInit = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-tokens': `${token}`
+        } 
+      }
+      try {
+        const response =  await fetch(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/resumen/`,reqInit)
+        return response.json()
+      } catch (error) {
+        return { data: [] } 
+      }
+    }
+  },
+  listpas:{
+    getProcesses: async () => {
+      const token = getCookie('tokenApi');
+      console.log(token)
+      const reqInit = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-tokens': `${token}`
+        } 
+      }
+      try {
+        const response =  await fetch(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/`,reqInit)
+        return response.json()
+      } catch (error) {
+        return { data: [] } 
+      }
+    }
+  },
+  access:{
+    getAcesses: async () => {
+      const token = getCookie('tokenApi');
+      console.log(token)
+      const reqInit = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-tokens': `${token}`
+        } 
+      }
+      try {
+        const response =  await fetch(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/users/`,reqInit)
+        return response.json()
+      } catch (error) {
+        return { data: [] } 
       }
     }
   },
@@ -283,7 +351,7 @@ const api = {
       }
     }
   },
-  access:{
+  accesss:{
     getAccess:async ({token, pageNum, pageSize}:any):Promise<response<Access|null>> => {
       const reqInit = {
         method: 'GET',

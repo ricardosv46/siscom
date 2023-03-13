@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { Breadcrumb, Table } from 'antd';
-import { ReactElement, Suspense } from 'react';
+import { ReactElement, Suspense, useState } from 'react';
 import { NextPageWithLayout } from './_app';
 import { LayoutFirst } from '@components/common';
 import { Card } from '@components/ui';
@@ -8,98 +8,116 @@ import {ArcElement} from 'chart.js';
 Chart.register(ArcElement);
 import { Chart } from 'chart.js/auto'
 import React, { useRef, useEffect } from "react";
+import api from '@framework/api';
+import { Doughnut } from 'react-chartjs-2';
+import { AlignCenterOutlined } from '@ant-design/icons';
 
 const Home: NextPageWithLayout = () => {
+  const [processGrouped,setProcessGrouped] = useState([])
+  const [processSummary,setProcessSummary] = useState([])
+  console.log(processGrouped)
 
-  // const data = {
-  //   labels:['Por iniciar','Más de 6 meses','Fuera de fecha','De 3 a 6 meses','Finalizado','Menos de 3 meses'],
-  //   datasets:[{
-  //     data:[15,25,5,35,8,12],
-  //     backgroundColor:['white','green','black','yellow','#7a8a82','red']
-  //   }]
-  // };
+  const processGroupedApi = async() => {
+    const {data} = await api.home.getProcessesGrouped()
+    const newData = data.map(item=>({...item, estado: 
+          item.estado === 'day_30_less'?<ion-icon style={{color:'rgb(232,52,44)'}} name="ellipse"></ion-icon>:
+          item.estado === 'day_60_less'?<ion-icon style={{color:'rgb(256,188,28)'}}  name="ellipse"></ion-icon>:
+          item.estado === 'day_60_more'?<ion-icon style={{color:'rgb(120,188,68)'}}  name="ellipse"></ion-icon>:
+          item.estado === 'finalizado'?<ion-icon style={{color:'rgb(136,132,132)'}}  name="ellipse"></ion-icon>:
+          item.estado === 'out_of_date'?<ion-icon style={{color:'rgb(5,5,5,255)'}}  name="ellipse"></ion-icon>:
+          item.estado === 'to_start'?<ion-icon name="ellipse-outline"></ion-icon>:''
+    }))
+    setProcessGrouped(newData) 
+  }
 
-  // const opciones = {
-  //   responsive:true,
-  //   maintainAspectRatio: false,
-  //   pieceLabel:{
-  //     render: function(args: { label: string; value: string; }){
-  //       return args.label+": "+args.value+"procesos";
-  //     },
-  //     fontSize: 15,
-  //     fontColor: '#fff',
-  //     fonFamily: 'Arial'
-  //   }
-  // }
+  const processSummaryApi = async() => {
+    const {data} = await api.home.getProcessesSummary()
+    setProcessSummary(data) 
+  }
 
   const canvas = useRef();
 
-  useEffect(() => {
-    const ctx = canvas.current;
-
-    let chartStatus = Chart.getChart("chart");
-    if (chartStatus !== undefined || chartStatus) {
-      chartStatus.destroy();
-    }
-
-    new Chart(ctx, {
-      type: "pie",
-      data: {
-        labels: ['Por iniciar','Fuera de fecha','Finalizado','Más de 6 meses','De 3 a 6 meses','Menos de 3 meses'],
-        datasets: [
-          {
-            label: "Procesos",
-            data: [15,25,5,35,8,12],
-            backgroundColor: [
-              "rgb(255,255,255)",
-              "rgba(5,5,5,255)",
-              "rgb(136,132,132)",
-              "rgb(120,188,68)",
-              "rgb(256,188,28)",
-              "rgb(232,52,44)"
-            ],
-            borderColor: [
-              "rgba(5,5,5,255)",
-              "rgba(5,5,5,255)",
-              "rgb(136,132,132)",
-              "rgb(120,188,68)",
-              "rgb(256,188,28)",
-              "rgb(232,52,44)"
-            ],
-            borderWidth: 1
-          }
-        ]
+  const dataFi = {
+    datasets: [
+      {
+        label: 'Cantidad de procesos',
+        data: Object.values(processSummary),
+        backgroundColor: ["rgb(232,52,44)","rgb(256,188,28)","rgb(120,188,68)","rgb(136,132,132)","rgb(5,5,5,255)","rgb(255,255,255)"],
+        borderColor: ["rgb(232,52,44)","rgb(256,188,28)","rgb(120,188,68)","rgb(136,132,132)","rgb(5,5,5,255)","rgb(5,5,5,255)"],
+        borderWidth: 1,
       },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: "top"
-          },
-          title: {
-            display: true,
-            text: "Total: 100 procesos"
-          }
-        }
-      }
-    });
+    ],
+  };
+
+  useEffect(() => {
+    processGroupedApi();
+    processSummaryApi();
+
+    // const ctx = canvas.current;
+
+    // let chartStatus = Chart.getChart("chart");
+    // if (chartStatus !== undefined || chartStatus) {
+    //   chartStatus.destroy();
+    // }
+
+    // new Chart(ctx, {
+    //   type: "pie",
+    //   data: {
+    //     labels: ['Por iniciar','Fuera de fecha','Finalizado','Más de 6 meses','De 3 a 6 meses','Menos de 3 meses'],
+    //     datasets: [
+    //       {
+    //         label: "Procesos",
+    //         data: processSummary,
+    //         backgroundColor: [
+    //           "rgb(255,255,255)",
+    //           "rgba(5,5,5,255)",
+    //           "rgb(136,132,132)",
+    //           "rgb(120,188,68)",
+    //           "rgb(256,188,28)",
+    //           "rgb(232,52,44)"
+    //         ],
+    //         borderColor: [
+    //           "rgba(5,5,5,255)",
+    //           "rgba(5,5,5,255)",
+    //           "rgb(136,132,132)",
+    //           "rgb(120,188,68)",
+    //           "rgb(256,188,28)",
+    //           "rgb(232,52,44)"
+    //         ],
+    //         borderWidth: 1
+    //       }
+    //     ]
+    //   },
+    //   options: {
+    //     responsive: true,
+    //     plugins: {
+    //       legend: {
+    //         position: "top"
+    //       },
+    //       title: {
+    //         display: true,
+    //         text: "Total: 100 procesos"
+    //       }
+    //     }
+    //   }
+    // });
   }, []);
 
-  const column = [
+  const columns = [
     {
       title: 'Proceso',
-      dataIndex: 'proceso',
-      key: 'proceso',
+      dataIndex: 'name',
+      key: 'name',
     },
     {
       title: 'Grado',
-      dataIndex: 'grado',
-      key: 'grado',
+      dataIndex: 'etapa',
+      key: 'etapa',
     },
     {
       title: 'Fecha Inicio',
-      dataIndex: 'fechainicio',
-      key: 'fechainicio',
+      dataIndex: 'fecha_inicio',
+      key: 'fecha_inicio',
     },
     {
       title: 'Estado',
@@ -108,42 +126,8 @@ const Home: NextPageWithLayout = () => {
     }
   ];
 
-  
-  const dataSource = [
-    {
-      key: '1',
-      proceso: 'Organización Política 1515',
-      grado: 'Instrucción',
-      fechainicio: '01 Feb 2023',
-      estado: <div style={{color:'rgb(232,52,44)'}}><ion-icon name="ellipse"></ion-icon></div>
-    },
-    {
-      key: '2',
-      proceso: 'Organización Política 1516',
-      grado: 'Sancionadora',
-      fechainicio: '20 Mar 2023',
-      estado: <div style={{color:'rgb(232,52,44)'}}><ion-icon name="ellipse"></ion-icon></div>
-    },
-    {
-      key: '3',
-      proceso: 'Marco Marcelaris',
-      grado: 'Instrucción',
-      fechainicio: '15 Jun 2024',
-      estado: <div style={{color:'rgb(256,188,28)'}}><ion-icon name="ellipse"></ion-icon></div>
-    },
-    {
-      key: '4',
-      proceso: 'Organización Política 1516',
-      grado: 'Sancionadora',
-      fechainicio: '01 Feb 2024',
-      estado: <div style={{color:'rgb(256,188,28)'}}><ion-icon name="ellipse"></ion-icon></div>
-    }
-  ];
-
-
   return (
     <>
-          
       <Head>
         <title>Monitoreo de PAS</title>
         <meta name="description" content="Generated by Monitoreo de PAS" />
@@ -151,7 +135,10 @@ const Home: NextPageWithLayout = () => {
       </Head>
 
       <Breadcrumb style={{ margin: '5px 0', color:'white' }}>
-        <Breadcrumb.Item>Bienvenido</Breadcrumb.Item>
+        {/* <Breadcrumb.Item>Bienvenido</Breadcrumb.Item> */}
+        <h2 style={{ fontSize: 20, color: "#FFFFFF" }}>
+          Bienvenido
+        </h2>
       </Breadcrumb>
 
       <script 
@@ -166,37 +153,40 @@ const Home: NextPageWithLayout = () => {
         src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js">
       </script>
 
-      <table key='1'>
-        <tbody key='2'>
-          <tr key='3'>
-          <td key='4' style={{ width:'50%'}}>
+      <div style={{display:'flex', gap:'20px'}}>
         <Card>
-        <div key='5'>
-          <h2 key='6'>Resumen</h2>
-        </div>
-        <div key='7'><canvas id="myChart" ref={canvas}></canvas></div>
-        
-        {/* <div style={{ width:'100%', height:'300px'}}>
-          <Pie data = {data} options = {opciones}/>
-        </div> */}
-      </Card>
-      </td>
-
-      <td key='8' style={{ width:'50%'}}>
-      <Card>
-        <div key='9'>
-          <h2 key='10'>Próximos procesos por concluir</h2>
-        </div>
-        
-        <Table  columns={column} rowKey='id' dataSource={dataSource}/>
-        
-      </Card>
-      </td>
-          </tr>
-        </tbody>
-
-      </table>
-      
+          <div style={{ marginBottom: "0.4rem" }}>
+            <h2 style={{ fontSize: 25, color: "#4F5172" }}>
+              Resumen
+            </h2>
+          </div>
+          <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
+          <div style={{display:'flex', gap:'20px'}}>
+            <p>{<ion-icon name="ellipse-outline"></ion-icon>} Por iniciar</p>
+            <p>{<ion-icon style={{color:'rgb(5,5,5,255)'}} name="ellipse"></ion-icon>} Fuera de fecha</p>
+            <p>{<ion-icon style={{color:'rgb(136,132,132)'}} name="ellipse"></ion-icon>} Finalizado</p>
+          </div>
+          <div style={{display:'flex', gap:'20px'}}>
+            <p>{<ion-icon style={{color:'rgb(120,188,68)'}} name="ellipse"></ion-icon>} Más de 6 meses</p>
+            <p>{<ion-icon style={{color:'rgb(256,188,28)'}} name="ellipse"></ion-icon>} De 3 a 6 meses</p>
+            <p>{<ion-icon style={{color:'rgb(232,52,44)'}} name="ellipse"></ion-icon>} Menos de 3 meses</p>
+          </div>
+          {/* <Input style={{ marginBottom: 8, display: 'block' }} width={12} placeholder='Buscar' prefix={<SearchOutlined />}/> */}
+       
+          {/* <div><canvas id="myChart" ref={canvas}></canvas></div> */}
+          <Doughnut data={dataFi} />
+        </Card>
+              
+        <Card>  
+          <div style={{ marginBottom: "0.4rem" }}>
+            <h2 style={{ fontSize: 25, color: "#4F5172" }}>
+              Próximos procesos por concluir
+            </h2>
+          </div>
+          <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />              
+          <Table columns={columns} dataSource={processGrouped}/> 
+        </Card>
+      </div>            
     </>
   )
 }

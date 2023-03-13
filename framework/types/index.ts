@@ -14,6 +14,7 @@ export interface responseLogin{
   token:string
   message:string
   success:boolean
+  data:any
 }
 
 export interface UserSave{

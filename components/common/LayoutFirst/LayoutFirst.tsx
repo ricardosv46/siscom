@@ -89,7 +89,7 @@ const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
             background:"white"
           }}
         >
-          <div className="logo">
+          <div className="logo justify-center mx-10">
             <IconOnpe width={88}/>
           </div>
           <Menu mode="inline" defaultSelectedKeys={['4']} items={items} onClick={handleMenu} />
@@ -97,8 +97,11 @@ const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
         <Layout className="site-layout" style={{ marginLeft: 200 }}>
           <Header className="header-layout">
             <div className="header-content">
-              <h1>Monitoreo de Procedimientos Administrativos Sancionadores - ERM 2022</h1>
-
+              <div>
+                <h1 style={{ fontSize: 15, color: "#2596be"}}>
+                  Monitoreo de Procedimientos Administrativos Sancionadores - ERM 2022
+                </h1>
+              </div>
               <div className="user-header">
                 <div className="data-user">
                   <div className="name-user">Admin</div>

@@ -84,7 +84,7 @@ const Home = () => {
             </Form.Item>
 
             <Form.Item >
-              <Button type="primary" htmlType="submit" block size='large' loading={loading}>
+              <Button className="bg-blue-500" type="primary" htmlType="submit" block size='large' loading={loading}>
                 {!loading ? 'Continuar' : 'Cargando...'}
               </Button>
               {/* <a href="/recoverpassword">¿Olvidaste tu contraseña?</a> */}

@@ -1,154 +1,172 @@
-import Head from 'next/head'
-import { Breadcrumb, Button, Space, Table } from 'antd';
-import {  ReactElement, useEffect, useState } from 'react';
-import { LayoutFirst } from '@components/common';
-import { NextPageWithLayout } from 'pages/_app';
-import { Card, DateFormat } from '@components/ui';
-import { Clients } from '@framework/types';
-import api from '@framework/api';
-import { ColumnsType } from 'antd/lib/table';
-import { DeleteOutlined, DesktopOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
-import { useUI } from '@components/ui/context';
-import { GetServerSideProps } from 'next';
-import { getCookie } from 'cookies-next';
-import { mergeArray } from '@lib/general';
-import Input from 'antd/lib/input/Input';
+import Head from "next/head";
+import { ReactElement, useEffect, useState } from "react";
+import { LayoutFirst } from "@components/common";
+import { NextPageWithLayout } from "pages/_app";
+import { Card } from "@components/ui";
+import api from "@framework/api";
+import { useUI } from "@components/ui/context";
+import { GetServerSideProps } from "next";
+import { getCookie } from "cookies-next";
+import { mergeArray } from "@lib/general";
+import { useRouter } from "next/router";
+import axios from "axios";
+import { RightCard } from "./components/right";
+import { LeftCard } from "./components/left";
 
-interface ListadopasProps{
-  pageNum:number
-  pageSize:number
-  total:number
+interface DetallepasProps {
+  pageNum: number;
+  pageSize: number;
+  total: number;
 }
 
-const Listadopas:NextPageWithLayout<ListadopasProps> = ({pageNum, pageSize, total}) => {
-  const { openModal, setModalView, clients, removeUser, openNotification, setNotification, setEditId, addClients } = useUI()
-  const [pagConfig, setPagConfig] = useState({pageNum:pageNum, pageSize:pageSize, total:total})
+interface IPropsItem {
+  actualizacion: string;
+  etapa: string | number | null;
+  fecha_fin: string | null;
+  fecha_inicio: string | null;
+  name: string;
+  numero: number;
+  responsable: string;
+}
 
-  useEffect(()=>{
-    //addClients()
-    if(clients){
-      const pageLenght = clients.length
-      if(pageLenght > pagConfig.total){
-        setPagConfig((res )=> {return {...res, total:pageLenght}})
-      }
-    }  
-  },[clients])
+export interface IDetailItem {
+  comment: string;
+  created_at: string;
+  current_responsible: string;
+  document: string;
+  id: number;
+  new_responsible: string;
+  related_document: string;
+  resolution_number: string;
+  start_at: string;
+}
 
-  const column = [
-    {
-      title: 'Fecha',
-      dataIndex: 'fecha',
-      key: 'fecha',
-    },
-    {
-      title: 'Creado / Atentido por',
-      dataIndex: 'creado',
-      key: 'creado',
-    },
-    {
-      title: 'Informe',
-      dataIndex: 'informe',
-      key: 'informe',
-    },
-    {
-      title: 'Asignado a',
-      dataIndex: 'asignado',
-      key: 'asignado',
-    },
-    {
-      title: 'Descripción',
-      dataIndex: 'descripcion',
-      key: 'descripcion',
-    }
-  ];
+const Detallepas: NextPageWithLayout<DetallepasProps> = ({
+  pageNum,
+  pageSize,
+  total,
+}) => {
+  const {
+    openModal,
+    setModalView,
+    clients,
+    removeUser,
+    openNotification,
+    setNotification,
+    setEditId,
+    addClients,
+  } = useUI();
+  const [pagConfig, setPagConfig] = useState({
+    pageNum: pageNum,
+    pageSize: pageSize,
+    total: total,
+  });
+  const [item, setItem] = useState<IPropsItem>();
+  const [detail, setDetail] = useState<IDetailItem[]>();
 
-  
-  const dataSource = [
-    {
-      key: '1',
-      fecha: '01 Set 2023',
-      creado: 'GSFP',
-      informe: 'RG-20230901-ASD',
-      asignado: 'SG',
-      descripcion: 'INFORME SOBRE ACTUACIONES PREVIAS AL INICIO'
-    },
-    {
-      key: '2',
-      fecha: '02 Oct 2023',
-      creado: 'SG',
-      informe: 'Informe 15203-DJS',
-      asignado: 'GAJ',
-      descripcion: 'INFORME'
-    }
-  ];
+  const router = useRouter();
 
-  const handlePagination = async(e:any) => {
-    const {pageNum, total, pageSize, data} = await api.clients.getClientsClient({pageNum: e.current, pageSize:e.pageSize})
-    if(pageNum && total && pageSize){
-      setPagConfig({pageNum:pageNum, total:total, pageSize:pageSize})
+  useEffect(() => {
+    let itemprop = history?.state?.item;
+    if (itemprop) {
+      setItem(itemprop);
+      getDetailInfo(itemprop.numero)
+    } else {
+      router.push("/listadopas");
     }
-    if(data.length){
-      const newClients = mergeArray(clients, data)
-      addClients(newClients)
-    }
-  }
+
+  }, []);
+
+ const getDetailInfo = async(id: number) => {
+   await axios.get(`http://192.168.48.47:5000/processes/${id}/tracking/`).then((response)=> {
+      let rpta = response.data.data
+      setDetail(rpta)
+   })
+ }
 
   return (
     <>
-      <script 
-        defer 
-        type="module" 
-        src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js">
-      </script>
-      
-      <script 
-        defer 
+      <script
+        defer
+        type="module"
+        src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+      ></script>
+
+      <script
+        defer
         noModule
-        src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js">
-      </script>
+        src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"
+      ></script>
 
       <Head>
         <title>Detalle PAS | Monitoreo de PAS</title>
         <meta name="description" content="Generated by Monitoreo de PAS" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      
-      <Card title='Listado de personal de ODPE'>
-        <div style={{display:'flex', justifyContent:'space-between', marginBottom:'1rem'}}>
-          <h2>Organización Política 1589</h2>
+
+      <Card title="Listado de personal de ODPE">
+        <div style={{ marginBottom: "0.4rem" }}>
+          <h1 style={{ fontSize: 25, color: "#4F5172" }}>
+            {item?.name} 
+          </h1>
         </div>
+        <hr
+          style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }}
+        />
+
         <div>
-          <p style={{color:'rgb(256,188,28)'}}>{<ion-icon name="ellipse"></ion-icon>} Fase de Instrucción: 01 Set 2023 - 01 Mar 2024</p>
-          <p style={{color:'rgb(232,52,44)'}}>{<ion-icon name="ellipse"></ion-icon>} Fase Sancionadora: 01 Abr - 01 Jun 2024</p>
+          <p style={{ color: "rgb(256,188,28)" }}>
+            {<ion-icon name="ellipse"></ion-icon>} Fase de Instrucción:{" "}
+            {item?.fecha_inicio}
+          </p>
+          <p style={{ color: "rgb(232,52,44)" }}>
+            {<ion-icon name="ellipse"></ion-icon>} Fase Sancionadora:{" "}
+            {item?.fecha_fin}
+          </p>
         </div>
-        <Table columns={column} rowKey='id' dataSource={dataSource} onChange={handlePagination} />
+
+        <div className="relative wrap overflow-hidden p-10 h-full">
+          <div
+            className="border-2 absolute border-opacity-20 border-gray-700 h-full border"
+            style={{ left: "50%" }}
+          ></div>
+          
+          {
+            detail?.map((item, idx)=> {
+              return (
+                   <>    
+                   {
+                    item.id % 2  ?  <LeftCard item={item}   idx={idx}/> :   <RightCard item={item}  idx={idx} />
+                   }           
+                  </>
+              )
+            })
+          }
+        
+           
+        </div>
       </Card>
-
     </>
-  )
-}
+  );
+};
 
-export const getServerSideProps:GetServerSideProps = async ({req, res}) => {
-  const token = getCookie('tokenApi', { req, res })
-  const { data, pageNum, pageSize, total } = await api.clients.getClients({token:token})
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const token = getCookie("tokenApi", { req, res });
+  const { data, pageNum, pageSize, total } = await api.clients.getClients({
+    token: token,
+  });
   return {
     props: {
-      clients:data,
-      pageNum:1,
-      pageSize:3,
-      total:0
-    }
-  }
-}
+      clients: data,
+      pageNum: 1,
+      pageSize: 3,
+      total: 0,
+    },
+  };
+};
 
-Listadopas.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <LayoutFirst>
-      {page}
-    </LayoutFirst>
-  )
-}
+Detallepas.getLayout = function getLayout(page: ReactElement) {
+  return <LayoutFirst>{page}</LayoutFirst>;
+};
 
-export default Listadopas
-
-
+export default Detallepas;
