@@ -12,7 +12,8 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { RightCard } from "./components/right";
 import { LeftCard } from "./components/left";
-import { Button, Modal } from "antd";
+import { Button, Modal, message } from "antd";
+import { format } from 'date-fns';
 
 interface IPropsItem {
   actualizacion: string;
@@ -21,60 +22,73 @@ interface IPropsItem {
   fecha_inicio: string | null;
   name: string;
   numero: number;
-  responsable: string;
+  resolution_number: string | null;
+  responsable: string | null;
+  type: string | null;
 }
 
 let id = ''
 let responsable_actual = ''
 let resolucion_gerencial = ''
 let tipo = ''
+let newFormatFechaInicio = ''
+let newFormatFechaFin = ''
 
 const Actualizaproceso: NextPageWithLayout= ({}) => {
   const [item, setItem] = useState<IPropsItem>();
   const router = useRouter();
-  const [showAlert, setShowAlert] = useState(false);
-
   useEffect(() => {
     let itemprop = history?.state?.item;
     if (itemprop) {
       setItem(itemprop);
       id = itemprop?.numero
       responsable_actual = itemprop?.responsable
-      resolucion_gerencial = itemprop?.numero
-      tipo = itemprop?.name
+      resolucion_gerencial = itemprop?.resolution_number
+      tipo = itemprop?.type
     } else {
       router.push("/listadopas");
     }
   }, []);
   
   const [documentoRelacionadoinputValue, setDocumentoRelacionadoinputValue] = useState("");
-  const [fechaInicioInputValue, setFechaInicioInputValue] = useState(new Date().toISOString());
+  const [fechaInicioInputValue, setFechaInicioInputValue] = useState("");
+  const [fechaFinInputValue, setFechaFinInputValue] = useState("");
   const [operationSelectedOption, setOperationSelectedOption] = useState("");
   const [tipoDocumentoSelectedOption, setTipoDocumentoSelectedOption] = useState("");
   const [gerenciaSelectedOption, setGerenciaSelectedOption] = useState("");
   const [comentarioTextareaValue, setComentarioTextareaValue] = useState("");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    setShowAlert(true);
-
+    
     event.preventDefault();
+
+    if (fechaInicioInputValue !== ''){
+      newFormatFechaInicio = `${fechaInicioInputValue.slice(0, 10)} ${fechaInicioInputValue.slice(11, 19)}:00`;
+      
+    } else if(fechaFinInputValue !== ''){
+      newFormatFechaFin = `${fechaFinInputValue.slice(0, 10)} ${fechaFinInputValue.slice(11, 19)}:00`;
+    }
+    
     const formData = new FormData();
     formData.append('comment', comentarioTextareaValue);
     formData.append('current_responsible', responsable_actual);
     formData.append('document', documentoRelacionadoinputValue);
     formData.append('new_responsible', gerenciaSelectedOption);
     formData.append('resolution_number', resolucion_gerencial);
-    formData.append('start_at', '2023-01-19 12:00:00'/*fechaInicioInputValue*/);
+    formData.append('start_at', newFormatFechaInicio);
     formData.append('type_document', tipoDocumentoSelectedOption);
     formData.append('type', tipo);
     formData.append('status', operationSelectedOption);
+    formData.append('fecha_fin', newFormatFechaFin);
 
     try {
       const response = await axios.post(`http://192.168.48.47:5000/processes/${id}/tracking/create/`, formData);
       console.log(response.data);
-      router.push('/listadopas')
+      limpiarDatos()
+      alert('El registro se procesó correctamente!!!')
     } catch (error) {
       console.log(error);
+      alert('Registro incorrecto!!!')
     }
   };
 
@@ -86,12 +100,19 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
     setDocumentoRelacionadoinputValue(event.target.value);
   };
 
-  const handleDateTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFechaInicioDateTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFechaInicioInputValue(event.target.value);
   };
 
-  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleFechaFinDateTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFechaFinInputValue(event.target.value);
+  };
+
+  const handleGerenciaSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setGerenciaSelectedOption(event.target.value);
+  };
+
+  const handleTipoDocumentoSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setTipoDocumentoSelectedOption(event.target.value);
   };
 
@@ -101,8 +122,18 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
 
   function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
     setOperationSelectedOption(event.target.value);
+    limpiarDatos()    
   }
 
+  function limpiarDatos(){
+    setDocumentoRelacionadoinputValue('');
+    setFechaInicioInputValue('');
+    setFechaFinInputValue('');
+    setTipoDocumentoSelectedOption('');
+    setGerenciaSelectedOption('');
+    setComentarioTextareaValue('');
+  }
+  
   return (
     <form onSubmit={handleSubmit}>
       <Card title="Crear usuario">
@@ -154,42 +185,62 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
           </div>
         </div>
 
+        {operationSelectedOption !== 'notificado' && operationSelectedOption !== 'actualizado' &&
+        operationSelectedOption === 'finalizado' && (
+        <div className="w-1/2 py-5">
+          <div className="grid grid-cols-2 gap-5 items-center mb-5">
+            <label htmlFor="fecha_fin" className="text-gray-600">Fecha de finalización:</label>
+            <input type="datetime-local" value={fechaFinInputValue} onChange={handleFechaFinDateTimeChange} id="fecha_fin" className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} />
+          </div>
+        </div>)}
+
+        {operationSelectedOption !== 'notificado' && operationSelectedOption !== 'finalizado' && 
+        operationSelectedOption === 'actualizado' && (
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="nuevo_responsable" className="text-gray-600">Designar nuevo responsable:</label>
-            <select className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} value={gerenciaSelectedOption} onChange={handleSelectChange}>
+            <select className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} value={gerenciaSelectedOption} onChange={handleGerenciaSelectChange}>
               <option value="">Seleccione Gerencia</option>
-              <option value="GITE">GITE</option>
-              <option value="SGGDI">SGGDI</option>
+              <option value="GITE">Gerencia de Informática y Tecnología Electoral</option>
+              <option value="GAJ">Gerencia de Asesoría Jurídica</option>
+              <option value="SG">Secretaría General</option>
+              <option value="GSFP">Gerencia de Supervisión y Fondos Partidarios</option>
+              <option value="JN">Jefatura Nacional</option>
             </select>
           </div>
-        </div>
-
+        </div>)}
+        
+        {operationSelectedOption !== 'notificado' && (operationSelectedOption === 'actualizado' ||
+        operationSelectedOption === 'finalizado') && (
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="documento_relacionado" className="text-gray-600">Documento relacionado:</label>
             <input type="text" placeholder="Ingrese número de documento" value={documentoRelacionadoinputValue} onChange={handleInputChange} id="documento_relacionado" className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} />
           </div>
-        </div>
+        </div>)}
 
+        {operationSelectedOption !== 'notificado' && (operationSelectedOption === 'actualizado' ||
+        operationSelectedOption === 'finalizado') && (
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="tipo_documento" className="text-gray-600">Tipo de documento:</label>
-            <select className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} value={tipoDocumentoSelectedOption} onChange={handleSelectChange}>
+            <select className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} value={tipoDocumentoSelectedOption} onChange={handleTipoDocumentoSelectChange}>
               <option value="">Seleccione tipo de documento</option>
               <option value="informe">Informe</option>
               <option value="resolucion">Resolución</option>
             </select>
           </div>
-        </div>
-
+        </div>)}
+        
+        {operationSelectedOption !== 'notificado' && operationSelectedOption !== 'finalizado' && 
+        operationSelectedOption === 'actualizado' && (
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="fecha_inicio" className="text-gray-600">Fecha de inicio:</label>
-            <input type="datetime-local" value={fechaInicioInputValue} onChange={handleDateTimeChange} id="fecha_inicio" className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} />
+            <input type="datetime-local" value={fechaInicioInputValue} onChange={handleFechaInicioDateTimeChange} id="fecha_inicio" className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} />
           </div>
-        </div>
-
+        </div>)}
+        
         <div className="w-1/2 py-50">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="comentario" className="text-gray-600">Comentarios (0/250 caracteres):</label>
@@ -203,7 +254,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
           <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} onClick={()=> onGotoBack('/listadopas')} >Cancelar</button>
         </div>
 
-        {showAlert && (<div style={{color:'#fff', backgroundColor:'#f0ad4e', borderColor: '#eea236', borderRadius:'5px', marginTop:'10px', padding:'10px'}} role="alert">El registro del proceso se ha enviado correctamente.</div>)}
+        {/* s{showAlert && (<div style={{color:'#fff', backgroundColor:'#f0ad4e', borderColor: '#eea236', borderRadius:'5px', marginTop:'10px', padding:'10px'}} role="alert">El registro del proceso se ha enviado correctamente.</div>)} */}
       </Card>
     </form>    
   );

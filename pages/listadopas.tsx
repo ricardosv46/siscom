@@ -30,10 +30,10 @@ const Listadopas:NextPageWithLayout<ListadopasProps> = ({pageNum, pageSize, tota
   const processApi = async() => {
     const {data} = await api.listpas.getProcesses()
     const newData = data.map((item: { estado: any; })=>({...item, estado: 
-          item.estado === 'day_30_less'?<img src='assets/images/day_30_less.png'/>:
-          item.estado === 'day_60_less'?<img src='assets/images/day_60_less.png'/>:
-          item.estado === 'day_60_more'?<img src='assets/images/day_60_more.png'/>:
-          item.estado === 'finalizado'?<img src='assets/images/finalizado.png'/>:
+          item.estado === 'less_3_months'?<img src='assets/images/less_3_months.png'/>:
+          item.estado === 'less_6_months'?<img src='assets/images/less_6_months.png'/>:
+          item.estado === 'more_6_months'?<img src='assets/images/more_6_months.png'/>:
+          item.estado === 'finalized'?<img src='assets/images/finalized.png'/>:
           item.estado === 'out_of_date'?<img src='assets/images/out_of_date.png'/>:
           item.estado === 'to_start'?<img src='assets/images/to_start.png'/>:''
     }))
@@ -132,10 +132,10 @@ const Listadopas:NextPageWithLayout<ListadopasProps> = ({pageNum, pageSize, tota
         <div style={{display:'flex', justifyContent:'space-between', marginBottom:'1rem'}}>
           <p><img src='assets/images/to_start.png'/> Por iniciar</p>
           <p><img src='assets/images/out_of_date.png'/> Fuera de fecha</p>
-          <p><img src='assets/images/finalizado.png'/> Finalizado</p>
-          <p><img src='assets/images/day_60_more.png'/> Más de 6 meses</p>
-          <p><img src='assets/images/day_60_less.png'/> De 3 a 6 meses</p>
-          <p><img src='assets/images/day_30_less.png'/> Menos de 3 meses</p>
+          <p><img src='assets/images/finalized.png'/> Finalizado</p>
+          <p><img src='assets/images/more_6_months.png'/> Más de 6 meses</p>
+          <p><img src='assets/images/less_6_months.png'/> De 3 a 6 meses</p>
+          <p><img src='assets/images/less_3_months.png'/> Menos de 3 meses</p>
           {/* <Input style={{ marginBottom: 8, display: 'block' }} width={12} placeholder='Buscar' prefix={<SearchOutlined />}/> */}
         </div>
         {/* <Table columns={columns} rowKey='id' dataSource={clients} onChange={handlePagination} pagination={{total:pagConfig.total, current:pagConfig.pageNum, pageSize:pagConfig.pageSize}} /> */}

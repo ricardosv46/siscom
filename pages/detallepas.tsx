@@ -83,6 +83,11 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({
       setDetail(rpta)
    })
  }
+ 
+  const onGotoBack = (page: string) => {
+    router.push({pathname:page, })
+  }
+
 
   return (
     <>
@@ -129,9 +134,11 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({
                   </>
               )
             })
-          }
-        
-           
+          }    
+        </div>
+        <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }}/>
+        <div style={{display:'flex', gap:'50px'}}>
+          <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} onClick={()=> onGotoBack('/listadopas')} >Ir al Listado PAS</button>
         </div>
       </Card>
     </>
