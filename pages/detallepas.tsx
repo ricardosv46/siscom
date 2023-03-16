@@ -19,7 +19,7 @@ interface DetallepasProps {
   total: number;
 }
 
-interface IPropsItem {
+export interface IPropsItem {
   actualizacion: string;
   etapa: string | number | null;
   fecha_fin: string | null;
@@ -61,7 +61,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({
     pageSize: pageSize,
     total: total,
   });
-  const [item, setItem] = useState<IPropsItem>();
+  const [item, setItem] = useState<IPropsItem[]>();
   const [detail, setDetail] = useState<IDetailItem[]>();
 
   const router = useRouter();
@@ -78,10 +78,9 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({
   }, []);
 
  const getDetailInfo = async(id: number) => {
-   await axios.get(`http://192.168.48.47:5000/processes/${id}/tracking/`).then((response)=> {
-      let rpta = response.data.data
-      setDetail(rpta)
-   })
+ const { processes } =  await api.listpas.getProcessesByTracking(id)
+ console.log(processes)
+     setDetail(processes)
  }
  
   const onGotoBack = (page: string) => {
@@ -131,6 +130,8 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({
                    {
                     item.id % 2  ?  <LeftCard item={item}   idx={idx}/> :   <RightCard item={item}  idx={idx} />
                    }           
+                   {/* <LeftCard item={item}   idx={idx}/> 
+                   <RightCard item={item}  idx={idx} /> */}
                   </>
               )
             })
@@ -138,27 +139,13 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({
         </div>
         <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }}/>
         <div style={{display:'flex', gap:'50px'}}>
-          <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} onClick={()=> onGotoBack('/listadopas')} >Ir al Listado PAS</button>
+          <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} onClick={()=> onGotoBack('/listadopas')} >Regresar</button>
         </div>
       </Card>
     </>
   );
 };
-
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const token = getCookie("tokenApi", { req, res });
-  const { data, pageNum, pageSize, total } = await api.clients.getClients({
-    token: token,
-  });
-  return {
-    props: {
-      clients: data,
-      pageNum: 1,
-      pageSize: 3,
-      total: 0,
-    },
-  };
-};
+ 
 
 Detallepas.getLayout = function getLayout(page: ReactElement) {
   return <LayoutFirst>{page}</LayoutFirst>;

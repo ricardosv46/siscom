@@ -1,7 +1,9 @@
-import { ComponentType, createElement, FC, ReactNode, useEffect } from "react";
+import { ComponentType, createElement, FC, ReactNode, useEffect, useState } from "react";
 import { Layout, Menu, notification } from 'antd';
 import menu from '@framework/pas/menu.json' 
 import type { MenuProps } from 'antd';
+import { responseLogin } from "@framework/types"
+import {  } from "../../../pages/api/auth/login";
 
 import {
   HomeOutlined,
@@ -16,7 +18,34 @@ import IconOnpe from "@components/icons/IconOnpe";
 import { ModalDrawer } from "@components/ui";
 import { useRouter } from "next/router";
 import { useUI } from "@components/ui/context";
+import { NextApiRequest } from "next";
+import { apiService } from "services/axios/configAxios";
+import useAuthStore from "store/auth/auth";
+import { RemoveSessionAuthService } from "services/auth/ServiceAuth";
 
+interface resAuth {
+  success:boolean
+  message:string
+  user:string
+  profile:string
+}
+
+interface IProps{
+  item: responseLogin;
+  idx: number;
+}
+
+let username = ''
+let password = ''
+
+
+function getusername(req: NextApiRequest) {
+  let { user, pass } = req.body
+  username = user
+  //password = pass
+}
+
+ 
 const { Header, Content, Footer, Sider } = Layout;
 
 const icons: { [P in string]: ComponentType<any> | string } = {
@@ -29,21 +58,43 @@ const icons: { [P in string]: ComponentType<any> | string } = {
   FileSearchOutlined:FileSearchOutlined
 }
 
-const items: MenuProps['items'] = menu.map((item, _) => ({
-  key: item.key,
-  icon: createElement(icons[item.icon]),
-  label: `${item.label}`,
-}));
 
 interface LayoutFirstProps {
   children: ReactNode,
 }
-const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
 
+// const Login: (props: { login: responseLogin }) {
+//   return props.login.profile
+// }
+
+const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
+//function Login(props: { login: responseLogin }) {
   const router = useRouter()
   const { displayNotification, notification: notificationView, closeNotification } = useUI()
   const [api, contextHolder] = notification.useNotification();
+  const { storeUser, removeSession, user } = useAuthStore();
+  const profile = user.profile.toUpperCase();
+   
+  const items: MenuProps['items'] = menu.map((item, _) => {
+   if(profile == 'ADMIN'){
+    return item.role == 'admin' &&   {
+      key: item.key,
+      icon: createElement(icons[item.icon]),
+      label: `${item.label}`,
+     } 
+   }else{
+    return item.role == 'user' &&   {
+      key: item.key,
+      icon: createElement(icons[item.icon]),
+      label: `${item.label}`,
+     } 
+   }
+ 
+ 
+  } );
   
+ 
+
   const handleMenu = ({ key, }:{key:string}) =>{
     router.push(key)
   }
@@ -66,11 +117,12 @@ const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
 
   const handleLogout = async () =>{
     try {
-      await fetch(`/api/auth/logout`)
+      removeSession()
+      router.push("/auth");
     } catch (error) {
       console.error(error);
     }
-    router.push("/auth");
+ 
   }
 
   return (
@@ -104,11 +156,13 @@ const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
               </div>
               <div className="user-header">
                 <div className="data-user">
-                  <div className="name-user">Admin</div>
-                  <div onClick={handleLogout} className="close-session">Cerrar sesión</div>
+                  <div className="name-user">Bienvenido</div>
+                  <div onClick={handleLogout} style={{cursor:'pointer',fontSize:'1rem',textUnderlineOffset:''}}>Cerrar sesión</div>
+                  {/* className="close-session" */}
                 </div>
-                <div className="icon-user">
-                  A
+                <div style={{width:'55px', height:'55px'}} className="icon-user">
+                {/* style={{color:'white', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'7px 20px'}} */}
+                {profile}
                 </div>
               </div>
 

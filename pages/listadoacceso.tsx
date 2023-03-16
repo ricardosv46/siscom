@@ -27,8 +27,8 @@ const Listadoacceso:NextPageWithLayout<ListadoaccesoProps> = ({pageNum, pageSize
   console.log(access)
 
   const accessApi = async() => {
-    const {message} = await api.access.getAcesses()
-    setAccess(message) 
+    const {data  } = await api.access.getAcesses()
+    setAccess(data) 
   }
 
   useEffect(()=>{

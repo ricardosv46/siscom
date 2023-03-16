@@ -41,7 +41,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
     let itemprop = history?.state?.item;
     if (itemprop) {
       setItem(itemprop);
-      id = itemprop?.numero
+      id = itemprop?.numero 
       responsable_actual = itemprop?.responsable
       resolucion_gerencial = itemprop?.resolution_number
       tipo = itemprop?.type
@@ -88,7 +88,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
       alert('El registro se procesó correctamente!!!')
     } catch (error) {
       console.log(error);
-      alert('Registro incorrecto!!!')
+      //alert('Registro incorrecto!!!')
     }
   };
 
@@ -251,7 +251,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
         <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }}/>
         <div style={{display:'flex', gap:'50px'}}>
           <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} type="submit">Actualizar</button>
-          <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} onClick={()=> onGotoBack('/listadopas')} >Cancelar</button>
+          <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} onClick={()=> onGotoBack('/listadopas')} >Regresar</button>
         </div>
 
         {/* s{showAlert && (<div style={{color:'#fff', backgroundColor:'#f0ad4e', borderColor: '#eea236', borderRadius:'5px', marginTop:'10px', padding:'10px'}} role="alert">El registro del proceso se ha enviado correctamente.</div>)} */}

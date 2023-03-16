@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { Breadcrumb, Table } from 'antd';
-import { ReactElement, Suspense, useState } from 'react';
+import { ReactElement, Suspense, useState, useCallback } from 'react';
 import { NextPageWithLayout } from './_app';
 import { LayoutFirst } from '@components/common';
 import { Card } from '@components/ui';
@@ -10,16 +10,18 @@ import { Chart } from 'chart.js/auto'
 import React, { useRef, useEffect } from "react";
 import api from '@framework/api';
 import { Doughnut } from 'react-chartjs-2';
-import { AlignCenterOutlined } from '@ant-design/icons';
+
 
 const Home: NextPageWithLayout = () => {
   const [processGrouped,setProcessGrouped] = useState([])
   const [processSummary,setProcessSummary] = useState([])
-  console.log(processGrouped)
+ 
+ 
+ 
 
   const processGroupedApi = async() => {
     const {data} = await api.home.getProcessesGrouped()
-    const newData = data.map((item: { estado: string; })=>({...item, estado: 
+    const newData = data?.map((item: { estado: string; })=>({...item, estado: 
           item.estado === 'less_3_months'?<img src='assets/images/less_3_months.png'/>:
           item.estado === 'less_6_months'?<img src='assets/images/less_6_months.png'/>:
           item.estado === 'more_6_months'?<img src='assets/images/more_6_months.png'/>:
@@ -126,6 +128,7 @@ const Home: NextPageWithLayout = () => {
     }
   ];
 
+   
   return (
     <>
       <Head>

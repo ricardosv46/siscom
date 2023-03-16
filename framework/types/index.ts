@@ -1,3 +1,6 @@
+import { IUserModel } from "./user.interface"
+import { axiosDefaultData } from "./responseDefault"
+
 export interface response<T>{
   pageNum?: number
   pageSize?: number
@@ -6,15 +9,37 @@ export interface response<T>{
   data: T
 }
 
+/**  Auth Login */
+
+
+
 export interface auth{
   username:string
   password:string
 }
-export interface responseLogin{
-  token:string
+export interface responseLogin extends axiosDefaultData{
+ data: {
   message:string
   success:boolean
-  data:any
+  data: {
+    token:string;
+    user: IUserModel;
+  }
+ }
+}
+/** Fin Auth Login */
+
+export interface IListadoPas{
+  actualizacion?: string
+  estado: string
+  etapa?: string
+  fecha_fin?: string
+  fecha_inicio?: string
+  name?: string
+  numero?: number 
+  resolution_number?: string 
+  responsable?: string 
+  type?: string 
 }
 
 export interface UserSave{
