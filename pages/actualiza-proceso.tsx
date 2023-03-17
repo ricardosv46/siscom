@@ -62,6 +62,26 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
     
     event.preventDefault();
 
+    // validaciones()
+
+    // if (!validaciones){return}
+
+    if ((operationSelectedOption == 'notificado') && (!gerenciaSelectedOption || !fechaInicioInputValue)){
+      alert('Por favor, ingrese los datos solicitados')
+      return 
+    } else if ((operationSelectedOption == 'actualizado') && (!gerenciaSelectedOption 
+      || !documentoRelacionadoinputValue || !tipoDocumentoSelectedOption || !fechaInicioInputValue)){
+      alert('Por favor, ingrese los datos solicitados')
+      return 
+    } else if ((operationSelectedOption == 'finalizado') && (!fechaFinInputValue 
+      || !tipoDocumentoSelectedOption || !fechaInicioInputValue)){
+      alert('Por favor, ingrese los datos solicitados')
+      return 
+    } else if (!operationSelectedOption){
+      alert('Por favor, marque una operación')
+      return 
+    }
+
     if (fechaInicioInputValue !== ''){
       newFormatFechaInicio = `${fechaInicioInputValue.slice(0, 10)} ${fechaInicioInputValue.slice(11, 19)}:00`;
       
@@ -86,6 +106,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
       console.log(response.data);
       limpiarDatos()
       alert('El registro se procesó correctamente!!!')
+      router.push('./listadopas')
     } catch (error) {
       console.log(error);
       //alert('Registro incorrecto!!!')
@@ -147,21 +168,21 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="resolucion_gerencial" className="text-gray-600">Número de Resolución Gerencial (RG)</label>
-            <label htmlFor="resolucion_gerencial" className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}>{resolucion_gerencial}</label>
+            <label htmlFor="resolucion_gerencial" className="text-gray-600">{resolucion_gerencial}</label>
           </div>
         </div>
 
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="tipo" className="text-gray-600">Tipo</label>
-            <label htmlFor="tipo" className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}>{tipo}</label>
+            <label htmlFor="tipo" className="text-gray-600">{tipo}</label>
           </div>
         </div>
 
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="responsable_actual" className="text-gray-600">Responsable actual</label>
-            <label htmlFor="responsable_actual" className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}>{responsable_actual}</label>
+            <label htmlFor="responsable_actual" className="text-gray-600">{responsable_actual}</label>
           </div>
         </div>
 
@@ -189,13 +210,12 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
         operationSelectedOption === 'finalizado' && (
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
-            <label htmlFor="fecha_fin" className="text-gray-600">Fecha de finalización:</label>
+            <label htmlFor="fecha_fin" className="text-gray-600">Fecha y hora de finalización:</label>
             <input type="datetime-local" value={fechaFinInputValue} onChange={handleFechaFinDateTimeChange} id="fecha_fin" className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} />
           </div>
         </div>)}
 
-        {operationSelectedOption !== 'notificado' && operationSelectedOption !== 'finalizado' && 
-        operationSelectedOption === 'actualizado' && (
+        {(operationSelectedOption === 'notificado' || operationSelectedOption === 'actualizado') &&  (
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="nuevo_responsable" className="text-gray-600">Designar nuevo responsable:</label>
@@ -232,26 +252,26 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
           </div>
         </div>)}
         
-        {operationSelectedOption !== 'notificado' && operationSelectedOption !== 'finalizado' && 
-        operationSelectedOption === 'actualizado' && (
+        {(operationSelectedOption === 'notificado' || operationSelectedOption === 'actualizado') &&  (
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
-            <label htmlFor="fecha_inicio" className="text-gray-600">Fecha de inicio:</label>
+            <label htmlFor="fecha_inicio" className="text-gray-600">Fecha y hora:</label>
             <input type="datetime-local" value={fechaInicioInputValue} onChange={handleFechaInicioDateTimeChange} id="fecha_inicio" className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} />
           </div>
         </div>)}
         
+        {operationSelectedOption  && (
         <div className="w-1/2 py-50">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="comentario" className="text-gray-600">Comentarios (0/250 caracteres):</label>
             <textarea placeholder="Ingrese un comentario (máx. 250 caraceteres)" value={comentarioTextareaValue} onChange={handleTextareaChange} id="comentario" maxLength={250} className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}/>
           </div>
-        </div>
+        </div>)}
         
         <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }}/>
         <div style={{display:'flex', gap:'50px'}}>
-          <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} type="submit">Actualizar</button>
-          <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} onClick={()=> onGotoBack('/listadopas')} >Regresar</button>
+          <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} id="submit" type="submit">Actualizar</button>
+          {/* <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} type="submit" id="goToBack" onClick={()=> onGotoBack('./listadopas')} >Regresar</button> */}
         </div>
 
         {/* s{showAlert && (<div style={{color:'#fff', backgroundColor:'#f0ad4e', borderColor: '#eea236', borderRadius:'5px', marginTop:'10px', padding:'10px'}} role="alert">El registro del proceso se ha enviado correctamente.</div>)} */}

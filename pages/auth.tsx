@@ -36,10 +36,10 @@ const Home = () => {
          storeUser(data?.user, data.token);
          router.push("/");
          `Bienivenido ${username}`
- 
       }
      } catch (error) {
       setLoading(false);
+      alert('Usuario y/o contraseña inválido !!!')
      } finally {
       setTimeout(() => {
         setLoading(false);
