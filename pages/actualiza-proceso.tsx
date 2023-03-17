@@ -10,8 +10,7 @@ import { getCookie } from "cookies-next";
 import { mergeArray } from "@lib/general";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { RightCard } from "./components/right";
-import { LeftCard } from "./components/left";
+import { RightCard } from "../components/common/right";
 import { Button, Modal, message } from "antd";
 import { format } from 'date-fns';
 

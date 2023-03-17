@@ -23,28 +23,6 @@ import { apiService } from "services/axios/configAxios";
 import useAuthStore from "store/auth/auth";
 import { RemoveSessionAuthService } from "services/auth/ServiceAuth";
 
-interface resAuth {
-  success:boolean
-  message:string
-  user:string
-  profile:string
-}
-
-interface IProps{
-  item: responseLogin;
-  idx: number;
-}
-
-let username = ''
-let password = ''
-
-
-function getusername(req: NextApiRequest) {
-  let { user, pass } = req.body
-  username = user
-  //password = pass
-}
-
  
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -75,7 +53,7 @@ const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
   const { storeUser, removeSession, user } = useAuthStore();
   const profile = user.profile.toUpperCase();
    
-  const items: MenuProps['items'] = menu.map((item, _) => {
+  const items:any  = menu.map((item, _) => {
    if(profile == 'ADMIN'){
     return item.role == 'admin' &&   {
       key: item.key,

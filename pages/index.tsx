@@ -13,8 +13,8 @@ import { Doughnut } from 'react-chartjs-2';
 
 
 const Home: NextPageWithLayout = () => {
-  const [processGrouped,setProcessGrouped] = useState([])
-  const [processSummary,setProcessSummary] = useState([])
+  const [processGrouped,setProcessGrouped] = useState<any>([])
+  const [processSummary,setProcessSummary] = useState<any>([])
  
  
  

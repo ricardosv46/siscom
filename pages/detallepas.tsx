@@ -10,8 +10,8 @@ import { getCookie } from "cookies-next";
 import { mergeArray } from "@lib/general";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { RightCard } from "./components/right";
-import { LeftCard } from "./components/left";
+import { RightCard } from "../components/common/right";
+import { LeftCard } from "@components/common/left";
 
 interface DetallepasProps {
   pageNum: number;
@@ -24,7 +24,7 @@ export interface IPropsItem {
   etapa: string | number | null;
   fecha_fin: string | null;
   fecha_inicio: string | null;
-  name: string;
+  name: string | null;
   numero: number;
   responsable: string;
 }
@@ -63,6 +63,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({
   });
   const [item, setItem] = useState<IPropsItem[]>();
   const [detail, setDetail] = useState<IDetailItem[]>();
+  const [nombre, setNombre] = useState()
 
   const router = useRouter();
 
@@ -71,6 +72,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({
     if (itemprop) {
       setItem(itemprop);
       getDetailInfo(itemprop.numero)
+      setNombre(itemprop.name)
     } else {
       router.push("/listadopas");
     }
@@ -99,7 +101,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({
       <Card title="Listado de personal de ODPE">
         <div style={{ marginBottom: "0.4rem" }}>
           <h1 style={{ fontSize: 25, color: "#4F5172" }}>
-            {item?.name} 
+            {nombre} 
           </h1>
         </div>
         <hr

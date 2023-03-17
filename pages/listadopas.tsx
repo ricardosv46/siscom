@@ -52,8 +52,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     total: total,
   });
   const router = useRouter();
-  const [process, setProcess] = useState<IListadoPas[]>();
-  const [memory, setMemory] = useState<IListadoPas[]>();
+  const [process, setProcess] = useState<any>();
+  const [memory, setMemory] = useState<any>();
   const { user } = useAuthStore();
   const profile = user.profile.toUpperCase();
 
@@ -84,10 +84,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
         };
       }
     });
-
     setMemory(newData);
     setProcess(newData);
-    //setProcessShow(newData)
+
   };
 
   const onGoDetail = (page: string, props: any) => {
@@ -174,7 +173,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     if (search || search.trim() != "") {
       if (process?.length) {
         let filterString = cleanTextStringAndFormat(search.toUpperCase());
-        const filterData = process.filter((item) => {
+        const filterData = process.filter((item:any) => {
           return (
             cleanTextStringAndFormat(item?.responsable?.toUpperCase()) == filterString ||
             cleanTextStringAndFormat(item?.responsable?.toUpperCase()).includes(filterString) ||
