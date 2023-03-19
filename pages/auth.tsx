@@ -35,7 +35,7 @@ const Home = () => {
       if (success) {
          storeUser(data?.user, data.token);
          router.push("/");
-         `Bienivenido ${username}`
+         `Bienvenido ${username}`
       }
      } catch (error) {
       setLoading(false);

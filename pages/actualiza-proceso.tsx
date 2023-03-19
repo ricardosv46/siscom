@@ -101,7 +101,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
     formData.append('fecha_fin', newFormatFechaFin);
 
     try {
-      const response = await axios.post(`http://192.168.48.47:5000/processes/${id}/tracking/create/`, formData);
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/${id}/tracking/create/`, formData);
       console.log(response.data);
       limpiarDatos()
       alert('El registro se procesó correctamente!!!')
