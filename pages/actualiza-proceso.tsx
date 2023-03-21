@@ -64,7 +64,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
     // validaciones()
 
     // if (!validaciones){return}
-
+    
     if ((operationSelectedOption == 'notificado') && (!gerenciaSelectedOption || !fechaInicioInputValue)){
       alert('Por favor, ingrese los datos solicitados')
       return 
@@ -189,18 +189,9 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="operacion" className="text-gray-40">Operación:</label>
             <div>
-              <input type="checkbox" name="notificado" value="notificado" checked={operationSelectedOption === "notificado"} onChange={handleCheckboxChange}/>
-              <span className="checkmark"></span>
-              <label className="form-checkbottom">   Notificación</label>
-              <div className="text-red-500 text-xs"></div>
-              <input type="checkbox" name="actualizado" value="actualizado" checked={operationSelectedOption === "actualizado"} onChange={handleCheckboxChange}/>
-              <span className="checkmark"></span>
-              <label className="form-checkbottom">   Actualización</label>
-              <div className="text-red-500 text-xs"></div>
-              <input type="checkbox" name="finalizado" value="finalizado" checked={operationSelectedOption === "finalizado"} onChange={handleCheckboxChange}/>
-              <span className="checkmark"></span>
-              <label className="form-checkbottom">   Finalización</label>
-              <div className="text-red-500 text-xs"></div>
+            {responsable_actual === 'SG' && (<><input type="checkbox" name="notificado" value="notificado" checked={operationSelectedOption === "notificado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Notificación</label><div className="text-red-500 text-xs"></div></>)}
+            {responsable_actual && (<><input type="checkbox" name="actualizado" value="actualizado" checked={operationSelectedOption === "actualizado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Actualización</label><div className="text-red-500 text-xs"></div></>)}
+            {responsable_actual === 'JN' && (<><input type="checkbox" name="finalizado" value="finalizado" checked={operationSelectedOption === "finalizado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Finalización</label><div className="text-red-500 text-xs"></div></>)}
             </div>
           </div>
         </div>
@@ -210,7 +201,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="fecha_fin" className="text-gray-600">Fecha y hora de finalización:</label>
-            <input type="datetime-local" value={fechaFinInputValue} onChange={handleFechaFinDateTimeChange} id="fecha_fin" className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} />
+            <input type="datetime-local" max={new Date().toISOString().slice(0, 16)} value={fechaFinInputValue} onChange={handleFechaFinDateTimeChange} id="fecha_fin" className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} />
           </div>
         </div>)}
 
@@ -255,7 +246,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="fecha_inicio" className="text-gray-600">Fecha y hora:</label>
-            <input type="datetime-local" value={fechaInicioInputValue} onChange={handleFechaInicioDateTimeChange} id="fecha_inicio" className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} />
+            <input type="datetime-local" max={new Date().toISOString().slice(0, 16)} value={fechaInicioInputValue} onChange={handleFechaInicioDateTimeChange} id="fecha_inicio" className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} />
           </div>
         </div>)}
         
