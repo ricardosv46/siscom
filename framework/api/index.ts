@@ -85,6 +85,27 @@ const api = {
         return { processes: [] };
       }
     },
+    getReporteExcelProcesses: async () => {
+      const tok = GetTokenAuthService();
+      if (tok) {
+        const responseExcel = await apiService.post(`download/`,{},{responseType: 'arraybuffer',
+        headers: {'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}});
+        const outputFilename = `reporte_pas_${Date.now()}.xlsx`;
+
+        console.log(responseExcel.headers);
+        console.log(responseExcel.status);
+        console.log(responseExcel.data);
+
+        // If you want to download file automatically using link attribute.
+        const url = URL.createObjectURL(new Blob([responseExcel.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', outputFilename);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      }
+    }
   },
   access: {
     getAcesses: async () => {

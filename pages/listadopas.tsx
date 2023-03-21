@@ -192,6 +192,12 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     }
   };
 
+  const descargarReporte = async () => {
+    console.log("ahdsadsajjdlajsld");
+    await api.listpas.getReporteExcelProcesses();
+    console.log("pase p");
+  }
+
   return (
     <>
       <Head>
@@ -240,6 +246,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
               placeholder="Buscar"
               prefix={<SearchOutlined />}
             />
+          </div>
+          <div>
+          <Button onClick={descargarReporte}>Descargar Reporte</Button>
           </div>
         </div>
         {/* <Table columns={columns} rowKey='id' dataSource={clients} onChange={handlePagination} pagination={{total:pagConfig.total, current:pagConfig.pageNum, pageSize:pagConfig.pageSize}} /> */}
