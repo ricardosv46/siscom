@@ -103,10 +103,15 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   let dat = "asd";
 
   const columns = [
-    {
+    /*{
       title: "Número",
       dataIndex: "numero",
       key: "numero",
+    },*/
+    {
+      title: "Resolución Gerencial",
+      dataIndex: "resolution_number",
+      key: "resolution_number",
     },
     {
       title: "Estado",
@@ -180,7 +185,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
             cleanTextStringAndFormat(item?.name?.toUpperCase()) == filterString ||
             cleanTextStringAndFormat(item?.name?.toUpperCase()).includes(filterString) ||
             cleanTextStringAndFormat(item?.etapa?.toUpperCase()) == filterString ||
-            cleanTextStringAndFormat(item?.etapa?.toUpperCase()).includes(filterString)
+            cleanTextStringAndFormat(item?.etapa?.toUpperCase()).includes(filterString) ||
+            cleanTextStringAndFormat(item?.resolution_number?.toUpperCase()) == filterString ||
+            cleanTextStringAndFormat(item?.resolution_number?.toUpperCase()).includes(filterString)
           );
         });
         setProcess(filterData);
@@ -193,9 +200,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   };
 
   const descargarReporte = async () => {
-    console.log("ahdsadsajjdlajsld");
     await api.listpas.getReporteExcelProcesses();
-    console.log("pase p");
   }
 
   return (
