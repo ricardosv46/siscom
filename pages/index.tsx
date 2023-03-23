@@ -4,20 +4,21 @@ import { ReactElement, Suspense, useState, useCallback } from 'react';
 import { NextPageWithLayout } from './_app';
 import { LayoutFirst } from '@components/common';
 import { Card } from '@components/ui';
-import {ArcElement} from 'chart.js';
+import {ArcElement, ChartOptions, elements} from 'chart.js';
 Chart.register(ArcElement);
 import { Chart } from 'chart.js/auto'
 import React, { useRef, useEffect } from "react";
 import api from '@framework/api';
-import { Doughnut } from 'react-chartjs-2';
+import { ChartProps, Doughnut } from 'react-chartjs-2';
+import { useRouter } from 'next/router';
 
+interface DoughnutChartOptions {
+  onClick?: (event: MouseEvent, activeElements: any[]) => void;
+}
 
 const Home: NextPageWithLayout = () => {
   const [processGrouped,setProcessGrouped] = useState<any>([])
   const [processSummary,setProcessSummary] = useState<any>([])
- 
- 
- 
 
   const processGroupedApi = async() => {
     const {data} = await api.home.getProcessesGrouped()
@@ -40,6 +41,7 @@ const Home: NextPageWithLayout = () => {
   const canvas = useRef();
  
   const dataFi = {
+    labels: ['Finalizado', 'Menos de 3 meses', 'De 3 a 6 meses', 'Más de 6 meses', 'Fuera de fecha', 'Por iniciar'],
     datasets: [
       {
         label: 'Cantidad de procesos',
@@ -105,6 +107,64 @@ const Home: NextPageWithLayout = () => {
     // });
   }, []);
 
+  const router = useRouter();
+
+  // const handleClick = (event: any, chartElements: string | any[]) => {
+  //   if (chartElements.length > 0) {
+  //     const label = chartElements[0]._model.label;   dataFi.
+  //     router.push(`/section/${label}`);
+  //   }
+  // };
+
+  const onGoListPas = (page: string, label: any) => {
+    // router.push({ pathname: page });
+    // const { estado, ...res } = props.item;
+    // const newDatos = { item: { ...res } };
+    // history.pushState(newDatos, "", page);
+    //router.push(page);
+    
+      router.push(`/${page}?seccion=${label}`);
+      history.pushState(label, "", page);    
+  };
+
+  // const handleElementClick = (elems: string | any[]) => {
+  //   if (elems.length > 0) {
+  //     //const labelIndex = elems[0].index;
+  //     const labelValue = dataFi.labels[elems[0].index];
+  //     console.log(`Label seleccionado: ${labelValue}`);
+  //   }
+  // };
+
+  // const handleElementClick = (elems: any) => {
+  //   if (elems.length > 0) {
+  //     const labelIndex = elems[0].index;
+  //     console.log(`Índice del label seleccionado: ${labelIndex}`);
+  //   }
+  // };
+
+  const handleElementClick = (event: MouseEvent, activeElements: any[]) => {
+    if (activeElements.length > 0) {
+      const labelIndex = activeElements[0].index;
+      console.log(`Índice del label seleccionado: ${labelIndex}`);
+      router.push(`/listadopas?estado=${labelIndex}`);
+      history.pushState(labelIndex, "", "/listadopas");    
+    }
+  };
+  
+  // const options: DoughnutChartOptions = {
+  //   onClick: handleElementClick,
+  // };
+
+  const options: ChartOptions<'doughnut'> = {
+    onClick: (event: any, elements: any, chart: any) => {
+      if (elements.length > 0) {
+        const labelIndex = elements[0].index;
+        //console.log(`Índice del label seleccionado: ${labelIndex}`);
+        router.push(`/listadopas?estado=${labelIndex}`);
+        //history.pushState(labelIndex, "", "/listadopas");    
+      }
+    },
+  }
   const columns = [
     {
       title: 'Proceso',
@@ -153,7 +213,7 @@ const Home: NextPageWithLayout = () => {
           </div>
           <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
           
-          <div style={{display:'flex', gap:'20px'}}>
+          {/* <div style={{display:'flex', gap:'20px'}}>
             <p><img src='assets/images/to_start.png'/> Por iniciar</p>
             <p><img src='assets/images/out_of_date.png'/> Fuera de fecha</p>
             <p><img src='assets/images/finalized.png'/> Finalizado</p>
@@ -162,11 +222,16 @@ const Home: NextPageWithLayout = () => {
             <p><img src='assets/images/more_6_months.png'/> Más de 6 meses</p>
             <p><img src='assets/images/less_6_months.png'/> De 3 a 6 meses</p>
             <p><img src='assets/images/less_3_months.png'/> Menos de 3 meses</p>
-          </div>
+          </div> */}
+
           {/* <Input style={{ marginBottom: 8, display: 'block' }} width={12} placeholder='Buscar' prefix={<SearchOutlined />}/> */}
        
           {/* <div><canvas id="myChart" ref={canvas}></canvas></div> */}
-          <Doughnut data={dataFi} />
+          {/* <Doughnut data={dataFi} /> */}
+          {/* <Doughnut data={dataFi} onClick={() => onGoListPas("/listadopas", Object.keys(processSummary)[elements[0].index])}/> */}
+          <Doughnut data={dataFi} options={options} />
+          {/* <Doughnut data={dataFi} onElementsClick={handleElementClick} /> */}
+          {/* dataFi.labels[elems[0].index] */}
         </Card>
               
         <Card>  

@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { Button, Space, Table } from "antd";
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { LayoutFirst } from "@components/common";
 import { NextPageWithLayout } from "pages/_app";
 import { Card } from "@components/ui";
@@ -12,23 +12,12 @@ import Input from "antd/lib/input/Input";
 import { useRouter } from "next/router";
 import useAuthStore from "store/auth/auth";
 import { cleanTextStringAndFormat } from "utils/helpers";
+import { ParsedUrlQuery } from "querystring";
 
 interface ListadopasProps {
   pageNum: number;
   pageSize: number;
   total: number;
-}
-
-interface IPropsItem {
-  actualizacion: string;
-  etapa: string | number | null;
-  fecha_fin: string | null;
-  fecha_inicio: string | null;
-  name: string;
-  numero: number;
-  resolution_number: string | null;
-  responsable: string | null;
-  type: string | null;
 }
 
 const Listadopas: NextPageWithLayout<ListadopasProps> = ({
@@ -56,6 +45,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   const [memory, setMemory] = useState<any>();
   const { user } = useAuthStore();
   const profile = user.profile.toUpperCase();
+  let label: string | string[] | undefined
 
   const processApi = async () => {
     const { processes } = await api.listpas.getProcesses();
@@ -86,7 +76,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     });
     setMemory(newData);
     setProcess(newData);
-
   };
 
   const onGoDetail = (page: string, props: any) => {
@@ -98,9 +87,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
 
   useEffect(() => {
     processApi();
+    const labelIndex = router.query;
+    label = labelIndex.estado
+    console.log(label)
+    onSearch(label)
   }, []);
-
-  let dat = "asd";
 
   const columns = [
     /*{
@@ -174,7 +165,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     },
   ];
 
-  const onSearch = (search: string = "") => {
+  const onSearch = (search: any = "") => {
     if (search || search.trim() != "") {
       if (process?.length) {
         let filterString = cleanTextStringAndFormat(search.toUpperCase());
@@ -187,7 +178,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
             cleanTextStringAndFormat(item?.etapa?.toUpperCase()) == filterString ||
             cleanTextStringAndFormat(item?.etapa?.toUpperCase()).includes(filterString) ||
             cleanTextStringAndFormat(item?.resolution_number?.toUpperCase()) == filterString ||
-            cleanTextStringAndFormat(item?.resolution_number?.toUpperCase()).includes(filterString)
+            cleanTextStringAndFormat(item?.resolution_number?.toUpperCase()).includes(filterString)||
+            cleanTextStringAndFormat(item?.estado_proceso?.toUpperCase()) == filterString ||
+            cleanTextStringAndFormat(item?.estado_proceso?.toUpperCase()).includes(filterString)
           );
         });
         setProcess(filterData);
@@ -198,7 +191,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
       setProcess(memory);
     }
   };
-
+  
   const descargarReporte = async () => {
     await api.listpas.getReporteExcelProcesses();
   }
@@ -213,7 +206,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
 
       <Card title="Listado de personal de ODPE">
         <div style={{ marginBottom: "0.4rem" }}>
-          <h2 style={{ fontSize: 25, color: "#4F5172" }}>Listado de ODPE</h2>
+          <h2 style={{ fontSize: 25, color: "#4F5172" }}>Listado de PAS</h2>
           <hr
             style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }}
           />
@@ -256,7 +249,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
           <Button onClick={descargarReporte}>Descargar Reporte</Button>
           </div>
         </div>
-        {/* <Table columns={columns} rowKey='id' dataSource={clients} onChange={handlePagination} pagination={{total:pagConfig.total, current:pagConfig.pageNum, pageSize:pagConfig.pageSize}} /> */}
         <Table columns={columns} dataSource={process} />
       </Card>
     </>
