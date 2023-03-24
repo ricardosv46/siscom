@@ -103,6 +103,10 @@ body{
   font-size: 1.4rem;
 }
 
+.ant-table-cell{
+  padding: 4px 20px !important;
+}
+
 /* @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

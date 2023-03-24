@@ -46,6 +46,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   const { user } = useAuthStore();
   const profile = user.profile.toUpperCase();
   let label: string | string[] | undefined
+  const [inputValue, setInputValue] = useState(label);
+
+  
 
   const processApi = async () => {
     const { processes } = await api.listpas.getProcesses();
@@ -240,7 +243,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
         <div className="py-10 border-b border-gray-200 pb-4 flex justify-between w-full items-center">
           <div>
             <Input
-              onChange={(e) => onSearch(e.target.value)}
+              value={inputValue}
+              onChange={(e) => onSearch(setInputValue(e.target.value))}
               placeholder="Buscar"
               prefix={<SearchOutlined />}
             />

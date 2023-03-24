@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { Breadcrumb, Table } from 'antd';
+import { Breadcrumb, Pagination, Table } from 'antd';
 import { ReactElement, Suspense, useState, useCallback } from 'react';
 import { NextPageWithLayout } from './_app';
 import { LayoutFirst } from '@components/common';
@@ -41,7 +41,6 @@ const Home: NextPageWithLayout = () => {
   const canvas = useRef();
  
   const dataFi = {
-    labels: ['Finalizado', 'Menos de 3 meses', 'De 3 a 6 meses', 'Más de 6 meses', 'Fuera de fecha', 'Por iniciar'],
     datasets: [
       {
         label: 'Cantidad de procesos',
@@ -56,112 +55,15 @@ const Home: NextPageWithLayout = () => {
   useEffect(() => {
     processGroupedApi();
     processSummaryApi();
-
-    // const ctx = canvas.current;
-
-    // let chartStatus = Chart.getChart("chart");
-    // if (chartStatus !== undefined || chartStatus) {
-    //   chartStatus.destroy();
-    // }
-
-    // new Chart(ctx, {
-    //   type: "pie",
-    //   data: {
-    //     labels: ['Por iniciar','Fuera de fecha','Finalizado','Más de 6 meses','De 3 a 6 meses','Menos de 3 meses'],
-    //     datasets: [
-    //       {
-    //         label: "Procesos",
-    //         data: processSummary,
-    //         backgroundColor: [
-    //           "rgb(255,255,255)",
-    //           "rgba(5,5,5,255)",
-    //           "rgb(136,132,132)",
-    //           "rgb(120,188,68)",
-    //           "rgb(256,188,28)",
-    //           "rgb(232,52,44)"
-    //         ],
-    //         borderColor: [
-    //           "rgba(5,5,5,255)",
-    //           "rgba(5,5,5,255)",
-    //           "rgb(136,132,132)",
-    //           "rgb(120,188,68)",
-    //           "rgb(256,188,28)",
-    //           "rgb(232,52,44)"
-    //         ],
-    //         borderWidth: 1
-    //       }
-    //     ]
-    //   },
-    //   options: {
-    //     responsive: true,
-    //     plugins: {
-    //       legend: {
-    //         position: "top"
-    //       },
-    //       title: {
-    //         display: true,
-    //         text: "Total: 100 procesos"
-    //       }
-    //     }
-    //   }
-    // });
   }, []);
 
   const router = useRouter();
-
-  // const handleClick = (event: any, chartElements: string | any[]) => {
-  //   if (chartElements.length > 0) {
-  //     const label = chartElements[0]._model.label;   dataFi.
-  //     router.push(`/section/${label}`);
-  //   }
-  // };
-
-  const onGoListPas = (page: string, label: any) => {
-    // router.push({ pathname: page });
-    // const { estado, ...res } = props.item;
-    // const newDatos = { item: { ...res } };
-    // history.pushState(newDatos, "", page);
-    //router.push(page);
-    
-      router.push(`/${page}?seccion=${label}`);
-      history.pushState(label, "", page);    
-  };
-
-  // const handleElementClick = (elems: string | any[]) => {
-  //   if (elems.length > 0) {
-  //     //const labelIndex = elems[0].index;
-  //     const labelValue = dataFi.labels[elems[0].index];
-  //     console.log(`Label seleccionado: ${labelValue}`);
-  //   }
-  // };
-
-  // const handleElementClick = (elems: any) => {
-  //   if (elems.length > 0) {
-  //     const labelIndex = elems[0].index;
-  //     console.log(`Índice del label seleccionado: ${labelIndex}`);
-  //   }
-  // };
-
-  const handleElementClick = (event: MouseEvent, activeElements: any[]) => {
-    if (activeElements.length > 0) {
-      const labelIndex = activeElements[0].index;
-      console.log(`Índice del label seleccionado: ${labelIndex}`);
-      router.push(`/listadopas?estado=${labelIndex}`);
-      history.pushState(labelIndex, "", "/listadopas");    
-    }
-  };
-  
-  // const options: DoughnutChartOptions = {
-  //   onClick: handleElementClick,
-  // };
 
   const options: ChartOptions<'doughnut'> = {
     onClick: (event: any, elements: any, chart: any) => {
       if (elements.length > 0) {
         const labelIndex = elements[0].index;
-        //console.log(`Índice del label seleccionado: ${labelIndex}`);
         router.push(`/listadopas?estado=${labelIndex}`);
-        //history.pushState(labelIndex, "", "/listadopas");    
       }
     },
   }
@@ -188,7 +90,30 @@ const Home: NextPageWithLayout = () => {
     }
   ];
 
-   
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 15;
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const currentData = processGrouped.slice(startIndex, endIndex);
+
+  function handlePageChange(pageNumber: number) {
+    if (pageNumber > Math.ceil(processGrouped.length / pageSize)) {
+      setCurrentPage(1);
+    } else {
+      setCurrentPage(pageNumber);
+    }
+  }
+  
+  useEffect(() => {
+    if (processGrouped.length <= pageSize) {
+      return;
+    }
+    setTimeout(() => {
+      const nextPage = currentPage === Math.ceil(processGrouped.length / pageSize) ? 1 : currentPage + 1;
+      setCurrentPage(nextPage);
+    }, 1000);
+  },[currentPage])
+  
   return (
     <>
       <Head>
@@ -198,7 +123,6 @@ const Home: NextPageWithLayout = () => {
       </Head>
 
       <Breadcrumb style={{ margin: '5px 0', color:'white' }}>
-        {/* <Breadcrumb.Item>Bienvenido</Breadcrumb.Item> */}
         <h2 style={{ fontSize: 20, color: "#FFFFFF" }}>
           Bienvenido
         </h2>
@@ -213,7 +137,7 @@ const Home: NextPageWithLayout = () => {
           </div>
           <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
           
-          {/* <div style={{display:'flex', gap:'20px'}}>
+          <div style={{display:'flex', gap:'20px'}}>
             <p><img src='assets/images/to_start.png'/> Por iniciar</p>
             <p><img src='assets/images/out_of_date.png'/> Fuera de fecha</p>
             <p><img src='assets/images/finalized.png'/> Finalizado</p>
@@ -222,16 +146,9 @@ const Home: NextPageWithLayout = () => {
             <p><img src='assets/images/more_6_months.png'/> Más de 6 meses</p>
             <p><img src='assets/images/less_6_months.png'/> De 3 a 6 meses</p>
             <p><img src='assets/images/less_3_months.png'/> Menos de 3 meses</p>
-          </div> */}
+          </div>
 
-          {/* <Input style={{ marginBottom: 8, display: 'block' }} width={12} placeholder='Buscar' prefix={<SearchOutlined />}/> */}
-       
-          {/* <div><canvas id="myChart" ref={canvas}></canvas></div> */}
-          {/* <Doughnut data={dataFi} /> */}
-          {/* <Doughnut data={dataFi} onClick={() => onGoListPas("/listadopas", Object.keys(processSummary)[elements[0].index])}/> */}
           <Doughnut data={dataFi} options={options} />
-          {/* <Doughnut data={dataFi} onElementsClick={handleElementClick} /> */}
-          {/* dataFi.labels[elems[0].index] */}
         </Card>
               
         <Card>  
@@ -240,8 +157,15 @@ const Home: NextPageWithLayout = () => {
               Próximos procesos por concluir
             </h2>
           </div>
-          <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />              
-          <Table columns={columns} dataSource={processGrouped}/> 
+          <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} /> 
+                       
+          <Table columns={columns} dataSource={currentData} pagination={false}/> 
+          <Pagination style={{textAlign: "right"}}
+        current={currentPage}
+        pageSize={pageSize}
+        total={processGrouped.length}
+        onChange={handlePageChange}
+      />
         </Card>
       </div>            
     </>
