@@ -62,7 +62,12 @@ const Home: NextPageWithLayout = () => {
   const options: ChartOptions<'doughnut'> = {
     onClick: (event: any, elements: any, chart: any) => {
       if (elements.length > 0) {
-        const labelIndex = elements[0].index;
+        const labelIndex = elements[0].index == 0 ? "finalized" :
+                           elements[0].index == 1 ? "less_3_months" :
+                           elements[0].index == 2 ? "less_6_months" :
+                           elements[0].index == 3 ? "more_6_months" :
+                           elements[0].index == 4 ? "out_of_date" :
+                           elements[0].index == 5 ? "to_start" : '';
         router.push(`/listadopas?estado=${labelIndex}`);
       }
     },
@@ -94,13 +99,20 @@ const Home: NextPageWithLayout = () => {
   const pageSize = 15;
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-  const currentData = processGrouped.slice(startIndex, endIndex);
+
+  let currentData
+  if (processGrouped){
+    currentData = processGrouped.slice(startIndex, endIndex);
+  }
+  
 
   function handlePageChange(pageNumber: number) {
-    if (pageNumber > Math.ceil(processGrouped.length / pageSize)) {
-      setCurrentPage(1);
-    } else {
-      setCurrentPage(pageNumber);
+    if (processGrouped){
+      if (pageNumber > Math.ceil(processGrouped.length / pageSize)) {
+        setCurrentPage(1);
+      } else {
+        setCurrentPage(pageNumber);
+      }
     }
   }
   
@@ -163,7 +175,7 @@ const Home: NextPageWithLayout = () => {
           <Pagination style={{textAlign: "right"}}
         current={currentPage}
         pageSize={pageSize}
-        total={processGrouped.length}
+        total={processGrouped && (processGrouped.length)}
         onChange={handlePageChange}
       />
         </Card>

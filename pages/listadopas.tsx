@@ -46,12 +46,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   const { user } = useAuthStore();
   const profile = user.profile.toUpperCase();
   let label: string | string[] | undefined
-  const [inputValue, setInputValue] = useState(label);
 
-  
-
-  const processApi = async () => {
-    const { processes } = await api.listpas.getProcesses();
+  const processApi = async (label:any) => {
+    const { processes } = await api.listpas.getProcesses(label);
+    //const { processes } = await api.listpas.getProcesses();
     const statusImg: any = {
       less_3_months: "less_3_months",
       less_6_months: "less_6_months",
@@ -89,11 +87,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   };
 
   useEffect(() => {
-    processApi();
     const labelIndex = router.query;
-    label = labelIndex.estado
+    label = labelIndex.estado == undefined ? "all" : labelIndex.estado
     console.log(label)
-    onSearch(label)
+    processApi(label)
   }, []);
 
   const columns = [
@@ -243,8 +240,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
         <div className="py-10 border-b border-gray-200 pb-4 flex justify-between w-full items-center">
           <div>
             <Input
-              value={inputValue}
-              onChange={(e) => onSearch(setInputValue(e.target.value))}
+              onChange={(e) => onSearch(e.target.value)}
               placeholder="Buscar"
               prefix={<SearchOutlined />}
             />
