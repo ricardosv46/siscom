@@ -29,6 +29,7 @@ interface IPropsItem {
   resolution_number: string | null;
   responsable: string | null;
   type: string | null;
+  estado_proceso: string | null;
 }
 
 const Listadopas: NextPageWithLayout<ListadopasProps> = ({
@@ -187,7 +188,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
             cleanTextStringAndFormat(item?.etapa?.toUpperCase()) == filterString ||
             cleanTextStringAndFormat(item?.etapa?.toUpperCase()).includes(filterString) ||
             cleanTextStringAndFormat(item?.resolution_number?.toUpperCase()) == filterString ||
-            cleanTextStringAndFormat(item?.resolution_number?.toUpperCase()).includes(filterString)
+            cleanTextStringAndFormat(item?.resolution_number?.toUpperCase()).includes(filterString) ||
+            cleanTextStringAndFormat(item?.estado_proceso?.toUpperCase()) == filterString ||
+            cleanTextStringAndFormat(item?.estado_proceso?.toUpperCase()).includes(filterString)
           );
         });
         setProcess(filterData);
