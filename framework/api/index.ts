@@ -74,12 +74,13 @@ const api = {
         return { data: [] };
       }
     },
-    getProcesses: async () => {
+
+    getProcesses: async (label: any) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
           data: { data, message, success },
-        }: IResponseProcesses = await apiService.get(`processes/`);
+        }: IResponseProcesses = await apiService.get(`${label}/processes/`);
         return { processes: data, message, success };
       } else {
         return { processes: [] };

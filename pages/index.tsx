@@ -1,23 +1,24 @@
 import Head from 'next/head'
-import { Breadcrumb, Table } from 'antd';
+import { Breadcrumb, Pagination, Table } from 'antd';
 import { ReactElement, Suspense, useState, useCallback } from 'react';
 import { NextPageWithLayout } from './_app';
 import { LayoutFirst } from '@components/common';
 import { Card } from '@components/ui';
-import {ArcElement} from 'chart.js';
+import {ArcElement, ChartOptions, elements} from 'chart.js';
 Chart.register(ArcElement);
 import { Chart } from 'chart.js/auto'
 import React, { useRef, useEffect } from "react";
 import api from '@framework/api';
-import { Doughnut } from 'react-chartjs-2';
+import { ChartProps, Doughnut } from 'react-chartjs-2';
+import { useRouter } from 'next/router';
 
+interface DoughnutChartOptions {
+  onClick?: (event: MouseEvent, activeElements: any[]) => void;
+}
 
 const Home: NextPageWithLayout = () => {
   const [processGrouped,setProcessGrouped] = useState<any>([])
   const [processSummary,setProcessSummary] = useState<any>([])
- 
- 
- 
 
   const processGroupedApi = async() => {
     const {data} = await api.home.getProcessesGrouped()
@@ -54,57 +55,23 @@ const Home: NextPageWithLayout = () => {
   useEffect(() => {
     processGroupedApi();
     processSummaryApi();
-
-    // const ctx = canvas.current;
-
-    // let chartStatus = Chart.getChart("chart");
-    // if (chartStatus !== undefined || chartStatus) {
-    //   chartStatus.destroy();
-    // }
-
-    // new Chart(ctx, {
-    //   type: "pie",
-    //   data: {
-    //     labels: ['Por iniciar','Fuera de fecha','Finalizado','Más de 6 meses','De 3 a 6 meses','Menos de 3 meses'],
-    //     datasets: [
-    //       {
-    //         label: "Procesos",
-    //         data: processSummary,
-    //         backgroundColor: [
-    //           "rgb(255,255,255)",
-    //           "rgba(5,5,5,255)",
-    //           "rgb(136,132,132)",
-    //           "rgb(120,188,68)",
-    //           "rgb(256,188,28)",
-    //           "rgb(232,52,44)"
-    //         ],
-    //         borderColor: [
-    //           "rgba(5,5,5,255)",
-    //           "rgba(5,5,5,255)",
-    //           "rgb(136,132,132)",
-    //           "rgb(120,188,68)",
-    //           "rgb(256,188,28)",
-    //           "rgb(232,52,44)"
-    //         ],
-    //         borderWidth: 1
-    //       }
-    //     ]
-    //   },
-    //   options: {
-    //     responsive: true,
-    //     plugins: {
-    //       legend: {
-    //         position: "top"
-    //       },
-    //       title: {
-    //         display: true,
-    //         text: "Total: 100 procesos"
-    //       }
-    //     }
-    //   }
-    // });
   }, []);
 
+  const router = useRouter();
+
+  const options: ChartOptions<'doughnut'> = {
+    onClick: (event: any, elements: any, chart: any) => {
+      if (elements.length > 0) {
+        const labelIndex = elements[0].index == 0 ? "finalized" :
+                           elements[0].index == 1 ? "less_3_months" :
+                           elements[0].index == 2 ? "less_6_months" :
+                           elements[0].index == 3 ? "more_6_months" :
+                           elements[0].index == 4 ? "out_of_date" :
+                           elements[0].index == 5 ? "to_start" : '';
+        router.push(`/listadopas?estado=${labelIndex}`);
+      }
+    },
+  }
   const columns = [
     {
       title: 'Proceso',
@@ -128,7 +95,37 @@ const Home: NextPageWithLayout = () => {
     }
   ];
 
-   
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 15;
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+
+  let currentData
+  if (processGrouped){
+    currentData = processGrouped.slice(startIndex, endIndex);
+  }
+  
+
+  function handlePageChange(pageNumber: number) {
+    if (processGrouped){
+      if (pageNumber > Math.ceil(processGrouped.length / pageSize)) {
+        setCurrentPage(1);
+      } else {
+        setCurrentPage(pageNumber);
+      }
+    }
+  }
+  
+  useEffect(() => {
+    if (processGrouped.length <= pageSize) {
+      return;
+    }
+    setTimeout(() => {
+      const nextPage = currentPage === Math.ceil(processGrouped.length / pageSize) ? 1 : currentPage + 1;
+      setCurrentPage(nextPage);
+    }, 1000);
+  },[currentPage])
+  
   return (
     <>
       <Head>
@@ -138,7 +135,6 @@ const Home: NextPageWithLayout = () => {
       </Head>
 
       <Breadcrumb style={{ margin: '5px 0', color:'white' }}>
-        {/* <Breadcrumb.Item>Bienvenido</Breadcrumb.Item> */}
         <h2 style={{ fontSize: 20, color: "#FFFFFF" }}>
           Bienvenido
         </h2>
@@ -163,10 +159,8 @@ const Home: NextPageWithLayout = () => {
             <p><img src='assets/images/less_6_months.png'/> De 3 a 6 meses</p>
             <p><img src='assets/images/less_3_months.png'/> Menos de 3 meses</p>
           </div>
-          {/* <Input style={{ marginBottom: 8, display: 'block' }} width={12} placeholder='Buscar' prefix={<SearchOutlined />}/> */}
-       
-          {/* <div><canvas id="myChart" ref={canvas}></canvas></div> */}
-          <Doughnut data={dataFi} />
+
+          <Doughnut data={dataFi} options={options} />
         </Card>
               
         <Card>  
@@ -175,8 +169,15 @@ const Home: NextPageWithLayout = () => {
               Próximos procesos por concluir
             </h2>
           </div>
-          <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />              
-          <Table columns={columns} dataSource={processGrouped}/> 
+          <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} /> 
+                       
+          <Table columns={columns} dataSource={currentData} pagination={false}/> 
+          <Pagination style={{textAlign: "right"}}
+        current={currentPage}
+        pageSize={pageSize}
+        total={processGrouped && (processGrouped.length)}
+        onChange={handlePageChange}
+      />
         </Card>
       </div>            
     </>

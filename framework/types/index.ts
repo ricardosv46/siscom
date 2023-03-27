@@ -32,6 +32,7 @@ export interface responseLogin extends axiosDefaultData{
 export interface IListadoPas{
   actualizacion?: string
   estado: string
+  estado_proceso?: string
   etapa?: string
   fecha_fin?: string
   fecha_inicio?: string
