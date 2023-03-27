@@ -79,14 +79,14 @@ const Home: NextPageWithLayout = () => {
       key: 'name',
     },
     {
-      title: 'Grado',
+      title: 'Etapa',
       dataIndex: 'etapa',
       key: 'etapa',
     },
     {
-      title: 'Fecha Inicio',
-      dataIndex: 'fecha_inicio',
-      key: 'fecha_inicio',
+      title: 'Fecha Fin',
+      dataIndex: 'fecha_fin',
+      key: 'fecha_fin',
     },
     {
       title: 'Estado',
@@ -123,7 +123,7 @@ const Home: NextPageWithLayout = () => {
     setTimeout(() => {
       const nextPage = currentPage === Math.ceil(processGrouped.length / pageSize) ? 1 : currentPage + 1;
       setCurrentPage(nextPage);
-    }, 1000);
+    }, 30000);
   },[currentPage])
   
   return (
