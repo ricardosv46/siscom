@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Button, Space, Table } from "antd";
+import { Button, Space, Table, DatePicker, ConfigProvider} from "antd";
 import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { LayoutFirst } from "@components/common";
 import { NextPageWithLayout } from "pages/_app";
@@ -13,6 +13,15 @@ import { useRouter } from "next/router";
 import useAuthStore from "store/auth/auth";
 import { cleanTextStringAndFormat } from "utils/helpers";
 import { ParsedUrlQuery } from "querystring";
+import moment from 'moment';
+//import 'moment/locale/es' from 'moment';
+import 'moment/locale/es';
+//import esES from 'antd/lib/locale/es_ES'
+//import locale from 'antd/es/date-picker/locale/en_US';
+import locale from 'antd/lib/date-picker/locale/es_ES';
+
+moment.locale('es');
+const { RangePicker } = DatePicker;
 
 interface ListadopasProps {
   pageNum: number;
@@ -209,6 +218,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     await api.listpas.getReporteExcelProcesses();
   }
 
+  const onChangeDate = async () => {
+    console.log("jejeje");
+  }
+
   return (
     <>
       <Head>
@@ -257,6 +270,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
               placeholder="Buscar"
               prefix={<SearchOutlined />}
             />
+          </div>
+          <div>
+          <RangePicker locale={locale} onChange={onChangeDate}/>
           </div>
           <div>
           <Button onClick={descargarReporte}>Descargar Reporte</Button>
