@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import useAuthStore from "store/auth/auth";
 import { cleanTextStringAndFormat } from "utils/helpers";
 import { ParsedUrlQuery } from "querystring";
+import { ExportExcel } from './ExportExcel'
 
 interface ListadopasProps {
   pageNum: number;
@@ -43,6 +44,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   const router = useRouter();
   const [process, setProcess] = useState<any>();
   const [memory, setMemory] = useState<any>();
+  const [inputValue, setInputValue] = useState<any>();
+  let [filterData, setFilterData] = useState<any>();
   const { user } = useAuthStore();
   const profile = user.profile.toUpperCase();
   let label: string | string[] | undefined
@@ -89,16 +92,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   useEffect(() => {
     const labelIndex = router.query;
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado
-    console.log(label)
     processApi(label)
   }, []);
 
   const columns = [
-    /*{
-      title: "Número",
-      dataIndex: "numero",
-      key: "numero",
-    },*/
     {
       title: "Resolución Gerencial",
       dataIndex: "resolution_number",
@@ -169,7 +166,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     if (search || search.trim() != "") {
       if (process?.length) {
         let filterString = cleanTextStringAndFormat(search.toUpperCase());
-        const filterData = process.filter((item:any) => {
+        filterData = process.filter((item:any) => {
           return (
             cleanTextStringAndFormat(item?.responsable?.toUpperCase()) == filterString ||
             cleanTextStringAndFormat(item?.responsable?.toUpperCase()).includes(filterString) ||
@@ -192,9 +189,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     }
   };
   
-  const descargarReporte = async () => {
-    await api.listpas.getReporteExcelProcesses();
-  }
+  // const descargarReporte = async () => {
+  //   await api.listpas.getReporteExcelProcesses();
+  // }
 
   return (
     <>
@@ -240,13 +237,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
         <div className="py-10 border-b border-gray-200 pb-4 flex justify-between w-full items-center">
           <div>
             <Input
+              value={inputValue}
               onChange={(e) => onSearch(e.target.value)}
               placeholder="Buscar"
               prefix={<SearchOutlined />}
             />
           </div>
           <div>
-          <Button onClick={descargarReporte}>Descargar Reporte</Button>
+          <Button onClick={() => ExportExcel(inputValue ? filterData : process)} /*onClick={descargarReporte}*/>Descargar Reporte</Button>
           </div>
         </div>
         <Table columns={columns} dataSource={process} />

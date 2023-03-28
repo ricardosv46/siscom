@@ -73,7 +73,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
       alert('Por favor, ingrese los datos solicitados')
       return 
     } else if ((operationSelectedOption == 'finalizado') && (!fechaFinInputValue 
-      || !tipoDocumentoSelectedOption || !fechaInicioInputValue)){
+      || !documentoRelacionadoinputValue || !tipoDocumentoSelectedOption)){
       alert('Por favor, ingrese los datos solicitados')
       return 
     } else if (!operationSelectedOption){
