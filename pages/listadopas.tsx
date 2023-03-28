@@ -1,10 +1,9 @@
 import Head from "next/head";
-import { Button, Space, Table } from "antd";
+import { Button, Space, Table, DatePicker, ConfigProvider} from "antd";
 import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { LayoutFirst } from "@components/common";
 import { NextPageWithLayout } from "pages/_app";
 import { Card } from "@components/ui";
-import { IListadoPas } from "@framework/types";
 import api from "@framework/api";
 import { EditOutlined, SearchOutlined } from "@ant-design/icons";
 import { useUI } from "@components/ui/context";
@@ -12,13 +11,31 @@ import Input from "antd/lib/input/Input";
 import { useRouter } from "next/router";
 import useAuthStore from "store/auth/auth";
 import { cleanTextStringAndFormat } from "utils/helpers";
-import { ParsedUrlQuery } from "querystring";
 import { ExportExcel } from './ExportExcel'
+import moment from 'moment';
+import 'moment/locale/es';
+import locale from 'antd/lib/date-picker/locale/es_ES';
+
+moment.locale('es');
+const { RangePicker } = DatePicker;
 
 interface ListadopasProps {
   pageNum: number;
   pageSize: number;
   total: number;
+}
+
+interface IPropsItem {
+  actualizacion: string;
+  etapa: string | number | null;
+  fecha_fin: string | null;
+  fecha_inicio: string | null;
+  name: string;
+  numero: number;
+  resolution_number: string | null;
+  responsable: string | null;
+  type: string | null;
+  estado_proceso: string | null;
 }
 
 const Listadopas: NextPageWithLayout<ListadopasProps> = ({
@@ -52,7 +69,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
 
   const processApi = async (label:any) => {
     const { processes } = await api.listpas.getProcesses(label);
-    //const { processes } = await api.listpas.getProcesses();
     const statusImg: any = {
       less_3_months: "less_3_months",
       less_6_months: "less_6_months",
@@ -189,9 +205,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     }
   };
   
-  // const descargarReporte = async () => {
-  //   await api.listpas.getReporteExcelProcesses();
-  // }
+  const onChangeDate = async () => {}
 
   return (
     <>
@@ -244,7 +258,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
             />
           </div>
           <div>
-          <Button onClick={() => ExportExcel(inputValue ? filterData : process)} /*onClick={descargarReporte}*/>Descargar Reporte</Button>
+            <RangePicker locale={locale} onChange={onChangeDate}/>
+          </div>
+          <div>
+            <Button onClick={() => ExportExcel(inputValue ? filterData : process)}>Descargar Reporte</Button>
           </div>
         </div>
         <Table columns={columns} dataSource={process} />
