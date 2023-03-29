@@ -63,12 +63,46 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   const [memory, setMemory] = useState<any>();
   const [inputValue, setInputValue] = useState<any>();
   let [filterData, setFilterData] = useState<any>();
+  const [date, setDate] = useState({from: "", to: ""})
   const { user } = useAuthStore();
   const profile = user.profile.toUpperCase();
   let label: string | string[] | undefined
 
   const processApi = async (label:any) => {
     const { processes } = await api.listpas.getProcesses(label);
+    
+    const statusImg: any = {
+      less_3_months: "less_3_months",
+      less_6_months: "less_6_months",
+      more_6_months: "more_6_months",
+      finalized: "finalized",
+      out_of_date: "out_of_date",
+      to_start: "to_start",
+    };
+
+    const newData = processes.map((item) => {
+      const { estado, responsable } = item;
+      if (responsable == profile) {
+        return {
+          ...item,
+          btnDisabled: false,
+          estado: <img src={`assets/images/${statusImg[estado]}.png`} />,
+        };
+      } else {
+        return {
+          ...item,
+          btnDisabled: true,
+          estado: <img src={`assets/images/${statusImg[estado]}.png`} />,
+        };
+      }
+    });
+    setMemory(newData);
+    setProcess(newData);
+  };
+
+  const processApiByDate = async (label:any, start_at: string, end_at:string) => {
+    const { processes } = await api.listpas.getProcessesByDate(label, start_at, end_at);
+    
     const statusImg: any = {
       less_3_months: "less_3_months",
       less_6_months: "less_6_months",
@@ -108,7 +142,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   useEffect(() => {
     const labelIndex = router.query;
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado
-    processApi(label)
+    processApi(label);
   }, []);
 
   const columns = [
@@ -209,8 +243,21 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
       setProcess(memory);
     }
   };
-  
-  const onChangeDate = async () => {}
+
+  function onChangeDate(date: any, dateStrings: [string, string]) {
+    const start_at = dateStrings[0].split("-").reverse().join("");
+    const end_at = dateStrings[1].split("-").reverse().join("");
+
+    const labelIndex = router.query;
+    label = labelIndex.estado == undefined ? "all" : labelIndex.estado
+    if (start_at === "" || end_at === ""){
+      processApi(label);
+    } else {
+      processApiByDate(label, start_at, end_at);
+    }
+    
+    
+  }
 
   return (
     <>
@@ -261,6 +308,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
               placeholder="Buscar"
               prefix={<SearchOutlined />}
             />
+          </div>
+          <div>
+            <RangePicker locale={locale} onChange={onChangeDate}/>
           </div>
           <div>
             <Button onClick={() => ExportExcel(inputValue ? filterData : process)}>Descargar Reporte</Button>
