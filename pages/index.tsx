@@ -96,7 +96,7 @@ const Home: NextPageWithLayout = () => {
   ];
 
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 15;
+  const pageSize = 20;
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
 
@@ -153,14 +153,18 @@ const Home: NextPageWithLayout = () => {
             <p><img src='assets/images/to_start.png'/> Por iniciar</p>
             <p><img src='assets/images/out_of_date.png'/> Fuera de fecha</p>
             <p><img src='assets/images/finalized.png'/> Finalizado</p>
-          </div>
-          <div style={{display:'flex', gap:'20px'}}>
             <p><img src='assets/images/more_6_months.png'/> Más de 6 meses</p>
             <p><img src='assets/images/less_6_months.png'/> De 3 a 6 meses</p>
             <p><img src='assets/images/less_3_months.png'/> Menos de 3 meses</p>
           </div>
 
           <Doughnut data={dataFi} options={options} />
+
+          <br></br>
+          <div style={{textAlign: "right"}}>
+            Total de registros: {Object.values(processSummary).reduce((a, b) => a+b, 0)}
+          </div>
+
         </Card>
               
         <Card>  
