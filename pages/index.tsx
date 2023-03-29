@@ -140,7 +140,7 @@ const Home: NextPageWithLayout = () => {
         </h2>
       </Breadcrumb>
 
-      <div style={{display:'flex', gap:'20px'}}>
+      <div style={{display:'flex', gap:'50px'}}>
         <Card>
           <div style={{ marginBottom: "0.4rem" }}>
             <h2 style={{ fontSize: 25, color: "#4F5172" }}>
@@ -175,7 +175,8 @@ const Home: NextPageWithLayout = () => {
           </div>
           <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} /> 
                        
-          <Table columns={columns} dataSource={currentData} pagination={false}/> 
+          <Table columns={columns} dataSource={currentData} pagination={false}/>
+          <br></br>
           <Pagination style={{textAlign: "right"}}
         current={currentPage}
         pageSize={pageSize}
