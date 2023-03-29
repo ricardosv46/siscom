@@ -190,7 +190,8 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
             <label htmlFor="operacion" className="text-gray-40">Operación:</label>
             <div>
             {responsable_actual === 'SG' && (<><input type="checkbox" name="notificado" value="notificado" checked={operationSelectedOption === "notificado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Notificación</label><div className="text-red-500 text-xs"></div></>)}
-            {responsable_actual && (<><input type="checkbox" name="actualizado" value="actualizado" checked={operationSelectedOption === "actualizado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Actualización</label><div className="text-red-500 text-xs"></div></>)}
+            {responsable_actual === 'SG' && (<><input type="checkbox" name="actualizado" value="actualizado" checked={operationSelectedOption === "actualizado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Observación</label><div className="text-red-500 text-xs"></div></>)}
+            {responsable_actual !== 'SG' && (<><input type="checkbox" name="actualizado" value="actualizado" checked={operationSelectedOption === "actualizado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Actualización</label><div className="text-red-500 text-xs"></div></>)}
             {responsable_actual === 'JN' && (<><input type="checkbox" name="finalizado" value="finalizado" checked={operationSelectedOption === "finalizado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Finalización</label><div className="text-red-500 text-xs"></div></>)}
             </div>
           </div>
@@ -236,8 +237,10 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
             <label htmlFor="tipo_documento" className="text-gray-600">Tipo de documento:</label>
             <select className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} value={tipoDocumentoSelectedOption} onChange={handleTipoDocumentoSelectChange}>
               <option value="">Seleccione tipo de documento</option>
-              <option value="informe">Informe</option>
-              <option value="resolucion">Resolución</option>
+              <option value="INFORME">Informe</option>
+              <option value="RESOLUCION_GERENCIAL">Resolución Gerencial</option>
+              <option value="PROVEIDO">Proveido</option>
+              <option value="HOJA_ENVIO">Hoja de Envio</option>
             </select>
           </div>
         </div>)}

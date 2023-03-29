@@ -153,6 +153,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
       key: "actualizacion",
     },
     {
+      title: "Tipo proceso",
+      dataIndex: "type",
+      key: "type",
+    },
+    {
       title: "Acciones",
       dataIndex: "acciones",
       key: "acciones",
