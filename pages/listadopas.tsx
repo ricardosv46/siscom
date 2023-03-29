@@ -263,9 +263,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
             />
           </div>
           <div>
-            <RangePicker locale={locale} onChange={onChangeDate}/>
-          </div>
-          <div>
             <Button onClick={() => ExportExcel(inputValue ? filterData : process)}>Descargar Reporte</Button>
           </div>
         </div>
