@@ -8,7 +8,7 @@ interface IProps{
 
 const RightCard:FC<IProps> = (props): ReactElement => {
  const { item, idx} = props   
- const { comment, current_responsible, created_at, document, new_responsible, related_document, resolution_number, start_at } = item
+ const { comment, current_responsible, created_at, document, new_responsible, related_document, resolution_number, start_at, tracking_action } = item
  return (<div className="mb-8 flex  justify-between items-center w-full right-timeline">
       <div className="order-1 w-5/12"></div>
       <div className="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
@@ -23,9 +23,8 @@ const RightCard:FC<IProps> = (props): ReactElement => {
             </div>
           </div>
         </div>
-      <h3 className="font-bold text-gray-500 text-x">
-        Fecha: {start_at}
-      </h3>
+      <h3 className="font-bold text-gray-500 text-x">Tipo Registro: {tracking_action}</h3>
+      <h3 className="font-bold text-gray-500 text-x">Fecha: {start_at}</h3>
       <h3 className="font-bold text-gray-500 text-x">Creado por: {current_responsible} </h3>
       <h3 className="font-bold text-gray-500 text-x">Asignado a: {new_responsible} </h3>
       {related_document && <h3 className="font-bold text-gray-500 text-x">Tipo documento: {related_document} </h3>}

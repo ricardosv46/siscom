@@ -39,6 +39,7 @@ export interface IDetailItem {
   related_document: string;
   resolution_number: string;
   start_at: string;
+  tracking_action: string;
 }
 
 const Detallepas: NextPageWithLayout<DetallepasProps> = ({
