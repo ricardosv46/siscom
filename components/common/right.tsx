@@ -24,14 +24,13 @@ const RightCard:FC<IProps> = (props): ReactElement => {
           </div>
         </div>
       <h3 className="font-bold text-gray-500 text-x">
-        Fecha de Inicio: {start_at}
+        Fecha: {start_at}
       </h3>
       <h3 className="font-bold text-gray-500 text-x">Creado por: {current_responsible} </h3>
-      <h3 className="font-bold text-gray-500 text-x">{resolution_number}</h3>
       <h3 className="font-bold text-gray-500 text-x">Asignado a: {new_responsible} </h3>
-      <p className="mt-2 text-sm font-medium leading-snug tracking-wide text-gray-500 text-opacity-100">
-       {comment}
-      </p>
+      {related_document && <h3 className="font-bold text-gray-500 text-x">Tipo documento: {related_document} </h3>}
+      {document && <h3 className="font-bold text-gray-500 text-x">Documento: {document} </h3>}
+      {comment && <p className="mt-2 text-sm font-medium leading-snug tracking-wide text-gray-500 text-opacity-100">{comment}</p>}
     </div>
   </div>
  );

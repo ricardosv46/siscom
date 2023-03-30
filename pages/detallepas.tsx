@@ -63,16 +63,20 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({
   });
   const [item, setItem] = useState<IPropsItem[]>();
   const [detail, setDetail] = useState<IDetailItem[]>();
-  const [nombre, setNombre] = useState()
+  const [nombre, setNombre] = useState();
+  const [resolucion_gerencial, setRG] = useState();
 
   const router = useRouter();
 
   useEffect(() => {
     let itemprop = history?.state?.item;
+    //console.log(itemprop);
+    
     if (itemprop) {
       setItem(itemprop);
-      getDetailInfo(itemprop.numero)
-      setNombre(itemprop.name)
+      getDetailInfo(itemprop.numero);
+      setNombre(itemprop.name);
+      setRG(itemprop.resolution_number);
     } else {
       router.push("/listadopas");
     }
@@ -89,7 +93,6 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({
     router.push({pathname:page, })
   }
 
-
   return (
     <>
       <Head>
@@ -101,7 +104,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({
       <Card title="Listado de personal de ODPE">
         <div style={{ marginBottom: "0.4rem" }}>
           <h1 style={{ fontSize: 25, color: "#4F5172" }}>
-            {nombre} 
+            {nombre} - R.G. {resolucion_gerencial}
           </h1>
         </div>
         <hr
