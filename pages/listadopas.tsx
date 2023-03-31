@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { Button, Space, Table, DatePicker, ConfigProvider} from "antd";
-import React, { ReactElement, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, ReactElement, useEffect, useRef, useState } from "react";
 import { LayoutFirst } from "@components/common";
 import { NextPageWithLayout } from "pages/_app";
 import { Card } from "@components/ui";
@@ -61,8 +61,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   const router = useRouter();
   const [process, setProcess] = useState<any>();
   const [memory, setMemory] = useState<any>();
-  const [inputValue, setInputValue] = useState<any>();
+  let [inputValue, setInputValue] = useState<any>();
   let [filterData, setFilterData] = useState<any>();
+  let [filterSelectedChecked, setFilterSelectedChecked] = useState("");
   const [date, setDate] = useState({from: "", to: ""})
   const { user } = useAuthStore();
   const profile = user.profile.toUpperCase();
@@ -140,6 +141,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   };
 
   useEffect(() => {
+    setFilterSelectedChecked("todos")
     const labelIndex = router.query;
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado
     processApi(label);
@@ -217,23 +219,46 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     },
   ];
 
+  function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
+    setFilterSelectedChecked(event.target.value);
+    onSearch(inputValue);
+  }
+
   const onSearch = (search: any = "") => {
     if (search || search.trim() != "") {
       if (process?.length) {
         let filterString = cleanTextStringAndFormat(search.toUpperCase());
         filterData = process.filter((item:any) => {
-          return (
-            cleanTextStringAndFormat(item?.responsable?.toUpperCase()) == filterString ||
-            cleanTextStringAndFormat(item?.responsable?.toUpperCase()).includes(filterString) ||
-            cleanTextStringAndFormat(item?.name?.toUpperCase()) == filterString ||
-            cleanTextStringAndFormat(item?.name?.toUpperCase()).includes(filterString) ||
-            cleanTextStringAndFormat(item?.etapa?.toUpperCase()) == filterString ||
-            cleanTextStringAndFormat(item?.etapa?.toUpperCase()).includes(filterString) ||
-            cleanTextStringAndFormat(item?.resolution_number?.toUpperCase()) == filterString ||
-            cleanTextStringAndFormat(item?.resolution_number?.toUpperCase()).includes(filterString)||
-            cleanTextStringAndFormat(item?.estado_proceso?.toUpperCase()) == filterString ||
-            cleanTextStringAndFormat(item?.estado_proceso?.toUpperCase()).includes(filterString)
-          );
+          if (filterSelectedChecked === "todos"){
+            return (
+              cleanTextStringAndFormat(item?.responsable?.toUpperCase()) == filterString ||
+              cleanTextStringAndFormat(item?.responsable?.toUpperCase()).includes(filterString) ||
+              cleanTextStringAndFormat(item?.name?.toUpperCase()) == filterString ||
+              cleanTextStringAndFormat(item?.name?.toUpperCase()).includes(filterString) ||
+              cleanTextStringAndFormat(item?.etapa?.toUpperCase()) == filterString ||
+              cleanTextStringAndFormat(item?.etapa?.toUpperCase()).includes(filterString) ||
+              cleanTextStringAndFormat(item?.resolution_number?.toUpperCase()) == filterString ||
+              cleanTextStringAndFormat(item?.resolution_number?.toUpperCase()).includes(filterString)||
+              cleanTextStringAndFormat(item?.estado_proceso?.toUpperCase()) == filterString ||
+              cleanTextStringAndFormat(item?.estado_proceso?.toUpperCase()).includes(filterString) ||
+              cleanTextStringAndFormat(item?.actualizacion?.toUpperCase()) == filterString ||
+              cleanTextStringAndFormat(item?.actualizacion?.toUpperCase()).includes(filterString) ||
+              cleanTextStringAndFormat(item?.fecha_inicio?.toUpperCase()) == filterString ||
+              cleanTextStringAndFormat(item?.fecha_inicio?.toUpperCase()).includes(filterString) ||
+              cleanTextStringAndFormat(item?.fecha_fin?.toUpperCase()) == filterString ||
+              cleanTextStringAndFormat(item?.fecha_fin?.toUpperCase()).includes(filterString)
+            );
+          } else if (filterSelectedChecked === "candidato") {
+            return (
+              cleanTextStringAndFormat(item?.name?.toUpperCase()) == filterString ||
+              cleanTextStringAndFormat(item?.name?.toUpperCase()).includes(filterString) 
+            );
+          } else if (filterSelectedChecked === "organizacion_politica") {
+            return (
+              cleanTextStringAndFormat(item?.responsable?.toUpperCase()) == filterString ||
+              cleanTextStringAndFormat(item?.responsable?.toUpperCase()).includes(filterString) 
+            );
+          }
         });
         setProcess(filterData);
       } else {
@@ -308,6 +333,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
               placeholder="Buscar"
               prefix={<SearchOutlined />}
             />
+          </div>
+          <div>
+            <input type="checkbox" id="todos" name="todos" value="todos" checked={filterSelectedChecked === "todos"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Todos    </label>
+            <input type="checkbox" id="candidato" name="candidato" value="candidato" checked={filterSelectedChecked === "candidato"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Candidato    </label>
+            <input type="checkbox" id="organizacion_politica" name="organizacion_politica" value="organizacion_politica" checked={filterSelectedChecked === "organizacion_politica"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Organización Política    </label>
           </div>
           <div>
             <RangePicker locale={locale} onChange={onChangeDate}/>

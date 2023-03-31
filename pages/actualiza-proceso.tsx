@@ -60,10 +60,6 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     
     event.preventDefault();
-
-    // validaciones()
-
-    // if (!validaciones){return}
     
     if ((operationSelectedOption == 'notificado') && (!gerenciaSelectedOption || !fechaInicioInputValue)){
       alert('Por favor, ingrese los datos solicitados')
