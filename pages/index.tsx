@@ -19,6 +19,7 @@ interface DoughnutChartOptions {
 const Home: NextPageWithLayout = () => {
   const [processGrouped,setProcessGrouped] = useState<any>([])
   const [processSummary,setProcessSummary] = useState<any>([])
+  const [processSummaryStats,setProcessSummaryStats] = useState<any>([])
 
   const processGroupedApi = async() => {
     const {data} = await api.home.getProcessesGrouped()
@@ -34,8 +35,20 @@ const Home: NextPageWithLayout = () => {
   }
 
   const processSummaryApi = async() => {
-    const {data} = await api.home.getProcessesSummary()
-    setProcessSummary(data) 
+    const dataStats = {}
+    const {data} = await api.home.getProcessesSummary();
+    const total = Object.values(data).reduce((a, b) => a+b, 0);
+    const empty = Object.assign(data, dataStats);
+    for (let k in data){
+      dataStats[k] = ((data[k] / total)*100).toFixed(2);
+    }
+
+    console.log(dataStats.to_start + dataStats.finalized + dataStats.more_6_months + dataStats.less_6_months + dataStats.out_of_date);
+
+    dataStats.less_3_months = 100 - (Number(dataStats.to_start) + Number(dataStats.finalized) + Number(dataStats.more_6_months) + Number(dataStats.less_6_months) + Number(dataStats.out_of_date));
+
+    setProcessSummary(data);
+    setProcessSummaryStats(dataStats);
   }
 
   const canvas = useRef();
@@ -95,6 +108,29 @@ const Home: NextPageWithLayout = () => {
     }
   ];
 
+  const columns_legend = [
+    {
+      title: 'Estado',
+      dataIndex: 'estado',
+      key: 'estado',
+    },
+    {
+      title: 'Descripción',
+      dataIndex: 'descripcion',
+      key: 'descripcion',
+    },
+    {
+      title: 'Cantidad',
+      dataIndex: 'cantidad',
+      key: 'cantidad',
+    },
+    {
+      title: 'Porcentaje',
+      dataIndex: 'percentage',
+      key: 'percentage',
+    }
+  ]
+
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 20;
   const startIndex = (currentPage - 1) * pageSize;
@@ -103,6 +139,34 @@ const Home: NextPageWithLayout = () => {
   let currentData
   if (processGrouped){
     currentData = processGrouped.slice(startIndex, endIndex);
+  }
+
+  let dataPie
+  if (processSummary && processSummaryStats){
+    dataPie = [{'estado': <img src='assets/images/to_start.png'/>, 
+                "descripcion": "Por iniciar", 
+                "cantidad": processSummary.to_start, 
+                "percentage": processSummaryStats.to_start},
+                {'estado': <img src='assets/images/out_of_date.png'/>, 
+                "descripcion": "Fuera de Fecha", 
+                "cantidad": processSummary.out_of_date, 
+                "percentage": processSummaryStats.out_of_date},
+                {'estado': <img src='assets/images/finalized.png'/>, 
+                "descripcion": "Finalizado", 
+                "cantidad": processSummary.finalized, 
+                "percentage": processSummaryStats.finalized},
+                {'estado': <img src='assets/images/more_6_months.png'/>, 
+                "descripcion": "Más de 6 meses", 
+                "cantidad": processSummary.more_6_months, 
+                "percentage": processSummaryStats.more_6_months},
+                {'estado': <img src='assets/images/less_6_months.png'/>, 
+                "descripcion": "De 3 a 6 meses", 
+                "cantidad": processSummary.less_6_months, 
+                "percentage": processSummaryStats.less_6_months},
+                {'estado': <img src='assets/images/less_3_months.png'/>, 
+                "descripcion": "Menos de 3 meses", 
+                "cantidad": processSummary.less_3_months, 
+                "percentage": processSummaryStats.less_3_months}]
   }
   
 
@@ -125,6 +189,9 @@ const Home: NextPageWithLayout = () => {
       setCurrentPage(nextPage);
     }, 30000);
   },[currentPage])
+
+  console.log(typeof(dataPie), dataPie);
+  console.log(typeof(currentData), currentData);
   
   return (
     <>
@@ -148,17 +215,12 @@ const Home: NextPageWithLayout = () => {
             </h2>
           </div>
           <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
-          
-          <div style={{display:'flex', gap:'20px'}}>
-            <p><img src='assets/images/to_start.png'/> Por iniciar</p>
-            <p><img src='assets/images/out_of_date.png'/> Fuera de fecha</p>
-            <p><img src='assets/images/finalized.png'/> Finalizado</p>
-            <p><img src='assets/images/more_6_months.png'/> Más de 6 meses</p>
-            <p><img src='assets/images/less_6_months.png'/> De 3 a 6 meses</p>
-            <p><img src='assets/images/less_3_months.png'/> Menos de 3 meses</p>
-          </div>
 
           <Doughnut data={dataFi} options={options} />
+
+          <br></br>
+
+          <Table columns={columns_legend} dataSource={dataPie} pagination={false}/>
 
           <br></br>
           <div style={{textAlign: "right"}}>
