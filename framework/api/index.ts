@@ -86,6 +86,17 @@ const api = {
         return { processes: [] };
       }
     },
+    getProcessesByDate: async (label: any, start_at: string, end_at: string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data, message, success },
+        }: IResponseProcesses = await apiService.get(`${label}/processes/${start_at}/${end_at}`);
+        return { processes: data, message, success };
+      } else {
+        return { processes: [] };
+      }
+    },
     getReporteExcelProcesses: async () => {
       const tok = GetTokenAuthService();
       if (tok) {

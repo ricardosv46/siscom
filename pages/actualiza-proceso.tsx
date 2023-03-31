@@ -186,14 +186,14 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
             <label htmlFor="operacion" className="text-gray-40">Operación:</label>
             <div>
             {responsable_actual === 'SG' && (<><input type="checkbox" name="notificado" value="notificado" checked={operationSelectedOption === "notificado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Notificación</label><div className="text-red-500 text-xs"></div></>)}
-            {responsable_actual && (<><input type="checkbox" name="actualizado" value="actualizado" checked={operationSelectedOption === "actualizado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Actualización</label><div className="text-red-500 text-xs"></div></>)}
+            {responsable_actual === 'SG' && (<><input type="checkbox" name="observado" value="observado" checked={operationSelectedOption === "observado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Observación</label><div className="text-red-500 text-xs"></div></>)}
+            {responsable_actual !== 'SG' && (<><input type="checkbox" name="actualizado" value="actualizado" checked={operationSelectedOption === "actualizado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Actualización</label><div className="text-red-500 text-xs"></div></>)}
             {responsable_actual === 'JN' && (<><input type="checkbox" name="finalizado" value="finalizado" checked={operationSelectedOption === "finalizado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Finalización</label><div className="text-red-500 text-xs"></div></>)}
             </div>
           </div>
         </div>
 
-        {operationSelectedOption !== 'notificado' && operationSelectedOption !== 'actualizado' &&
-        operationSelectedOption === 'finalizado' && (
+        {operationSelectedOption === 'finalizado' && (
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="fecha_fin" className="text-gray-600">Fecha y hora de finalización:</label>
@@ -201,7 +201,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
           </div>
         </div>)}
 
-        {(operationSelectedOption === 'notificado' || operationSelectedOption === 'actualizado') &&  (
+        {(operationSelectedOption === 'notificado' || operationSelectedOption === 'actualizado' || operationSelectedOption === 'observado') &&  (
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="nuevo_responsable" className="text-gray-600">Designar nuevo responsable:</label>
@@ -216,8 +216,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
           </div>
         </div>)}
         
-        {operationSelectedOption !== 'notificado' && (operationSelectedOption === 'actualizado' ||
-        operationSelectedOption === 'finalizado') && (
+        {(operationSelectedOption === 'actualizado' || operationSelectedOption === 'observado' || operationSelectedOption === 'finalizado') && (
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="documento_relacionado" className="text-gray-600">Documento relacionado:</label>
@@ -225,24 +224,25 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
           </div>
         </div>)}
 
-        {operationSelectedOption !== 'notificado' && (operationSelectedOption === 'actualizado' ||
-        operationSelectedOption === 'finalizado') && (
+        {(operationSelectedOption === 'actualizado' || operationSelectedOption === 'observado' || operationSelectedOption === 'finalizado') && (
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="tipo_documento" className="text-gray-600">Tipo de documento:</label>
             <select className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} value={tipoDocumentoSelectedOption} onChange={handleTipoDocumentoSelectChange}>
               <option value="">Seleccione tipo de documento</option>
-              <option value="informe">Informe</option>
-              <option value="resolucion">Resolución</option>
+              <option value="INFORME">Informe</option>
+              <option value="RESOLUCION_GERENCIAL">Resolución Gerencial</option>
+              <option value="PROVEIDO">Proveido</option>
+              <option value="HOJA_ENVIO">Hoja de Envio</option>
             </select>
           </div>
         </div>)}
         
-        {(operationSelectedOption === 'notificado' || operationSelectedOption === 'actualizado') &&  (
+        {(operationSelectedOption) &&  (
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="fecha_inicio" className="text-gray-600">Fecha y hora:</label>
-            <input type="datetime-local" max={new Date().toISOString().slice(0, 16)} value={fechaInicioInputValue} onChange={handleFechaInicioDateTimeChange} id="fecha_inicio" className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} />
+            <input type="datetime-local" min="2023-03-01T00:00" max={new Date().toISOString().slice(0, 16)} value={fechaInicioInputValue} onChange={handleFechaInicioDateTimeChange} id="fecha_inicio" className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} />
           </div>
         </div>)}
         
