@@ -334,11 +334,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
               prefix={<SearchOutlined />}
             />
           </div>
-          <div>
+          {/*<div>
             <input type="checkbox" id="todos" name="todos" value="todos" checked={filterSelectedChecked === "todos"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Todos    </label>
             <input type="checkbox" id="candidato" name="candidato" value="candidato" checked={filterSelectedChecked === "candidato"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Candidato    </label>
             <input type="checkbox" id="organizacion_politica" name="organizacion_politica" value="organizacion_politica" checked={filterSelectedChecked === "organizacion_politica"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Organización Política    </label>
-          </div>
+        </div>*/}
           <div>
             <RangePicker locale={locale} onChange={onChangeDate}/>
           </div>

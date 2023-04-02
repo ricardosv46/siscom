@@ -45,7 +45,7 @@ const Home: NextPageWithLayout = () => {
 
     console.log(dataStats.to_start + dataStats.finalized + dataStats.more_6_months + dataStats.less_6_months + dataStats.out_of_date);
 
-    dataStats.less_3_months = 100 - (Number(dataStats.to_start) + Number(dataStats.finalized) + Number(dataStats.more_6_months) + Number(dataStats.less_6_months) + Number(dataStats.out_of_date));
+    dataStats.less_3_months = (100 - (Number(dataStats.to_start) + Number(dataStats.finalized) + Number(dataStats.more_6_months) + Number(dataStats.less_6_months) + Number(dataStats.out_of_date))).toFixed(2);
 
     setProcessSummary(data);
     setProcessSummaryStats(dataStats);
@@ -146,27 +146,27 @@ const Home: NextPageWithLayout = () => {
     dataPie = [{'estado': <img src='assets/images/to_start.png'/>, 
                 "descripcion": "Por iniciar", 
                 "cantidad": processSummary.to_start, 
-                "percentage": processSummaryStats.to_start},
+                "percentage": processSummaryStats.to_start + '%'},
                 {'estado': <img src='assets/images/out_of_date.png'/>, 
                 "descripcion": "Fuera de Fecha", 
                 "cantidad": processSummary.out_of_date, 
-                "percentage": processSummaryStats.out_of_date},
+                "percentage": processSummaryStats.out_of_date + '%'},
                 {'estado': <img src='assets/images/finalized.png'/>, 
                 "descripcion": "Finalizado", 
                 "cantidad": processSummary.finalized, 
-                "percentage": processSummaryStats.finalized},
+                "percentage": processSummaryStats.finalized + '%'},
                 {'estado': <img src='assets/images/more_6_months.png'/>, 
                 "descripcion": "Más de 6 meses", 
                 "cantidad": processSummary.more_6_months, 
-                "percentage": processSummaryStats.more_6_months},
+                "percentage": processSummaryStats.more_6_months + '%'},
                 {'estado': <img src='assets/images/less_6_months.png'/>, 
                 "descripcion": "De 3 a 6 meses", 
                 "cantidad": processSummary.less_6_months, 
-                "percentage": processSummaryStats.less_6_months},
+                "percentage": processSummaryStats.less_6_months + '%'},
                 {'estado': <img src='assets/images/less_3_months.png'/>, 
                 "descripcion": "Menos de 3 meses", 
                 "cantidad": processSummary.less_3_months, 
-                "percentage": processSummaryStats.less_3_months}]
+                "percentage": processSummaryStats.less_3_months + '%'}]
   }
   
 
@@ -239,12 +239,13 @@ const Home: NextPageWithLayout = () => {
                        
           <Table columns={columns} dataSource={currentData} pagination={false}/>
           <br></br>
-          <Pagination style={{textAlign: "right"}}
-        current={currentPage}
-        pageSize={pageSize}
-        total={processGrouped && (processGrouped.length)}
-        onChange={handlePageChange}
-      />
+          <Pagination style={{textAlign: "center"}}
+            current={currentPage}
+            pageSize={pageSize}
+            total={processGrouped && (processGrouped.length)}
+            onChange={handlePageChange}
+            showSizeChanger={false}
+          />
         </Card>
       </div>            
     </>
