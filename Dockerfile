@@ -4,5 +4,5 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 EXPOSE 3000
-ENV API_TRACKING_PAS http://localhost/apiseguimiento
+ENV API_TRACKING_PAS https://seguimiento-pas.onpe.gob.pe/apiseguimiento
 CMD npm run dev
