@@ -43,8 +43,6 @@ const Home: NextPageWithLayout = () => {
       dataStats[k] = ((data[k] / total)*100).toFixed(2);
     }
 
-    console.log(dataStats.to_start + dataStats.finalized + dataStats.more_6_months + dataStats.less_6_months + dataStats.out_of_date);
-
     dataStats.less_3_months = (100 - (Number(dataStats.to_start) + Number(dataStats.finalized) + Number(dataStats.more_6_months) + Number(dataStats.less_6_months) + Number(dataStats.out_of_date))).toFixed(2);
 
     setProcessSummary(data);
@@ -189,9 +187,6 @@ const Home: NextPageWithLayout = () => {
       setCurrentPage(nextPage);
     }, 30000);
   },[currentPage])
-
-  console.log(typeof(dataPie), dataPie);
-  console.log(typeof(currentData), currentData);
   
   return (
     <>

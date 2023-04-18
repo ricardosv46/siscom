@@ -1,37 +1,47 @@
 import axios from 'axios';
 import { GetTokenAuthService, RemoveSessionAuthService } from 'services/auth/ServiceAuth';
+import Router from 'next/router';
+import { Console } from 'console';
  
 export const apiService = axios.create({
-  //withCredentials: true,
   baseURL: `${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/`,
-  headers: {
-    "Custom-Language": "es",
-  },
 });
 
 apiService.interceptors.request.use(
-  async(config) => {
-       let tkn = await GetTokenAuthService()
-       if(tkn)  {
-        config.headers['x-access-tokens'] =  tkn 
-            return config;
-        }
-        return config;
-        },
-        error => {
-            return Promise.reject(error);
-        }
+  function(config) {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers['x-access-tokens'] = token;
+    }
+    return config;
+  },
+  function(error){
+    return Promise.reject(error);
+  }
 );
 
-export const errorHandler = (error:any) => {
-  //const router = useRouter()
-  const statusCode = error.response?.status
-  if (statusCode == 401) {
-    return RemoveSessionAuthService()
+apiService.interceptors.response.use(
+  function(response){
+    if (response.data){
+      if(response.status === 401){
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        Router.push("/auth");
+        return Promise.reject(response);
+      } else {
+        return response;
+      }
+    }
+
+    return Promise.reject(response);  
+  },
+  function (error) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    Router.push("/auth");
+    return error.response.data;
+    //return Promise.reject(error);
   }
-  return Promise.reject(error)
-}
-  
-apiService.interceptors.response.use(undefined, (error) => {
-    return errorHandler(error)
-})
+);
+
+export default apiService;

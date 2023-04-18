@@ -41,7 +41,11 @@ const api = {
         const {
           data: { data },
         }: IResponseProcesses = await apiService.get(`processes/grouped/`);
-        return { data };
+        if (data === undefined) {
+          return { data: [] };
+        } else {
+          return { data };
+        }
       } else {
         return { data: [] };
       }
@@ -54,7 +58,11 @@ const api = {
         }: IResponseProcessesResumen = await apiService.get(
           `processes/resumen/`
         );
-        return { data, message, success };
+        if (data === undefined || success === undefined || message === undefined) {
+          return { data: {} };
+        } else {
+          return { data, message, success };
+        }
       } else {
         return { data: {} };
       }
@@ -69,7 +77,11 @@ const api = {
         }: IResponseProcessesDetail = await apiService.get(
           `processes/${id}/tracking/`
         );
-        return { processes: data, message, success };
+        if (data === undefined || success === undefined || message === undefined) {
+          return { data: [] };
+        } else {
+          return { processes: data, message, success };
+        }
       } else {
         return { data: [] };
       }
@@ -81,7 +93,12 @@ const api = {
         const {
           data: { data, message, success },
         }: IResponseProcesses = await apiService.get(`${label}/processes/`);
-        return { processes: data, message, success };
+        if (data === undefined || success === undefined || message === undefined) {
+          return { processes: [] };
+        } else {
+          return { processes: data, message, success };
+        }
+        
       } else {
         return { processes: [] };
       }
@@ -92,7 +109,11 @@ const api = {
         const {
           data: { data, message, success },
         }: IResponseProcesses = await apiService.get(`${label}/processes/${start_at}/${end_at}`);
-        return { processes: data, message, success };
+        if (data === undefined || success === undefined || message === undefined) {
+          return { processes: [] };
+        } else {
+          return { processes: data, message, success };
+        }
       } else {
         return { processes: [] };
       }
@@ -103,10 +124,6 @@ const api = {
         const responseExcel = await apiService.post(`download/`,{},{responseType: 'arraybuffer',
         headers: {'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}});
         const outputFilename = `reporte_pas_${Date.now()}.xlsx`;
-
-        console.log(responseExcel.headers);
-        console.log(responseExcel.status);
-        console.log(responseExcel.data);
 
         // If you want to download file automatically using link attribute.
         const url = URL.createObjectURL(new Blob([responseExcel.data]));
