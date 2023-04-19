@@ -179,13 +179,14 @@ const Home: NextPageWithLayout = () => {
   }
   
   useEffect(() => {
-    if (processGrouped.length <= pageSize) {
+    //Commented to work on docker
+    /*if (processGrouped.length <= pageSize) {
       return;
-    }
+    }*/
     setTimeout(() => {
       const nextPage = currentPage === Math.ceil(processGrouped.length / pageSize) ? 1 : currentPage + 1;
       setCurrentPage(nextPage);
-    }, 30000);
+    }, 20000);
   },[currentPage])
   
   return (
