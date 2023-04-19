@@ -196,32 +196,27 @@ const Home: NextPageWithLayout = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Breadcrumb style={{ margin: '5px 0', color:'white' }}>
-        <h2 style={{ fontSize: 20, color: "#FFFFFF" }}>
-          Bienvenido
-        </h2>
-      </Breadcrumb>
-
-      <div style={{display:'flex', gap:'50px'}}>
+      <div style={{display:'flex', gap:'50px', marginLeft:'16rem', marginRight:'15rem'}}>
         <Card>
-          <div style={{ marginBottom: "0.4rem" }}>
-            <h2 style={{ fontSize: 25, color: "#4F5172" }}>
-              Resumen
-            </h2>
+          <div style={{paddingLeft: "3rem", paddingRight: "3rem"}}>
+            <div style={{ marginBottom: "0.4rem" }}>
+              <h2 style={{ fontSize: 25, color: "#4F5172" }}>
+                Resumen
+              </h2>
+            </div>
+            <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
+
+            <Doughnut data={dataFi} options={options} />
+
+            <br></br>
+
+            <Table columns={columns_legend} dataSource={dataPie} pagination={false}/>
+
+            <br></br>
+            <div style={{textAlign: "right"}}>
+              Total de registros: {Object.values(processSummary).reduce((a, b) => a+b, 0)}
+            </div>
           </div>
-          <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
-
-          <Doughnut data={dataFi} options={options} />
-
-          <br></br>
-
-          <Table columns={columns_legend} dataSource={dataPie} pagination={false}/>
-
-          <br></br>
-          <div style={{textAlign: "right"}}>
-            Total de registros: {Object.values(processSummary).reduce((a, b) => a+b, 0)}
-          </div>
-
         </Card>
               
         <Card>  
