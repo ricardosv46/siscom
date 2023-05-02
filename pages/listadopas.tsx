@@ -15,6 +15,7 @@ import { ExportExcel } from './ExportExcel'
 import moment from 'moment';
 import 'moment/locale/es';
 import locale from 'antd/lib/date-picker/locale/es_ES';
+import { useFilePicker } from 'use-file-picker';
 
 moment.locale('es');
 const { RangePicker } = DatePicker;
@@ -139,6 +140,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     const newDatos = { item: { ...res } };
     history.pushState(newDatos, "", page);
   };
+
+  //FilePicker
+  const [openFileSelector, { filesContent, loading }] = useFilePicker({
+    accept: ['.xlsx', '.xls'],
+  });
 
   useEffect(() => {
     setFilterSelectedChecked("todos")
@@ -284,6 +290,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     
   }
 
+  async function loadFile(){
+    try {
+      const result = await openFileSelector();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <>
       <Head>
@@ -343,6 +357,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
             <RangePicker locale={locale} onChange={onChangeDate}/>
           </div>
           <div>
+            <Button onClick={() => loadFile()}>Cargar Información</Button>
             <Button onClick={() => ExportExcel(inputValue ? filterData : process)}>Descargar Reporte</Button>
           </div>
         </div>
