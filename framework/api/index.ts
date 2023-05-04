@@ -1,3 +1,4 @@
+import { ConsoleSqlOutlined } from "@ant-design/icons";
 import {
   Access,
   AccessSave,
@@ -26,6 +27,8 @@ import {
 import { GetTokenAuthService } from "services/auth/ServiceAuth";
 import { authService } from "services/axios/authConfigAxios";
 import { apiService } from "services/axios/configAxios";
+import axios from "axios";
+import { utils, writeFile } from 'xlsx'
 
 const api = {
   login: async (body: any) => {
@@ -133,6 +136,52 @@ const api = {
         document.body.appendChild(link);
         link.click();
         link.remove();
+      }
+    },
+    loadExcelInformation: async (excelFile: any) => {
+      const tok = GetTokenAuthService();
+      if (tok){
+        const formData = new FormData();
+        formData.append('xlsx_file', excelFile);
+        formData.append('user_id', "21");
+        try {
+          const resultApi = await axios.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/bulk/tracking/create`, formData);
+          const response = resultApi.data;
+
+          if (response){
+            alert(response.message);
+            if (response.data.length > 0){
+              let dataExcel = [];
+              let headers: any[];
+              headers = ['DNI_CANDIDATO', 'NRO_RG_PAS','TIPO_DOC_EMITIDO', 'NRO_DOC_EMITIDO', 'NUEVO_RESPONSABLE', 'ERROR']
+              for (let i = 0; i < response.data.length; i++) {
+                dataExcel.push({
+                  dni_candidato: response.data[i].DNI_CANDIDATO,
+                  nro_rg_pas: response.data[i].NRO_RG_PAS,
+                  tipo_doc_emitido: response.data[i].TIPO_DOC_EMITIDO,
+                  nro_doc_emitido: response.data[i].NRO_DOC_EMITIDO,
+                  nuevo_responsable: response.data[i].NUEVO_RESPONSABLE,
+                  error: response.data[i].ERROR
+                })
+              }
+
+              const ws = utils.book_new()
+              utils.sheet_add_aoa(ws, [headers])
+              utils.sheet_add_json(ws, dataExcel, { origin: 'A2', skipHeader: true })
+              const wb = { Sheets: { LidadoDatos: ws }, SheetNames: ['LidadoDatos'] }
+              const filename = 'erroresCarga.xlsx'
+              utils.book_append_sheet(wb, dataExcel)
+              writeFile(wb, `${filename}`)
+            }
+
+          } else {
+            console.log("ssssss");
+          }
+        } catch (error) {
+          alert("Ocurrió un error al procesar el archivo!");
+        }
+        
+        return {data: []}
       }
     }
   },

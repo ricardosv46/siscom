@@ -134,6 +134,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     setProcess(newData);
   };
 
+  const loadExcelApi = async(excelFile: any) => {
+    const result = await api.listpas.loadExcelInformation(excelFile);
+  };
+
   const onGoDetail = (page: string, props: any) => {
     router.push({ pathname: page });
     const { estado, ...res } = props.item;
@@ -142,7 +146,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   };
 
   //FilePicker
-  const [openFileSelector, { filesContent, loading }] = useFilePicker({
+  const [openFileSelector, { filesContent, plainFiles, loading }] = useFilePicker({
     accept: ['.xlsx', '.xls'],
   });
 
@@ -298,6 +302,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     }
   }
 
+  function processFile(plainFile: any){
+    loadExcelApi(plainFile);
+  }
+
   return (
     <>
       <Head>
@@ -358,6 +366,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
           </div>
           <div>
             <Button onClick={() => loadFile()}>Cargar Información</Button>
+            {filesContent.length == 1 && processFile(plainFiles[0])}
             <Button onClick={() => ExportExcel(inputValue ? filterData : process)}>Descargar Reporte</Button>
           </div>
         </div>
