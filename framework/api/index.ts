@@ -29,6 +29,7 @@ import { authService } from "services/axios/authConfigAxios";
 import { apiService } from "services/axios/configAxios";
 import axios from "axios";
 import { utils, writeFile } from 'xlsx'
+import { GetAuthService } from 'services/auth/ServiceAuth';
 
 const api = {
   login: async (body: any) => {
@@ -141,9 +142,10 @@ const api = {
     loadExcelInformation: async (excelFile: any) => {
       const tok = GetTokenAuthService();
       if (tok){
+        const {  user } = GetAuthService();
         const formData = new FormData();
         formData.append('xlsx_file', excelFile);
-        formData.append('user_id', "21");
+        formData.append('user_id', user.id);
         try {
           const resultApi = await axios.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/bulk/tracking/create`, formData);
           const response = resultApi.data;
