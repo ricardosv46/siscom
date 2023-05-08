@@ -159,6 +159,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
 
   const columns = [
     {
+      title: "Número de Expediente",
+      dataIndex: "num_expediente",
+      key: "num_expediente",
+    },
+    {
       title: "Resolución Gerencial",
       dataIndex: "resolution_number",
       key: "resolution_number",
@@ -167,6 +172,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
       title: "Estado",
       dataIndex: "estado",
       key: "estado",
+    },
+    {
+      title: "DNI",
+      dataIndex: "dni_candidato",
+      key: "dni_candidato",
     },
     {
       title: "Nombre",
@@ -256,7 +266,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
               cleanTextStringAndFormat(item?.fecha_inicio?.toUpperCase()) == filterString ||
               cleanTextStringAndFormat(item?.fecha_inicio?.toUpperCase()).includes(filterString) ||
               cleanTextStringAndFormat(item?.fecha_fin?.toUpperCase()) == filterString ||
-              cleanTextStringAndFormat(item?.fecha_fin?.toUpperCase()).includes(filterString)
+              cleanTextStringAndFormat(item?.fecha_fin?.toUpperCase()).includes(filterString) ||
+              cleanTextStringAndFormat(item?.num_expediente?.toUpperCase()) == filterString ||
+              cleanTextStringAndFormat(item?.num_expediente?.toUpperCase()).includes(filterString) || 
+              cleanTextStringAndFormat(item?.dni_candidato?.toUpperCase()) == filterString ||
+              cleanTextStringAndFormat(item?.dni_candidato?.toUpperCase()).includes(filterString)
             );
           } else if (filterSelectedChecked === "candidato") {
             return (

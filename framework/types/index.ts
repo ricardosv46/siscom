@@ -40,7 +40,9 @@ export interface IListadoPas{
   numero?: number 
   resolution_number?: string 
   responsable?: string 
-  type?: string 
+  type?: string
+  dni_candidato?: string
+  num_expediente?: string
 }
 
 export interface UserSave{

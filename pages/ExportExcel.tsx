@@ -4,10 +4,13 @@ let headers: any[]
 export const ExportExcel = (body: any) => {
   let dataExport = []
   for (let i = 0; i < body.length; i++) {
-    headers = ['Resolución Gerencial', 'Estado', 'Nombre', 'Responsable', 'Etapa', 'Fecha inicio', 'Fecha fin', 'Actualización', 'Tipo Proceso']
+    console.log(body[i]);
+    headers = ['Número de Expediente', 'Resolución Gerencial', 'Estado', 'DNI Candidato', 'Nombre', 'Responsable', 'Etapa', 'Fecha inicio', 'Fecha fin', 'Actualización', 'Tipo Proceso']
     dataExport.push({
+      num_expediente: body[i].num_expediente,
       resolucion_gerencial: body[i].resolution_number,
       estado: body[i].estado_proceso,
+      dni_candidato: body[i].dni_candidato,
       nombre: body[i].name,
       responsable: body[i].responsable,
       etapa: body[i].etapa,
