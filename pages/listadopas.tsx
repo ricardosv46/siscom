@@ -380,8 +380,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
             <RangePicker locale={locale} onChange={onChangeDate}/>
           </div>
           <div>
-            {/*<Button onClick={() => loadFile()}>Cargar Información</Button>*/}
-            {/*filesContent.length == 1 && processFile(plainFiles[0])*/}
+            {<Button onClick={() => loadFile()}>Cargar Información</Button>}
+            {filesContent.length == 1 && processFile(plainFiles[0])}
             <Button onClick={() => ExportExcel(inputValue ? filterData : process)}>Descargar Reporte</Button>
           </div>
         </div>
