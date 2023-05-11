@@ -201,6 +201,19 @@ const api = {
       }
     },
   },
+  update_process: {
+    getTypeDocuments: async () => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { message },
+        }: any = await apiService.get(`type_documents/`);
+        return { data: message };
+      } else {
+        return { data: [] };
+      }
+    },
+  },
 };
 
 export default api;
