@@ -136,6 +136,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
 
   const loadExcelApi = async(excelFile: any) => {
     const result = await api.listpas.loadExcelInformation(excelFile);
+    processApi("all");
   };
 
   const onGoDetail = (page: string, props: any) => {
