@@ -239,7 +239,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
             <select className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} 
                 value={tipoDocumentoSelectedOption} onChange={handleTipoDocumentoSelectChange}>
               <option value="">Seleccione tipo de documento</option>
-              {options.map( (item,index)=> <option value={item.id} key={index}>{item.name}</option> )}
+              {options.map( (item,index)=> <option value={item.name} key={index}>{item.name}</option> )}
             </select>
           </div>
         </div>)}
