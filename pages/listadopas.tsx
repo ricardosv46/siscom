@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Button, Space, Table, DatePicker, ConfigProvider} from "antd";
+import { Button, Space, Table, DatePicker, ConfigProvider, Pagination} from "antd";
 import React, { ChangeEvent, ReactElement, useEffect, useRef, useState } from "react";
 import { LayoutFirst } from "@components/common";
 import { NextPageWithLayout } from "pages/_app";
@@ -245,7 +245,39 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   }
 
   const onSearch = (search: any = "") => {
-    if (search || search.trim() != "") {
+    if(search.length > 0){
+			const filterData = process?.filter((item: {
+        fecha_fin: any;
+        fecha_inicio: any;
+        dni_candidato: any;
+        num_expediente: any;
+        estado_proceso: any;
+        actualizacion: any;
+        resolution_number: any; 
+        responsable: string; 
+        name: string; 
+        etapa: string; 
+      })=>
+          item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) )
+                          
+			if(filterData?.length ){
+				setProcess(filterData)
+			} else{
+				setProcess(null)
+			}
+		} else {
+			setProcess(memory)
+		}
+    /*if (search || search.trim() != "") {
       if (process?.length) {
         let filterString = cleanTextStringAndFormat(search.toUpperCase());
         filterData = process.filter((item:any) => {
@@ -290,7 +322,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
       }
     } else {
       setProcess(memory);
-    }
+    }*/
   };
 
   function onChangeDate(date: any, dateStrings: [string, string]) {
