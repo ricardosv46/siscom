@@ -29,7 +29,9 @@ return (<div className="mb-8 flex  justify-between flex-row-reverse items-center
       {new_responsible && <h3 className="font-bold text-gray-500 text-x">Asignado a: {new_responsible} </h3>}
       {related_document && <h3 className="font-bold text-gray-500 text-x">Tipo documento: {related_document} </h3>}
       {document && <h3 className="font-bold text-gray-500 text-x">Documento: {document} </h3>}
-      {comment && <p className="mt-2 text-sm font-medium leading-snug tracking-wide text-gray-500 text-opacity-100">{comment}</p>}
+      {comment && <p className="mt-2 text-sm font-medium leading-snug tracking-wide text-gray-500 text-opacity-100">Comentario: {comment}</p>}
+      <br></br>
+      {created_at && <h3 className="font-bold text-gray-500 text-x">Fecha de Actualización: {created_at} </h3>}
        
     </div>
   </div>
