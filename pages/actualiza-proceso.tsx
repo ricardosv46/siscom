@@ -36,7 +36,14 @@ let newFormatFechaFin = ''
 const Actualizaproceso: NextPageWithLayout= ({}) => {
   const [item, setItem] = useState<IPropsItem>();
   const router = useRouter();
+
+  const getTypeDocumentsApi = async() => {
+    const {data} = await api.update_process.getTypeDocuments()
+    setOptions(data) 
+  }
+  
   useEffect(() => {
+    getTypeDocumentsApi()
     let itemprop = history?.state?.item;
     if (itemprop) {
       setItem(itemprop);
@@ -53,6 +60,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
   const [fechaInicioInputValue, setFechaInicioInputValue] = useState("");
   const [fechaFinInputValue, setFechaFinInputValue] = useState("");
   const [operationSelectedOption, setOperationSelectedOption] = useState("");
+  const [options, setOptions] = useState([]);
   const [tipoDocumentoSelectedOption, setTipoDocumentoSelectedOption] = useState("");
   const [gerenciaSelectedOption, setGerenciaSelectedOption] = useState("");
   const [comentarioTextareaValue, setComentarioTextareaValue] = useState("");
@@ -211,7 +219,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
               <option value="GAJ">Gerencia de Asesoría Jurídica</option>
               <option value="SG">Secretaría General</option>
               <option value="GSFP">Gerencia de Supervisión y Fondos Partidarios</option>
-              <option value="JN">Jefatura Nacional</option>
+              <option value="JN">Jefatura Nacional</option>              
             </select>
           </div>
         </div>)}
@@ -228,12 +236,10 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="tipo_documento" className="text-gray-600">Tipo de documento:</label>
-            <select className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} value={tipoDocumentoSelectedOption} onChange={handleTipoDocumentoSelectChange}>
+            <select className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} 
+                value={tipoDocumentoSelectedOption} onChange={handleTipoDocumentoSelectChange}>
               <option value="">Seleccione tipo de documento</option>
-              <option value="INFORME">Informe</option>
-              <option value="RESOLUCION_GERENCIAL">Resolución Gerencial</option>
-              <option value="PROVEIDO">Proveido</option>
-              <option value="HOJA_ENVIO">Hoja de Envio</option>
+              {options.map( (item,index)=> <option value={item.id} key={index}>{item.name}</option> )}
             </select>
           </div>
         </div>)}
