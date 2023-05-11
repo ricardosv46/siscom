@@ -156,7 +156,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado
     processApi(label);
   }, []);
-
+  
   const columns = [
     {
       title: "Número de Expediente",
@@ -246,7 +246,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
 
   const onSearch = (search: any = "") => {
     if(search.length > 0){
-			const filterData = process?.filter((item: {
+			const filterData = memory?.filter((item: {
         fecha_fin: any;
         fecha_inicio: any;
         dni_candidato: any;
@@ -277,52 +277,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
 		} else {
 			setProcess(memory)
 		}
-    /*if (search || search.trim() != "") {
-      if (process?.length) {
-        let filterString = cleanTextStringAndFormat(search.toUpperCase());
-        filterData = process.filter((item:any) => {
-          if (filterSelectedChecked === "todos"){
-            return (
-              cleanTextStringAndFormat(item?.responsable?.toUpperCase()) == filterString ||
-              cleanTextStringAndFormat(item?.responsable?.toUpperCase()).includes(filterString) ||
-              cleanTextStringAndFormat(item?.name?.toUpperCase()) == filterString ||
-              cleanTextStringAndFormat(item?.name?.toUpperCase()).includes(filterString) ||
-              cleanTextStringAndFormat(item?.etapa?.toUpperCase()) == filterString ||
-              cleanTextStringAndFormat(item?.etapa?.toUpperCase()).includes(filterString) ||
-              cleanTextStringAndFormat(item?.resolution_number?.toUpperCase()) == filterString ||
-              cleanTextStringAndFormat(item?.resolution_number?.toUpperCase()).includes(filterString)||
-              cleanTextStringAndFormat(item?.estado_proceso?.toUpperCase()) == filterString ||
-              cleanTextStringAndFormat(item?.estado_proceso?.toUpperCase()).includes(filterString) ||
-              cleanTextStringAndFormat(item?.actualizacion?.toUpperCase()) == filterString ||
-              cleanTextStringAndFormat(item?.actualizacion?.toUpperCase()).includes(filterString) ||
-              cleanTextStringAndFormat(item?.fecha_inicio?.toUpperCase()) == filterString ||
-              cleanTextStringAndFormat(item?.fecha_inicio?.toUpperCase()).includes(filterString) ||
-              cleanTextStringAndFormat(item?.fecha_fin?.toUpperCase()) == filterString ||
-              cleanTextStringAndFormat(item?.fecha_fin?.toUpperCase()).includes(filterString) ||
-              cleanTextStringAndFormat(item?.num_expediente?.toUpperCase()) == filterString ||
-              cleanTextStringAndFormat(item?.num_expediente?.toUpperCase()).includes(filterString) || 
-              cleanTextStringAndFormat(item?.dni_candidato?.toUpperCase()) == filterString ||
-              cleanTextStringAndFormat(item?.dni_candidato?.toUpperCase()).includes(filterString)
-            );
-          } else if (filterSelectedChecked === "candidato") {
-            return (
-              cleanTextStringAndFormat(item?.name?.toUpperCase()) == filterString ||
-              cleanTextStringAndFormat(item?.name?.toUpperCase()).includes(filterString) 
-            );
-          } else if (filterSelectedChecked === "organizacion_politica") {
-            return (
-              cleanTextStringAndFormat(item?.responsable?.toUpperCase()) == filterString ||
-              cleanTextStringAndFormat(item?.responsable?.toUpperCase()).includes(filterString) 
-            );
-          }
-        });
-        setProcess(filterData);
-      } else {
-        setProcess(memory);
-      }
-    } else {
-      setProcess(memory);
-    }*/
   };
 
   function onChangeDate(date: any, dateStrings: [string, string]) {
