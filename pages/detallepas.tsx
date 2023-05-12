@@ -30,6 +30,7 @@ export interface IPropsItem {
 }
 
 export interface IDetailItem {
+  key: number
   comment: string;
   created_at: string;
   current_responsible: string;
@@ -130,14 +131,12 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({
           ></div>
           
           {
-            detail?.map((item, idx)=> {
+            detail?.map((item, key)=> {
               return (
                    <>    
                    {
-                    item.id % 2  ?  <LeftCard item={item}   idx={idx}/> :   <RightCard item={item}  idx={idx} />
-                   }           
-                   {/* <LeftCard item={item}   idx={idx}/> 
-                   <RightCard item={item}  idx={idx} /> */}
+                    key % 2 === 0  ?  <LeftCard item={item}   idx={key}/> :   <RightCard item={item}  idx={key} />
+                   }   
                   </>
               )
             })

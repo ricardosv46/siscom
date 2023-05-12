@@ -374,32 +374,28 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
             style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }}
           />
         </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "1rem",
-          }}
-        >
-          <p>
-            <img src="assets/images/to_start.png" /> Por iniciar
-          </p>
-          <p>
-            <img src="assets/images/out_of_date.png" /> Fuera de fecha
-          </p>
-          <p>
-            <img src="assets/images/finalized.png" /> Finalizado
-          </p>
-          <p>
-            <img src="assets/images/more_6_months.png" /> Más de 6 meses
-          </p>
-          <p>
-            <img src="assets/images/less_6_months.png" /> De 3 a 6 meses
-          </p>
-          <p>
-            <img src="assets/images/less_3_months.png" /> Menos de 3 meses
-          </p>
-        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', marginRight: '40px' }}>
+            <img style={{ marginRight: '10px' }} src="assets/images/to_start.png" /><label className="form-checkbottom">Por iniciar</label>
+          </div >
+          <div style={{ display: 'flex', marginRight: '40px' }}>
+            <img style={{ marginRight: '10px' }} src="assets/images/out_of_date.png" /><label className="form-checkbottom">Fuera de fecha</label>
+          </div>
+          <div style={{ display: 'flex', marginRight: '40px' }}>
+            <img style={{ marginRight: '10px' }} src="assets/images/finalized.png" /><label className="form-checkbottom">Finalizado</label>
+          </div>
+          <div style={{ display: 'flex', marginRight: '40px' }}>
+            <img style={{ marginRight: '10px' }} src="assets/images/more_6_months.png" /><label className="form-checkbottom">Más de 6 meses</label>
+          </div>
+          <div style={{ display: 'flex', marginRight: '40px' }}>
+            <img style={{ marginRight: '10px' }} src="assets/images/less_6_months.png" /><label className="form-checkbottom">De 3 a 6 meses</label>
+          </div>
+          <div style={{ display: 'flex', marginRight: '40px' }}>
+            <img style={{ marginRight: '10px' }} src="assets/images/less_3_months.png" /><label className="form-checkbottom">Menos de 3 meses</label>
+          </div>
+        </div> 
+
         <div className="py-10 border-b border-gray-200 pb-4 flex justify-between w-full items-center">
           <div>
             <Input
@@ -410,13 +406,13 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
             />
           </div>          
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{ marginRight: '30px' }}>
+            <div style={{ marginRight: '20px' }}>
               <input  style={{ marginRight: '10px' }} type="radio" checked={isCheckedTodos} onChange={() => { setIsCheckedTodos(!isCheckedTodos); setIsCheckedCandidato(false); setIsCheckedOP(false);}} /><span className="checkmark"></span><label className="form-checkbottom">Todos</label>
             </div >
-            <div style={{ marginRight: '30px' }}>
+            <div style={{ marginRight: '20px' }}>
               <input style={{ marginRight: '10px' }} type="radio" checked={isCheckedCandidato} onChange={() => { setIsCheckedTodos(false); setIsCheckedCandidato(!isCheckedCandidato); setIsCheckedOP(false);}} /><span className="checkmark"></span><label className="form-checkbottom">Candidato</label>
             </div>
-            <div style={{ marginRight: '30px' }}>
+            <div style={{ marginRight: '20px' }}>
               <input style={{ marginRight: '10px' }} type="radio" checked={isCheckedOP} onChange={() => { setIsCheckedTodos(false); setIsCheckedCandidato(false); setIsCheckedOP(!isCheckedOP);}} /><span className="checkmark"></span><label className="form-checkbottom">Organización Política</label>
             </div>
           </div>        
