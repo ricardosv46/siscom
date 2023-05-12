@@ -62,13 +62,15 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   const router = useRouter();
   const [process, setProcess] = useState<any>();
   const [memory, setMemory] = useState<any>();
-  let [inputValue, setInputValue] = useState<any>();
-  let [filterData, setFilterData] = useState<any>();
-  let [filterSelectedChecked, setFilterSelectedChecked] = useState("");
+  let inputValue: any | undefined
+  let filterData: any | undefined
   const [date, setDate] = useState({from: "", to: ""})
   const { user } = useAuthStore();
   const profile = user.profile.toUpperCase();
   let label: string | string[] | undefined
+  const [isCheckedTodos, setIsCheckedTodos] = useState(false);
+  const [isCheckedCandidato, setIsCheckedCandidato] = useState(false);
+  const [isCheckedOP, setIsCheckedOP] = useState(false);
 
   const processApi = async (label:any) => {
     const { processes } = await api.listpas.getProcesses(label);
@@ -152,7 +154,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   });
 
   useEffect(() => {
-    setFilterSelectedChecked("todos")
+    setIsCheckedTodos(true)
     const labelIndex = router.query;
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado
     processApi(label);
@@ -240,36 +242,87 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     },
   ];
 
-  function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
-    setFilterSelectedChecked(event.target.value);
-    onSearch(inputValue);
-  }
-
   const onSearch = (search: any = "") => {
-    if(search.length > 0){
-			const filterData = memory?.filter((item: {
-        fecha_fin: any;
-        fecha_inicio: any;
-        dni_candidato: any;
-        num_expediente: any;
-        estado_proceso: any;
-        actualizacion: any;
-        resolution_number: any; 
-        responsable: string; 
-        name: string; 
-        etapa: string; 
-      })=>
-          item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) )
-                          
+    if(search.length > 0 ){
+      if (isCheckedOP){
+          filterData = memory?.filter((item: {
+          type: any;
+          fecha_fin: any;
+          fecha_inicio: any;
+          dni_candidato: any;
+          num_expediente: any;
+          estado_proceso: any;
+          actualizacion: any;
+          resolution_number: any; 
+          responsable: string; 
+          name: string; 
+          etapa: string; 
+        })=>
+            (item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.type?.toLowerCase()?.includes(search.toLowerCase())) &&
+            item?.type?.includes("OP") )
+      } else if (isCheckedCandidato){
+        filterData = memory?.filter((item: {
+          type: any;
+          fecha_fin: any;
+          fecha_inicio: any;
+          dni_candidato: any;
+          num_expediente: any;
+          estado_proceso: any;
+          actualizacion: any;
+          resolution_number: any; 
+          responsable: string; 
+          name: string; 
+          etapa: string; 
+        })=>
+            (item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.type?.toLowerCase()?.includes(search.toLowerCase())) &&
+            item?.type?.includes("CANDIDATO") )
+      } else {
+        filterData = memory?.filter((item: {
+          type: any;
+          fecha_fin: any;
+          fecha_inicio: any;
+          dni_candidato: any;
+          num_expediente: any;
+          estado_proceso: any;
+          actualizacion: any;
+          resolution_number: any; 
+          responsable: string; 
+          name: string; 
+          etapa: string; 
+        })=>
+        item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
+        item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
+        item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
+        item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
+        item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
+        item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
+        item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
+        item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
+        item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
+        item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
+        item?.type?.toLowerCase()?.includes(search.toLowerCase()) )
+      }
+
 			if(filterData?.length ){
 				setProcess(filterData)
 			} else{
@@ -291,8 +344,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     } else {
       processApiByDate(label, start_at, end_at);
     }
-    
-    
   }
 
   async function loadFile(){
@@ -357,12 +408,18 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
               placeholder="Buscar"
               prefix={<SearchOutlined />}
             />
-          </div>
-          {/*<div>
-            <input type="checkbox" id="todos" name="todos" value="todos" checked={filterSelectedChecked === "todos"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Todos    </label>
-            <input type="checkbox" id="candidato" name="candidato" value="candidato" checked={filterSelectedChecked === "candidato"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Candidato    </label>
-            <input type="checkbox" id="organizacion_politica" name="organizacion_politica" value="organizacion_politica" checked={filterSelectedChecked === "organizacion_politica"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Organización Política    </label>
-        </div>*/}
+          </div>          
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ marginRight: '30px' }}>
+              <input  style={{ marginRight: '10px' }} type="radio" checked={isCheckedTodos} onChange={() => { setIsCheckedTodos(!isCheckedTodos); setIsCheckedCandidato(false); setIsCheckedOP(false);}} /><span className="checkmark"></span><label className="form-checkbottom">Todos</label>
+            </div >
+            <div style={{ marginRight: '30px' }}>
+              <input style={{ marginRight: '10px' }} type="radio" checked={isCheckedCandidato} onChange={() => { setIsCheckedTodos(false); setIsCheckedCandidato(!isCheckedCandidato); setIsCheckedOP(false);}} /><span className="checkmark"></span><label className="form-checkbottom">Candidato</label>
+            </div>
+            <div style={{ marginRight: '30px' }}>
+              <input style={{ marginRight: '10px' }} type="radio" checked={isCheckedOP} onChange={() => { setIsCheckedTodos(false); setIsCheckedCandidato(false); setIsCheckedOP(!isCheckedOP);}} /><span className="checkmark"></span><label className="form-checkbottom">Organización Política</label>
+            </div>
+          </div>        
           <div>
             <RangePicker locale={locale} onChange={onChangeDate}/>
           </div>
