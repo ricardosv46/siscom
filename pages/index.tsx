@@ -130,7 +130,7 @@ const Home: NextPageWithLayout = () => {
   ]
 
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 20;
+  const pageSize = 15;
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
 
@@ -197,7 +197,7 @@ const Home: NextPageWithLayout = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div style={{display:'flex', gap:'50px', marginLeft:'16rem', marginRight:'15rem'}}>
+      <div style={{display:'flex', gap:'50px', marginLeft:'4rem', marginRight:'1rem'}}>
         <Card>
           <div style={{paddingLeft: "3rem", paddingRight: "3rem"}}>
             <div style={{ marginBottom: "0.4rem" }}>
@@ -206,9 +206,9 @@ const Home: NextPageWithLayout = () => {
               </h2>
             </div>
             <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
-
-            <Doughnut data={dataFi} options={options} />
-
+            <div style={{paddingLeft: "3rem", paddingRight: "3rem"}}>
+              <Doughnut data={dataFi} options={options} />
+            </div>
             <br></br>
 
             <Table columns={columns_legend} dataSource={dataPie} pagination={false}/>

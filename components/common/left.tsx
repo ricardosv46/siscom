@@ -1,3 +1,6 @@
+import { EditOutlined } from "@ant-design/icons";
+import { Button } from "antd";
+import router from "next/router";
 import { IDetailItem } from "pages/detallepas";
 import React, {ReactElement, FC} from "react"
 interface IProps{
@@ -5,9 +8,16 @@ interface IProps{
     idx: number;
 }
 
+const onGoDetail = (page: string, props: any) => {
+  router.push({ pathname: page });
+  const { estado, ...res } = props.item;
+  const newDatos = { item: { ...res } };
+  history.pushState(newDatos, "", page);
+};
+
 const LeftCard:FC<IProps> = (props): ReactElement => {
     const { item, idx} = props   
-    const { comment, current_responsible, created_at, document, new_responsible, related_document, resolution_number, start_at, tracking_action } = item
+    const { id, comment, current_responsible, created_at, document, new_responsible, related_document, resolution_number, start_at, tracking_action } = item
 
 return (<div className="mb-8 flex  justify-between flex-row-reverse items-center w-full left-timeline">
     <div className="order-1 w-5/12"></div>
@@ -32,7 +42,16 @@ return (<div className="mb-8 flex  justify-between flex-row-reverse items-center
       {comment && <p className="mt-2 text-sm font-medium leading-snug tracking-wide text-gray-500 text-opacity-100">Comentario: {comment}</p>}
       <br></br>
       {created_at && <h3 className="font-bold text-gray-500 text-x">Fecha de Actualización: {created_at} </h3>}
-       
+      <br></br>
+      {<Button 
+        type="dashed" hidden={idx===0} icon={<EditOutlined />} 
+        onClick={() => onGoDetail("/actualiza-detalle",  { item })}
+      > 
+        Editar
+      </Button>}
+    </div>
+    <div>
+      
     </div>
   </div>
  );

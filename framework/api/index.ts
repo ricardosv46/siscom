@@ -213,6 +213,17 @@ const api = {
         return { data: [] };
       }
     },
+    getOrganizations: async () => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { message },
+        }: any = await apiService.get(`organizations/`);
+        return { data: message };
+      } else {
+        return { data: [] };
+      }
+    },
   },
 };
 
