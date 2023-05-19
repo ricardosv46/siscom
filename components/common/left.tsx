@@ -3,6 +3,8 @@ import { Button } from "antd";
 import router from "next/router";
 import { IDetailItem } from "pages/detallepas";
 import React, {ReactElement, FC} from "react"
+import { GetAuthService } from "services/auth/ServiceAuth";
+
 interface IProps{
     item: IDetailItem;
     idx: number;
@@ -16,6 +18,7 @@ const onGoDetail = (page: string, props: any) => {
 };
 
 const LeftCard:FC<IProps> = (props): ReactElement => {
+    const { user } = GetAuthService()
     const { item, idx} = props   
     const { id, comment, current_responsible, created_at, document, new_responsible, related_document, resolution_number, start_at, tracking_action } = item
 
@@ -43,12 +46,12 @@ return (<div className="mb-8 flex  justify-between flex-row-reverse items-center
       <br></br>
       {created_at && <h3 className="font-bold text-gray-500 text-x">Fecha de Actualización: {created_at} </h3>}
       <br></br>
-      {<Button 
-        type="dashed" hidden={idx===0} icon={<EditOutlined />} 
+      <Button 
+        type="dashed" hidden={idx===0 || !user?.id_admin} icon={<EditOutlined />} 
         onClick={() => onGoDetail("/actualiza-detalle",  { item })}
       > 
         Editar
-      </Button>}
+      </Button>
     </div>
     <div>
       

@@ -11,6 +11,7 @@ const useAuthStore = create<IAuthStore>((set, get) => ({
   user: {
     id: 0,
     profile: "",
+    is_admin: false,
   },
   islogged: false,
   storeUser: (userdata, token) => {
@@ -34,6 +35,7 @@ const useAuthStore = create<IAuthStore>((set, get) => ({
       user: {
         id: 0,
         profile: "",
+        is_admin: false,
       },
     });
     set({ islogged: false });
