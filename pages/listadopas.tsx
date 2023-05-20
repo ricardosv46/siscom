@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Button, Space, Table, DatePicker, ConfigProvider, Pagination} from "antd";
+import { Button, Space, Table, DatePicker, ConfigProvider, Pagination } from "antd";
 import React, { ChangeEvent, ReactElement, useEffect, useRef, useState } from "react";
 import { LayoutFirst } from "@components/common";
 import { NextPageWithLayout } from "pages/_app";
@@ -16,9 +16,13 @@ import moment from 'moment';
 import 'moment/locale/es';
 import locale from 'antd/lib/date-picker/locale/es_ES';
 import { useFilePicker } from 'use-file-picker';
+import { match } from "assert";
+import axios from "axios";
 
 moment.locale('es');
 const { RangePicker } = DatePicker;
+
+type IOptionFilter = 1 | 2 | 3
 
 interface ListadopasProps {
   pageNum: number;
@@ -64,17 +68,18 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   const [memory, setMemory] = useState<any>();
   let inputValue: any | undefined
   let filterData: any | undefined
-  const [date, setDate] = useState({from: "", to: ""})
+  const [date, setDate] = useState({ from: "", to: "" })
   const { user } = useAuthStore();
   const profile = user.profile.toUpperCase();
   let label: string | string[] | undefined
   const [isCheckedTodos, setIsCheckedTodos] = useState(false);
   const [isCheckedCandidato, setIsCheckedCandidato] = useState(false);
+  const [operationSelectedOption, setOperationSelectedOption] = useState("");
   const [isCheckedOP, setIsCheckedOP] = useState(false);
 
-  const processApi = async (label:any) => {
+  const processApi = async (label: any) => {
     const { processes } = await api.listpas.getProcesses(label);
-    
+
     const statusImg: any = {
       less_3_months: "less_3_months",
       less_6_months: "less_6_months",
@@ -104,9 +109,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     setProcess(newData);
   };
 
-  const processApiByDate = async (label:any, start_at: string, end_at:string) => {
+  const processApiByDate = async (label: any, start_at: string, end_at: string) => {
     const { processes } = await api.listpas.getProcessesByDate(label, start_at, end_at);
-    
+
     const statusImg: any = {
       less_3_months: "less_3_months",
       less_6_months: "less_6_months",
@@ -136,7 +141,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     setProcess(newData);
   };
 
-  const loadExcelApi = async(excelFile: any) => {
+  const loadExcelApi = async (excelFile: any) => {
     const result = await api.listpas.loadExcelInformation(excelFile);
     processApi("all");
   };
@@ -159,7 +164,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado
     processApi(label);
   }, []);
-  
+
   const columns = [
     {
       title: "Número de Expediente",
@@ -243,34 +248,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   ];
 
   const onSearch = (search: any = "") => {
-    if(search.length > 0 ){
-      if (isCheckedOP){
-          filterData = memory?.filter((item: {
-          type: any;
-          fecha_fin: any;
-          fecha_inicio: any;
-          dni_candidato: any;
-          num_expediente: any;
-          estado_proceso: any;
-          actualizacion: any;
-          resolution_number: any; 
-          responsable: string; 
-          name: string; 
-          etapa: string; 
-        })=>
-            (item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.type?.toLowerCase()?.includes(search.toLowerCase())) &&
-            item?.type?.includes("OP") )
-      } else if (isCheckedCandidato){
+    console.log(isCheckedTodos)
+    console.log(isCheckedCandidato)
+    console.log(isCheckedOP)
+    if (search.length > 0) {
+      if (isCheckedOP) {
         filterData = memory?.filter((item: {
           type: any;
           fecha_fin: any;
@@ -279,12 +261,12 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
           num_expediente: any;
           estado_proceso: any;
           actualizacion: any;
-          resolution_number: any; 
-          responsable: string; 
-          name: string; 
-          etapa: string; 
-        })=>
-            (item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
+          resolution_number: any;
+          responsable: string;
+          name: string;
+          etapa: string;
+        }) =>
+          (item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
             item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
             item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
             item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
@@ -295,7 +277,33 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
             item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
             item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
             item?.type?.toLowerCase()?.includes(search.toLowerCase())) &&
-            item?.type?.includes("CANDIDATO") )
+          item?.type?.includes("OP"))
+      } else if (isCheckedCandidato) {
+        filterData = memory?.filter((item: {
+          type: any;
+          fecha_fin: any;
+          fecha_inicio: any;
+          dni_candidato: any;
+          num_expediente: any;
+          estado_proceso: any;
+          actualizacion: any;
+          resolution_number: any;
+          responsable: string;
+          name: string;
+          etapa: string;
+        }) =>
+          (item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
+            item?.type?.toLowerCase()?.includes(search.toLowerCase())) &&
+          item?.type?.includes("CANDIDATO"))
       } else {
         filterData = memory?.filter((item: {
           type: any;
@@ -305,32 +313,31 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
           num_expediente: any;
           estado_proceso: any;
           actualizacion: any;
-          resolution_number: any; 
-          responsable: string; 
-          name: string; 
-          etapa: string; 
-        })=>
-        item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
-        item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
-        item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
-        item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
-        item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
-        item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
-        item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
-        item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
-        item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
-        item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
-        item?.type?.toLowerCase()?.includes(search.toLowerCase()) )
+          resolution_number: any;
+          responsable: string;
+          name: string;
+          etapa: string;
+        }) =>
+          item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
+          item?.type?.toLowerCase()?.includes(search.toLowerCase()))
       }
 
-			if(filterData?.length ){
-				setProcess(filterData)
-			} else{
-				setProcess(null)
-			}
-		} else {
-			setProcess(memory)
-		}
+      if (filterData?.length) {
+        setProcess(filterData)
+      } else {
+        setProcess(null)
+      }
+    }
+     
   };
 
   function onChangeDate(date: any, dateStrings: [string, string]) {
@@ -339,14 +346,19 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
 
     const labelIndex = router.query;
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado
-    if (start_at === "" || end_at === ""){
+    if (start_at === "" || end_at === "") {
       processApi(label);
     } else {
       processApiByDate(label, start_at, end_at);
     }
   }
 
-  async function loadFile(){
+  function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
+    setOperationSelectedOption(event.target.value);
+    console.log(operationSelectedOption)
+  }
+
+  async function loadFile() {
     try {
       const result = await openFileSelector();
     } catch (error) {
@@ -354,10 +366,52 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     }
   }
 
-  function processFile(plainFile: any){
+  function processFile(plainFile: any) {
     loadExcelApi(plainFile);
     clear();
   }
+
+  const otionFilters = {
+    1: 'all',
+    2: 'CANDIDATO',
+    3: 'OP'
+  }
+
+  const onfilterlist = (option: IOptionFilter) => {
+    setProcess(memory)
+    switch (option) {
+      case 1:
+        setIsCheckedTodos(true)
+        setIsCheckedCandidato(false)
+        setIsCheckedOP(false)
+        break;
+      case 2:
+        setIsCheckedCandidato(true)
+        setIsCheckedTodos(false)
+        setIsCheckedOP(false)
+        setProcess(memory.filter((element:any) =>  element.type == otionFilters[option] ))
+        break;
+      case 3:
+        setIsCheckedOP(true)
+        setIsCheckedCandidato(false)
+        setIsCheckedTodos(false)
+        setProcess(memory.filter((element:any) =>  element.type == otionFilters[option] ))
+        break;
+      default:
+        break;
+    }
+  }
+
+
+  const DescargarExcel = async() => {
+    let dataExcel: any[] = []
+    process.map((item: any)=>{
+       dataExcel.push(item.numero)
+    })
+   await api.listpas.downloadExcelInformation(dataExcel)
+
+  }
+
 
   return (
     <>
@@ -394,8 +448,24 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
           <div style={{ display: 'flex', marginRight: '40px' }}>
             <img style={{ marginRight: '10px' }} src="assets/images/less_3_months.png" /><label className="form-checkbottom">Menos de 3 meses</label>
           </div>
-        </div> 
+        </div>
+        <br></br>
 
+        <div className="py-10 border-gray-200 pb-4 flex justify-between w-full items-center">
+          <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', right: 0 }}>
+            <div style={{ marginRight: '20px' }}>
+              {<Button style={{height:'50px', color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 20px', marginRight: '10px'}} onClick={() => loadFile()}>Cargar Información</Button>}
+              {filesContent.length == 1 && processFile(plainFiles[0])}
+            </div>
+            <div style={{ marginRight: '20px' }}>
+              <Button style={{height:'50px', color:'white', backgroundColor:'#2a8c4a', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 20px', marginRight: '10px'}} onClick={() => ExportExcel(inputValue ? filterData : process)}>Descargar Listado PAS</Button>
+            </div>
+            <div style={{ marginRight: '20px' }}>
+              <Button style={{height:'50px', color:'white', backgroundColor:'#2a8c4a', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 20px', marginRight: '10px'}} onClick={() => DescargarExcel()}>Descargar Detalle del PAS</Button>
+            </div>
+          </div>
+        </div>
+        
         <div className="py-10 border-b border-gray-200 pb-4 flex justify-between w-full items-center">
           <div>
             <Input
@@ -404,25 +474,21 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
               placeholder="Buscar"
               prefix={<SearchOutlined />}
             />
-          </div>          
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center'}}>
+            <div className="text-red-500 text-xs"></div>
             <div style={{ marginRight: '20px' }}>
-              <input  style={{ marginRight: '10px' }} type="radio" checked={isCheckedTodos} onChange={() => { setIsCheckedTodos(!isCheckedTodos); setIsCheckedCandidato(false); setIsCheckedOP(false);}} /><span className="checkmark"></span><label className="form-checkbottom">Todos</label>
+              <input style={{ marginRight: '10px' }} type="radio" checked={isCheckedTodos} onChange={() => onfilterlist(1)} /><span className="checkmark"></span><label className="form-checkbottom">Todos</label>
             </div >
             <div style={{ marginRight: '20px' }}>
-              <input style={{ marginRight: '10px' }} type="radio" checked={isCheckedCandidato} onChange={() => { setIsCheckedTodos(false); setIsCheckedCandidato(!isCheckedCandidato); setIsCheckedOP(false);}} /><span className="checkmark"></span><label className="form-checkbottom">Candidato</label>
+              <input style={{ marginRight: '10px' }} type="radio" checked={isCheckedCandidato} onChange={() => onfilterlist(2)} /><span className="checkmark"></span><label className="form-checkbottom">Candidato</label>
             </div>
             <div style={{ marginRight: '20px' }}>
-              <input style={{ marginRight: '10px' }} type="radio" checked={isCheckedOP} onChange={() => { setIsCheckedTodos(false); setIsCheckedCandidato(false); setIsCheckedOP(!isCheckedOP);}} /><span className="checkmark"></span><label className="form-checkbottom">Organización Política</label>
+              <input style={{ marginRight: '10px' }} type="radio" checked={isCheckedOP} onChange={() => onfilterlist(3)} /><span className="checkmark"></span><label className="form-checkbottom">Organización Política</label>
             </div>
-          </div>        
-          <div>
-            <RangePicker locale={locale} onChange={onChangeDate}/>
           </div>
-          <div>
-            {<Button onClick={() => loadFile()}>Cargar Información</Button>}
-            {filesContent.length == 1 && processFile(plainFiles[0])}
-            <Button onClick={() => ExportExcel(inputValue ? filterData : process)}>Descargar Reporte</Button>
+          <div >
+            <RangePicker locale={locale} onChange={onChangeDate} />
           </div>
         </div>
         <Table columns={columns} dataSource={process} />

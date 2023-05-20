@@ -29,6 +29,7 @@ import { authService } from "services/axios/authConfigAxios";
 import { apiService } from "services/axios/configAxios";
 import axios from "axios";
 import { utils, writeFile } from 'xlsx'
+
 import { GetAuthService } from 'services/auth/ServiceAuth';
 
 const api = {
@@ -185,6 +186,26 @@ const api = {
         }
         
         return {data: []}
+      }
+    },
+     
+    downloadExcelInformation: async (payload: any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const { headers,  status, data } = await apiService.post(`/tracking/download/`, {
+          processes: payload
+        },{responseType: "blob",});
+        if(status === 200) {
+          const resp = data
+         var blob = new Blob([resp], {
+          type: headers["content-type"],
+        });
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `report_${new Date().getTime()}.xlsx`;
+        link.click();
+          
+        }
       }
     }
   },
