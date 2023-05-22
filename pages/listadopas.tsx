@@ -491,7 +491,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
             <RangePicker locale={locale} onChange={onChangeDate} />
           </div>
         </div>
-        <Table columns={columns} dataSource={process} />
+        <div style={{overflowX: 'auto'}}>
+          <Table style={{width: '100%', borderCollapse: 'collapse'}}  columns={columns} dataSource={process} />
+        </div>
       </Card>
     </>
   );
