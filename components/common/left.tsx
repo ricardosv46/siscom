@@ -47,7 +47,7 @@ return (<div className="mb-8 flex  justify-between flex-row-reverse items-center
       {created_at && <h3 className="font-bold text-gray-500 text-x">Fecha de Actualización: {created_at} </h3>}
       <br></br>
       <Button 
-        type="dashed" hidden={idx===0 || !user?.id_admin} icon={<EditOutlined />} 
+        type="dashed" hidden={idx===0 || !user?.is_admin} icon={<EditOutlined />} 
         onClick={() => onGoDetail("/actualiza-detalle",  { item })}
       > 
         Editar

@@ -89,7 +89,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
         setDocumentoRelacionadoinputValue(document);
         setComentarioTextareaValue(comment);
     } else {
-        router.push("/listadopas");
+        router.push("/detallepas");
     }
   }, []);
   
@@ -175,6 +175,10 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
     setOperationSelectedOption(event.target.value);
   }
   
+  function goBack(): void {
+    router.push("/detallepas");
+  }
+
   return (
     <form onSubmit={handleSubmit}>
       <Card title="Crear usuario">
@@ -254,7 +258,8 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
         
         <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }}/>
         <div style={{display:'flex', gap:'50px'}}>
-          <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} id="submit" type="submit">Actualizar</button>
+          <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 50px'}} id="submit" type="submit">Actualizar</button>
+          {/* <Button style={{height:'50px', color:'white', backgroundColor:'#2596be', borderRadius:'10px', cursor:'pointer', padding:'10px 50px', fontSize:'1rem', marginRight: '5px'}} onClick={() => goBack()}>Regresar</Button> */}
         </div>
       </Card>
     </form>    

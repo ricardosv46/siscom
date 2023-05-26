@@ -430,41 +430,32 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div style={{ display: 'flex', marginRight: '40px' }}>
-            <img style={{ marginRight: '10px' }} src="assets/images/to_start.png" /><label className="form-checkbottom">Por iniciar</label>
+          <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
+            <img style={{ marginRight: '10px'}} src="assets/images/to_start.png" />
+            <label className="form-checkbottom">Por iniciar</label>
           </div >
-          <div style={{ display: 'flex', marginRight: '40px' }}>
-            <img style={{ marginRight: '10px' }} src="assets/images/out_of_date.png" /><label className="form-checkbottom">Fuera de fecha</label>
+          <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
+            <img style={{ marginRight: '10px' }} src="assets/images/out_of_date.png" />
+            <label className="form-checkbottom">Fuera de fecha</label>
           </div>
-          <div style={{ display: 'flex', marginRight: '40px' }}>
-            <img style={{ marginRight: '10px' }} src="assets/images/finalized.png" /><label className="form-checkbottom">Finalizado</label>
+          <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
+            <img style={{ marginRight: '10px' }} src="assets/images/finalized.png" />
+            <label className="form-checkbottom">Finalizado</label>
           </div>
-          <div style={{ display: 'flex', marginRight: '40px' }}>
-            <img style={{ marginRight: '10px' }} src="assets/images/more_6_months.png" /><label className="form-checkbottom">Más de 6 meses</label>
+          <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
+            <img style={{ marginRight: '10px' }} src="assets/images/more_6_months.png" />
+            <label className="form-checkbottom">Más de 6 meses</label>
           </div>
-          <div style={{ display: 'flex', marginRight: '40px' }}>
-            <img style={{ marginRight: '10px' }} src="assets/images/less_6_months.png" /><label className="form-checkbottom">De 3 a 6 meses</label>
+          <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
+            <img style={{ marginRight: '10px' }} src="assets/images/less_6_months.png" />
+            <label className="form-checkbottom">De 3 a 6 meses</label>
           </div>
-          <div style={{ display: 'flex', marginRight: '40px' }}>
-            <img style={{ marginRight: '10px' }} src="assets/images/less_3_months.png" /><label className="form-checkbottom">Menos de 3 meses</label>
+          <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
+            <img style={{ marginRight: '10px' }} src="assets/images/less_3_months.png" />
+            <label className="form-checkbottom">Menos de 3 meses</label>
           </div>
         </div>
         <br></br>
-
-        <div className="py-10 border-gray-200 pb-4 flex justify-between w-full items-center">
-          <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', right: 0 }}>
-            <div style={{ marginRight: '20px' }}>
-              {<Button style={{height:'50px', color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 20px', marginRight: '10px'}} onClick={() => loadFile()}>Cargar Información</Button>}
-              {filesContent.length == 1 && processFile(plainFiles[0])}
-            </div>
-            <div style={{ marginRight: '20px' }}>
-              <Button style={{height:'50px', color:'white', backgroundColor:'#2a8c4a', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 20px', marginRight: '10px'}} onClick={() => ExportExcel(inputValue ? filterData : process)}>Descargar Listado PAS</Button>
-            </div>
-            <div style={{ marginRight: '20px' }}>
-              <Button style={{height:'50px', color:'white', backgroundColor:'#2a8c4a', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 20px', marginRight: '10px'}} onClick={() => DescargarExcel()}>Descargar Detalle del PAS</Button>
-            </div>
-          </div>
-        </div>
         
         <div className="py-10 border-b border-gray-200 pb-4 flex justify-between w-full items-center">
           <div>
@@ -490,6 +481,18 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
           <div >
             <RangePicker locale={locale} onChange={onChangeDate} />
           </div>
+            <div style={{ display: 'flex'}}>
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                {<Button style={{height:'50px', color:'white', backgroundColor:'#78bc44', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => loadFile()}>Cargar Información</Button>}
+                {filesContent.length == 1 && processFile(plainFiles[0])}
+              </div>
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                <Button style={{height:'50px', color:'white', backgroundColor:'#083474', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => ExportExcel(inputValue ? filterData : process)}>Reporte PAS</Button>
+              </div>
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                <Button style={{height:'50px', color:'white', backgroundColor:'#0874cc', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => DescargarExcel()}>Detalle</Button>
+              </div>
+            </div>
         </div>
         <div style={{overflowX: 'auto'}}>
           <Table style={{width: '100%', borderCollapse: 'collapse'}}  columns={columns} dataSource={process} />
