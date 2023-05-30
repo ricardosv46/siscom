@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { ChangeEvent, ReactElement, useEffect, useState } from "react";
+import { ChangeEvent, ReactElement, SetStateAction, useEffect, useState } from "react";
 import { LayoutFirst } from "@components/common";
 import { NextPageWithLayout } from "pages/_app";
 import { Card } from "@components/ui";
@@ -55,10 +55,12 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
     setGerenciaOtions(data) 
   }
   
+  let itemprop: any
+  itemprop = history?.state?.item;
+
   useEffect(() => {
     getTypeDocumentsApi()
     getOrganizationsApi()
-    let itemprop = history?.state?.item;
     if (itemprop) {
         setItem(itemprop);
         id = itemprop?.id 
@@ -136,16 +138,12 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
             const response = await axios.put(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/tracking/${id}/edit/`, formData, reqInit);
             console.log(response.data);
             alert('El detalle se actualizó correctamente!!!')
-            router.push('./listadopas')
+            goBack("/detallepas",  { itemprop })
         } catch (error) {
             console.log(error);
         }
     }
   };
-
-  const onGotoBack = (page: string) => {
-    router.push({pathname:page, })
-  }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDocumentoRelacionadoinputValue(event.target.value);
@@ -174,9 +172,12 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
   function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
     setOperationSelectedOption(event.target.value);
   }
-  
-  function goBack(): void {
-    router.push("/detallepas");
+
+  function goBack(page: string, props: any): void {
+    router.push({ pathname: page });
+    const { estado, ...res } = props;
+    const newDatos =  { ...res } ;
+    history.pushState(newDatos, "", page);
   }
 
   return (
@@ -259,7 +260,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
         <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }}/>
         <div style={{display:'flex', gap:'50px'}}>
           <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 50px'}} id="submit" type="submit">Actualizar</button>
-          {/* <Button style={{height:'50px', color:'white', backgroundColor:'#2596be', borderRadius:'10px', cursor:'pointer', padding:'10px 50px', fontSize:'1rem', marginRight: '5px'}} onClick={() => goBack()}>Regresar</Button> */}
+          <Button style={{height:'50px', color:'white', backgroundColor:'#2596be', borderRadius:'10px', cursor:'pointer', padding:'10px 50px', fontSize:'1rem', marginRight: '5px'}} onClick={() => goBack("/detallepas",  { itemprop })}>Regresar</Button>
         </div>
       </Card>
     </form>    

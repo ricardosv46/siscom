@@ -71,14 +71,18 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({
   const router = useRouter();
 
   useEffect(() => {
-    let itemprop = history?.state?.item;
-    //console.log(itemprop);
-    
-    if (itemprop) {
-      setItem(itemprop);
-      getDetailInfo(itemprop.numero);
-      setNombre(itemprop.name);
-      setRG(itemprop.resolution_number);
+    let itempropDetail = history?.state?.item;
+    let itempropBack = history?.state?.itemprop;
+    if (itempropDetail && !itempropBack) {
+      setItem(itempropDetail);
+      getDetailInfo(itempropDetail.numero);
+      setNombre(itempropDetail.name);
+      setRG(itempropDetail.resolution_number);
+    } else if (itempropBack && !itempropDetail) {
+      setItem(itempropBack);
+      getDetailInfo(itempropBack.process.numero);
+      setNombre(itempropBack.process.name);
+      setRG(itempropBack.resolution_number);
     } else {
       router.push("/listadopas");
     }
