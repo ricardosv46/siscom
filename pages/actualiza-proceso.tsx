@@ -13,6 +13,7 @@ import axios from "axios";
 import { RightCard } from "../components/common/right";
 import { Button, Modal, message } from "antd";
 import { format } from 'date-fns';
+import useAuthStore from "store/auth/auth";
 
 interface IPropsItem {
   actualizacion: string;
@@ -36,6 +37,8 @@ let newFormatFechaFin = ''
 const Actualizaproceso: NextPageWithLayout= ({}) => {
   const [item, setItem] = useState<IPropsItem>();
   const router = useRouter();
+
+  const { user } = useAuthStore();
 
   const getTypeDocumentsApi = async() => {
     const {data} = await api.update_process.getTypeDocuments()
@@ -193,10 +196,10 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="operacion" className="text-gray-40">Operación:</label>
             <div>
-            {responsable_actual === 'SG' && (<><input type="checkbox" name="notificado" value="notificado" checked={operationSelectedOption === "notificado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Notificación</label><div className="text-red-500 text-xs"></div></>)}
-            {responsable_actual === 'SG' && (<><input type="checkbox" name="observado" value="observado" checked={operationSelectedOption === "observado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Observación</label><div className="text-red-500 text-xs"></div></>)}
-            {responsable_actual !== 'SG' && (<><input type="checkbox" name="actualizado" value="actualizado" checked={operationSelectedOption === "actualizado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Actualización</label><div className="text-red-500 text-xs"></div></>)}
-            {responsable_actual === 'JN' && (<><input type="checkbox" name="finalizado" value="finalizado" checked={operationSelectedOption === "finalizado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Finalización</label><div className="text-red-500 text-xs"></div></>)}
+            {(user.is_admin || responsable_actual === 'SG') && (<><input type="checkbox" name="notificado" value="notificado" checked={operationSelectedOption === "notificado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Notificación</label><div className="text-red-500 text-xs"></div></>)}
+            {(user.is_admin || responsable_actual === 'SG') && (<><input type="checkbox" name="observado" value="observado" checked={operationSelectedOption === "observado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Observación</label><div className="text-red-500 text-xs"></div></>)}
+            {(user.is_admin || responsable_actual !== 'SG') && (<><input type="checkbox" name="actualizado" value="actualizado" checked={operationSelectedOption === "actualizado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Actualización</label><div className="text-red-500 text-xs"></div></>)}
+            {(user.is_admin || responsable_actual === 'JN') && (<><input type="checkbox" name="finalizado" value="finalizado" checked={operationSelectedOption === "finalizado"} onChange={handleCheckboxChange} /><span className="checkmark"></span><label className="form-checkbottom">   Finalización</label><div className="text-red-500 text-xs"></div></>)}
             </div>
           </div>
         </div>

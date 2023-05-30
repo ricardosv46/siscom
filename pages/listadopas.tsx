@@ -91,7 +91,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
 
     const newData = processes.map((item) => {
       const { estado, responsable } = item;
-      if (responsable == profile) {
+      if (responsable == profile || user.is_admin) {
         return {
           ...item,
           btnDisabled: false,
