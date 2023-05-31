@@ -4,6 +4,7 @@ import menu from '@framework/pas/menu.json'
 import type { MenuProps } from 'antd';
 import { responseLogin } from "@framework/types"
 import {  } from "../../../pages/api/auth/login";
+import { globalProcess, setGlobalProcess } from '../../../pages/globals';
 
 import {
   HomeOutlined,
@@ -55,20 +56,25 @@ const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
    
   const items:any  = menu.map((item, _) => {
    if(profile == 'ADMIN'){
-    return item.role == 'admin' &&   {
-      key: item.key,
-      icon: createElement(icons[item.icon]),
-      label: `${item.label}`,
-     } 
-   }else{
-    return item.role == 'user' &&   {
-      key: item.key,
-      icon: createElement(icons[item.icon]),
-      label: `${item.label}`,
-     } 
-   }
- 
- 
+      return item.role == 'admin' &&   {
+        key: item.key,
+        icon: createElement(icons[item.icon]),
+        label: `${item.label}`,
+      } 
+    }else if (profile != 'ADMIN' && globalProcess != ''){
+      return item.role == 'user' && 
+      (item.id === 1 || item.id === 2 || item.id === 3) &&  {
+        key: item.key,
+        icon: createElement(icons[item.icon]),
+        label: `${item.label}`,
+      } 
+    }else if (profile != 'ADMIN' && globalProcess == ''){
+      return item.role == 'user' && item.id === 1 &&  {
+        key: item.key,
+        icon: createElement(icons[item.icon]),
+        label: `${item.label}`,
+      }
+    }    
   } );
   
  
@@ -96,6 +102,7 @@ const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
   const handleLogout = async () =>{
     try {
       removeSession()
+      setGlobalProcess('')
       router.push("/auth");
     } catch (error) {
       console.error(error);
@@ -129,7 +136,7 @@ const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
             <div className="header-content">
               <div>
                 <h1 style={{ fontSize: 15, color: "#2596be"}}>
-                  Monitoreo de Procedimientos Administrativos Sancionadores - ERM 2022
+                  Monitoreo de Procedimientos Administrativos Sancionadores {globalProcess}
                 </h1>
               </div>
               <div className="user-header">

@@ -18,6 +18,7 @@ import locale from 'antd/lib/date-picker/locale/es_ES';
 import { useFilePicker } from 'use-file-picker';
 import { match } from "assert";
 import axios from "axios";
+import { globalProcess } from './globals';
 
 moment.locale('es');
 const { RangePicker } = DatePicker;
@@ -77,8 +78,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   const [operationSelectedOption, setOperationSelectedOption] = useState("");
   const [isCheckedOP, setIsCheckedOP] = useState(false);
 
-  const processApi = async (label: any) => {
-    const { processes } = await api.listpas.getProcesses(label);
+  const processApi = async (globalProcess: any, label: any) => {
+    const { processes } = await api.listpas.getProcesses(globalProcess, label);
 
     const statusImg: any = {
       less_3_months: "less_3_months",
@@ -143,7 +144,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
 
   const loadExcelApi = async (excelFile: any) => {
     const result = await api.listpas.loadExcelInformation(excelFile);
-    processApi("all");
+    processApi(globalProcess, "all");
   };
 
   const onGoDetail = (page: string, props: any) => {
@@ -159,10 +160,15 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   });
 
   useEffect(() => {
+    if (globalProcess == ''){
+      alert('Por favor, primero seleccione un Proceso Electoral!!!')
+      router.push('./procesos');
+    }
+
     setIsCheckedTodos(true)
     const labelIndex = router.query;
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado
-    processApi(label);
+    processApi(globalProcess, label);
   }, []);
 
   const columns = [
@@ -347,7 +353,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     const labelIndex = router.query;
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado
     if (start_at === "" || end_at === "") {
-      processApi(label);
+      processApi(globalProcess, label);
     } else {
       processApiByDate(label, start_at, end_at);
     }

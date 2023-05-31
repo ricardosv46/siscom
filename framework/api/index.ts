@@ -92,12 +92,12 @@ const api = {
       }
     },
 
-    getProcesses: async (label: any) => {
+    getProcesses: async (globalProcess:any, label: any) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
           data: { data, message, success },
-        }: IResponseProcesses = await apiService.get(`${label}/processes/`);
+        }: IResponseProcesses = await apiService.get(`${label}/processes/?electoral_process=${globalProcess}`);
         if (data === undefined || success === undefined || message === undefined) {
           return { processes: [] };
         } else {

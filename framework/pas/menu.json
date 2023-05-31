@@ -1,29 +1,34 @@
 [ 
   {
+    "id": 1,
     "key": "procesos",
     "icon": "KeyOutlined",
     "label": "Procesos",
-    "role":  "user" 
+    "role":  "user"
   },
   {
+    "id": 2,
     "key": "/",
     "icon": "HomeOutlined",
     "label": "Inicio",
-    "role":  "user" 
+    "role":  "user"
   },
   {
+    "id": 3,
     "key": "listadopas",
     "icon": "FileSearchOutlined",
     "label": "Listado de PAS",
     "role":  "user"
   },
   {
+    "id": 4,
     "key": "nuevoacceso",
     "icon": "UserOutlined",
     "label": "Nuevo acceso",
     "role":  "admin"
   },
   {
+    "id": 5,
     "key": "listadoacceso",
     "icon": "KeyOutlined",
     "label": "Listado de accesos",

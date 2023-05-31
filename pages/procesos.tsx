@@ -7,6 +7,8 @@ import api from "@framework/api";
 import { useUI } from "@components/ui/context";
 import { useRouter } from "next/router";
 import 'moment/locale/es';
+import { setGlobalProcess } from './globals';
+import { Button } from "antd";
 
 interface ProcesosProps {
   pageNum: number;
@@ -63,6 +65,7 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({
         alert('Debe seleccionar un Proceso Electoral!!!')
         return
     }
+    setGlobalProcess(procesoSelectedOption);
     router.push('/');
   }
 
@@ -100,7 +103,7 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({
                     {options.map( (item,index)=> <option value={item.code} key={index}>{item.name}</option> )}
                 </select>
             </div>
-            <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} onClick={()=> onGotoList()} >Buscar</button>
+            <Button style={{height:'50px', color:'white', backgroundColor:'#0874cc', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => onGotoList()}>Buscar</Button>
         </div>
       </Card>
     </>
