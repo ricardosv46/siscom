@@ -1,4 +1,10 @@
-[
+[ 
+  {
+    "key": "procesos",
+    "icon": "KeyOutlined",
+    "label": "Procesos",
+    "role":  "user" 
+  },
   {
     "key": "/",
     "icon": "HomeOutlined",

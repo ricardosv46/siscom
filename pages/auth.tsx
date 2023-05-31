@@ -34,7 +34,7 @@ const Home = () => {
 
       if (success) {
          storeUser(data?.user, data.token);
-         router.push("/");
+         router.push("procesos");
          `Bienvenido ${username}`
       }
      } catch (error) {
@@ -57,7 +57,7 @@ const Home = () => {
   useEffect(()=>{
       const { user } = GetAuthService()
       if(user?.id){
-         router.push("/");
+         router.push("procesos");
       }
    },[ ])
 

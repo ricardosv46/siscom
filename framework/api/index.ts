@@ -246,6 +246,30 @@ const api = {
       }
     },
   },
+  processes: {
+    getProcesses: async (year:any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { message },
+        }: any = await apiService.get(`electoral-process/?year=${year}`);
+        return { data: message };
+      } else {
+        return { data: [] };
+      }
+    },
+    getYear: async () => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { message },
+        }: any = await apiService.get(`years/`);
+        return { data: message };
+      } else {
+        return { data: [] };
+      }
+    },
+  }
 };
 
 export default api;
