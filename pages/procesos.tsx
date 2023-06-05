@@ -7,7 +7,7 @@ import api from "@framework/api";
 import { useUI } from "@components/ui/context";
 import { useRouter } from "next/router";
 import 'moment/locale/es';
-import { setGlobalProcess } from './globals';
+import { getLocalStorageItem, setLocalStorageItem } from './globals';
 import { Button } from "antd";
 
 interface ProcesosProps {
@@ -41,6 +41,7 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({
   const [procesoSelectedOption, setProcesoSelectedOption] = useState("");
   const [options, setOptions] = useState([]);
   const [optionsYear, setOptionsYear] = useState([]);
+  const [processGlobal, setProcessGlobal] = useState('');
 
   const listProcessApi = async(año:any) => {
     const {data} = await api.processes.getProcesses(año)
@@ -62,10 +63,12 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({
 
   const onGotoList = () => {
     if(procesoSelectedOption == ''){
-        alert('Debe seleccionar un Proceso Electoral!!!')
+        alert('Debe seleccionar un Proceso Electoral !')
         return
     }
-    setGlobalProcess(procesoSelectedOption);
+
+    setProcessGlobal(procesoSelectedOption);
+    setLocalStorageItem('processGlobal', procesoSelectedOption);
     router.push('/');
   }
 
@@ -103,7 +106,9 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({
                     {options.map( (item,index)=> <option value={item.code} key={index}>{item.name}</option> )}
                 </select>
             </div>
-            <Button style={{height:'50px', color:'white', backgroundColor:'#0874cc', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => onGotoList()}>Buscar</Button>
+            <Button style={{height:'30px', width:'50px', color:'white', cursor:'pointer',fontSize:'1rem'}} onClick={() => onGotoList()}>
+                <img src='assets/images/buscar.svg'/>
+            </Button>
         </div>
       </Card>
     </>
