@@ -155,6 +155,12 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     history.pushState(newDatos, "", page);
   };
 
+  const DescargarDocumentos = async (props: any) => {
+    const { estado, ...res } = props.item;
+    const newDatos = { item: { ...res } };
+    await api.listpas.downloadDocuments(newDatos.item.numero)
+  };
+
   //FilePicker
   const [openFileSelector, { filesContent, plainFiles, loading, clear }] = useFilePicker({
     accept: ['.xlsx', '.xls'],
@@ -251,6 +257,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
           </Button>
           <Button
             style={{height:'30px', width:'50px', color:'white', cursor:'pointer',fontSize:'1rem'}}
+            onClick={() => DescargarDocumentos({item})}
           >
             <img src='assets/images/descargar.svg'/>
           </Button>

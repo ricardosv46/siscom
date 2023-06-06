@@ -168,7 +168,6 @@ const api = {
                   error: response.data[i].ERROR
                 })
               }
-
               const ws = utils.book_new()
               utils.sheet_add_aoa(ws, [headers])
               utils.sheet_add_json(ws, dataExcel, { origin: 'A2', skipHeader: true })
@@ -177,7 +176,6 @@ const api = {
               utils.book_append_sheet(wb, dataExcel)
               writeFile(wb, `${filename}`)
             }
-
           } else {
             console.log("ssssss");
           }
@@ -187,8 +185,7 @@ const api = {
         
         return {data: []}
       }
-    },
-     
+    },     
     downloadExcelInformation: async (payload: any) => {
       const tok =  GetTokenAuthService();
       if (tok) {
@@ -197,14 +194,29 @@ const api = {
         },{responseType: "blob",});
         if(status === 200) {
           const resp = data
-         var blob = new Blob([resp], {
-          type: headers["content-type"],
-        });
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = `report_${new Date().getTime()}.xlsx`;
-        link.click();
-          
+          var blob = new Blob([resp], {
+            type: headers["content-type"],
+          });
+          const link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          link.download = `report_${new Date().getTime()}.xlsx`;
+          link.click();          
+        }
+      }
+    },
+    downloadDocuments: async (payload: any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const { headers,  status, data } = await apiService.get(`/processes/${payload}/documents/download/`, {});
+        if(status === 200) {
+          const resp = data
+          var blob = new Blob([resp], {
+            type: headers["content-type"],
+          });
+          const link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          link.download = `report_${new Date().getTime()}.xlsx`;
+          link.click();          
         }
       }
     }
