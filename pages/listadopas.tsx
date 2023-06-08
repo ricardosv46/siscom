@@ -529,26 +529,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
               <div style={{display: 'flex', alignItems: 'center'}}>
                 {(process !== null) && (<Button style={{height:'50px', color:'white', backgroundColor:'#0874cc', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => DescargarExcel()}>Detalle</Button>)}
                 {(process === null) && (<Button style={{height:'50px', color:'white', backgroundColor:'#0874cc', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => alert('No hay datos para descargar')}>Detalle</Button>)}
-=======
-                <Button style={{display:'flex', alignItems:'center',
-                 justifyContent:'center', padding:'8px 8px',
-                 backgroundColor:'#083474', border:'none',
-                 color:'white', marginRight: '10px', cursor:'pointer'}} 
-                 onClick={() => ExportExcel(inputValue ? filterData : process)}>
-                  <img src='assets/images/reporte_pas.svg' style={{width: '24px', height: '24px', marginRight: '8px'}}/>
-                  <span style={{fontSize: '16px'}}>Reporte PAS</span>
-                  </Button>
-              </div>
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                <Button style={{display:'flex', alignItems:'center',
-                 justifyContent:'center', padding:'8px 8px',
-                 backgroundColor:'#0874cc', border:'none',
-                 color:'white', marginRight: '10px', cursor:'pointer'}} 
-                 onClick={() => DescargarExcel()}>
-                  <img src='assets/images/icono_detalle.svg' style={{width: '24px', height: '24px', marginRight: '8px'}}/>
-                  <span style={{fontSize: '16px'}}>Detalle</span>
-                  </Button>
-
               </div>
             </div>
         </div>
