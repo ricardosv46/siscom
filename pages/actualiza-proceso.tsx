@@ -108,11 +108,17 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
     formData.append('fecha_fin', newFormatFechaFin);
 
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/${id}/tracking/create/`, formData);
-      console.log(response.data);
-      limpiarDatos()
-      alert('El registro se procesó correctamente!!!')
-      router.push('./listadopas')
+      const token = localStorage.getItem("token");
+      if (token) {
+        //config.headers['x-access-tokens'] = token;
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/${id}/tracking/create/`, formData, {headers: {'x-access-tokens': token}});
+        console.log(response.data);
+        limpiarDatos()
+        alert('El registro se procesó correctamente!!!')
+        router.push('./listadopas')
+      } else {
+        router.push("/auth");
+      }
     } catch (error) {
       console.log(error);
       //alert('Registro incorrecto!!!')
@@ -266,7 +272,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
         <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }}/>
         <div style={{display:'flex', gap:'50px'}}>
           <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} id="submit" type="submit">Actualizar</button>
-          {/* <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} type="submit" id="goToBack" onClick={()=> onGotoBack('./listadopas')} >Regresar</button> */}
+          <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} id="goToBack" type="button" onClick={()=> onGotoBack('./listadopas')} >Regresar</button>
         </div>
 
         {/* s{showAlert && (<div style={{color:'#fff', backgroundColor:'#f0ad4e', borderColor: '#eea236', borderRadius:'5px', marginTop:'10px', padding:'10px'}} role="alert">El registro del proceso se ha enviado correctamente.</div>)} */}
