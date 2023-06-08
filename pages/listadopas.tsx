@@ -527,8 +527,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
                 {(process === null) && (<Button style={{height:'50px', color:'white', backgroundColor:'#083474', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => alert('No hay datos para descargar')}>Reporte PAS</Button>)}
               </div>
               <div style={{display: 'flex', alignItems: 'center'}}>
-                {(process !== null) && (<Button style={{height:'50px', color:'white', backgroundColor:'#0874cc', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => DescargarExcel()}>Detalle</Button>)}
-                {(process === null) && (<Button style={{height:'50px', color:'white', backgroundColor:'#0874cc', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => alert('No hay datos para descargar')}>Detalle</Button>)}
+                <Button style={{height:'50px', color:'white', backgroundColor:'#0874cc', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => DescargarExcel()}>Detalle</Button>
               </div>
             </div>
         </div>
