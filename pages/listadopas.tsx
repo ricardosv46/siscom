@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Button, Space, Table, DatePicker, ConfigProvider, Pagination, Modal } from "antd";
+import { Button, Space, Table, DatePicker, ConfigProvider, Pagination } from "antd";
 import React, { ChangeEvent, ReactElement, useEffect, useRef, useState } from "react";
 import { LayoutFirst } from "@components/common";
 import { NextPageWithLayout } from "pages/_app";
@@ -10,12 +10,14 @@ import { useUI } from "@components/ui/context";
 import Input from "antd/lib/input/Input";
 import { useRouter } from "next/router";
 import useAuthStore from "store/auth/auth";
+import { cleanTextStringAndFormat } from "utils/helpers";
 import { ExportExcel } from './ExportExcel'
 import moment from 'moment';
 import 'moment/locale/es';
 import locale from 'antd/lib/date-picker/locale/es_ES';
 import { useFilePicker } from 'use-file-picker';
-import { getLocalStorageItem } from './globals';
+import { match } from "assert";
+import axios from "axios";
 
 moment.locale('es');
 const { RangePicker } = DatePicker;
@@ -74,13 +76,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   const [isCheckedCandidato, setIsCheckedCandidato] = useState(false);
   const [operationSelectedOption, setOperationSelectedOption] = useState("");
   const [isCheckedOP, setIsCheckedOP] = useState(false);
-  const [processGlobal, setProcessGlobal] = useState('');
-  let savedProcess = ''
-  const [openAnexos, setOpenAnexos] = useState(false);
-  const [openTracking, setOpenTracking] = useState(false);
 
-  const processApi = async (savedProcess: any, label: any) => {
-    const { processes } = await api.listpas.getProcesses(savedProcess, label);
+  const processApi = async (label: any) => {
+    const { processes } = await api.listpas.getProcesses(label);
 
     const statusImg: any = {
       less_3_months: "less_3_months",
@@ -145,7 +143,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
 
   const loadExcelApi = async (excelFile: any) => {
     const result = await api.listpas.loadExcelInformation(excelFile);
-    processApi(savedProcess, "all");
+    processApi("all");
   };
 
   const onGoDetail = (page: string, props: any) => {
@@ -155,27 +153,16 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     history.pushState(newDatos, "", page);
   };
 
-  const DescargarDocumentos = async (props: any) => {
-    const { estado, ...res } = props.item;
-    const newDatos = { item: { ...res } };
-    await api.listpas.downloadDocuments(newDatos.item.numero)
-  };
-
   //FilePicker
   const [openFileSelector, { filesContent, plainFiles, loading, clear }] = useFilePicker({
     accept: ['.xlsx', '.xls'],
   });
 
   useEffect(() => {
-    savedProcess = getLocalStorageItem('processGlobal');
-    if(!savedProcess){
-      alert('Primero debe seleccionar un Proceso Electoral !')
-      router.push('./procesos')
-    }
     setIsCheckedTodos(true)
     const labelIndex = router.query;
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado
-    processApi(savedProcess, label);
+    processApi(label);
   }, []);
 
   const columns = [
@@ -242,37 +229,18 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
         <Space>
           <Button
             hidden={item.btnDisabled}
-            /*{icon={<EditOutlined />}}*/
-            style={{height:'40px', width:'60px', color:'white', cursor:'pointer',fontSize:'1rem'}}
+            type="dashed"
+            icon={<EditOutlined />}
             onClick={() => onGoDetail("/actualiza-proceso", { item })}
           >
-            <img src='assets/images/editar.svg'/>
+            Editar
           </Button>
           <Button
-            /*{icon={<SearchOutlined />}}*/
-            style={{height:'30px', width:'50px', color:'white', cursor:'pointer',fontSize:'1rem'}}
+            type="dashed"
+            icon={<SearchOutlined />}
             onClick={() => onGoDetail("/detallepas", { item })}
           >
-            <img src='assets/images/buscar.svg'/>
-          </Button>
-          <Button
-            style={{height:'30px', width:'50px', color:'white', cursor:'pointer',fontSize:'1rem'}}
-            onClick={() => DescargarDocumentos({item})}
-          >
-            <img src='assets/images/descargar.svg'/>
-          </Button>
-          <Button
-            style={{height:'30px', width:'50px', color:'white', cursor:'pointer',fontSize:'1rem'}}
-            onClick={() => setOpenAnexos(true)}
-          >
-            
-            <img src='assets/images/anexos.svg'/>
-          </Button>
-          <Button
-            style={{height:'30px', width:'50px', color:'white', cursor:'pointer',fontSize:'1rem'}}
-            onClick={() => setOpenTracking(true)}
-          >
-            <img src='assets/images/hitos.svg'/>
+            Detalle
           </Button>
         </Space>
       ),
@@ -280,6 +248,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   ];
 
   const onSearch = (search: any = "") => {
+    console.log(isCheckedTodos)
+    console.log(isCheckedCandidato)
+    console.log(isCheckedOP)
     if (search.length > 0) {
       if (isCheckedOP) {
         filterData = memory?.filter((item: {
@@ -376,7 +347,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     const labelIndex = router.query;
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado
     if (start_at === "" || end_at === "") {
-      processApi(savedProcess, label);
+      processApi(label);
     } else {
       processApiByDate(label, start_at, end_at);
     }
@@ -384,6 +355,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
 
   function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
     setOperationSelectedOption(event.target.value);
+    console.log(operationSelectedOption)
   }
 
   async function loadFile() {
@@ -511,83 +483,22 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
           </div>
             <div style={{ display: 'flex'}}>
               <div style={{display: 'flex', alignItems: 'center'}}>
-                {<Button style={{display:'flex', alignItems:'center',
-                 justifyContent:'center', padding:'8px 8px',
-                 backgroundColor:'#78bc44', border:'none',
-                 color:'white', marginRight: '10px', cursor:'pointer'}} 
-                 onClick={() => loadFile()}>
-                <img src='assets/images/cargar.svg' style={{width: '24px', height: '24px', marginRight: '8px'}}/>
-                <span style={{fontSize: '16px'}}>Cargar Información</span>
-                </Button>}
+                {<Button style={{height:'50px', color:'white', backgroundColor:'#78bc44', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => loadFile()}>Cargar Información</Button>}
                 {filesContent.length == 1 && processFile(plainFiles[0])}
               </div>
               <div style={{display: 'flex', alignItems: 'center'}}>
-
                 {(process !== null) && (<Button style={{height:'50px', color:'white', backgroundColor:'#083474', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => ExportExcel(inputValue ? filterData : process)}>Reporte PAS</Button>)}
                 {(process === null) && (<Button style={{height:'50px', color:'white', backgroundColor:'#083474', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => alert('No hay datos para descargar')}>Reporte PAS</Button>)}
               </div>
               <div style={{display: 'flex', alignItems: 'center'}}>
-                <Button style={{height:'50px', color:'white', backgroundColor:'#0874cc', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => DescargarExcel()}>Detalle</Button>
+                {(process !== null) && (<Button style={{height:'50px', color:'white', backgroundColor:'#0874cc', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => DescargarExcel()}>Detalle</Button>)}
+                {(process === null) && (<Button style={{height:'50px', color:'white', backgroundColor:'#0874cc', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => alert('No hay datos para descargar')}>Detalle</Button>)}
               </div>
             </div>
         </div>
         <div style={{overflowX: 'auto'}}>
           <Table style={{width: '100%', borderCollapse: 'collapse'}}  columns={columns} dataSource={process} />
         </div>
-        <Modal
-          title="Documentos Anexos"
-          centered
-          open={openAnexos}
-          onOk={() => setOpenAnexos(false)}
-          onCancel={() => setOpenAnexos(false)}
-          okButtonProps={{ style: { backgroundColor:'#0874cc' }, className: 'ant-btn-primary' }}
-          width={1000}
-        >
-          <div>
-            <span style={{color:'#083474', fontSize: '16px'}}>Detalles</span>
-          </div>
-          <div>
-            <span style={{color:'#083474', fontSize: '16px'}}>Documentos anexos</span>
-          </div>
-          {/* <div>
-            <Button
-              style={{display:'flex', alignItems:'center',
-              justifyContent:'center', width: '180px', height: '40px',
-              backgroundColor:'#083474', border:'none',
-              color:'white', marginRight: '10px', cursor:'pointer'}}
-            >
-              <img src='assets/images/cancelar.svg' style={{height: '24px', marginRight: '8px'}}/>
-              <span style={{fontSize: '16px'}}>CERRAR</span>
-            </Button>
-          </div> */}
-        </Modal>
-        <Modal
-          title="Seguimiento de documento"
-          centered
-          open={openTracking}
-          onOk={() => setOpenTracking(false)}
-          onCancel={() => setOpenTracking(false)}
-          okButtonProps={{ style: { backgroundColor:'#0874cc' }, className: 'ant-btn-primary' }}
-          width={1000}
-        >
-          <div>
-            <span style={{color:'#083474', fontSize: '16px'}}>Remitente</span>
-          </div>
-          <div>
-            <span style={{color:'#083474', fontSize: '16px'}}>Destinatario</span>
-          </div>
-          {/* <div>
-            <Button
-              style={{display:'flex', alignItems:'center',
-              justifyContent:'center', width: '180px', height: '40px',
-              backgroundColor:'#083474', border:'none',
-              color:'white', marginRight: '10px', cursor:'pointer'}}
-            >
-              <img src='assets/images/cancelar.svg' style={{height: '24px', marginRight: '8px'}}/>
-              <span style={{fontSize: '16px'}}>CERRAR</span>
-            </Button>
-          </div> */}
-        </Modal>
       </Card>
     </>
   );
