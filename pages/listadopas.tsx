@@ -522,6 +522,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
                 {filesContent.length == 1 && processFile(plainFiles[0])}
               </div>
               <div style={{display: 'flex', alignItems: 'center'}}>
+
+                {(process !== null) && (<Button style={{height:'50px', color:'white', backgroundColor:'#083474', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => ExportExcel(inputValue ? filterData : process)}>Reporte PAS</Button>)}
+                {(process === null) && (<Button style={{height:'50px', color:'white', backgroundColor:'#083474', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => alert('No hay datos para descargar')}>Reporte PAS</Button>)}
+              </div>
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                {(process !== null) && (<Button style={{height:'50px', color:'white', backgroundColor:'#0874cc', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => DescargarExcel()}>Detalle</Button>)}
+                {(process === null) && (<Button style={{height:'50px', color:'white', backgroundColor:'#0874cc', cursor:'pointer',fontSize:'1rem', marginRight: '5px'}} onClick={() => alert('No hay datos para descargar')}>Detalle</Button>)}
+=======
                 <Button style={{display:'flex', alignItems:'center',
                  justifyContent:'center', padding:'8px 8px',
                  backgroundColor:'#083474', border:'none',
@@ -540,6 +548,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
                   <img src='assets/images/icono_detalle.svg' style={{width: '24px', height: '24px', marginRight: '8px'}}/>
                   <span style={{fontSize: '16px'}}>Detalle</span>
                   </Button>
+
               </div>
             </div>
         </div>

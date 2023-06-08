@@ -148,7 +148,8 @@ const api = {
         formData.append('xlsx_file', excelFile);
         formData.append('user_id', user.id);
         try {
-          const resultApi = await axios.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/bulk/tracking/create/`, formData);
+          const token = localStorage.getItem("token");
+          const resultApi = await axios.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/bulk/tracking/create/`, formData, {headers: {'x-access-tokens': token}});
           //const resultApi = await apiService.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/bulk/tracking/create`, formData);
           const response = resultApi.data;
 
