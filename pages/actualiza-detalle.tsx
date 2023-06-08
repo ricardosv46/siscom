@@ -34,12 +34,17 @@ let id = ''
 let resolution_number = ''
 let tracking_action = ''
 let start_at = ''
+let start_atTMP = ''
 let current_responsible = ''
 let new_responsible = ''
 let related_document = ''
 let document = ''
 let comment = ''
 let created_at   = ''
+
+let año = ''
+let mes = ''
+let dia = ''
 
 const Actualizaproceso: NextPageWithLayout= ({}) => {
   const [item, setItem] = useState<IPropsItem>();
@@ -70,18 +75,23 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
         current_responsible = itemprop?.current_responsible 
         new_responsible = itemprop?.new_responsible 
         related_document = itemprop?.related_document 
-        document = itemprop?.document 
-        comment = itemprop?.comment 
+        document = itemprop?.document === null ? '' : itemprop?.document
+        comment = itemprop?.comment === null ? '' : itemprop?.comment
         created_at = itemprop?.created_at 
         
-        let año = start_at.substring(13, 8)
-        let mes = start_at.substring(4, 7)
-        let dia = start_at.substring(1, 3)
-        
-        if (mes === "Ene") {mes = "01"} else if (mes === "Feb") {mes = "02"} else if (mes === "Mar") {mes = "03"}
-        else if (mes === "Abr") {mes = "04"} else if (mes === "May") {mes = "05"} else if (mes === "Jun") {mes = "06"}
-        else if (mes === "Jul") {mes = "07"} else if (mes === "Ago") {mes = "08"} else if (mes === "Set" || mes === "Sep") {mes = "09"}
-        else if (mes === "Oct") {mes = "10"} else if (mes === "Nov") {mes = "11"} else if (mes === "Dic") {mes = "12"}
+        if (start_at){
+          año = start_at.substring(13, 8)
+          mes = start_at.substring(4, 7)
+          dia = start_at.substring(1, 3)
+          
+          if (mes === "Ene") {mes = "01"} else if (mes === "Feb") {mes = "02"} else if (mes === "Mar") {mes = "03"}
+          else if (mes === "Abr") {mes = "04"} else if (mes === "May") {mes = "05"} else if (mes === "Jun") {mes = "06"}
+          else if (mes === "Jul") {mes = "07"} else if (mes === "Ago") {mes = "08"} else if (mes === "Set" || mes === "Sep") {mes = "09"}
+          else if (mes === "Oct") {mes = "10"} else if (mes === "Nov") {mes = "11"} else if (mes === "Dic") {mes = "12"}
+        }
+
+        start_atTMP = año + '-' + mes + '-' + dia + 'T00:00'
+        start_at = año + '-' + mes + '-' + dia + ' 00:00'
 
         setOperationSelectedOption(tracking_action); 
         setFechaInicioInputValue(año + '-' + mes + '-' + dia + ' 00:00')   
@@ -111,6 +121,15 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
 
     if (fechaInicioInputValue === ''){
         alert('Por favor, ingrese la fecha')
+        return 
+    }
+    
+    if ( operationSelectedOption === tracking_action && 
+        (fechaInicioInputValue === start_atTMP || fechaInicioInputValue === start_at) &&
+        gerenciaSelectedOption === current_responsible && gerenciaAsignadaSelectedOption === new_responsible &&
+        tipoDocumentoSelectedOption === related_document && documentoRelacionadoinputValue === document && 
+        comentarioTextareaValue === comment ){
+        alert('No se ha modificado la información')
         return 
     }
 
@@ -209,7 +228,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
             max={new Date().toISOString().slice(0, 16)} value={fechaInicioInputValue} 
             onChange={handleFechaInicioDateTimeChange} id="fecha_inicio" 
             className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} />
-          </div>
+          </div>{fechaInicioInputValue}
         </div>
 
         <div className="w-1/2 py-5">

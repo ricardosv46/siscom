@@ -8,5 +8,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/procesos", '/', '/listadopas', '/nuevoacceso', '/listadoacceso'],
+  matcher: ["/", '/listadopas', '/nuevoacceso', '/listadoacceso'],
 };
