@@ -9,8 +9,9 @@ Chart.register(ArcElement);
 import { Chart } from 'chart.js/auto'
 import React, { useRef, useEffect } from "react";
 import api from '@framework/api';
-import { ChartProps, Doughnut } from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 import { useRouter } from 'next/router';
+import { getLocalStorageItem } from './globals';
 
 interface DoughnutChartOptions {
   onClick?: (event: MouseEvent, activeElements: any[]) => void;
@@ -20,8 +21,10 @@ const Home: NextPageWithLayout = () => {
   const [processGrouped,setProcessGrouped] = useState<any>([])
   const [processSummary,setProcessSummary] = useState<any>([])
   const [processSummaryStats,setProcessSummaryStats] = useState<any>([])
+  let savedProcess = ''
 
-  const processGroupedApi = async() => {
+
+  const processGroupedApi = async(savedProcess:any) => {
     const {data} = await api.home.getProcessesGrouped()
     const newData = data?.map((item: { estado: string; })=>({...item, estado: 
           item.estado === 'less_3_months'?<img src='assets/images/less_3_months.png'/>:
@@ -34,7 +37,7 @@ const Home: NextPageWithLayout = () => {
     setProcessGrouped(newData) 
   }
 
-  const processSummaryApi = async() => {
+  const processSummaryApi = async(savedProcess:any) => {
     const dataStats = {}
     const {data} = await api.home.getProcessesSummary();
     const total = Object.values(data).reduce((a, b) => a+b, 0);
@@ -64,8 +67,13 @@ const Home: NextPageWithLayout = () => {
   };
 
   useEffect(() => {
-    processGroupedApi();
-    processSummaryApi();
+    savedProcess = getLocalStorageItem('processGlobal')
+    if(!savedProcess){
+      alert('Primero debe seleccionar un Proceso Electoral !')
+      router.push('./procesos')
+    }
+    processGroupedApi(savedProcess);
+    processSummaryApi(savedProcess);
   }, []);
 
   const router = useRouter();

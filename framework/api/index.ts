@@ -92,12 +92,12 @@ const api = {
       }
     },
 
-    getProcesses: async (label: any) => {
+    getProcesses: async (globalProcess:any, label: any) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
           data: { data, message, success },
-        }: IResponseProcesses = await apiService.get(`${label}/processes/`);
+        }: IResponseProcesses = await apiService.get(`${label}/processes/?electoral_process=${globalProcess}`);
         if (data === undefined || success === undefined || message === undefined) {
           return { processes: [] };
         } else {
@@ -169,7 +169,6 @@ const api = {
                   error: response.data[i].ERROR
                 })
               }
-
               const ws = utils.book_new()
               utils.sheet_add_aoa(ws, [headers])
               utils.sheet_add_json(ws, dataExcel, { origin: 'A2', skipHeader: true })
@@ -178,7 +177,6 @@ const api = {
               utils.book_append_sheet(wb, dataExcel)
               writeFile(wb, `${filename}`)
             }
-
           } else {
             console.log("ssssss");
           }
@@ -188,8 +186,7 @@ const api = {
         
         return {data: []}
       }
-    },
-     
+    },     
     downloadExcelInformation: async (payload: any) => {
       const tok =  GetTokenAuthService();
       if (tok) {
@@ -198,14 +195,29 @@ const api = {
         },{responseType: "blob",});
         if(status === 200) {
           const resp = data
-         var blob = new Blob([resp], {
-          type: headers["content-type"],
-        });
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = `report_${new Date().getTime()}.xlsx`;
-        link.click();
-          
+          var blob = new Blob([resp], {
+            type: headers["content-type"],
+          });
+          const link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          link.download = `report_${new Date().getTime()}.xlsx`;
+          link.click();          
+        }
+      }
+    },
+    downloadDocuments: async (payload: any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const { headers,  status, data } = await apiService.get(`/processes/${payload}/documents/download/`, {});
+        if(status === 200) {
+          const resp = data
+          var blob = new Blob([resp], {
+            type: headers["content-type"],
+          });
+          const link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          link.download = `report_${new Date().getTime()}.xlsx`;
+          link.click();          
         }
       }
     }
@@ -247,6 +259,30 @@ const api = {
       }
     },
   },
+  processes: {
+    getProcesses: async (year:any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { message },
+        }: any = await apiService.get(`electoral-process/?year=${year}`);
+        return { data: message };
+      } else {
+        return { data: [] };
+      }
+    },
+    getYear: async () => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { message },
+        }: any = await apiService.get(`years/`);
+        return { data: message };
+      } else {
+        return { data: [] };
+      }
+    },
+  }
 };
 
 export default api;

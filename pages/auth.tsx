@@ -9,7 +9,8 @@ import { serialize } from "cookie";
 import { NextApiResponse, NextApiHandler } from "next";
 import useAuthStore from "store/auth/auth";
 import api from "@framework/api";
-import { GetAuthService, GetTokenAuthService } from "services/auth/ServiceAuth";
+import { GetAuthService } from "services/auth/ServiceAuth";
+import { setLocalStorageItem } from '../pages/globals';
 
 interface resAuth {
   success: boolean;
@@ -19,7 +20,6 @@ const Home = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const { storeUser } = useAuthStore();
-
   const onFinish = async (body: auth) => {
    
     setLoading(true);
@@ -34,7 +34,8 @@ const Home = () => {
 
       if (success) {
          storeUser(data?.user, data.token);
-         router.push("/");
+         setLocalStorageItem('processGlobal', '');
+         router.push("procesos");
          `Bienvenido ${username}`
       }
      } catch (error) {
@@ -57,7 +58,7 @@ const Home = () => {
   useEffect(()=>{
       const { user } = GetAuthService()
       if(user?.id){
-         router.push("/");
+         router.push("procesos");
       }
    },[ ])
 
