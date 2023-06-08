@@ -1,6 +1,7 @@
 import { ComponentType, createElement, FC, JSXElementConstructor, ReactElement, ReactFragment, ReactNode, startTransition, Suspense, useEffect, useState } from "react";
 import { Layout, Menu, notification } from 'antd';
 import menu from '@framework/pas/menu.json' 
+import menu_initial from '@framework/pas/menu_initial.json' 
 import type { MenuProps } from 'antd';
 import { responseLogin } from "@framework/types"
 import {  } from "../../../pages/api/auth/login";
@@ -22,6 +23,7 @@ import { useUI } from "@components/ui/context";
 import { NextApiRequest } from "next";
 import { apiService } from "services/axios/configAxios";
 import useAuthStore from "store/auth/auth";
+import useMenuStore from "store/menu/menu";
 
  
 const { Header, Content, Footer, Sider } = Layout;
@@ -52,8 +54,10 @@ const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
   const [api, contextHolder] = notification.useNotification();
   const { storeUser, removeSession, user } = useAuthStore();
   const profile = user.profile.toUpperCase();
-  
-  const items:any  = menu.map((item, _) => {
+  const { IdSelectedProcess, getStateSelectedProcess, changeStateSelectedProcess  } = useMenuStore()
+
+  const menuOptions = IdSelectedProcess ? menu : menu_initial
+  const items:any  = menuOptions.map((item, _) => {
    if(profile == 'ADMIN'){
       return item.role == 'admin' &&   {
         key: item.key,
@@ -66,20 +70,7 @@ const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
         icon: createElement(icons[item.icon]),
         label: `${item.label}`,
       }
-    }  /*else if (profile != 'ADMIN' && processGlobal){
-      return item.role == 'user' && 
-      (item.id == 1 || item.id == 2 || item.id == 3) &&  {
-        key: item.key,
-        icon: createElement(icons[item.icon]),
-        label: `${item.label}`,
-      } 
-    }else if (profile != 'ADMIN' && !processGlobal){
-      return item.role == 'user' && item.id == 1 &&  {
-        key: item.key,
-        icon: createElement(icons[item.icon]),
-        label: `${item.label}`,
-      }
-    } */ 
+    }  
   } );
   
   const handleMenu = ({ key, }:{key:string}) =>{
@@ -97,21 +88,28 @@ const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
     });
   }; 
 
+  const 
+  handleLogout = async () =>{
+    try {
+      changeStateSelectedProcess('')
+      removeSession()
+      router.push("/auth");
+    } catch (error) {
+      console.error(error);
+    } 
+  }
+
+  useEffect(()=>{
+    getStateSelectedProcess()
+  },[])
+
   useEffect(()=>{
     if(displayNotification){
       infoNotification()
     }
   },[displayNotification])
 
-  const handleLogout = async () =>{
-    try {
-      removeSession()
-      setLocalStorageItem('processGlobal', '');
-      router.push("/auth");
-    } catch (error) {
-      console.error(error);
-    } 
-  }
+  
 
   return (
     <>
@@ -139,7 +137,7 @@ const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
             <div className="header-content">
               <div>
                 <h1 style={{ fontSize: 15, color: "#2596be"}}>
-                  Monitoreo de Procedimientos Administrativos Sancionadores
+                  Monitoreo de Procedimientos Administrativos Sancionadores {IdSelectedProcess}
                 </h1>
               </div>
               <div className="user-header">

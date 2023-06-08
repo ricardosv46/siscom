@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import 'moment/locale/es';
 import { getLocalStorageItem, setLocalStorageItem } from './globals';
 import { Button } from "antd";
+import useMenuStore from "store/menu/menu";
 
 interface ProcesosProps {
   pageNum: number;
@@ -42,7 +43,7 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({
   const [options, setOptions] = useState([]);
   const [optionsYear, setOptionsYear] = useState([]);
   const [processGlobal, setProcessGlobal] = useState('');
-
+  const { changeStateSelectedProcess  } = useMenuStore()
   const listProcessApi = async(año:any) => {
     const {data} = await api.processes.getProcesses(año)
     setOptions(data) 
@@ -66,9 +67,10 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({
         alert('Debe seleccionar un Proceso Electoral !')
         return
     }
-
-    setProcessGlobal(procesoSelectedOption);
-    setLocalStorageItem('processGlobal', procesoSelectedOption);
+       
+    //setProcessGlobal(procesoSelectedOption);
+    //setLocalStorageItem('processGlobal', procesoSelectedOption);
+    changeStateSelectedProcess(procesoSelectedOption)
     router.push('/');
   }
 

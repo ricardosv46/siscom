@@ -16,6 +16,7 @@ import 'moment/locale/es';
 import locale from 'antd/lib/date-picker/locale/es_ES';
 import { useFilePicker } from 'use-file-picker';
 import { getLocalStorageItem } from './globals';
+import useMenuStore from "store/menu/menu";
 
 moment.locale('es');
 const { RangePicker } = DatePicker;
@@ -75,12 +76,12 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   const [operationSelectedOption, setOperationSelectedOption] = useState("");
   const [isCheckedOP, setIsCheckedOP] = useState(false);
   const [processGlobal, setProcessGlobal] = useState('');
-  let savedProcess = ''
   const [openAnexos, setOpenAnexos] = useState(false);
   const [openTracking, setOpenTracking] = useState(false);
+  const { IdSelectedProcess  } = useMenuStore()
 
-  const processApi = async (savedProcess: any, label: any) => {
-    const { processes } = await api.listpas.getProcesses(savedProcess, label);
+  const processApi = async (IdSelectedProcess: any, label: any) => {
+    const { processes } = await api.listpas.getProcesses(IdSelectedProcess, label);
 
     const statusImg: any = {
       less_3_months: "less_3_months",
@@ -145,7 +146,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
 
   const loadExcelApi = async (excelFile: any) => {
     const result = await api.listpas.loadExcelInformation(excelFile);
-    processApi(savedProcess, "all");
+    processApi(IdSelectedProcess, "all");
   };
 
   const onGoDetail = (page: string, props: any) => {
@@ -167,15 +168,16 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   });
 
   useEffect(() => {
-    savedProcess = getLocalStorageItem('processGlobal');
-    if(!savedProcess){
+   
+    if(!IdSelectedProcess){
       alert('Primero debe seleccionar un Proceso Electoral !')
       router.push('./procesos')
     }
     setIsCheckedTodos(true)
     const labelIndex = router.query;
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado
-    processApi(savedProcess, label);
+    processApi(IdSelectedProcess, label);
+
   }, []);
 
   const columns = [
@@ -376,7 +378,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     const labelIndex = router.query;
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado
     if (start_at === "" || end_at === "") {
-      processApi(savedProcess, label);
+      processApi(IdSelectedProcess, label);
     } else {
       processApiByDate(label, start_at, end_at);
     }

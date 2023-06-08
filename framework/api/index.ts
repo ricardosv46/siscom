@@ -206,17 +206,21 @@ const api = {
     },
     downloadDocuments: async (payload: any) => {
       const tok =  GetTokenAuthService();
-      if (tok) {
-        const { headers,  status, data } = await apiService.get(`/processes/${payload}/documents/download/`, {});
-        if(status === 200) {
-          const resp = data
-          var blob = new Blob([resp], {
-            type: headers["content-type"],
+      if (tok) {        
+        try {
+          const response = await apiService.get(`processes/${payload}/documents/download/`,  
+          {
+            responseType: 'blob',
           });
-          const link = document.createElement("a");
-          link.href = window.URL.createObjectURL(blob);
-          link.download = `report_${new Date().getTime()}.xlsx`;
-          link.click();          
+      
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', 'archivo.zip');
+          document.body.appendChild(link);
+          link.click();
+        } catch (error) {
+          console.error('Error al descargar el archivo ZIP', error);
         }
       }
     }

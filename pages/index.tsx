@@ -67,11 +67,11 @@ const Home: NextPageWithLayout = () => {
   };
 
   useEffect(() => {
-    savedProcess = getLocalStorageItem('processGlobal')
+    /*savedProcess = getLocalStorageItem('processGlobal')
     if(!savedProcess){
       alert('Primero debe seleccionar un Proceso Electoral !')
       router.push('./procesos')
-    }
+    }*/
     processGroupedApi(savedProcess);
     processSummaryApi(savedProcess);
   }, []);
