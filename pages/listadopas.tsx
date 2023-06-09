@@ -40,6 +40,7 @@ interface IPropsItem {
   responsable: string | null;
   type: string | null;
   estado_proceso: string | null;
+  sgd: boolean;
 }
 
 const Listadopas: NextPageWithLayout<ListadopasProps> = ({
@@ -258,6 +259,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
             <img src='assets/images/buscar.svg'/>
           </Button>
           <Button
+            hidden={!item.sgd}
             style={{height:'30px', width:'50px', color:'white', cursor:'pointer',fontSize:'1rem'}}
             onClick={() => DescargarDocumentos({item})}
           >
