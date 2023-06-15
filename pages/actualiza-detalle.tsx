@@ -78,8 +78,17 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
         document = itemprop?.document === null ? '' : itemprop?.document
         comment = itemprop?.comment === null ? '' : itemprop?.comment
         created_at = itemprop?.created_at 
+
+        let año = start_at.substring(13, 8)
+        let mes = start_at.substring(4, 7)
+        let dia = start_at.substring(1, 3)
         
-        if (start_at){
+        if (mes === "Ene") {mes = "01"} else if (mes === "Feb") {mes = "02"} else if (mes === "Mar") {mes = "03"}
+        else if (mes === "Abr") {mes = "04"} else if (mes === "May") {mes = "05"} else if (mes === "Jun") {mes = "06"}
+        else if (mes === "Jul") {mes = "07"} else if (mes === "Ago") {mes = "08"} else if (mes === "Set" || mes === "Sep") {mes = "09"}
+        else if (mes === "Oct") {mes = "10"} else if (mes === "Nov") {mes = "11"} else if (mes === "Dic") {mes = "12"}
+        
+        /*if (start_at){
           año = start_at.substring(13, 8)
           mes = start_at.substring(4, 7)
           dia = start_at.substring(1, 3)
@@ -91,7 +100,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
         }
 
         start_atTMP = año + '-' + mes + '-' + dia + 'T00:00'
-        start_at = año + '-' + mes + '-' + dia + ' 00:00'
+        start_at = año + '-' + mes + '-' + dia + ' 00:00'*/
 
         setOperationSelectedOption(tracking_action); 
         setFechaInicioInputValue(año + '-' + mes + '-' + dia + ' 00:00')   
@@ -228,7 +237,8 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
             max={new Date().toISOString().slice(0, 16)} value={fechaInicioInputValue} 
             onChange={handleFechaInicioDateTimeChange} id="fecha_inicio" 
             className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} />
-          </div>{fechaInicioInputValue}
+          {/*</div>{fechaInicioInputValue}*/}
+          </div>
         </div>
 
         <div className="w-1/2 py-5">

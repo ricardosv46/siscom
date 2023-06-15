@@ -92,12 +92,14 @@ const api = {
       }
     },
 
-    getProcesses: async (label: any) => {
+    //getProcesses: async (label: any) => {
+    getProcesses: async (globalProcess:any, label: any) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
           data: { data, message, success },
-        }: IResponseProcesses = await apiService.get(`${label}/processes/`);
+        //}: IResponseProcesses = await apiService.get(`${label}/processes/`);
+      }: IResponseProcesses = await apiService.get(`${label}/processes/?electoral_process=${globalProcess}`);
         if (data === undefined || success === undefined || message === undefined) {
           return { processes: [] };
         } else {
@@ -260,6 +262,30 @@ const api = {
         const {
           data: { message },
         }: any = await apiService.get(`organizations/`);
+        return { data: message };
+      } else {
+        return { data: [] };
+      }
+    },
+  },
+  processes: {
+    getProcesses: async (year:any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { message },
+        }: any = await apiService.get(`electoral-process/?year=${year}`);
+        return { data: message };
+      } else {
+        return { data: [] };
+      }
+    },
+    getYear: async () => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { message },
+        }: any = await apiService.get(`years/`);
         return { data: message };
       } else {
         return { data: [] };
