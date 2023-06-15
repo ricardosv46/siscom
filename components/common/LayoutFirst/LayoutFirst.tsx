@@ -1,11 +1,10 @@
-import { ComponentType, createElement, FC, JSXElementConstructor, ReactElement, ReactFragment, ReactNode, startTransition, Suspense, useEffect, useState } from "react";
+import { ComponentType, createElement, FC, ReactNode, useEffect, useState } from "react";
 import { Layout, Menu, notification } from 'antd';
 import menu from '@framework/pas/menu.json' 
 import menu_initial from '@framework/pas/menu_initial.json' 
 import type { MenuProps } from 'antd';
 import { responseLogin } from "@framework/types"
 import {  } from "../../../pages/api/auth/login";
-import { setLocalStorageItem } from '../../../pages/globals';
 
 import {
   HomeOutlined,
@@ -24,6 +23,7 @@ import { NextApiRequest } from "next";
 import { apiService } from "services/axios/configAxios";
 import useAuthStore from "store/auth/auth";
 import useMenuStore from "store/menu/menu";
+import { RemoveSessionAuthService } from "services/auth/ServiceAuth";
 
  
 const { Header, Content, Footer, Sider } = Layout;
@@ -73,6 +73,8 @@ const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
     }  
   } );
   
+ 
+
   const handleMenu = ({ key, }:{key:string}) =>{
     router.push(key)
   }
@@ -86,17 +88,22 @@ const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
         closeNotification()
       }
     });
-  }; 
+  };
+  useEffect(()=>{
+    if(displayNotification){
+      infoNotification()
+    }
+  },[displayNotification])
 
-  const 
-  handleLogout = async () =>{
+  const handleLogout = async () =>{
     try {
       changeStateSelectedProcess('')
       removeSession()
       router.push("/auth");
     } catch (error) {
       console.error(error);
-    } 
+    }
+ 
   }
 
   useEffect(()=>{

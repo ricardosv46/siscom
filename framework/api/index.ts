@@ -92,12 +92,12 @@ const api = {
       }
     },
 
-    getProcesses: async (globalProcess:any, label: any) => {
+    getProcesses: async (label: any) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
           data: { data, message, success },
-        }: IResponseProcesses = await apiService.get(`${label}/processes/?electoral_process=${globalProcess}`);
+        }: IResponseProcesses = await apiService.get(`${label}/processes/`);
         if (data === undefined || success === undefined || message === undefined) {
           return { processes: [] };
         } else {
@@ -169,6 +169,7 @@ const api = {
                   error: response.data[i].ERROR
                 })
               }
+
               const ws = utils.book_new()
               utils.sheet_add_aoa(ws, [headers])
               utils.sheet_add_json(ws, dataExcel, { origin: 'A2', skipHeader: true })
@@ -177,6 +178,7 @@ const api = {
               utils.book_append_sheet(wb, dataExcel)
               writeFile(wb, `${filename}`)
             }
+
           } else {
             console.log("ssssss");
           }
@@ -186,7 +188,8 @@ const api = {
         
         return {data: []}
       }
-    },     
+    },
+     
     downloadExcelInformation: async (payload: any) => {
       const tok =  GetTokenAuthService();
       if (tok) {
@@ -263,30 +266,6 @@ const api = {
       }
     },
   },
-  processes: {
-    getProcesses: async (year:any) => {
-      const tok =  GetTokenAuthService();
-      if (tok) {
-        const {
-          data: { message },
-        }: any = await apiService.get(`electoral-process/?year=${year}`);
-        return { data: message };
-      } else {
-        return { data: [] };
-      }
-    },
-    getYear: async () => {
-      const tok =  GetTokenAuthService();
-      if (tok) {
-        const {
-          data: { message },
-        }: any = await apiService.get(`years/`);
-        return { data: message };
-      } else {
-        return { data: [] };
-      }
-    },
-  }
 };
 
 export default api;

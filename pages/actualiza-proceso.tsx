@@ -66,6 +66,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
   const [options, setOptions] = useState([]);
   const [tipoDocumentoSelectedOption, setTipoDocumentoSelectedOption] = useState("");
   const [gerenciaSelectedOption, setGerenciaSelectedOption] = useState("");
+  const [gerenciaInicialSelectedOption, setGerenciaInicialSelectedOption] = useState("");
   const [comentarioTextareaValue, setComentarioTextareaValue] = useState("");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -97,9 +98,15 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
     
     const formData = new FormData();
     formData.append('comment', comentarioTextareaValue);
-    formData.append('current_responsible', responsable_actual);
     formData.append('document', documentoRelacionadoinputValue);
     formData.append('new_responsible', gerenciaSelectedOption);
+    if(user.is_admin){
+      formData.append('current_responsible', gerenciaInicialSelectedOption);
+      formData.append('is_admin', "true");
+    } else {
+      formData.append('current_responsible', responsable_actual);
+      formData.append('is_admin', "false");
+    }
     formData.append('resolution_number', resolucion_gerencial);
     formData.append('start_at', newFormatFechaInicio);
     formData.append('type_document', tipoDocumentoSelectedOption);
@@ -145,6 +152,10 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
     setGerenciaSelectedOption(event.target.value);
   };
 
+  const handleGerenciaInicialSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setGerenciaInicialSelectedOption(event.target.value);
+  };
+
   const handleTipoDocumentoSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setTipoDocumentoSelectedOption(event.target.value);
   };
@@ -164,6 +175,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
     setFechaFinInputValue('');
     setTipoDocumentoSelectedOption('');
     setGerenciaSelectedOption('');
+    //setGerenciaInicialSelectedOption('');
     setComentarioTextareaValue('');
   }
   
@@ -194,7 +206,15 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="responsable_actual" className="text-gray-600">Responsable actual</label>
-            <label htmlFor="responsable_actual" className="text-gray-600">{responsable_actual}</label>
+            {(!user.is_admin) && <label htmlFor="responsable_actual" className="text-gray-600">{responsable_actual}</label>}
+            {(user.is_admin) && (<select className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} value={gerenciaInicialSelectedOption} onChange={handleGerenciaInicialSelectChange}>
+              <option value="">Seleccione Gerencia</option>
+              <option value="GAJ">Gerencia de Asesoría Jurídica</option>
+              <option value="SG">Secretaría General</option>
+              <option value="GSFP">Gerencia de Supervisión y Fondos Partidarios</option>
+              <option value="JN">Jefatura Nacional</option>              
+            </select>)}
+            
           </div>
         </div>
 
@@ -224,7 +244,6 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
             <label htmlFor="nuevo_responsable" className="text-gray-600">Designar nuevo responsable:</label>
             <select className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} value={gerenciaSelectedOption} onChange={handleGerenciaSelectChange}>
               <option value="">Seleccione Gerencia</option>
-              <option value="GITE">Gerencia de Informática y Tecnología Electoral</option>
               <option value="GAJ">Gerencia de Asesoría Jurídica</option>
               <option value="SG">Secretaría General</option>
               <option value="GSFP">Gerencia de Supervisión y Fondos Partidarios</option>
