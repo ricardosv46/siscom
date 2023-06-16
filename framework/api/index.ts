@@ -23,6 +23,7 @@ import {
   IResponseProcesses,
   IResponseProcessesDetail,
   IResponseProcessesResumen,
+  IResponseTracking,
 } from "@framework/types/processes.interface";
 import { GetTokenAuthService } from "services/auth/ServiceAuth";
 import { authService } from "services/axios/authConfigAxios";
@@ -229,7 +230,23 @@ const api = {
           console.error('Error al descargar el archivo ZIP', error);
         }
       }
-    }
+    },
+    getTracking: async (id:any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data, message, success },
+        }: IResponseTracking = await apiService.get(`processes/${id}/sgd-tracking/`);
+        if (data === undefined || success === undefined || message === undefined) {
+          return { tracking: [] };
+        } else {
+          return { tracking: data, message, success };
+        }
+        
+      } else {
+        return { tracking: [] };
+      }
+    },
   },
   access: {
     getAcesses: async () => {

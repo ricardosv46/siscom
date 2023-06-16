@@ -11,7 +11,6 @@ import React, { useRef, useEffect } from "react";
 import api from '@framework/api';
 import { ChartProps, Doughnut } from 'react-chartjs-2';
 import { useRouter } from 'next/router';
-import { getLocalStorageItem } from './globals';
 
 interface DoughnutChartOptions {
   onClick?: (event: MouseEvent, activeElements: any[]) => void;
@@ -68,15 +67,8 @@ const Home: NextPageWithLayout = () => {
   };
 
   useEffect(() => {
-    /*savedProcess = getLocalStorageItem('processGlobal')
-    if(!savedProcess){
-      alert('Primero debe seleccionar un Proceso Electoral !')
-      router.push('./procesos')
-    }*/
     processGroupedApi(savedProcess);
     processSummaryApi(savedProcess);
-    /*processGroupedApi();
-    processSummaryApi();*/
   }, []);
 
   const router = useRouter();

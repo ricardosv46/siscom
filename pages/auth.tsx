@@ -10,8 +10,6 @@ import { NextApiResponse, NextApiHandler } from "next";
 import useAuthStore from "store/auth/auth";
 import api from "@framework/api";
 import { GetAuthService, GetTokenAuthService } from "services/auth/ServiceAuth";
-import { setLocalStorageItem } from '../pages/globals';
-
 
 interface resAuth {
   success: boolean;
@@ -36,7 +34,6 @@ const Home = () => {
 
       if (success) {
          storeUser(data?.user, data.token);
-         setLocalStorageItem('processGlobal', '');
          router.push("procesos");
          //router.push("/");
          `Bienvenido ${username}`

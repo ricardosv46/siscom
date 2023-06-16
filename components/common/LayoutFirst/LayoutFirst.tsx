@@ -6,7 +6,6 @@ import menu_initial from '@framework/pas/menu_initial.json'
 import type { MenuProps } from 'antd';
 import { responseLogin } from "@framework/types"
 import {  } from "../../../pages/api/auth/login";
-import { setLocalStorageItem } from '../../../pages/globals';
 
 import {
   HomeOutlined,

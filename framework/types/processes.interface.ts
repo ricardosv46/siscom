@@ -1,5 +1,5 @@
 import { IDetailItem } from "pages/detallepas";
-import { IListadoPas } from ".";
+import { IListadoPas, ITracking } from ".";
 import { axiosDefaultData } from "./responseDefault";
 
  
@@ -31,7 +31,15 @@ export interface IResponseProcesses extends axiosDefaultData{
         message: string,
         success: boolean
     }
-   
+}
+
+export interface IResponseTracking extends axiosDefaultData{
+    data: 
+    {
+        data: ITracking[],
+        message: string,
+        success: boolean
+    }
 }
 
 export interface IResponseProcessesDetail extends axiosDefaultData{

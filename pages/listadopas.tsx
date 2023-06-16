@@ -17,7 +17,6 @@ import moment from 'moment';
 import 'moment/locale/es';
 import locale from 'antd/lib/date-picker/locale/es_ES';
 import { useFilePicker } from 'use-file-picker';
-import { getLocalStorageItem } from './globals';
 import useMenuStore from "store/menu/menu";
 import { match } from "assert";
 import axios from "axios";
@@ -84,6 +83,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   const [openAnexos, setOpenAnexos] = useState(false);
   const [openTracking, setOpenTracking] = useState(false);
   const { IdSelectedProcess  } = useMenuStore()
+  const [dataTracking, setDataTracking] = useState<any>([]);
 
   const processApi = async (IdSelectedProcess: any, label: any) => {
     const { processes } = await api.listpas.getProcesses(IdSelectedProcess, label);
@@ -168,6 +168,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     await api.listpas.downloadDocuments(newDatos.item.numero)
   };
 
+  const getTracking = async (props: any) => {
+    const { estado, ...res } = props.item;
+    const newDatos = { item: { ...res } };
+    const {tracking}  = await api.listpas.getTracking(newDatos.item.numero)
+    if (tracking){setDataTracking(tracking);}
+    setOpenTracking(true)
+  };
+
   //FilePicker
   const [openFileSelector, { filesContent, plainFiles, loading, clear }] = useFilePicker({
     accept: ['.xlsx', '.xls'],
@@ -250,16 +258,12 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
         <Space>
           <Button
             hidden={item.btnDisabled}
-            /*type="dashed"
-            icon={<EditOutlined />}*/
-            style={{height:'40px', width:'60px', color:'white', cursor:'pointer',fontSize:'1rem'}}
+            style={{height:'30px', width:'50px', color:'white', cursor:'pointer',fontSize:'1rem'}}
             onClick={() => onGoDetail("/actualiza-proceso", { item })}
           >
             <img src='assets/images/editar.svg'/>
           </Button>
           <Button
-            /*type="dashed"
-            icon={<SearchOutlined />}*/
             style={{height:'30px', width:'50px', color:'white', cursor:'pointer',fontSize:'1rem'}}
             onClick={() => onGoDetail("/detallepas", { item })}
           >
@@ -275,16 +279,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
           <Button
             style={{height:'30px', width:'50px', color:'white', cursor:'pointer',fontSize:'1rem'}}
             onClick={() => setOpenAnexos(true)}
-          >
-            
+          >            
             <img src='assets/images/anexos.svg'/>
           </Button>
           <Button
             style={{height:'30px', width:'50px', color:'white', cursor:'pointer',fontSize:'1rem'}}
-            onClick={() => setOpenTracking(true)}
+            onClick={() => getTracking({item})}
           >
             <img src='assets/images/hitos.svg'/>
-            Detalle
           </Button>
         </Space>
       ),
@@ -584,17 +586,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
           <div>
             <span style={{color:'#083474', fontSize: '16px'}}>Documentos anexos</span>
           </div>
-          {/* <div>
-            <Button
-              style={{display:'flex', alignItems:'center',
-              justifyContent:'center', width: '180px', height: '40px',
-              backgroundColor:'#083474', border:'none',
-              color:'white', marginRight: '10px', cursor:'pointer'}}
-            >
-              <img src='assets/images/cancelar.svg' style={{height: '24px', marginRight: '8px'}}/>
-              <span style={{fontSize: '16px'}}>CERRAR</span>
-            </Button>
-          </div> */}
         </Modal>
         <Modal
           title="Seguimiento de documento"
@@ -604,26 +595,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
           onCancel={() => setOpenTracking(false)}
           okButtonProps={{ style: { backgroundColor:'#0874cc' }, className: 'ant-btn-primary' }}
           width={1000}
-        >
-          <div>
-            <span style={{color:'#083474', fontSize: '16px'}}>Remitente</span>
-          </div>
-          <div>
-            <span style={{color:'#083474', fontSize: '16px'}}>Destinatario</span>
-          </div>
-          {/* <div>
-            <Button
-              style={{display:'flex', alignItems:'center',
-              justifyContent:'center', width: '180px', height: '40px',
-              backgroundColor:'#083474', border:'none',
-              color:'white', marginRight: '10px', cursor:'pointer'}}
-            >
-              <img src='assets/images/cancelar.svg' style={{height: '24px', marginRight: '8px'}}/>
-              <span style={{fontSize: '16px'}}>CERRAR</span>
-            </Button>
-          </div> */}
+        >{dataTracking?.length && dataTracking.map( ({name, from}:any, index: React.Key | null | undefined) => 
+          <tr key={index} className="border-b border-gray-300 text-left last:border-none">
+            <div>
+              <button><img src='assets/images/abrir.svg'/></button>
+              <span style={{fontSize: '17px'}}>{name} - {from}</span>
+            </div>
+          </tr>)}
         </Modal>
-
       </Card>
     </>
   );

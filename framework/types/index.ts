@@ -45,6 +45,16 @@ export interface IListadoPas{
   num_expediente?: string
 }
 
+export interface ITracking{
+  document?: string
+  from?: string
+  name?: string
+  nu_ann?: string
+  nu_emi?: string
+  references?: []
+  to?: string
+}
+
 export interface UserSave{
   username: string
   password: string
