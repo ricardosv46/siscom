@@ -22,6 +22,8 @@ apiService.interceptors.request.use(
 
 apiService.interceptors.response.use(
   function(response){
+    console.log("kkkkkkkkkkkk");
+    console.log(response);
     if (response.data){
       if(response.status === 401){
         localStorage.removeItem("token");
@@ -33,14 +35,21 @@ apiService.interceptors.response.use(
       }
     }
 
+    console.log("la ctmr")
+    console.log(response.status);
+
     return Promise.reject(response);  
   },
   function (error) {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    Router.push("/auth");
-    return error.response.data;
-    //return Promise.reject(error);
+    if (error.response.status == 400){
+      return error.response;
+    } else {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      Router.push("/auth");
+      return error.response.data;
+      //return Promise.reject(error);
+    }
   }
 );
 
