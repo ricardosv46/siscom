@@ -22,8 +22,6 @@ apiService.interceptors.request.use(
 
 apiService.interceptors.response.use(
   function(response){
-    console.log("kkkkkkkkkkkk");
-    console.log(response);
     if (response.data){
       if(response.status === 401){
         localStorage.removeItem("token");
