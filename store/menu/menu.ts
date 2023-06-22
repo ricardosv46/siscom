@@ -8,8 +8,8 @@ const useMenuStore = create<IMenuStore>((set, get) => ({
       set({ IdSelectedProcess: id });
       StoreProcessElectoralStorageService({ id })
    },
-   getStateSelectedProcess: () => {
-      const id = GetProcessElectoralStorageService()
+   getStateSelectedProcess: async () => {
+      const id = await GetProcessElectoralStorageService()
       if(id){
         set({ IdSelectedProcess:  id });
       }

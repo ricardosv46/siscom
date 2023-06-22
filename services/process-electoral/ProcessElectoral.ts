@@ -8,8 +8,8 @@ const StoreProcessElectoralStorageService = ({ id }: IProps) => {
     }
 }
 
-const GetProcessElectoralStorageService = () => {
-    return localStorage.getItem('IdSelectedProcess')
+const GetProcessElectoralStorageService = async () => {
+    return await localStorage.getItem('IdSelectedProcess')
 }
 
 const RemoveProcessElectoralStorageService = () => {
