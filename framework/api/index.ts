@@ -219,13 +219,23 @@ const api = {
           {
             responseType: 'blob',
           });
-      
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement('a');
-          link.href = url;
-          link.setAttribute('download', 'archivo.zip');
-          document.body.appendChild(link);
-          link.click();
+
+          /*console.log(response);
+          console.log(response.data);
+          console.log(response.status);
+          console.log(response.request);
+          console.log(response.statusText);*/
+
+          if (response.status == 400 || response.data === undefined){
+            alert("No se encontraron documentos para descargar");
+          } else {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'archivo.zip');
+            document.body.appendChild(link);
+            link.click();
+          }
         } catch (error) {
           console.error('Error al descargar el archivo ZIP', error);
         }
