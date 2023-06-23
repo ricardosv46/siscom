@@ -80,10 +80,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   const [isCheckedCandidato, setIsCheckedCandidato] = useState(false);
   const [operationSelectedOption, setOperationSelectedOption] = useState("");
   const [isCheckedOP, setIsCheckedOP] = useState(false);
-  const [processGlobal, setProcessGlobal] = useState('');
-  const [openAnexos, setOpenAnexos] = useState(false);
-  const [openTracking, setOpenTracking] = useState(false);
   const { IdSelectedProcess } = useMenuStore()
+  const [openAnexos, setOpenAnexos] = useState(false);
+  const [dataAnexos, setDataAnexos] = useState<any>([]);
+  const [openTracking, setOpenTracking] = useState(false);
   const [dataTracking, setDataTracking] = useState<any>([]);
 
   const processApi = async (IdSelectedProcess: any, label: any) => {
@@ -175,6 +175,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     const {tracking}  = await api.listpas.getTracking(newDatos.item.numero)
     if (tracking){setDataTracking(tracking);}
     setOpenTracking(true)
+  };
+
+  const getAnexos = async (props: any) => {
+    const { estado, ...res } = props.item;
+    const newDatos = { item: { ...res } };
+    const {tracking}  = await api.listpas.getTracking(newDatos.item.numero)
+    if (tracking){setDataAnexos(tracking);}
+    setOpenAnexos(true)
   };
 
   //FilePicker
@@ -274,7 +282,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
           </Button>
           <Button
             style={{height:'30px', width:'50px', color:'white', cursor:'pointer',fontSize:'1rem'}}
-            onClick={() => setOpenAnexos(true)}
+            onClick={() => getAnexos({item})}
           >            
             <img src='assets/images/anexos.svg'/>
           </Button>
@@ -575,13 +583,112 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
           onCancel={() => setOpenAnexos(false)}
           okButtonProps={{ style: { backgroundColor:'#0874cc' }, className: 'ant-btn-primary' }}
           width={1000}
-        >
+        >{dataAnexos?.length && dataAnexos.map( ({name, from}:any, index: React.Key | null | undefined) => 
+        <tr key={index} className="border-b border-gray-300 text-left last:border-none">
           <div>
-            <span style={{color:'#083474', fontSize: '16px'}}>Detalles</span>
+            <button><img src='assets/images/abrir.svg'/></button>
+            <label style={{fontSize: '17px'}}>{name} - {from}</label>
           </div>
+        </tr>)}
+        <br></br>
+        <tr>
           <div>
-            <span style={{color:'#083474', fontSize: '16px'}}>Documentos anexos</span>
+            <label style={{color:'#083474', fontSize: '16px'}}>Detalles</label>
+          </div> 
+          <br></br>           
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{marginRight: '55px', display: 'flex', alignItems: 'center'}}>
+              <label style={{fontSize: '16px'}}>Año:</label>
+            </div >
+            <div style={{marginRight: '60px', display: 'flex', alignItems: 'center'}}>
+              <label style={{fontSize: '16px'}}>2023</label>
+            </div >
+            <div style={{marginRight: '30px', display: 'flex', alignItems: 'center'}}>
+              <label style={{fontSize: '16px'}}>Fecha Emisión:</label>
+            </div >
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <label style={{fontSize: '16px'}}>27/01/2023 16:32</label>
+            </div >
           </div>
+          <br></br>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{marginRight: '45px', display: 'flex', alignItems: 'center'}}>
+              <label style={{fontSize: '16px'}}>Emite:</label>
+            </div >
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <label style={{fontSize: '16px'}}>SUB GERENCIA DE GOBIERNO DIGITAL E INNOVACIÓN - JUAN PÉREZ PÉREZ</label>
+            </div >
+          </div>
+          <br></br>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{marginRight: '30px', display: 'flex', alignItems: 'center'}}>
+              <label style={{fontSize: '16px'}}>Destino:</label>
+            </div >
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <label style={{fontSize: '16px'}}>SUB GERENCIA DE GOBIERNO DIGITAL E INNOVACIÓN - MARÍA MORENO MORENO</label>
+            </div >
+          </div>
+          <br></br>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{marginRight: '20px', display: 'flex', alignItems: 'center'}}>
+              <label style={{fontSize: '16px'}}>Tipo Doc.:</label>
+            </div >
+            <div style={{marginRight: '60px', display: 'flex', alignItems: 'center'}}>
+              <label style={{fontSize: '16px'}}>PROVEÍDO</label>
+            </div >
+            <div style={{marginRight: '80px', display: 'flex', alignItems: 'center'}}>
+              <label style={{fontSize: '16px'}}>Nro. Doc.:    000000-2023/SGGDI</label>
+            </div >
+            <div style={{marginRight: '5px', display: 'flex', alignItems: 'center'}}>
+              <Button style={{display:'flex', alignItems:'center',
+               justifyContent:'center', padding:'8px 8px',
+               backgroundColor:'#e6002d', border:'none',
+               color:'white', marginRight: '10px', cursor:'pointer'}} 
+               >
+              <img src='assets/images/icono_pdf.svg' style={{width: '24px', height: '24px', marginRight: '8px'}}/>
+              <span style={{fontSize: '16px'}}>Abrir Documento</span>
+              </Button>
+            </div>
+          </div>
+          <br></br>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
+              <label style={{fontSize: '16px'}}>Asunto:</label>
+            </div >
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <textarea style={{fontSize: '16px', width:'700px', height:'50px'}}>DOCUMENTO DE PRUEBA DEL SISTEMA</textarea>
+            </div >
+          </div>
+          <br></br>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{marginRight: '30px', display: 'flex', alignItems: 'center'}}>
+              <label style={{fontSize: '16px'}}>Trámite:</label>
+            </div >
+            <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
+              <label style={{fontSize: '16px'}}>PARA CONOCMIENTO</label>
+            </div >
+            <div style={{marginRight: '20px', display: 'flex', alignItems: 'center'}}>
+              <label style={{fontSize: '16px'}}>Prioridad:</label>
+            </div >
+            <div style={{marginRight: '90px', display: 'flex', alignItems: 'center'}}>
+              <label style={{fontSize: '16px'}}>NORMAL</label>
+            </div >
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <label style={{fontSize: '16px'}}>Indicaciones:</label>
+            </div >
+          </div>
+          <br></br>
+        </tr>
+        <br></br>
+        <tr>
+          <div>
+            <label style={{color:'#083474', fontSize: '16px'}}>Documentos Anexos</label>
+          </div>
+          <br></br>
+          <div>
+            <label style={{fontSize: '16px'}}>No se encuentran registros</label>
+          </div> 
+        </tr>
         </Modal>
         <Modal
           title="Seguimiento de documento"
