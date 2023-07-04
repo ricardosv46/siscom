@@ -1,8 +1,8 @@
-import { ITracking } from "@framework/types"
+import { IAnexos } from "@framework/types"
 import { FC, memo, ReactNode } from "react"
 
 interface IPropsItem {
-    item: ITracking,
+    item: IAnexos,
     children?: ReactNode,
     onClick?: () => void,
 }

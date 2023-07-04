@@ -1,32 +1,32 @@
-import { IReferences, ITracking } from "@framework/types"
+import { IReferences, IAnexos } from "@framework/types"
 import { FC, ReactNode, memo, useState } from "react"
 import Child from "./Child"
 import SubChild from "./SubChild"
 
 interface IPropsItem {
-    item: ITracking,
+    item: IAnexos,
     children?: ReactNode,
-    onValueSelectedTracking?:(item:ITracking)=> void
+    onValueSelectedAnexo?:(item:IAnexos)=> void
 }
 
 interface IPropsReferences {
     subitem: IReferences[]
 }
-const Tracking: FC<IPropsItem> = ({
+const Anexo: FC<IPropsItem> = ({
     item,
     children = null,
-    onValueSelectedTracking
+    onValueSelectedAnexo
 }) => {
 
     const [active, setActive] = useState<boolean>(false)
     const { references } = item
-     const onSelectedValue = (val:ITracking) => {
-        onValueSelectedTracking && onValueSelectedTracking(val)
+     const onSelectedValue = (val:IAnexos) => {
+        onValueSelectedAnexo && onValueSelectedAnexo(val)
      }
 
-    const onSelectedTracking = (val:ITracking) => {
+    const onSelectedAnexo = (val:IAnexos) => {
         setActive(!active)
-        onValueSelectedTracking &&  onValueSelectedTracking(val)
+        onValueSelectedAnexo &&  onValueSelectedAnexo(val)
     }
 
     function RenderData({subitem}:IPropsReferences) {
@@ -43,9 +43,9 @@ const Tracking: FC<IPropsItem> = ({
     }
 
     return (<div>
-        <Child onClick={() => onSelectedTracking(item)} item={item} />
+        <Child onClick={() => onSelectedAnexo(item)} item={item} />
 
-          { references.length
+          { references?.length
             && active &&
             references.map((data, key) => {
                 return  <RenderData  subitem={data.references} key={key}/>
@@ -57,4 +57,4 @@ const Tracking: FC<IPropsItem> = ({
     </div >
     )
 }
-export default memo(Tracking)
+export default memo(Anexo)

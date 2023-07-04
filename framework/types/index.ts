@@ -60,7 +60,7 @@ export interface IAnexos{
   name?: string
   nu_ann?: string
   nu_emi?: string
-  references?: []
+  references?: IReferences[]
   to?: string
 }
 
@@ -69,18 +69,20 @@ export interface ITracking {
   document: string,
   from: string,
   name: string,
-  nu_ann: number,
-  nu_emi: number,
+  nu_ann: string,
+  nu_emi: string,
   references: IReferences[]
+  to?: string
 }
  
 export interface  IReferences {
   document: string,
   from: string,
   name: string,
-  nu_ann: number,
-  nu_emi: number,
-  references: ITracking[]
+  nu_ann: string,
+  nu_emi: string,
+  references: ITracking[],
+  to?: string
 }
 
 
