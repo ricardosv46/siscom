@@ -10,6 +10,8 @@ import { NextApiResponse, NextApiHandler } from "next";
 import useAuthStore from "store/auth/auth";
 import api from "@framework/api";
 import { GetAuthService, GetTokenAuthService } from "services/auth/ServiceAuth";
+import { RemoveProcessElectoralStorageService } from "services/process-electoral/ProcessElectoral";
+import useMenuStore from "store/menu/menu";
 
 interface resAuth {
   success: boolean;
@@ -19,7 +21,7 @@ const Home = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const { storeUser } = useAuthStore();
-
+  const { changeStateSelectedProcess } = useMenuStore()
   const onFinish = async (body: auth) => {
    
     setLoading(true);
@@ -34,6 +36,8 @@ const Home = () => {
 
       if (success) {
          storeUser(data?.user, data.token);
+         changeStateSelectedProcess('')
+         RemoveProcessElectoralStorageService()
          router.push("procesos");
          //router.push("/");
          `Bienvenido ${username}`

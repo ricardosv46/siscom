@@ -8,6 +8,7 @@ import Head from 'next/head';
 import { GetAuthService, GetTokenAuthService, RemoveSessionAuthService } from 'services/auth/ServiceAuth';
 import useAuthStore from 'store/auth/auth';
 import { useRouter } from 'next/router';
+import { RemoveProcessElectoralStorageService } from 'services/process-electoral/ProcessElectoral';
  
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -32,6 +33,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       } 
       storeUser(user)
     }else{
+       RemoveProcessElectoralStorageService()
         router.push("/auth");
         RemoveSessionAuthService()
     }
