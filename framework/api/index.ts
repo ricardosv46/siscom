@@ -20,10 +20,13 @@ import {
   IListadoPas,
 } from "@framework/types";
 import {
+  IResponseAnexos,
+  IResponseAnexosDetail,
   IResponseProcesses,
   IResponseProcessesDetail,
   IResponseProcessesResumen,
   IResponseTracking,
+  IResponseTrackingDetail,
 } from "@framework/types/processes.interface";
 import { GetTokenAuthService } from "services/auth/ServiceAuth";
 import { authService } from "services/axios/authConfigAxios";
@@ -219,13 +222,7 @@ const api = {
           {
             responseType: 'blob',
           });
-
-          /*console.log(response);
-          console.log(response.data);
-          console.log(response.status);
-          console.log(response.request);
-          console.log(response.statusText);*/
-
+          
           if (response.status == 400 || response.data === undefined){
             alert("No se encontraron documentos para descargar");
           } else {
@@ -245,16 +242,64 @@ const api = {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
-          data: { data, message, success },
+         status, data: { data, message, success },
         }: IResponseTracking = await apiService.get(`processes/${id}/sgd-tracking/`);
-        if (data === undefined || success === undefined || message === undefined) {
+        if (status !== 200) {
           return { tracking: [] };
         } else {
           return { tracking: data, message, success };
         }
         
       } else {
-        return { tracking: [] };
+        return { tracking: [], success: false };
+      }
+    },
+    getAnexos: async (id:any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data, message, success },
+        }: IResponseAnexos = await apiService.get(`processes/${id}/sgd-annexes/`);
+        if (data === undefined || success === undefined || message === undefined) {
+          return { anexos: [] };
+        } else {
+          return { anexos: data, message, success };
+        }
+        
+      } else {
+        return { anexos: [] };
+      }
+    },
+    getTrackingDetail: async (año:any, id:any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data, message, success },
+        }: IResponseTrackingDetail = await apiService.get(`processes/sgd/destination-detail/${año}/${id}/`);
+        if (data === undefined || success === undefined || message === undefined) {
+          return { trackingDetail: [] };
+        } else {
+          return { trackingDetail: data, message, success };
+        }
+        
+      } else {
+        return { trackingDetail: [] };
+      }
+    },
+    getAnexosDetail: async (año:any, id:any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data, message, success },
+        }: IResponseAnexosDetail = await apiService.get(`processes/sgd/annex-detail/${año}/${id}/`);
+        if (data === undefined || success === undefined || message === undefined) {
+          return { anexosDetail: [] };
+        } else {
+          return { anexosDetail: data, message, success };
+        }
+        
+      } else {
+        return { anexosDetail: [] };
       }
     },
   },

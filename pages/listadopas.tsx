@@ -1,10 +1,10 @@
 import Head from "next/head";
 //import { Button, Space, Table, DatePicker, ConfigProvider, Pagination } from "antd";
 import { Button, Space, Table, DatePicker, ConfigProvider, Pagination, Modal } from "antd";
-import React, { ChangeEvent, ReactElement, useCallback, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, ReactElement, cloneElement, useCallback, useEffect, useRef, useState } from "react";
 import { LayoutFirst } from "@components/common";
 import { NextPageWithLayout } from "pages/_app";
-import { Card } from "@components/ui";
+import { Card, Tracking } from "@components/ui";
 import api from "@framework/api";
 import { EditOutlined, SearchOutlined } from "@ant-design/icons";
 import { useUI } from "@components/ui/context";
@@ -21,6 +21,7 @@ import useMenuStore from "store/menu/menu";
 import { match } from "assert";
 import axios from "axios";
 import Link from "next/link";
+import { IAnexos, IResponseTracking, ITracking } from "@framework/types";
 
 moment.locale('es');
 const { RangePicker } = DatePicker;
@@ -83,9 +84,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   const { IdSelectedProcess } = useMenuStore()
   const [openAnexos, setOpenAnexos] = useState(false);
   const [dataAnexos, setDataAnexos] = useState<any>([]);
+  const [dataAnexosDetail, setDataAnexosDetail] = useState<any>([]);
   const [openTracking, setOpenTracking] = useState(false);
-  const [dataTracking, setDataTracking] = useState<any>([]);
-
+  const [dataTracking, setDataTracking] = useState<ITracking[]>([]);
+  const [dataTrackingDetail, setDataTrackingDetail] = useState<any>([]);
+  
   const processApi = async (IdSelectedProcess: any, label: any) => {
     const { processes } = await api.listpas.getProcesses(IdSelectedProcess, label);
 
@@ -172,16 +175,31 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   const getTracking = async (props: any) => {
     const { estado, ...res } = props.item;
     const newDatos = { item: { ...res } };
-    const {tracking}  = await api.listpas.getTracking(newDatos.item.numero)
-    if (tracking){setDataTracking(tracking);}
+    const { success , tracking } = await api.listpas.getTracking(newDatos.item.numero)
+    if (success){
+      setDataTracking(tracking)
+      const {trackingDetail}  = await api.listpas.getTrackingDetail(tracking[0].nu_ann,tracking[0].nu_emi)
+      if (trackingDetail){setDataTrackingDetail(trackingDetail)}
+    }
     setOpenTracking(true)
   };
+
+  const onValueSelectedTracking = async (item: ITracking) => {
+    if (item){
+      const {trackingDetail}  = await api.listpas.getTrackingDetail(item.nu_ann,item.nu_emi)
+      if (trackingDetail){setDataTrackingDetail(trackingDetail)}
+    }
+  }
 
   const getAnexos = async (props: any) => {
     const { estado, ...res } = props.item;
     const newDatos = { item: { ...res } };
-    const {tracking}  = await api.listpas.getTracking(newDatos.item.numero)
-    if (tracking){setDataAnexos(tracking);}
+    const {anexos}  = await api.listpas.getAnexos(newDatos.item.numero)
+    if (anexos){
+      setDataAnexos(anexos);
+      const {anexosDetail}  = await api.listpas.getAnexosDetail("2023","0005610235")
+      if (anexosDetail){setDataAnexosDetail(anexosDetail)}
+    }
     setOpenAnexos(true)
   };
 
@@ -463,7 +481,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
 
   }
 
-
   return (
     <>
       <Head>
@@ -474,7 +491,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
 
       <Card title="Listado de personal de ODPE">
         <div style={{ marginBottom: "0.4rem" }}>
-          <h2 style={{ fontSize: 25, color: "#4F5172" }}>Listado de PAS</h2>
+          <h2 style={{ fontSize: 25, color: "#4F5172" }}>Listado de PAS  </h2>
           <hr
             style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }}
           />
@@ -591,6 +608,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
           </div>
         </tr>)}
         <br></br>
+        {dataAnexosDetail?.length && dataAnexosDetail.map( ({FECHA_EMI}:any, index: React.Key | null | undefined) =>
         <tr>
           <div>
             <label style={{color:'#083474', fontSize: '16px'}}>Detalles</label>
@@ -607,7 +625,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
               <label style={{fontSize: '16px'}}>Fecha Emisión:</label>
             </div >
             <div style={{display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>27/01/2023 16:32</label>
+              <label style={{fontSize: '16px'}}>{FECHA_EMI}</label>
             </div >
           </div>
           <br></br>
@@ -678,7 +696,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
             </div >
           </div>
           <br></br>
-        </tr>
+        </tr>)}
         <br></br>
         <tr>
           <div>
@@ -691,41 +709,51 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
         </tr>
         </Modal>
         <Modal
-          title="Seguimiento de documento"
+          bodyStyle={{
+            margin: 10,
+            overflowY: 'scroll', height: 600,
+            overflowX: 'hidden'
+          }}
+          title={<p style={{ textAlign:'center' , fontWeight: 'bold' }}>Seguimiento de documento </p>}
           centered
           open={openTracking}
           onOk={() => setOpenTracking(false)}
           onCancel={() => setOpenTracking(false)}
           okButtonProps={{ style: { backgroundColor:'#0874cc' }, className: 'ant-btn-primary' }}
           width={1000}
-        >{dataTracking?.length && dataTracking.map( ({name, from}:any, index: React.Key | null | undefined) => 
-          <tr key={index} className="border-b border-gray-300 text-left last:border-none">
-            <div>
-              <button><img src='assets/images/abrir.svg'/></button>
-              <label style={{fontSize: '17px'}}>{name} - {from}</label>
-            </div>
-          </tr>)}
+          
+        >
+          <tr>
+          <div style={{ borderWidth: 4, padding: 5, margin: 10, overflowX: 'scroll', width: 925, overflowY: 'scroll', height: 200}}>
+          {dataTracking?.length && dataTracking.map((item, index) => {
+            return <Tracking onValueSelectedTracking={onValueSelectedTracking} item={item} key={index.toString()}/>
+          }
+          )}
+          </div>
+          </tr>
           <br></br>
+          {dataTrackingDetail?.length && dataTrackingDetail.map( 
+              ({ASUNTO,ELABORO,EMISOR,ESTADO,FECHA_EMI,NRO_DOC,NU_DES,TIPO_DOC}:any) =>
           <tr>
             <div>
               <label style={{color:'#083474', fontSize: '16px'}}>Remitente</label>
             </div> 
             <br></br>           
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{marginRight: '130px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Tipo Doc.: PROVEÍDO</label>
+              <div style={{marginRight: '30px', display: 'flex', alignItems: 'center'}}>
+                <label style={{fontSize: '16px'}}>Tipo Doc.: {TIPO_DOC}</label>
               </div >
               <div style={{display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Nro. Doc.: 000000-2023/SGGDI</label>
+                <label style={{fontSize: '16px'}}>Nro. Doc.: {NRO_DOC}</label>
               </div >
             </div>
             <br></br>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <div style={{marginRight: '80px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Fecha Emi: 27/01/2023 16:32</label>
+                <label style={{fontSize: '16px'}}>Fecha Emi: {FECHA_EMI}</label>
               </div >
               <div style={{display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Elaboró: Juan Pérez Pérez</label>
+                <label style={{fontSize: '16px'}}>Elaboró: {ELABORO}</label>
               </div >
             </div>
             <br></br>
@@ -734,7 +762,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
                 <label style={{fontSize: '16px'}}>Emisor:</label>
               </div >
               <div style={{display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>SUB GERENCIA DE GOBIERNO DIGITAL E INNOVACIÓN - JUAN PÉREZ PÉREZ</label>
+                <label style={{fontSize: '16px'}}>{EMISOR}</label>
               </div >
             </div>
             <br></br>
@@ -743,7 +771,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
                 <label style={{fontSize: '16px'}}>Asunto:</label>
               </div >
               <div style={{display: 'flex', alignItems: 'center'}}>
-                <textarea style={{fontSize: '16px', width:'700px', height:'50px'}}>DOCUMENTO DE PRUEBA DEL SISTEMA</textarea>
+                <textarea style={{borderWidth: 4, fontSize: '16px', width:'700px', height:'50px'}}>{ASUNTO}</textarea>
               </div >
             </div>
             <br></br>
@@ -752,13 +780,13 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
                 <label style={{fontSize: '16px'}}>Estado:</label>
               </div >
               <div style={{marginRight: '50px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>ARCHIVADO</label>
+                <label style={{fontSize: '16px'}}>{ESTADO}</label>
               </div >
               <div style={{marginRight: '30px', display: 'flex', alignItems: 'center'}}>
                 <label style={{fontSize: '16px'}}>Folios:</label>
               </div >
               <div style={{marginRight: '90px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>0</label>
+                <label style={{fontSize: '16px'}}>{NU_DES}</label>
               </div >
               <div style={{marginRight: '5px', display: 'flex', alignItems: 'center'}}>
                 <Button style={{display:'flex', alignItems:'center',
@@ -782,8 +810,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
               </div>
             </div>
             <br></br>
-          </tr>
+          </tr>)}
           <br></br>
+          {dataTrackingDetail?.length && dataTrackingDetail.map( 
+              ({DEPENDENCIA,ESTADO_DESTINATARIO,FECHA_ATE,FECHA_REC,INDICACIONES,PRIORIDAD,RECEPTOR,TRAMITE}:any) =>
           <tr>
             <div>
               <label style={{color:'#083474', fontSize: '16px'}}>Destinatario</label>
@@ -794,7 +824,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
                 <label style={{fontSize: '16px'}}>Dependencia:</label>
               </div >
               <div style={{display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>SUB GERENCIA DE GOBIERNO DIGITAL E INNOVACIÓN - CAMPOS CAMPOS PEDRO</label>
+                <label style={{fontSize: '16px'}}>{DEPENDENCIA}</label>
               </div >
             </div>
             <br></br>
@@ -803,7 +833,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
                 <label style={{fontSize: '16px'}}>Receptor:</label>
               </div >
               <div style={{display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>CAMPOS CAMPOS PEDRO</label>
+                <label style={{fontSize: '16px'}}>{RECEPTOR}</label>
               </div >
             </div>
             <br></br>
@@ -812,37 +842,43 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
                 <label style={{fontSize: '16px'}}>Estado:</label>
               </div >
               <div style={{marginRight: '90px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>RECIBIDO</label>
+                <label style={{fontSize: '16px'}}>{ESTADO_DESTINATARIO}</label>
               </div >
               <div style={{marginRight: '20px', display: 'flex', alignItems: 'center'}}>
                 <label style={{fontSize: '16px'}}>Fecha Rec.:</label>
               </div >
               <div style={{marginRight: '60px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>28/01/2023 16:32</label>
+                <label style={{fontSize: '16px'}}>{FECHA_REC}</label>
               </div >
               <div style={{marginRight: '20px', display: 'flex', alignItems: 'center'}}>
                 <label style={{fontSize: '16px'}}>Fecha Ate.:</label>
               </div >
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                <label style={{fontSize: '16px'}}>{FECHA_ATE}</label>
+              </div >
             </div>
             <br></br>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{marginRight: '30px', display: 'flex', alignItems: 'center'}}>
+              <div style={{marginRight: '60px', display: 'flex', alignItems: 'center'}}>
                 <label style={{fontSize: '16px'}}>Trámite:</label>
               </div >
               <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>PARA CONOCMIENTO</label>
+                <label style={{fontSize: '16px'}}>{TRAMITE}</label>
               </div >
               <div style={{marginRight: '20px', display: 'flex', alignItems: 'center'}}>
                 <label style={{fontSize: '16px'}}>Prioridad:</label>
               </div >
               <div style={{marginRight: '90px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>NORMAL</label>
+                <label style={{fontSize: '16px'}}>{PRIORIDAD}</label>
               </div >
-              <div style={{display: 'flex', alignItems: 'center'}}>
+              <div style={{marginRight: '20px', display: 'flex', alignItems: 'center'}}>
                 <label style={{fontSize: '16px'}}>Indicaciones:</label>
               </div >
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                <label style={{fontSize: '16px'}}>{INDICACIONES}</label>
+              </div >
             </div>
-          </tr>
+          </tr>)}
         </Modal>
       </Card>
     </>

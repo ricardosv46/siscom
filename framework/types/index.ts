@@ -45,7 +45,16 @@ export interface IListadoPas{
   num_expediente?: string
 }
 
-export interface ITracking{
+ 
+export interface IResponseTracking extends axiosDefaultData{
+  data: {
+    message:string
+    success:boolean
+    data: ITracking[]
+   }
+}
+
+export interface IAnexos{
   document?: string
   from?: string
   name?: string
@@ -53,6 +62,67 @@ export interface ITracking{
   nu_emi?: string
   references?: []
   to?: string
+}
+
+ 
+export interface ITracking {
+  document: string,
+  from: string,
+  name: string,
+  nu_ann: number,
+  nu_emi: number,
+  references: IReferences[]
+}
+ 
+export interface  IReferences {
+  document: string,
+  from: string,
+  name: string,
+  nu_ann: number,
+  nu_emi: number,
+  references: ITracking[]
+}
+
+
+export interface ITrackingDetail{
+  ASUNTO?: string | undefined
+  DEPENDENCIA?: string | undefined
+  ELABORO?: string | undefined
+  EMISOR?: string | undefined
+  ESTADO?: string | undefined
+  ESTADO_DESTINATARIO?: string | undefined
+  FECHA_ATE?: string | undefined
+  FECHA_EMI?: string | undefined
+  FECHA_REC?: string | undefined
+  INDICACIONES?: string | undefined
+  NRO_DOC?: string | undefined
+  NU_ANN?: string | undefined
+  NU_ANN_EXP?: string | undefined
+  NU_DES?: string | undefined
+  NU_EMI?: string | undefined
+  NU_SEC_EXP?: string | undefined
+  PRIORIDAD?: string | undefined
+  RECEPTOR?: string | undefined
+  TIPO_DOC?: string | undefined
+  TRAMITE?: string | undefined
+}
+
+export interface IAnexosDetail{
+  ASUNTO?: string | undefined
+  AÑO?: string | undefined
+  DESTINO?: string | undefined
+  EMITE?: string | undefined
+  FECHA_EMI?: string | undefined
+  INDICACIONES?: string | undefined
+  NRO_DOC?: string | undefined
+  NU_ANN?: string | undefined
+  NU_ANN_EXP?: string | undefined
+  NU_DES?: string | undefined
+  NU_EMI?: string | undefined
+  NU_SEC_EXP?: string | undefined
+  PRIORIDAD?: string | undefined
+  TIPO_DOC?: string | undefined
+  TRAMITE?: string | undefined
 }
 
 export interface UserSave{

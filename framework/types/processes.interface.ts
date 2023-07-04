@@ -1,5 +1,5 @@
 import { IDetailItem } from "pages/detallepas";
-import { IListadoPas, ITracking } from ".";
+import { IAnexos, IAnexosDetail, IListadoPas, ITracking, ITrackingDetail } from ".";
 import { axiosDefaultData } from "./responseDefault";
 
  
@@ -37,6 +37,33 @@ export interface IResponseTracking extends axiosDefaultData{
     data: 
     {
         data: ITracking[],
+        message: string,
+        success: boolean
+    }
+}
+
+export interface IResponseAnexos extends axiosDefaultData{
+    data: 
+    {
+        data: IAnexos[],
+        message: string,
+        success: boolean
+    }
+}
+
+export interface IResponseTrackingDetail extends axiosDefaultData{
+    data: 
+    {
+        data: ITrackingDetail[],
+        message: string,
+        success: boolean
+    }
+}
+
+export interface IResponseAnexosDetail extends axiosDefaultData{
+    data: 
+    {
+        data: IAnexosDetail[],
         message: string,
         success: boolean
     }
