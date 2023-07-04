@@ -39,7 +39,7 @@ const Home: NextPageWithLayout = () => {
   //const processSummaryApi = async() => {
     const processSummaryApi = async(savedProcess:any) => {
     const dataStats = {}
-    const {data} = await api.home.getProcessesSummary();
+    const {data} = await api.home.getProcessesSummary(localStorage.getItem('IdSelectedProcess'));
     const total = Object.values(data).reduce((a, b) => a+b, 0);
     const empty = Object.assign(data, dataStats);
     for (let k in data){

@@ -56,13 +56,13 @@ const api = {
         return { data: [] };
       }
     },
-    getProcessesSummary: async () => {
+    getProcessesSummary: async (savedProcess:any) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
           data: { data, message, success },
         }: IResponseProcessesResumen = await apiService.get(
-          `processes/resumen/`
+          `processes/resumen/?electoral_process=` + savedProcess
         );
         if (data === undefined || success === undefined || message === undefined) {
           return { data: {} };
