@@ -31,7 +31,8 @@ const Home: NextPageWithLayout = () => {
           item.estado === 'more_6_months'?<img src='assets/images/more_6_months.png'/>:
           item.estado === 'finalized'?<img src='assets/images/finalized.png'/>:
           item.estado === 'out_of_date'?<img src='assets/images/out_of_date.png'/>:
-          item.estado === 'to_start'?<img src='assets/images/to_start.png'/>:''
+          item.estado === 'to_start'?<img src='assets/images/to_start.png'/>:
+          item.estado === 'undefined'?<img src='assets/images/estado-indefinido.png'/>:''
     }))
     setProcessGrouped(newData) 
   }
@@ -46,7 +47,7 @@ const Home: NextPageWithLayout = () => {
       dataStats[k] = ((data[k] / total)*100).toFixed(2);
     }
 
-    dataStats.less_3_months = (100 - (Number(dataStats.to_start) + Number(dataStats.finalized) + Number(dataStats.more_6_months) + Number(dataStats.less_6_months) + Number(dataStats.out_of_date))).toFixed(2);
+    dataStats.undefined = (100 - (Number(dataStats.to_start) + Number(dataStats.finalized) + Number(dataStats.more_6_months) + Number(dataStats.less_6_months) + Number(dataStats.out_of_date) + Number(dataStats.less_3_months))).toFixed(2);
 
     setProcessSummary(data);
     setProcessSummaryStats(dataStats);
@@ -59,8 +60,8 @@ const Home: NextPageWithLayout = () => {
       {
         label: 'Cantidad de procesos',
         data: Object.values(processSummary),
-        backgroundColor: ["rgb(136,132,132)","rgb(232,52,44)","rgb(256,188,28)","rgb(120,188,68)","rgb(5,5,5,255)","rgb(255,255,255)"],
-        borderColor: ["rgb(136,132,132)","rgb(232,52,44)","rgb(256,188,28)","rgb(120,188,68)","rgb(5,5,5,255)","rgb(5,5,5,255)"],
+        backgroundColor: ["rgb(136,132,132)","rgb(232,52,44)","rgb(256,188,28)","rgb(120,188,68)","rgb(5,5,5,255)","rgb(255,255,255)", "rgb(129, 71, 174)"],
+        borderColor: ["rgb(136,132,132)","rgb(232,52,44)","rgb(256,188,28)","rgb(120,188,68)","rgb(5,5,5,255)","rgb(5,5,5,255)", "rgb(129, 71, 174)"],
         borderWidth: 1,
       },
     ],
@@ -81,7 +82,8 @@ const Home: NextPageWithLayout = () => {
                            elements[0].index == 2 ? "less_6_months" :
                            elements[0].index == 3 ? "more_6_months" :
                            elements[0].index == 4 ? "out_of_date" :
-                           elements[0].index == 5 ? "to_start" : '';
+                           elements[0].index == 5 ? "to_start" :
+                           elements[0].index == 6 ? "undefined": '';
         router.push(`/listadopas?estado=${labelIndex}`);
       }
     },
@@ -167,7 +169,11 @@ const Home: NextPageWithLayout = () => {
                 {'estado': <img src='assets/images/less_3_months.png'/>, 
                 "descripcion": "Menos de 3 meses", 
                 "cantidad": processSummary.less_3_months, 
-                "percentage": processSummaryStats.less_3_months + '%'}]
+                "percentage": processSummaryStats.less_3_months + '%'},
+                {'estado': <img src='assets/images/estado-indefinido.png'/>, 
+                "descripcion": "Indefinido", 
+                "cantidad": processSummary.undefined, 
+                "percentage": processSummaryStats.undefined + '%'}]
   }
   
 
