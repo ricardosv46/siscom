@@ -24,7 +24,7 @@ const Home: NextPageWithLayout = () => {
 
   //const processGroupedApi = async() => {
     const processGroupedApi = async(savedProcess:any) => {
-    const {data} = await api.home.getProcessesGrouped()
+    const {data} = await api.home.getProcessesGrouped(localStorage.getItem('IdSelectedProcess'));
     const newData = data?.map((item: { estado: string; })=>({...item, estado: 
           item.estado === 'less_3_months'?<img src='assets/images/less_3_months.png'/>:
           item.estado === 'less_6_months'?<img src='assets/images/less_6_months.png'/>:

@@ -44,12 +44,12 @@ const api = {
     return { data, message, success };
   },
   home: {
-    getProcessesGrouped: async () => {
+    getProcessesGrouped: async (savedProcess:any) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
           data: { data },
-        }: IResponseProcesses = await apiService.get(`processes/grouped/`);
+        }: IResponseProcesses = await apiService.get(`processes/grouped/?electoral_process=` + savedProcess);
         if (data === undefined) {
           return { data: [] };
         } else {
