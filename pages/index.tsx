@@ -32,7 +32,7 @@ const Home: NextPageWithLayout = () => {
           item.estado === 'finalized'?<img src='assets/images/finalized.png'/>:
           item.estado === 'out_of_date'?<img src='assets/images/out_of_date.png'/>:
           item.estado === 'to_start'?<img src='assets/images/to_start.png'/>:
-          item.estado === 'undefined'?<img src='assets/images/estado-indefinido.png'/>:''
+          item.estado === 'undefined'?<img src='assets/images/undefined.png'/>:''
     }))
     setProcessGrouped(newData) 
   }
@@ -170,7 +170,7 @@ const Home: NextPageWithLayout = () => {
                 "descripcion": "Menos de 3 meses", 
                 "cantidad": processSummary.less_3_months, 
                 "percentage": processSummaryStats.less_3_months + '%'},
-                {'estado': <img src='assets/images/estado-indefinido.png'/>, 
+                {'estado': <img src='assets/images/undefined.png'/>, 
                 "descripcion": "Indefinido", 
                 "cantidad": processSummary.undefined, 
                 "percentage": processSummaryStats.undefined + '%'}]

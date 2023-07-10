@@ -98,6 +98,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
       finalized: "finalized",
       out_of_date: "out_of_date",
       to_start: "to_start",
+      undefined: "undefined",
     };
 
     const newData = processes.map((item) => {
@@ -526,6 +527,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
           <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
             <img style={{ marginRight: '10px' }} src="assets/images/less_3_months.png" />
             <label className="form-checkbottom">Menos de 3 meses</label>
+          </div>
+          <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
+            <img style={{ marginRight: '10px' }} src="assets/images/estado-indefinido.png" />
+            <label className="form-checkbottom">Indefinido</label>
           </div>
         </div>
         <br></br>
