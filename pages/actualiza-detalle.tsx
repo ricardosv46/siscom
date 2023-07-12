@@ -146,7 +146,7 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
         formData.append('new_responsible', gerenciaAsignadaSelectedOption);
         formData.append('start_at', newFormatFechaInicio);
         formData.append('type_document', tipoDocumentoSelectedOption);
-        formData.append('status', operationSelectedOption.toLowerCase());
+        formData.append('tracking_action', operationSelectedOption.toLowerCase());
         try {
             const reqInit = {
                 headers: {
