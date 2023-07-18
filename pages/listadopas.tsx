@@ -529,7 +529,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
             <label className="form-checkbottom">Menos de 3 meses</label>
           </div>
           <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
-            <img style={{ marginRight: '10px' }} src="assets/images/estado-indefinido.png" />
+            <img style={{ marginRight: '10px' }} src="assets/images/undefined.png" />
             <label className="form-checkbottom">Indefinido</label>
           </div>
         </div>
