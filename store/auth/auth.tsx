@@ -6,6 +6,7 @@ import {
   StoreAuthService,
   StoreTokenService,
 } from "services/auth/ServiceAuth";
+import { RemoveProcessElectoralStorageService } from "services/process-electoral/ProcessElectoral";
 
 const useAuthStore = create<IAuthStore>((set, get) => ({
   user: {
@@ -30,6 +31,7 @@ const useAuthStore = create<IAuthStore>((set, get) => ({
     set({ islogged: true });
   },
   removeSession: () => {
+    RemoveProcessElectoralStorageService()
     RemoveSessionAuthService();
     set({
       user: {

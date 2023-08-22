@@ -1,23 +1,9 @@
-[
+[ 
   {
     "id": 1,
     "key": "procesos",
     "icon": "KeyOutlined",
     "label": "Procesos",
-    "role":  "user"
-  },
-  {
-    "id": 2,
-    "key": "/",
-    "icon": "HomeOutlined",
-    "label": "Inicio",
-    "role":  "user" 
-  },
-  {
-    "id": 3,
-    "key": "listadopas",
-    "icon": "FileSearchOutlined",
-    "label": "Listado de PAS",
     "role":  "user"
   },
   {

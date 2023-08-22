@@ -20,9 +20,13 @@ import {
   IListadoPas,
 } from "@framework/types";
 import {
+  IResponseAnexos,
+  IResponseAnexosDetail,
   IResponseProcesses,
   IResponseProcessesDetail,
   IResponseProcessesResumen,
+  IResponseTracking,
+  IResponseTrackingDetail,
 } from "@framework/types/processes.interface";
 import { GetTokenAuthService } from "services/auth/ServiceAuth";
 import { authService } from "services/axios/authConfigAxios";
@@ -40,12 +44,12 @@ const api = {
     return { data, message, success };
   },
   home: {
-    getProcessesGrouped: async () => {
+    getProcessesGrouped: async (savedProcess:any) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
           data: { data },
-        }: IResponseProcesses = await apiService.get(`processes/grouped/`);
+        }: IResponseProcesses = await apiService.get(`processes/grouped/?electoral_process=` + savedProcess);
         if (data === undefined) {
           return { data: [] };
         } else {
@@ -55,13 +59,13 @@ const api = {
         return { data: [] };
       }
     },
-    getProcessesSummary: async () => {
+    getProcessesSummary: async (savedProcess:any) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
           data: { data, message, success },
         }: IResponseProcessesResumen = await apiService.get(
-          `processes/resumen/`
+          `processes/resumen/?electoral_process=` + savedProcess
         );
         if (data === undefined || success === undefined || message === undefined) {
           return { data: {} };
@@ -92,12 +96,14 @@ const api = {
       }
     },
 
-    getProcesses: async (label: any) => {
+    //getProcesses: async (label: any) => {
+    getProcesses: async (globalProcess:any, label: any) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
           data: { data, message, success },
-        }: IResponseProcesses = await apiService.get(`${label}/processes/`);
+        //}: IResponseProcesses = await apiService.get(`${label}/processes/`);
+      }: IResponseProcesses = await apiService.get(`${label}/processes/?electoral_process=${globalProcess}`);
         if (data === undefined || success === undefined || message === undefined) {
           return { processes: [] };
         } else {
@@ -198,17 +204,104 @@ const api = {
         },{responseType: "blob",});
         if(status === 200) {
           const resp = data
-         var blob = new Blob([resp], {
-          type: headers["content-type"],
-        });
-        const link = document.createElement("a");
-        link.href = window.URL.createObjectURL(blob);
-        link.download = `report_${new Date().getTime()}.xlsx`;
-        link.click();
-          
+          var blob = new Blob([resp], {
+            type: headers["content-type"],
+          });
+          const link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          link.download = `report_${new Date().getTime()}.xlsx`;
+          link.click();          
         }
       }
-    }
+    },
+    downloadDocuments: async (payload: any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {        
+        try {
+          const response = await apiService.get(`processes/${payload}/documents/download/`,  
+          {
+            responseType: 'blob',
+          });
+          
+          if (response.status == 400 || response.data === undefined){
+            alert("No se encontraron documentos para descargar");
+          } else {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'archivo.zip');
+            document.body.appendChild(link);
+            link.click();
+          }
+        } catch (error) {
+          console.error('Error al descargar el archivo ZIP', error);
+        }
+      }
+    },
+    getTracking: async (id:any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+         status, data: { data, message, success },
+        }: IResponseTracking = await apiService.get(`processes/${id}/sgd-tracking/`);
+        if (status !== 200) {
+          return { tracking: [] };
+        } else {
+          return { tracking: data, message, success };
+        }
+        
+      } else {
+        return { tracking: [], success: false };
+      }
+    },
+    getAnexos: async (id:any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data, message, success },
+        }: IResponseAnexos = await apiService.get(`processes/${id}/sgd-annexes/`);
+        if (data === undefined || success === undefined || message === undefined) {
+          return { anexos: [] };
+        } else {
+          return { anexos: data, message, success };
+        }
+        
+      } else {
+        return { anexos: [] };
+      }
+    },
+    getTrackingDetail: async (año:any, id:any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data, message, success },
+        }: IResponseTrackingDetail = await apiService.get(`processes/sgd/destination-detail/${año}/${id}/`);
+        if (data === undefined || success === undefined || message === undefined) {
+          return { trackingDetail: [] };
+        } else {
+          return { trackingDetail: data, message, success };
+        }
+        
+      } else {
+        return { trackingDetail: [] };
+      }
+    },
+    getAnexosDetail: async (año:any, id:any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data, message, success },
+        }: IResponseAnexosDetail = await apiService.get(`processes/sgd/annex-detail/${año}/${id}/`);
+        if (data === undefined || success === undefined || message === undefined) {
+          return { anexosDetail: [] };
+        } else {
+          return { anexosDetail: data, message, success };
+        }
+        
+      } else {
+        return { anexosDetail: [] };
+      }
+    },
   },
   access: {
     getAcesses: async () => {
@@ -241,6 +334,30 @@ const api = {
         const {
           data: { message },
         }: any = await apiService.get(`organizations/`);
+        return { data: message };
+      } else {
+        return { data: [] };
+      }
+    },
+  },
+  processes: {
+    getProcesses: async (year:any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { message },
+        }: any = await apiService.get(`electoral-process/?year=${year}`);
+        return { data: message };
+      } else {
+        return { data: [] };
+      }
+    },
+    getYear: async () => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { message },
+        }: any = await apiService.get(`years/`);
         return { data: message };
       } else {
         return { data: [] };

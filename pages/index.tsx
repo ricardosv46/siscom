@@ -20,30 +20,34 @@ const Home: NextPageWithLayout = () => {
   const [processGrouped,setProcessGrouped] = useState<any>([])
   const [processSummary,setProcessSummary] = useState<any>([])
   const [processSummaryStats,setProcessSummaryStats] = useState<any>([])
+  let savedProcess = ''
 
-  const processGroupedApi = async() => {
-    const {data} = await api.home.getProcessesGrouped()
+  //const processGroupedApi = async() => {
+    const processGroupedApi = async(savedProcess:any) => {
+    const {data} = await api.home.getProcessesGrouped(localStorage.getItem('IdSelectedProcess'));
     const newData = data?.map((item: { estado: string; })=>({...item, estado: 
           item.estado === 'less_3_months'?<img src='assets/images/less_3_months.png'/>:
           item.estado === 'less_6_months'?<img src='assets/images/less_6_months.png'/>:
           item.estado === 'more_6_months'?<img src='assets/images/more_6_months.png'/>:
           item.estado === 'finalized'?<img src='assets/images/finalized.png'/>:
           item.estado === 'out_of_date'?<img src='assets/images/out_of_date.png'/>:
-          item.estado === 'to_start'?<img src='assets/images/to_start.png'/>:''
+          item.estado === 'to_start'?<img src='assets/images/to_start.png'/>:
+          item.estado === 'undefined'?<img src='assets/images/undefined.png'/>:''
     }))
     setProcessGrouped(newData) 
   }
 
-  const processSummaryApi = async() => {
+  //const processSummaryApi = async() => {
+    const processSummaryApi = async(savedProcess:any) => {
     const dataStats = {}
-    const {data} = await api.home.getProcessesSummary();
+    const {data} = await api.home.getProcessesSummary(localStorage.getItem('IdSelectedProcess'));
     const total = Object.values(data).reduce((a, b) => a+b, 0);
     const empty = Object.assign(data, dataStats);
     for (let k in data){
       dataStats[k] = ((data[k] / total)*100).toFixed(2);
     }
 
-    dataStats.less_3_months = (100 - (Number(dataStats.to_start) + Number(dataStats.finalized) + Number(dataStats.more_6_months) + Number(dataStats.less_6_months) + Number(dataStats.out_of_date))).toFixed(2);
+    dataStats.undefined = (100 - (Number(dataStats.to_start) + Number(dataStats.finalized) + Number(dataStats.more_6_months) + Number(dataStats.less_6_months) + Number(dataStats.out_of_date) + Number(dataStats.less_3_months))).toFixed(2);
 
     setProcessSummary(data);
     setProcessSummaryStats(dataStats);
@@ -56,16 +60,16 @@ const Home: NextPageWithLayout = () => {
       {
         label: 'Cantidad de procesos',
         data: Object.values(processSummary),
-        backgroundColor: ["rgb(136,132,132)","rgb(232,52,44)","rgb(256,188,28)","rgb(120,188,68)","rgb(5,5,5,255)","rgb(255,255,255)"],
-        borderColor: ["rgb(136,132,132)","rgb(232,52,44)","rgb(256,188,28)","rgb(120,188,68)","rgb(5,5,5,255)","rgb(5,5,5,255)"],
+        backgroundColor: ["rgb(136,132,132)","rgb(232,52,44)","rgb(256,188,28)","rgb(120,188,68)","rgb(5,5,5,255)","rgb(255,255,255)", "rgb(129, 71, 174)"],
+        borderColor: ["rgb(136,132,132)","rgb(232,52,44)","rgb(256,188,28)","rgb(120,188,68)","rgb(5,5,5,255)","rgb(5,5,5,255)", "rgb(129, 71, 174)"],
         borderWidth: 1,
       },
     ],
   };
 
   useEffect(() => {
-    processGroupedApi();
-    processSummaryApi();
+    processGroupedApi(savedProcess);
+    processSummaryApi(savedProcess);
   }, []);
 
   const router = useRouter();
@@ -78,7 +82,8 @@ const Home: NextPageWithLayout = () => {
                            elements[0].index == 2 ? "less_6_months" :
                            elements[0].index == 3 ? "more_6_months" :
                            elements[0].index == 4 ? "out_of_date" :
-                           elements[0].index == 5 ? "to_start" : '';
+                           elements[0].index == 5 ? "to_start" :
+                           elements[0].index == 6 ? "undefined": '';
         router.push(`/listadopas?estado=${labelIndex}`);
       }
     },
@@ -164,7 +169,11 @@ const Home: NextPageWithLayout = () => {
                 {'estado': <img src='assets/images/less_3_months.png'/>, 
                 "descripcion": "Menos de 3 meses", 
                 "cantidad": processSummary.less_3_months, 
-                "percentage": processSummaryStats.less_3_months + '%'}]
+                "percentage": processSummaryStats.less_3_months + '%'},
+                {'estado': <img src='assets/images/undefined.png'/>, 
+                "descripcion": "Indefinido", 
+                "cantidad": processSummary.undefined, 
+                "percentage": processSummaryStats.undefined + '%'}]
   }
   
 
