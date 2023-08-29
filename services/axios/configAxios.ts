@@ -33,7 +33,6 @@ apiService.interceptors.response.use(
       }
     }
 
-    console.log("la ctmr")
     console.log(response.status);
 
     return Promise.reject(response);  

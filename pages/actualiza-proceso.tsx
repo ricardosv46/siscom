@@ -14,6 +14,7 @@ import { RightCard } from "../components/common/right";
 import { Button, Modal, message } from "antd";
 import { format } from 'date-fns';
 import useAuthStore from "store/auth/auth";
+import apiService from "services/axios/configAxios";
 
 interface IPropsItem {
   actualizacion: string;
@@ -118,11 +119,17 @@ const Actualizaproceso: NextPageWithLayout= ({}) => {
       const token = localStorage.getItem("token");
       if (token) {
         //config.headers['x-access-tokens'] = token;
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/${id}/tracking/create/`, formData, {headers: {'x-access-tokens': token}});
-        console.log(response.data);
-        limpiarDatos()
-        alert('El registro se procesó correctamente!!!')
-        router.push('./listadopas')
+        //const response = await axios.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/${id}/tracking/create/`, formData, {headers: {'x-access-tokens': token}});
+        const response = await apiService.post(`processes/${id}/tracking/create/`, formData, {headers: {'x-access-tokens': token}})
+        
+        //TODO: optimizar esto para que lo haga en el config del axios por default.
+        if (response.status === 400 && response.data.success === false){
+          alert(response.data.message);
+        } else {
+          limpiarDatos();
+          alert('El registro se procesó correctamente!!!');
+          router.push('./listadopas');
+        }
       } else {
         router.push("/auth");
       }
