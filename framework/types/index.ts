@@ -111,21 +111,21 @@ export interface ITrackingDetail{
 }
 
 export interface IAnexosDetail{
-  ASUNTO?: string | undefined
-  AÑO?: string | undefined
-  DESTINO?: string | undefined
-  EMITE?: string | undefined
-  FECHA_EMI?: string | undefined
-  INDICACIONES?: string | undefined
-  NRO_DOC?: string | undefined
-  NU_ANN?: string | undefined
-  NU_ANN_EXP?: string | undefined
-  NU_DES?: string | undefined
-  NU_EMI?: string | undefined
-  NU_SEC_EXP?: string | undefined
-  PRIORIDAD?: string | undefined
-  TIPO_DOC?: string | undefined
-  TRAMITE?: string | undefined
+  asunto?: string | undefined
+  año?: string | undefined
+  destino?: string | undefined
+  emite?: string | undefined
+  fecha_emi?: string | undefined
+  indicaciones?: string | undefined
+  nro_doc?: string | undefined
+  nu_ann?: string | undefined
+  nu_ann_exp?: string | undefined
+  nu_des?: string | undefined
+  nu_emi?: string | undefined
+  nu_sec_exp?: string | undefined
+  prioridad?: string | undefined
+  tipo_doc?: string | undefined
+  tramite?: string | undefined
 }
 
 export interface UserSave{

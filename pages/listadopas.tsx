@@ -20,7 +20,7 @@ import useMenuStore from "store/menu/menu";
 import { match } from "assert";
 import axios from "axios";
 import Link from "next/link";
-import { IAnexos, ITracking } from "@framework/types";
+import { IAnexos, IAnexosDetail, ITracking } from "@framework/types";
 
 moment.locale('es');
 const { RangePicker } = DatePicker;
@@ -620,8 +620,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
           </div>
           </tr>
           <br></br>
-          {dataAnexosDetail?.length && dataAnexosDetail.map( 
-              ({AÑO,FECHA_EMI,EMITE,DESTINO,NRO_DOC,TIPO_DOC,ASUNTO,TRAMITE,PRIORIDAD,INDICACIONES}:any) =>
+          {console.log("testttttt", dataAnexosDetail)}
+          {dataAnexosDetail?.length && dataAnexosDetail.map((item: IAnexosDetail, index: { toString: () => React.Key | null | undefined; }) =>
         <tr>
           <div>
             <label style={{color:'#083474', fontSize: '16px'}}>Detalles</label>
@@ -632,13 +632,13 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
               <label style={{fontSize: '16px'}}>Año:</label>
             </div >
             <div style={{marginRight: '60px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>{AÑO}</label>
+              <label style={{fontSize: '16px'}}>{item.año}</label>
             </div >
             <div style={{marginRight: '30px', display: 'flex', alignItems: 'center'}}>
               <label style={{fontSize: '16px'}}>Fecha Emisión:</label>
             </div >
             <div style={{display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>{FECHA_EMI}</label>
+              <label style={{fontSize: '16px'}}>{item.fecha_emi}</label>
             </div >
           </div>
           <br></br>
@@ -647,7 +647,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
               <label style={{fontSize: '16px'}}>Emite:</label>
             </div >
             <div style={{display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>{EMITE}</label>
+              <label style={{fontSize: '16px'}}>{item.emite}</label>
             </div >
           </div>
           <br></br>
@@ -656,7 +656,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
               <label style={{fontSize: '16px'}}>Destino:</label>
             </div >
             <div style={{display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>{DESTINO}</label>
+              <label style={{fontSize: '16px'}}>{item.destino}</label>
             </div >
           </div>
           <br></br>
@@ -665,10 +665,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
               <label style={{fontSize: '16px'}}>Tipo Doc.:</label>
             </div >
             <div style={{marginRight: '60px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>{TIPO_DOC}</label>
+              <label style={{fontSize: '16px'}}>{item.tipo_doc}</label>
             </div >
             <div style={{marginRight: '80px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>Nro. Doc.: {NRO_DOC}</label>
+              <label style={{fontSize: '16px'}}>Nro. Doc.: {item.nro_doc}</label>
             </div >
             <div style={{marginRight: '5px', display: 'flex', alignItems: 'center'}}>
               <Button style={{display:'flex', alignItems:'center',
@@ -687,7 +687,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
               <label style={{fontSize: '16px'}}>Asunto:</label>
             </div >
             <div style={{display: 'flex', alignItems: 'center'}}>
-              <textarea style={{borderWidth: 4, fontSize: '16px', width:'700px', height:'50px'}}>{ASUNTO}</textarea>
+              <textarea style={{borderWidth: 4, fontSize: '16px', width:'700px', height:'50px'}}>{item.asunto}</textarea>
             </div >
           </div>
           <br></br>
@@ -696,19 +696,19 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
               <label style={{fontSize: '16px'}}>Trámite:</label>
             </div >
             <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>{TRAMITE}</label>
+              <label style={{fontSize: '16px'}}>{item.tramite}</label>
             </div >
             <div style={{marginRight: '20px', display: 'flex', alignItems: 'center'}}>
               <label style={{fontSize: '16px'}}>Prioridad:</label>
             </div >
             <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>{PRIORIDAD}</label>
+              <label style={{fontSize: '16px'}}>{item.prioridad}</label>
             </div >
             <div style={{marginRight: '20px', display: 'flex', alignItems: 'center'}}>
               <label style={{fontSize: '16px'}}>Indicaciones:</label>
             </div >
             <div style={{display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>{INDICACIONES}</label>
+              <label style={{fontSize: '16px'}}>{item.indicaciones}</label>
             </div >
           </div>
           <br></br>
