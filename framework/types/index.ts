@@ -55,6 +55,7 @@ export interface IResponseTracking extends axiosDefaultData{
 }
 
 export interface IAnexos{
+  document_type?: string
   document?: string
   from?: string
   name?: string
