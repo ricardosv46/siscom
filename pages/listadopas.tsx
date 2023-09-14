@@ -269,6 +269,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
       key: "fecha_fin",
     },
     {
+      title: "Tiempo Restante",
+      dataIndex: "days_left",
+      key: "days_left",
+    },
+    {
       title: "Actualización",
       dataIndex: "actualizacion",
       key: "actualizacion",
@@ -620,7 +625,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
           </div>
           </tr>
           <br></br>
-          {console.log("testttttt", dataAnexosDetail)}
           {dataAnexosDetail?.length && dataAnexosDetail.map((item: IAnexosDetail, index: { toString: () => React.Key | null | undefined; }) =>
         <tr>
           <div>
