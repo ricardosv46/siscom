@@ -272,6 +272,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       key: "fecha_fin",
     },
     {
+      title: "Tiempo Restante",
+      dataIndex: "days_left",
+      key: "days_left",
+    },
+    {
       title: "Actualización",
       dataIndex: "actualizacion",
       key: "actualizacion",
