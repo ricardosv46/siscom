@@ -152,6 +152,11 @@ const Home: NextPageWithLayout = () => {
       key: "fecha_fin",
     },
     {
+      title: "Tiempo Restante",
+      dataIndex: "days_left",
+      key: "days_left",
+    },
+    {
       title: "Estado",
       dataIndex: "estado",
       key: "estado",
