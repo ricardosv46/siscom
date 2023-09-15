@@ -67,6 +67,7 @@ export interface IAnexos{
 
  
 export interface ITracking {
+  document_type?: string
   document: string,
   from: string,
   name: string,
@@ -88,26 +89,28 @@ export interface  IReferences {
 
 
 export interface ITrackingDetail{
-  ASUNTO?: string | undefined
-  DEPENDENCIA?: string | undefined
-  ELABORO?: string | undefined
-  EMISOR?: string | undefined
-  ESTADO?: string | undefined
-  ESTADO_DESTINATARIO?: string | undefined
-  FECHA_ATE?: string | undefined
-  FECHA_EMI?: string | undefined
-  FECHA_REC?: string | undefined
-  INDICACIONES?: string | undefined
-  NRO_DOC?: string | undefined
-  NU_ANN?: string | undefined
-  NU_ANN_EXP?: string | undefined
-  NU_DES?: string | undefined
-  NU_EMI?: string | undefined
-  NU_SEC_EXP?: string | undefined
-  PRIORIDAD?: string | undefined
-  RECEPTOR?: string | undefined
-  TIPO_DOC?: string | undefined
-  TRAMITE?: string | undefined
+  asunto: string;
+  de_ruta_origen: string;
+  dependencia: string;
+  documento: null | string;
+  elaboro: string;
+  emisor: string;
+  estado: string;
+  estado_destinatario: string;
+  fecha_ate: string;
+  fecha_emi: string;
+  fecha_rec: string;
+  indicaciones: null | string;
+  nro_doc: string;
+  nu_ann: string;
+  nu_ann_exp: string;
+  nu_des: string;
+  nu_emi: string;
+  nu_sec_exp: string;
+  prioridad: string;
+  receptor: string;
+  tipo_doc: string;
+  tramite: string;
 }
 
 export interface IAnexosDetail{
