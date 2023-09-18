@@ -61,6 +61,7 @@ export interface IAnexos{
   name?: string
   nu_ann?: string
   nu_emi?: string
+  nu_emi_ref?:string
   references?: IReferences[]
   to?: string
 }
@@ -114,6 +115,7 @@ export interface ITrackingDetail{
 }
 
 export interface IAnexosDetail{
+  id?:string
   asunto?: string | undefined
   año?: string | undefined
   destino?: string | undefined

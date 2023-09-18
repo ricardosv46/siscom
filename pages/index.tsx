@@ -137,7 +137,7 @@ const Home: NextPageWithLayout = () => {
   };
   const columns = [
     {
-      title: "Proceso",
+      title: "Nombre",
       dataIndex: "name",
       key: "name",
     },
@@ -254,16 +254,16 @@ const Home: NextPageWithLayout = () => {
     }
   }
 
-  useEffect(() => {
-    //Commented to work on docker
-    /*if (processGrouped.length <= pageSize) {
-      return;
-    }*/
-    setTimeout(() => {
-      const nextPage = currentPage === Math.ceil(processGrouped.length / pageSize) ? 1 : currentPage + 1;
-      setCurrentPage(nextPage);
-    }, 20000);
-  }, [currentPage]);
+  // useEffect(() => {
+  //   //Commented to work on docker
+  //   /*if (processGrouped.length <= pageSize) {
+  //     return;
+  //   }*/
+  //   setTimeout(() => {
+  //     const nextPage = currentPage === Math.ceil(processGrouped.length / pageSize) ? 1 : currentPage + 1;
+  //     setCurrentPage(nextPage);
+  //   }, 20000);
+  // }, [currentPage]);
 
   return (
     <>

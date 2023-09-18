@@ -1,24 +1,20 @@
 import Head from "next/head";
-import { Button, Space, Table, DatePicker, ConfigProvider, Pagination, Modal } from "antd";
-import React, { ChangeEvent, ReactElement, cloneElement, useCallback, useEffect, useRef, useState } from "react";
+import { Button, Space, Table, DatePicker, Modal } from "antd";
+import React, { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import { LayoutFirst } from "@components/common";
 import { NextPageWithLayout } from "pages/_app";
-import { Card, Tracking, Anexo, AnexoItem, TrackingItem } from "@components/ui";
+import { Card, AnexoItem, TrackingItem } from "@components/ui";
 import api from "@framework/api";
-import { EditOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { useUI } from "@components/ui/context";
 import Input from "antd/lib/input/Input";
 import { useRouter } from "next/router";
 import useAuthStore from "store/auth/auth";
-import { cleanTextStringAndFormat } from "utils/helpers";
 import moment from "moment";
 import "moment/locale/es";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import { useFilePicker } from "use-file-picker";
 import useMenuStore from "store/menu/menu";
-import { match } from "assert";
-import axios from "axios";
-import Link from "next/link";
 import { IAnexos, IAnexosDetail, ITracking, ITrackingDetail } from "@framework/types";
 import { ExportExcel } from "@components/ui/ExportExcel/ExportExcel";
 
@@ -69,9 +65,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [isCheckedOP, setIsCheckedOP] = useState(false);
   const { IdSelectedProcess } = useMenuStore();
   const [openAnexos, setOpenAnexos] = useState(false);
+
   const [dataAnexos, setDataAnexos] = useState<IAnexos[]>([]);
-  console.log({ dataAnexos });
+
   const [dataAnexosDetail, setDataAnexosDetail] = useState<any>([]);
+
   const [openTracking, setOpenTracking] = useState(false);
   const [dataTracking, setDataTracking] = useState<ITracking[]>([]);
   const [dataTrackingDetail, setDataTrackingDetail] = useState<any>([]);
@@ -197,27 +195,38 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       setDataAnexos(anexos);
       const { anexosDetail } = await api.listpas.getAnexosDetail(anexos[0].nu_ann, anexos[0].nu_emi);
       if (anexosDetail) {
-        setDataAnexosDetail(anexosDetail.slice(0, 1));
+        setDataAnexosDetail([{ id: `${0}-${anexosDetail[0].nro_doc}`, ...anexosDetail[0] }]);
       }
     }
     setOpenAnexos(true);
   };
 
+  // const [dataAnexos, setDataAnexos] = useState<IAnexos[]>([]);
+
+  // const [open, setOpen] = useState(() => new Map());
+  // const isOpen = (item: IAnexos) => open.get(item.document) || false;
+  // const toggle = async (item: IAnexos) => {
+  //   setOpen((m) => new Map(m).set(item.document, !isOpen(item)));
+
+  //   const { anexosDetail } = await api.listpas.getAnexosDetail(item.nu_ann, item.nu_emi_ref);
+
+  //   setDataAnexosDetail(anexosDetail.slice(0, 1));
+  // };
+
   const getAnexosDetail = async (anexos: any) => {
     const { anexosDetail } = await api.listpas.getAnexosDetail(anexos.nu_ann, anexos.nu_emi);
-    if (anexosDetail) {
-      setDataAnexosDetail(anexosDetail.slice(0, 1));
-    }
+
+    setDataAnexosDetail([{ id: anexos.id, ...anexosDetail[0] }]);
   };
 
-  const onValueSelectedAnexo = async (item: IAnexos) => {
-    if (item) {
-      const { anexosDetail } = await api.listpas.getAnexosDetail(item.nu_ann, item.nu_ann);
-      if (anexosDetail) {
-        setDataAnexosDetail(anexosDetail);
-      }
-    }
-  };
+  // const onValueSelectedAnexo = async (item: IAnexos) => {
+  //   if (item) {
+  //     const { anexosDetail } = await api.listpas.getAnexosDetail(item.nu_ann, item.nu_ann);
+  //     if (anexosDetail) {
+  //       setDataAnexosDetail(anexosDetail);
+  //     }
+  //   }
+  // };
 
   //FilePicker
   const [openFileSelector, { filesContent, plainFiles, loading, clear }] = useFilePicker({
@@ -672,38 +681,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                 resize: "vertical",
               }}
             >
-              {/* {dataAnexos?.length &&
-                dataAnexos.map((item: IAnexos, index: { toString: () => React.Key | null | undefined }) => {
-                  return <Anexo onValueSelectedAnexo={onValueSelectedAnexo} item={item} key={index.toString()} />;
-                })} */}
-
-              {/* {dataAnexos?.length &&
-                dataAnexos.map((item: IAnexos, index: number) => {
-                  return (
-                    <button key={index} className="flex flex-col">
-                      <div className="flex gap-1">
-                        <img src="assets/images/abrir.svg" />
-                        <p style={{ fontSize: "15px" }}>
-                          {item?.document_type} {item?.document} - {item.from}
-                        </p>
-                      </div>
-                      {item.references &&
-                        item.references.map((item) => (
-                          <button key={index} className="px-5">
-                            <div className="flex gap-1">
-                              <img src="assets/images/abrir.svg" />
-                              <p style={{ fontSize: "15px" }}>
-                                {item?.document_type} {item?.document} - {item.from}
-                              </p>
-                            </div>
-                          </button>
-                        ))}
-                    </button>
-                  );
-                })} */}
-
-              {dataAnexos?.length &&
-                dataAnexos.map((item: IAnexos, index: number) => <AnexoItem key={index} item={item} getAnexosDetail={getAnexosDetail} />)}
+              {dataAnexos?.length > 0 &&
+                dataAnexos.map((item: IAnexos, index: number) => (
+                  <AnexoItem key={index} item={item} getAnexosDetail={getAnexosDetail} document={dataAnexosDetail} />
+                ))}
+              {/* {dataAnexos?.length > 0 && <Anexo items={dataAnexos} isOpen={isOpen} toggle={toggle} />} */}
             </div>
           </tr>
           <br></br>
@@ -714,6 +696,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                 <div>
                   <label style={{ color: "#083474", fontSize: "16px" }}>Detalles</label>
                 </div>
+                {item.nro_doc}
                 <br></br>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <div style={{ marginRight: "55px", display: "flex", alignItems: "center" }}>

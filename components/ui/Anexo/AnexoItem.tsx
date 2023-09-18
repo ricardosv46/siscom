@@ -1,18 +1,37 @@
+import api from "@framework/api";
 import { IAnexos } from "@framework/types";
+import { relative } from "path";
 import { useState } from "react";
 
-const AnexoItem = ({ getAnexosDetail, item, level = 0 }: { item: IAnexos; level?: number; getAnexosDetail: (props: any) => void }) => {
+const AnexoItem = ({
+  getAnexosDetail,
+  item,
+  level = 0,
+  document,
+}: {
+  item: IAnexos;
+  level?: number;
+  getAnexosDetail: any;
+  document: any;
+}) => {
   const [isOpen, setIsOpen] = useState(true);
   const paddingLeft = `${level + 14}px`;
+  const id = `${level}-${item.document}`;
 
-  const toggleOpen = () => {
-    getAnexosDetail(item);
-    setIsOpen(!isOpen);
+  const toggleOpen = async () => {
+    getAnexosDetail({ id, ...item });
+    setIsOpen((prevState) => !prevState);
   };
 
+  // const isSelected = item.document === document[0].nro_doc && item.nu_emi_ref === document[0].nu_emi;
+
+  console.log({ id, id2: document[0] });
+  // const isSelected = id === document[0].id;
+  const isSelected = item.document === document[0].nro_doc;
+
   return (
-    <button style={{ paddingLeft }} className="flex flex-col">
-      <div className="flex gap-1" onClick={toggleOpen}>
+    <div style={{ paddingLeft }} className="flex flex-col">
+      <button className="flex gap-1 items-center" onClick={toggleOpen}>
         {item.references?.length! > 0 && <img src="assets/images/arrow.svg" alt="Arrow" className={`${isOpen ? "rotate-90" : ""}`} />}
 
         {item.references?.length! > 0 ? (
@@ -25,16 +44,16 @@ const AnexoItem = ({ getAnexosDetail, item, level = 0 }: { item: IAnexos; level?
           <img src="assets/images/clip.svg" alt="Clip" />
         )}
 
-        <p className="fl" style={{ fontSize: "15px" }}>
+        <p className="fl" style={{ backgroundColor: isSelected ? "#fffbc5" : "", fontSize: "15px" }}>
           {item?.document_type} {item?.document} - {item.from}
         </p>
-      </div>
+      </button>
       {isOpen &&
         item.references &&
         item.references.map((refItem: any, index: any) => (
-          <AnexoItem key={index} item={refItem} getAnexosDetail={getAnexosDetail} level={level + 1} />
+          <AnexoItem key={index} item={refItem} getAnexosDetail={getAnexosDetail} level={level + 1} document={document} />
         ))}
-    </button>
+    </div>
   );
 };
 
