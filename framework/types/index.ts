@@ -55,6 +55,7 @@ export interface IResponseTracking extends axiosDefaultData{
 }
 
 export interface IAnexos{
+  id?:string
   document_type?: string
   document?: string
   from?: string
@@ -68,17 +69,20 @@ export interface IAnexos{
 
  
 export interface ITracking {
+  id?:string
   document_type?: string
   document: string,
   from: string,
   name: string,
   nu_ann: string,
   nu_emi: string,
+  nu_emi_ref: string,
   references: IReferences[]
   to?: string
 }
  
 export interface  IReferences {
+  
   document: string,
   from: string,
   name: string,
@@ -90,6 +94,7 @@ export interface  IReferences {
 
 
 export interface ITrackingDetail{
+  id?:string
   asunto: string;
   de_ruta_origen: string;
   dependencia: string;
@@ -131,6 +136,7 @@ export interface IAnexosDetail{
   prioridad?: string | undefined
   tipo_doc?: string | undefined
   tramite?: string | undefined
+  
 }
 
 export interface UserSave{

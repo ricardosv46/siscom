@@ -165,7 +165,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       setDataTracking(tracking);
       const { trackingDetail } = await api.listpas.getTrackingDetail(tracking[0].nu_ann, tracking[0].nu_emi);
       if (trackingDetail) {
-        setDataTrackingDetail(trackingDetail.slice(0, 1));
+        setDataTrackingDetail([{ id: `${0}-${trackingDetail[0].nro_doc}`, ...trackingDetail[0] }]);
       }
     }
     setOpenTracking(true);
@@ -173,17 +173,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
   const getTrackingDetail = async (tracking: any) => {
     const { trackingDetail } = await api.listpas.getTrackingDetail(tracking.nu_ann, tracking.nu_emi);
+    console.log({ trackingDetail, tracking });
     if (trackingDetail) {
-      setDataTrackingDetail(trackingDetail.slice(0, 1));
-    }
-  };
-
-  const onValueSelectedTracking = async (item: ITracking) => {
-    if (item) {
-      const { trackingDetail } = await api.listpas.getTrackingDetail(item.nu_ann, item.nu_emi);
-      if (trackingDetail) {
-        setDataTrackingDetail(trackingDetail);
-      }
+      setDataTrackingDetail([{ id: tracking.id, ...tracking[0] }]);
     }
   };
 
@@ -193,7 +185,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     const { success, anexos } = await api.listpas.getAnexos(newDatos.item.numero);
     if (success) {
       setDataAnexos(anexos);
-      const { anexosDetail } = await api.listpas.getAnexosDetail(anexos[0].nu_ann, anexos[0].nu_emi);
+      const { anexosDetail } = await api.listpas.getAnexosDetail(anexos[0].nu_ann, anexos[0].nu_emi_ref);
       if (anexosDetail) {
         setDataAnexosDetail([{ id: `${0}-${anexosDetail[0].nro_doc}`, ...anexosDetail[0] }]);
       }
@@ -201,32 +193,12 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     setOpenAnexos(true);
   };
 
-  // const [dataAnexos, setDataAnexos] = useState<IAnexos[]>([]);
-
-  // const [open, setOpen] = useState(() => new Map());
-  // const isOpen = (item: IAnexos) => open.get(item.document) || false;
-  // const toggle = async (item: IAnexos) => {
-  //   setOpen((m) => new Map(m).set(item.document, !isOpen(item)));
-
-  //   const { anexosDetail } = await api.listpas.getAnexosDetail(item.nu_ann, item.nu_emi_ref);
-
-  //   setDataAnexosDetail(anexosDetail.slice(0, 1));
-  // };
-
   const getAnexosDetail = async (anexos: any) => {
-    const { anexosDetail } = await api.listpas.getAnexosDetail(anexos.nu_ann, anexos.nu_emi);
-
-    setDataAnexosDetail([{ id: anexos.id, ...anexosDetail[0] }]);
+    const { anexosDetail } = await api.listpas.getAnexosDetail(anexos.nu_ann, anexos.nu_emi_ref);
+    if (anexosDetail) {
+      setDataAnexosDetail([{ id: anexos.id, ...anexosDetail[0] }]);
+    }
   };
-
-  // const onValueSelectedAnexo = async (item: IAnexos) => {
-  //   if (item) {
-  //     const { anexosDetail } = await api.listpas.getAnexosDetail(item.nu_ann, item.nu_ann);
-  //     if (anexosDetail) {
-  //       setDataAnexosDetail(anexosDetail);
-  //     }
-  //   }
-  // };
 
   //FilePicker
   const [openFileSelector, { filesContent, plainFiles, loading, clear }] = useFilePicker({
@@ -683,7 +655,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             >
               {dataAnexos?.length > 0 &&
                 dataAnexos.map((item: IAnexos, index: number) => (
-                  <AnexoItem key={index} item={item} getAnexosDetail={getAnexosDetail} document={dataAnexosDetail} />
+                  <AnexoItem key={index} item={item} getAnexosDetail={getAnexosDetail} anexoDetail={dataAnexosDetail} />
                 ))}
               {/* {dataAnexos?.length > 0 && <Anexo items={dataAnexos} isOpen={isOpen} toggle={toggle} />} */}
             </div>
@@ -839,7 +811,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
               {dataTracking?.length &&
                 dataTracking.map((item: ITracking, index: number) => (
-                  <TrackingItem key={index} item={item} getTrackingDetail={getTrackingDetail} />
+                  <TrackingItem key={index} item={item} getTrackingDetail={getTrackingDetail} tackingDetail={dataTrackingDetail} />
                 ))}
             </div>
           </tr>

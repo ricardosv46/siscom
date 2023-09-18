@@ -1,22 +1,27 @@
-import { IAnexos, ITracking } from "@framework/types";
+import { ITracking, ITrackingDetail } from "@framework/types";
 import { useState } from "react";
 
 const TrackingItem = ({
   getTrackingDetail,
   item,
   level = 0,
+  tackingDetail,
 }: {
   item: ITracking;
   level?: number;
-  getTrackingDetail: (props: any) => void;
+  getTrackingDetail: (props: ITracking) => void;
+  tackingDetail: ITrackingDetail[];
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const paddingLeft = `${level + 14}px`;
+  const id = `${level}-${item.document}`;
 
-  const toggleOpen = () => {
-    getTrackingDetail(item);
-    setIsOpen(!isOpen);
+  const toggleOpen = async () => {
+    getTrackingDetail({ id, ...item });
+    setIsOpen((prevState) => !prevState);
   };
+
+  const isSelected = id === tackingDetail[0].id;
 
   return (
     <button style={{ paddingLeft }} className="flex flex-col">
@@ -33,14 +38,14 @@ const TrackingItem = ({
           <img src="assets/images/clip.svg" alt="Clip" />
         )}
 
-        <p className="fl" style={{ fontSize: "15px" }}>
+        <p style={{ backgroundColor: isSelected ? "#fffbc5" : "", fontSize: "15px" }}>
           {item?.document_type} {item?.document} - {item.from}
         </p>
       </div>
       {isOpen &&
         item.references &&
         item.references.map((refItem: any, index: any) => (
-          <TrackingItem key={index} item={refItem} getTrackingDetail={getTrackingDetail} level={level + 1} />
+          <TrackingItem key={index} item={refItem} getTrackingDetail={getTrackingDetail} level={level + 1} tackingDetail={tackingDetail} />
         ))}
     </button>
   );

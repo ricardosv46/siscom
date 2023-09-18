@@ -1,5 +1,5 @@
 import api from "@framework/api";
-import { IAnexos } from "@framework/types";
+import { IAnexos, IAnexosDetail } from "@framework/types";
 import { relative } from "path";
 import { useState } from "react";
 
@@ -7,12 +7,12 @@ const AnexoItem = ({
   getAnexosDetail,
   item,
   level = 0,
-  document,
+  anexoDetail,
 }: {
   item: IAnexos;
   level?: number;
-  getAnexosDetail: any;
-  document: any;
+  getAnexosDetail: (props: IAnexos) => void;
+  anexoDetail: IAnexosDetail[];
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const paddingLeft = `${level + 14}px`;
@@ -23,11 +23,7 @@ const AnexoItem = ({
     setIsOpen((prevState) => !prevState);
   };
 
-  // const isSelected = item.document === document[0].nro_doc && item.nu_emi_ref === document[0].nu_emi;
-
-  console.log({ id, id2: document[0] });
-  // const isSelected = id === document[0].id;
-  const isSelected = item.document === document[0].nro_doc;
+  const isSelected = id === anexoDetail[0].id;
 
   return (
     <div style={{ paddingLeft }} className="flex flex-col">
@@ -44,14 +40,14 @@ const AnexoItem = ({
           <img src="assets/images/clip.svg" alt="Clip" />
         )}
 
-        <p className="fl" style={{ backgroundColor: isSelected ? "#fffbc5" : "", fontSize: "15px" }}>
+        <p style={{ backgroundColor: isSelected ? "#fffbc5" : "", fontSize: "15px" }}>
           {item?.document_type} {item?.document} - {item.from}
         </p>
       </button>
       {isOpen &&
         item.references &&
         item.references.map((refItem: any, index: any) => (
-          <AnexoItem key={index} item={refItem} getAnexosDetail={getAnexosDetail} level={level + 1} document={document} />
+          <AnexoItem key={index} item={refItem} getAnexosDetail={getAnexosDetail} level={level + 1} anexoDetail={anexoDetail} />
         ))}
     </div>
   );
