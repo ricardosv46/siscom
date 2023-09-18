@@ -165,7 +165,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       setDataTracking(tracking);
       const { trackingDetail } = await api.listpas.getTrackingDetail(tracking[0].nu_ann, tracking[0].nu_emi);
       if (trackingDetail) {
-        setDataTrackingDetail([{ id: `${0}-${trackingDetail[0].nro_doc}`, ...trackingDetail[0] }]);
+        setDataTrackingDetail([{ id: `${0}-${trackingDetail[0].id}`, ...trackingDetail[0] }]);
       }
     }
     setOpenTracking(true);
@@ -173,9 +173,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
   const getTrackingDetail = async (tracking: any) => {
     const { trackingDetail } = await api.listpas.getTrackingDetail(tracking.nu_ann, tracking.nu_emi);
-    console.log({ trackingDetail, tracking });
+    console.log({ trackingDetail, nu: tracking.nu_ann, emi: tracking.nu_emi_ref, tracking });
     if (trackingDetail) {
-      setDataTrackingDetail([{ id: tracking.id, ...tracking[0] }]);
+      setDataTrackingDetail([{ id: tracking.id, ...trackingDetail[0] }]);
     }
   };
 

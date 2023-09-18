@@ -279,7 +279,7 @@ const api = {
         if (data === undefined || success === undefined || message === undefined) {
           return { trackingDetail: [] };
         } else {
-          return { trackingDetail: data, message, success };
+          return { trackingDetail: [{...data}], message, success };
         }
         
       } else {

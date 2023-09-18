@@ -54,7 +54,7 @@ export interface IResponseAnexos extends axiosDefaultData{
 export interface IResponseTrackingDetail extends axiosDefaultData{
     data: 
     {
-        data: ITrackingDetail[],
+        data: ITrackingDetail,
         message: string,
         success: boolean
     }
