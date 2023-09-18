@@ -16,7 +16,7 @@ const Child: FC<IPropsItem> = ({
 
     return (<>
         <button onClick={onClick}><img src='assets/images/abrir.svg' /></button>
-        <label style={{ fontSize: '17px' }}>{item?.document} - {item.from}</label>
+        <label style={{ fontSize: '15px' }}>{item?.document_type} {item?.document} - {item.from}</label>
         {children}
     </>)
 }

@@ -1,31 +1,27 @@
 import Head from "next/head";
-import { Button, Space, Table, DatePicker, ConfigProvider, Pagination, Modal } from "antd";
-import React, { ChangeEvent, ReactElement, cloneElement, useCallback, useEffect, useRef, useState } from "react";
+import { Button, Space, Table, DatePicker, Modal } from "antd";
+import React, { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import { LayoutFirst } from "@components/common";
 import { NextPageWithLayout } from "pages/_app";
-import { Card, Tracking, Anexo } from "@components/ui";
+import { Card, AnexoItem, TrackingItem } from "@components/ui";
 import api from "@framework/api";
-import { EditOutlined, SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 import { useUI } from "@components/ui/context";
 import Input from "antd/lib/input/Input";
 import { useRouter } from "next/router";
 import useAuthStore from "store/auth/auth";
-import { cleanTextStringAndFormat } from "utils/helpers";
-import { ExportExcel } from './ExportExcel'
-import moment from 'moment';
-import 'moment/locale/es';
-import locale from 'antd/lib/date-picker/locale/es_ES';
-import { useFilePicker } from 'use-file-picker';
+import moment from "moment";
+import "moment/locale/es";
+import locale from "antd/lib/date-picker/locale/es_ES";
+import { useFilePicker } from "use-file-picker";
 import useMenuStore from "store/menu/menu";
-import { match } from "assert";
-import axios from "axios";
-import Link from "next/link";
-import { IAnexos, ITracking } from "@framework/types";
+import { IAnexos, IAnexosDetail, ITracking, ITrackingDetail } from "@framework/types";
+import { ExportExcel } from "@components/ui/ExportExcel/ExportExcel";
 
-moment.locale('es');
+moment.locale("es");
 const { RangePicker } = DatePicker;
 
-type IOptionFilter = 1 | 2 | 3
+type IOptionFilter = 1 | 2 | 3;
 
 interface ListadopasProps {
   pageNum: number;
@@ -47,21 +43,8 @@ interface IPropsItem {
   sgd: boolean;
 }
 
-const Listadopas: NextPageWithLayout<ListadopasProps> = ({
-  pageNum,
-  pageSize,
-  total,
-}) => {
-  const {
-    openModal,
-    setModalView,
-    clients,
-    removeUser,
-    openNotification,
-    setNotification,
-    setEditId,
-    addClients,
-  } = useUI();
+const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, total }) => {
+  const { openModal, setModalView, clients, removeUser, openNotification, setNotification, setEditId, addClients } = useUI();
   const [pagConfig, setPagConfig] = useState({
     pageNum: pageNum,
     pageSize: pageSize,
@@ -70,24 +53,27 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   const router = useRouter();
   const [process, setProcess] = useState<any>();
   const [memory, setMemory] = useState<any>();
-  let inputValue: any | undefined
-  let filterData: any | undefined
-  const [date, setDate] = useState({ from: "", to: "" })
+  let inputValue: any | undefined;
+  let filterData: any | undefined;
+  const [date, setDate] = useState({ from: "", to: "" });
   const { user } = useAuthStore();
   const profile = user.profile.toUpperCase();
-  let label: string | string[] | undefined
+  let label: string | string[] | undefined;
   const [isCheckedTodos, setIsCheckedTodos] = useState(false);
   const [isCheckedCandidato, setIsCheckedCandidato] = useState(false);
   const [operationSelectedOption, setOperationSelectedOption] = useState("");
   const [isCheckedOP, setIsCheckedOP] = useState(false);
-  const { IdSelectedProcess } = useMenuStore()
+  const { IdSelectedProcess } = useMenuStore();
   const [openAnexos, setOpenAnexos] = useState(false);
+
   const [dataAnexos, setDataAnexos] = useState<IAnexos[]>([]);
+
   const [dataAnexosDetail, setDataAnexosDetail] = useState<any>([]);
+
   const [openTracking, setOpenTracking] = useState(false);
   const [dataTracking, setDataTracking] = useState<ITracking[]>([]);
   const [dataTrackingDetail, setDataTrackingDetail] = useState<any>([]);
-  
+  console.log({ dataTrackingDetail, dataTracking });
   const processApi = async (IdSelectedProcess: any, label: any) => {
     const { processes } = await api.listpas.getProcesses(IdSelectedProcess, label);
 
@@ -168,57 +154,89 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   const DescargarDocumentos = async (props: any) => {
     const { estado, ...res } = props.item;
     const newDatos = { item: { ...res } };
-    await api.listpas.downloadDocuments(newDatos.item.numero)
+    await api.listpas.downloadDocuments(newDatos.item.numero);
   };
 
   const getTracking = async (props: any) => {
     const { estado, ...res } = props.item;
     const newDatos = { item: { ...res } };
-    const { success , tracking } = await api.listpas.getTracking(newDatos.item.numero)
-    if (success){
-      setDataTracking(tracking)
-      const {trackingDetail}  = await api.listpas.getTrackingDetail(tracking[0].nu_ann,tracking[0].nu_emi)
-      if (trackingDetail){setDataTrackingDetail(trackingDetail)}
+    const { success, tracking } = await api.listpas.getTracking(newDatos.item.numero);
+    if (success) {
+      setDataTracking(tracking);
+      const { trackingDetail } = await api.listpas.getTrackingDetail(tracking[0].nu_ann, tracking[0].nu_emi);
+      if (trackingDetail) {
+        setDataTrackingDetail(trackingDetail.slice(0, 1));
+      }
     }
-    setOpenTracking(true)
+    setOpenTracking(true);
+  };
+
+  const getTrackingDetail = async (tracking: any) => {
+    const { trackingDetail } = await api.listpas.getTrackingDetail(tracking.nu_ann, tracking.nu_emi);
+    if (trackingDetail) {
+      setDataTrackingDetail(trackingDetail.slice(0, 1));
+    }
   };
 
   const onValueSelectedTracking = async (item: ITracking) => {
-    if (item){
-      const {trackingDetail}  = await api.listpas.getTrackingDetail(item.nu_ann,item.nu_emi)
-      if (trackingDetail){setDataTrackingDetail(trackingDetail)}
+    if (item) {
+      const { trackingDetail } = await api.listpas.getTrackingDetail(item.nu_ann, item.nu_emi);
+      if (trackingDetail) {
+        setDataTrackingDetail(trackingDetail);
+      }
     }
-  }
+  };
 
   const getAnexos = async (props: any) => {
     const { estado, ...res } = props.item;
     const newDatos = { item: { ...res } };
-    const {success, anexos}  = await api.listpas.getAnexos(newDatos.item.numero)
-    if (success){
+    const { success, anexos } = await api.listpas.getAnexos(newDatos.item.numero);
+    if (success) {
       setDataAnexos(anexos);
-      const {anexosDetail}  = await api.listpas.getAnexosDetail(anexos[0].nu_ann,anexos[0].nu_emi)
-      if (anexosDetail){setDataAnexosDetail(anexosDetail)}
+      const { anexosDetail } = await api.listpas.getAnexosDetail(anexos[0].nu_ann, anexos[0].nu_emi);
+      if (anexosDetail) {
+        setDataAnexosDetail([{ id: `${0}-${anexosDetail[0].nro_doc}`, ...anexosDetail[0] }]);
+      }
     }
-    setOpenAnexos(true)
+    setOpenAnexos(true);
   };
 
-  const onValueSelectedAnexo = async (item: IAnexos) => {
-    if (item){
-      const {anexosDetail}  = await api.listpas.getAnexosDetail(item.nu_ann,item.nu_ann)
-      if (anexosDetail){setDataAnexosDetail(anexosDetail)}
-    }
-  }
+  // const [dataAnexos, setDataAnexos] = useState<IAnexos[]>([]);
+
+  // const [open, setOpen] = useState(() => new Map());
+  // const isOpen = (item: IAnexos) => open.get(item.document) || false;
+  // const toggle = async (item: IAnexos) => {
+  //   setOpen((m) => new Map(m).set(item.document, !isOpen(item)));
+
+  //   const { anexosDetail } = await api.listpas.getAnexosDetail(item.nu_ann, item.nu_emi_ref);
+
+  //   setDataAnexosDetail(anexosDetail.slice(0, 1));
+  // };
+
+  const getAnexosDetail = async (anexos: any) => {
+    const { anexosDetail } = await api.listpas.getAnexosDetail(anexos.nu_ann, anexos.nu_emi);
+
+    setDataAnexosDetail([{ id: anexos.id, ...anexosDetail[0] }]);
+  };
+
+  // const onValueSelectedAnexo = async (item: IAnexos) => {
+  //   if (item) {
+  //     const { anexosDetail } = await api.listpas.getAnexosDetail(item.nu_ann, item.nu_ann);
+  //     if (anexosDetail) {
+  //       setDataAnexosDetail(anexosDetail);
+  //     }
+  //   }
+  // };
 
   //FilePicker
   const [openFileSelector, { filesContent, plainFiles, loading, clear }] = useFilePicker({
-    accept: ['.xlsx', '.xls'],
+    accept: [".xlsx", ".xls"],
   });
- 
 
   useEffect(() => {
-    setIsCheckedTodos(true)
+    setIsCheckedTodos(true);
     const labelIndex = router.query;
-    label = labelIndex.estado == undefined ? "all" : labelIndex.estado
+    label = labelIndex.estado == undefined ? "all" : labelIndex.estado;
     processApi(IdSelectedProcess, label);
   }, [IdSelectedProcess]);
 
@@ -269,6 +287,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
       key: "fecha_fin",
     },
     {
+      title: "Tiempo Restante",
+      dataIndex: "days_left",
+      key: "days_left",
+    },
+    {
       title: "Actualización",
       dataIndex: "actualizacion",
       key: "actualizacion",
@@ -286,35 +309,35 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
         <Space>
           <Button
             hidden={item.btnDisabled}
-            style={{height:'30px', width:'50px', color:'white', cursor:'pointer',fontSize:'1rem'}}
+            style={{ height: "30px", width: "50px", color: "white", cursor: "pointer", fontSize: "1rem" }}
             onClick={() => onGoDetail("/actualiza-proceso", { item })}
           >
-            <img src='assets/images/editar.svg'/>
+            <img src="assets/images/editar.svg" />
           </Button>
           <Button
-            style={{height:'30px', width:'50px', color:'white', cursor:'pointer',fontSize:'1rem'}}
+            style={{ height: "30px", width: "50px", color: "white", cursor: "pointer", fontSize: "1rem" }}
             onClick={() => onGoDetail("/detallepas", { item })}
           >
-            <img src='assets/images/buscar.svg'/>
+            <img src="assets/images/buscar.svg" />
           </Button>
           <Button
             hidden={!item.sgd}
-            style={{height:'30px', width:'50px', color:'white', cursor:'pointer',fontSize:'1rem'}}
-            onClick={() => DescargarDocumentos({item})}
+            style={{ height: "30px", width: "50px", color: "white", cursor: "pointer", fontSize: "1rem" }}
+            onClick={() => DescargarDocumentos({ item })}
           >
-            <img src='assets/images/descargar.svg'/>
+            <img src="assets/images/descargar.svg" />
           </Button>
           <Button
-            style={{height:'30px', width:'50px', color:'white', cursor:'pointer',fontSize:'1rem'}}
-            onClick={() => getAnexos({item})}
-          >            
-            <img src='assets/images/anexos.svg'/>
+            style={{ height: "30px", width: "50px", color: "white", cursor: "pointer", fontSize: "1rem" }}
+            onClick={() => getAnexos({ item })}
+          >
+            <img src="assets/images/anexos.svg" />
           </Button>
           <Button
-            style={{height:'30px', width:'50px', color:'white', cursor:'pointer',fontSize:'1rem'}}
-            onClick={() => getTracking({item})}
+            style={{ height: "30px", width: "50px", color: "white", cursor: "pointer", fontSize: "1rem" }}
+            onClick={() => getTracking({ item })}
           >
-            <img src='assets/images/hitos.svg'/>
+            <img src="assets/images/hitos.svg" />
           </Button>
         </Space>
       ),
@@ -327,46 +350,77 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     console.log(isCheckedOP)*/
     if (search.length > 0) {
       if (isCheckedOP) {
-        filterData = memory?.filter((item: {
-          type: any;
-          fecha_fin: any;
-          fecha_inicio: any;
-          dni_candidato: any;
-          num_expediente: any;
-          estado_proceso: any;
-          actualizacion: any;
-          resolution_number: any;
-          responsable: string;
-          name: string;
-          etapa: string;
-        }) =>
-          (item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.type?.toLowerCase()?.includes(search.toLowerCase())) &&
-          item?.type?.includes("OP"))
+        filterData = memory?.filter(
+          (item: {
+            type: any;
+            fecha_fin: any;
+            fecha_inicio: any;
+            dni_candidato: any;
+            num_expediente: any;
+            estado_proceso: any;
+            actualizacion: any;
+            resolution_number: any;
+            responsable: string;
+            name: string;
+            etapa: string;
+          }) =>
+            (item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.type?.toLowerCase()?.includes(search.toLowerCase())) &&
+            item?.type?.includes("OP")
+        );
       } else if (isCheckedCandidato) {
-        filterData = memory?.filter((item: {
-          type: any;
-          fecha_fin: any;
-          fecha_inicio: any;
-          dni_candidato: any;
-          num_expediente: any;
-          estado_proceso: any;
-          actualizacion: any;
-          resolution_number: any;
-          responsable: string;
-          name: string;
-          etapa: string;
-        }) =>
-          (item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
+        filterData = memory?.filter(
+          (item: {
+            type: any;
+            fecha_fin: any;
+            fecha_inicio: any;
+            dni_candidato: any;
+            num_expediente: any;
+            estado_proceso: any;
+            actualizacion: any;
+            resolution_number: any;
+            responsable: string;
+            name: string;
+            etapa: string;
+          }) =>
+            (item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
+              item?.type?.toLowerCase()?.includes(search.toLowerCase())) &&
+            item?.type?.includes("CANDIDATO")
+        );
+      } else {
+        filterData = memory?.filter(
+          (item: {
+            type: any;
+            fecha_fin: any;
+            fecha_inicio: any;
+            dni_candidato: any;
+            num_expediente: any;
+            estado_proceso: any;
+            actualizacion: any;
+            resolution_number: any;
+            responsable: string;
+            name: string;
+            etapa: string;
+          }) =>
+            item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
             item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
             item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
             item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
@@ -376,42 +430,16 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
             item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
             item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
             item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.type?.toLowerCase()?.includes(search.toLowerCase())) &&
-          item?.type?.includes("CANDIDATO"))
-      } else {
-        filterData = memory?.filter((item: {
-          type: any;
-          fecha_fin: any;
-          fecha_inicio: any;
-          dni_candidato: any;
-          num_expediente: any;
-          estado_proceso: any;
-          actualizacion: any;
-          resolution_number: any;
-          responsable: string;
-          name: string;
-          etapa: string;
-        }) =>
-          item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
-          item?.type?.toLowerCase()?.includes(search.toLowerCase()))
+            item?.type?.toLowerCase()?.includes(search.toLowerCase())
+        );
       }
 
       if (filterData?.length) {
-        setProcess(filterData)
+        setProcess(filterData);
       } else {
-        setProcess(null)
+        setProcess(null);
       }
     }
-     
   };
 
   function onChangeDate(date: any, dateStrings: [string, string]) {
@@ -419,7 +447,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
     const end_at = dateStrings[1].split("-").reverse().join("");
 
     const labelIndex = router.query;
-    label = labelIndex.estado == undefined ? "all" : labelIndex.estado
+    label = labelIndex.estado == undefined ? "all" : labelIndex.estado;
     if (start_at === "" || end_at === "") {
       processApi(IdSelectedProcess, label);
       //processApi(label);
@@ -430,7 +458,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
 
   function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
     setOperationSelectedOption(event.target.value);
-    console.log(operationSelectedOption)
+    console.log(operationSelectedOption);
   }
 
   async function loadFile() {
@@ -447,45 +475,43 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
   }
 
   const otionFilters = {
-    1: 'all',
-    2: 'CANDIDATO',
-    3: 'OP'
-  }
+    1: "all",
+    2: "CANDIDATO",
+    3: "OP",
+  };
 
   const onfilterlist = (option: IOptionFilter) => {
-    setProcess(memory)
+    setProcess(memory);
     switch (option) {
       case 1:
-        setIsCheckedTodos(true)
-        setIsCheckedCandidato(false)
-        setIsCheckedOP(false)
+        setIsCheckedTodos(true);
+        setIsCheckedCandidato(false);
+        setIsCheckedOP(false);
         break;
       case 2:
-        setIsCheckedCandidato(true)
-        setIsCheckedTodos(false)
-        setIsCheckedOP(false)
-        setProcess(memory.filter((element:any) =>  element.type == otionFilters[option] ))
+        setIsCheckedCandidato(true);
+        setIsCheckedTodos(false);
+        setIsCheckedOP(false);
+        setProcess(memory.filter((element: any) => element.type == otionFilters[option]));
         break;
       case 3:
-        setIsCheckedOP(true)
-        setIsCheckedCandidato(false)
-        setIsCheckedTodos(false)
-        setProcess(memory.filter((element:any) =>  element.type == otionFilters[option] ))
+        setIsCheckedOP(true);
+        setIsCheckedCandidato(false);
+        setIsCheckedTodos(false);
+        setProcess(memory.filter((element: any) => element.type == otionFilters[option]));
         break;
       default:
         break;
     }
-  }
+  };
 
-
-  const DescargarExcel = async() => {
-    let dataExcel: any[] = []
-    process.map((item: any)=>{
-       dataExcel.push(item.numero)
-    })
-   await api.listpas.downloadExcelInformation(dataExcel)
-
-  }
+  const DescargarExcel = async () => {
+    let dataExcel: any[] = [];
+    process.map((item: any) => {
+      dataExcel.push(item.numero);
+    });
+    await api.listpas.downloadExcelInformation(dataExcel);
+  };
 
   return (
     <>
@@ -497,404 +523,492 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({
 
       <Card title="Listado de personal de ODPE">
         <div style={{ marginBottom: "0.4rem" }}>
-          <h2 style={{ fontSize: 25, color: "#4F5172" }}>Listado de PAS  </h2>
-          <hr
-            style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }}
-          />
+          <h2 style={{ fontSize: 25, color: "#4F5172" }}>Listado de PAS </h2>
+          <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
-            <img style={{ marginRight: '10px'}} src="assets/images/to_start.png" />
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+            <img style={{ marginRight: "10px" }} src="assets/images/to_start.png" />
             <label className="form-checkbottom">Por iniciar</label>
-          </div >
-          <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
-            <img style={{ marginRight: '10px' }} src="assets/images/out_of_date.png" />
+          </div>
+          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+            <img style={{ marginRight: "10px" }} src="assets/images/out_of_date.png" />
             <label className="form-checkbottom">Fuera de fecha</label>
           </div>
-          <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
-            <img style={{ marginRight: '10px' }} src="assets/images/finalized.png" />
+          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+            <img style={{ marginRight: "10px" }} src="assets/images/finalized.png" />
             <label className="form-checkbottom">Finalizado</label>
           </div>
-          <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
-            <img style={{ marginRight: '10px' }} src="assets/images/more_6_months.png" />
+          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+            <img style={{ marginRight: "10px" }} src="assets/images/more_6_months.png" />
             <label className="form-checkbottom">Más de 6 meses</label>
           </div>
-          <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
-            <img style={{ marginRight: '10px' }} src="assets/images/less_6_months.png" />
+          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+            <img style={{ marginRight: "10px" }} src="assets/images/less_6_months.png" />
             <label className="form-checkbottom">De 3 a 6 meses</label>
           </div>
-          <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
-            <img style={{ marginRight: '10px' }} src="assets/images/less_3_months.png" />
+          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+            <img style={{ marginRight: "10px" }} src="assets/images/less_3_months.png" />
             <label className="form-checkbottom">Menos de 3 meses</label>
           </div>
-          <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
-            <img style={{ marginRight: '10px' }} src="assets/images/undefined.png" />
+          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+            <img style={{ marginRight: "10px" }} src="assets/images/undefined.png" />
             <label className="form-checkbottom">Indefinido</label>
           </div>
         </div>
         <br></br>
-        
+
         <div className="py-10 border-b border-gray-200 pb-4 flex justify-between w-full items-center">
           <div>
-            <Input
-              value={inputValue}
-              onChange={(e) => onSearch(e.target.value)}
-              placeholder="Buscar"
-              prefix={<SearchOutlined />}
-            />
+            <Input value={inputValue} onChange={(e) => onSearch(e.target.value)} placeholder="Buscar" prefix={<SearchOutlined />} />
           </div>
-          <div style={{ display: 'flex', alignItems: 'center'}}>
+          <div style={{ display: "flex", alignItems: "center" }}>
             <div className="text-red-500 text-xs"></div>
-            <div style={{ marginRight: '20px' }}>
-              <input style={{ marginRight: '10px' }} type="radio" checked={isCheckedTodos} onChange={() => onfilterlist(1)} /><span className="checkmark"></span><label className="form-checkbottom">Todos</label>
-            </div >
-            <div style={{ marginRight: '20px' }}>
-              <input style={{ marginRight: '10px' }} type="radio" checked={isCheckedCandidato} onChange={() => onfilterlist(2)} /><span className="checkmark"></span><label className="form-checkbottom">Candidato</label>
+            <div style={{ marginRight: "20px" }}>
+              <input style={{ marginRight: "10px" }} type="radio" checked={isCheckedTodos} onChange={() => onfilterlist(1)} />
+              <span className="checkmark"></span>
+              <label className="form-checkbottom">Todos</label>
             </div>
-            <div style={{ marginRight: '20px' }}>
-              <input style={{ marginRight: '10px' }} type="radio" checked={isCheckedOP} onChange={() => onfilterlist(3)} /><span className="checkmark"></span><label className="form-checkbottom">Organización Política</label>
+            <div style={{ marginRight: "20px" }}>
+              <input style={{ marginRight: "10px" }} type="radio" checked={isCheckedCandidato} onChange={() => onfilterlist(2)} />
+              <span className="checkmark"></span>
+              <label className="form-checkbottom">Candidato</label>
+            </div>
+            <div style={{ marginRight: "20px" }}>
+              <input style={{ marginRight: "10px" }} type="radio" checked={isCheckedOP} onChange={() => onfilterlist(3)} />
+              <span className="checkmark"></span>
+              <label className="form-checkbottom">Organización Política</label>
             </div>
           </div>
-          <div >
+          <div>
             <RangePicker locale={locale} onChange={onChangeDate} />
           </div>
-            <div style={{ display: 'flex'}}>
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                {<Button style={{display:'flex', alignItems:'center',
-                 justifyContent:'center', padding:'8px 8px',
-                 backgroundColor:'#78bc44', border:'none',
-                 color:'white', marginRight: '10px', cursor:'pointer'}} 
-                 onClick={() => loadFile()}>
-                <img src='assets/images/cargar.svg' style={{width: '24px', height: '24px', marginRight: '8px'}}/>
-                <span style={{fontSize: '16px'}}>Cargar Información</span>
-                </Button>}
-                {filesContent.length == 1 && processFile(plainFiles[0])}
-              </div>
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                <Button hidden={!process} style={{display:'flex', alignItems:'center',
-                 justifyContent:'center', padding:'8px 8px',
-                 backgroundColor:'#083474', border:'none',
-                 color:'white', marginRight: '10px', cursor:'pointer'}} 
-                 onClick={() => ExportExcel(inputValue ? filterData : process)}>
-                  <img src='assets/images/reporte_pas.svg' style={{width: '24px', height: '24px', marginRight: '8px'}}/>
-                  <span style={{fontSize: '16px'}}>Reporte PAS</span>
+          <div style={{ display: "flex" }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              {
+                <Button
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "8px 8px",
+                    backgroundColor: "#78bc44",
+                    border: "none",
+                    color: "white",
+                    marginRight: "10px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => loadFile()}
+                >
+                  <img src="assets/images/cargar.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
+                  <span style={{ fontSize: "16px" }}>Cargar Información</span>
                 </Button>
-              </div>
-              <div style={{display: 'flex', alignItems: 'center'}}>
-              <Button hidden={!process} style={{display:'flex', alignItems:'center',
-                 justifyContent:'center', padding:'8px 8px',
-                 backgroundColor:'#0874cc', border:'none',
-                 color:'white', marginRight: '10px', cursor:'pointer'}} 
-                 onClick={() => DescargarExcel()}>
-                  <img src='assets/images/icono_detalle.svg' style={{width: '24px', height: '24px', marginRight: '8px'}}/>
-                  <span style={{fontSize: '16px'}}>Detalle</span>
-                  </Button>
-              </div>
+              }
+              {filesContent.length == 1 && (processFile(plainFiles[0]) as any)}
             </div>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Button
+                hidden={!process}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "8px 8px",
+                  backgroundColor: "#083474",
+                  border: "none",
+                  color: "white",
+                  marginRight: "10px",
+                  cursor: "pointer",
+                }}
+                onClick={() => ExportExcel(inputValue ? filterData : process)}
+              >
+                <img src="assets/images/reporte_pas.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
+                <span style={{ fontSize: "16px" }}>Reporte PAS</span>
+              </Button>
+            </div>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Button
+                hidden={!process}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "8px 8px",
+                  backgroundColor: "#0874cc",
+                  border: "none",
+                  color: "white",
+                  marginRight: "10px",
+                  cursor: "pointer",
+                }}
+                onClick={() => DescargarExcel()}
+              >
+                <img src="assets/images/icono_detalle.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
+                <span style={{ fontSize: "16px" }}>Detalle</span>
+              </Button>
+            </div>
+          </div>
         </div>
-        <div style={{overflowX: 'auto'}}>
-          <Table style={{width: '100%', borderCollapse: 'collapse'}}  columns={columns} dataSource={process} />
+        <div style={{ overflowX: "auto" }}>
+          <Table style={{ width: "100%", borderCollapse: "collapse" }} columns={columns} dataSource={process} />
         </div>
         <Modal
           bodyStyle={{
             margin: 10,
-            overflowY: 'scroll', height: 600,
-            overflowX: 'hidden'
+            overflowY: "scroll",
+            height: 600,
+            overflowX: "hidden",
           }}
-          title={<p style={{ textAlign:'center' , fontWeight: 'bold' }}>Documentos Anexos</p>}
+          title={<p style={{ textAlign: "center", fontWeight: "bold" }}>Documentos Anexos</p>}
           centered
           open={openAnexos}
           onOk={() => setOpenAnexos(false)}
           onCancel={() => setOpenAnexos(false)}
-          okButtonProps={{ style: { backgroundColor:'#0874cc' }, className: 'ant-btn-primary' }}
+          okButtonProps={{ style: { backgroundColor: "#0874cc" }, className: "ant-btn-primary" }}
           width={1000}
-          
         >
           <tr>
-          <div style={{ borderWidth: 4, padding: 5, margin: 10, overflowX: 'scroll', width: 880, overflowY: 'scroll', height: 200}}>
-          {dataAnexos?.length && dataAnexos.map((item: IAnexos, index: { toString: () => React.Key | null | undefined; }) => {
-            return <Anexo onValueSelectedAnexo={onValueSelectedAnexo} item={item} key={index.toString()}/>
-          }
-          )}
-          </div>
+            <div
+              style={{
+                borderWidth: 4,
+                padding: 5,
+                margin: 10,
+                overflowX: "scroll",
+                width: 880,
+                overflowY: "scroll",
+                height: 200,
+                whiteSpace: "nowrap",
+                resize: "vertical",
+              }}
+            >
+              {dataAnexos?.length > 0 &&
+                dataAnexos.map((item: IAnexos, index: number) => (
+                  <AnexoItem key={index} item={item} getAnexosDetail={getAnexosDetail} document={dataAnexosDetail} />
+                ))}
+              {/* {dataAnexos?.length > 0 && <Anexo items={dataAnexos} isOpen={isOpen} toggle={toggle} />} */}
+            </div>
           </tr>
           <br></br>
-          {dataAnexosDetail?.length && dataAnexosDetail.map( 
-              ({AÑO,FECHA_EMI,EMITE,DESTINO,NRO_DOC,TIPO_DOC,ASUNTO,TRAMITE,PRIORIDAD,INDICACIONES}:any) =>
-        <tr>
-          <div>
-            <label style={{color:'#083474', fontSize: '16px'}}>Detalles</label>
-          </div> 
-          <br></br>           
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{marginRight: '55px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>Año:</label>
-            </div >
-            <div style={{marginRight: '60px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>{AÑO}</label>
-            </div >
-            <div style={{marginRight: '30px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>Fecha Emisión:</label>
-            </div >
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>{FECHA_EMI}</label>
-            </div >
-          </div>
+
+          {dataAnexosDetail?.length &&
+            dataAnexosDetail.map((item: IAnexosDetail, index: number) => (
+              <tr key={index}>
+                <div>
+                  <label style={{ color: "#083474", fontSize: "16px" }}>Detalles</label>
+                </div>
+                {item.nro_doc}
+                <br></br>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{ marginRight: "55px", display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>Año:</label>
+                  </div>
+                  <div style={{ marginRight: "60px", display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>{item.año}</label>
+                  </div>
+                  <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>Fecha Emisión:</label>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>{item.fecha_emi}</label>
+                  </div>
+                </div>
+                <br></br>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{ marginRight: "45px", display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>Emite:</label>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>{item.emite}</label>
+                  </div>
+                </div>
+                <br></br>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>Destino:</label>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>{item.destino}</label>
+                  </div>
+                </div>
+                <br></br>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>Tipo Doc.:</label>
+                  </div>
+                  <div style={{ marginRight: "60px", display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>{item.tipo_doc}</label>
+                  </div>
+                  <div style={{ marginRight: "80px", display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>Nro. Doc.: {item.nro_doc}</label>
+                  </div>
+                  <div style={{ marginRight: "5px", display: "flex", alignItems: "center" }}>
+                    <Button
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: "8px 8px",
+                        backgroundColor: "#e6002d",
+                        border: "none",
+                        color: "white",
+                        marginRight: "10px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <img src="assets/images/icono_pdf.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
+                      <span style={{ fontSize: "16px" }}>Abrir Documento</span>
+                    </Button>
+                  </div>
+                </div>
+                <br></br>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>Asunto:</label>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <textarea style={{ borderWidth: 4, fontSize: "16px", width: "700px", height: "50px" }}>{item.asunto}</textarea>
+                  </div>
+                </div>
+                <br></br>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>Trámite:</label>
+                  </div>
+                  <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>{item.tramite}</label>
+                  </div>
+                  <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>Prioridad:</label>
+                  </div>
+                  <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>{item.prioridad}</label>
+                  </div>
+                  <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>Indicaciones:</label>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <label style={{ fontSize: "16px" }}>{item.indicaciones}</label>
+                  </div>
+                </div>
+                <br></br>
+              </tr>
+            ))}
           <br></br>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{marginRight: '45px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>Emite:</label>
-            </div >
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>{EMITE}</label>
-            </div >
-          </div>
-          <br></br>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{marginRight: '30px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>Destino:</label>
-            </div >
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>{DESTINO}</label>
-            </div >
-          </div>
-          <br></br>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{marginRight: '20px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>Tipo Doc.:</label>
-            </div >
-            <div style={{marginRight: '60px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>{TIPO_DOC}</label>
-            </div >
-            <div style={{marginRight: '80px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>Nro. Doc.: {NRO_DOC}</label>
-            </div >
-            <div style={{marginRight: '5px', display: 'flex', alignItems: 'center'}}>
-              <Button style={{display:'flex', alignItems:'center',
-               justifyContent:'center', padding:'8px 8px',
-               backgroundColor:'#e6002d', border:'none',
-               color:'white', marginRight: '10px', cursor:'pointer'}} 
-               >
-              <img src='assets/images/icono_pdf.svg' style={{width: '24px', height: '24px', marginRight: '8px'}}/>
-              <span style={{fontSize: '16px'}}>Abrir Documento</span>
-              </Button>
+          <tr>
+            <div>
+              <label style={{ color: "#083474", fontSize: "16px" }}>Documentos Anexos</label>
             </div>
-          </div>
-          <br></br>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>Asunto:</label>
-            </div >
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              <textarea style={{borderWidth: 4, fontSize: '16px', width:'700px', height:'50px'}}>{ASUNTO}</textarea>
-            </div >
-          </div>
-          <br></br>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>Trámite:</label>
-            </div >
-            <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>{TRAMITE}</label>
-            </div >
-            <div style={{marginRight: '20px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>Prioridad:</label>
-            </div >
-            <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>{PRIORIDAD}</label>
-            </div >
-            <div style={{marginRight: '20px', display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>Indicaciones:</label>
-            </div >
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              <label style={{fontSize: '16px'}}>{INDICACIONES}</label>
-            </div >
-          </div>
-          <br></br>
-        </tr>)}
-        <br></br>
-        <tr>
-          <div>
-            <label style={{color:'#083474', fontSize: '16px'}}>Documentos Anexos</label>
-          </div>
-          <br></br>
-          <div>
-            <label style={{fontSize: '16px'}}>No se encuentran registros</label>
-          </div> 
-        </tr>
+            <br></br>
+            <div>
+              <label style={{ fontSize: "16px" }}>No se encuentran registros</label>
+            </div>
+          </tr>
         </Modal>
         <Modal
           bodyStyle={{
             margin: 10,
-            overflowY: 'scroll', height: 600,
-            overflowX: 'hidden'
+            overflowY: "scroll",
+            height: 600,
+            overflowX: "hidden",
           }}
-          title={<p style={{ textAlign:'center' , fontWeight: 'bold' }}>Seguimiento de documento </p>}
+          title={<p style={{ textAlign: "center", fontWeight: "bold" }}>Seguimiento de documento </p>}
           centered
           open={openTracking}
           onOk={() => setOpenTracking(false)}
           onCancel={() => setOpenTracking(false)}
-          okButtonProps={{ style: { backgroundColor:'#0874cc' }, className: 'ant-btn-primary' }}
+          okButtonProps={{ style: { backgroundColor: "#0874cc" }, className: "ant-btn-primary" }}
           width={1000}
-          
         >
           <tr>
-          <div style={{ borderWidth: 4, padding: 5, margin: 10, overflowX: 'scroll', width: 880, overflowY: 'scroll', height: 200}}>
-          {dataTracking?.length && dataTracking.map((item, index) => {
-            return <Tracking onValueSelectedTracking={onValueSelectedTracking} item={item} key={index.toString()}/>
-          }
-          )}
-          </div>
+            <div
+              style={{
+                borderWidth: 4,
+                padding: 5,
+                margin: 10,
+                width: 880,
+                overflow: "scroll",
+                height: 200,
+                whiteSpace: "nowrap",
+                resize: "vertical",
+              }}
+            >
+              {/* {dataTracking?.length &&
+                dataTracking.map((item, index) => {
+                  return <Tracking onValueSelectedTracking={onValueSelectedTracking} item={item} key={index.toString()} />;
+                })} */}
+
+              {dataTracking?.length &&
+                dataTracking.map((item: ITracking, index: number) => (
+                  <TrackingItem key={index} item={item} getTrackingDetail={getTrackingDetail} />
+                ))}
+            </div>
           </tr>
           <br></br>
-          {dataTrackingDetail?.length && dataTrackingDetail.map( 
-              ({ASUNTO,ELABORO,EMISOR,ESTADO,FECHA_EMI,NRO_DOC,NU_DES,TIPO_DOC}:any) =>
-          <tr>
-            <div>
-              <label style={{color:'#083474', fontSize: '16px'}}>Remitente</label>
-            </div> 
-            <br></br>           
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{marginRight: '30px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Tipo Doc.: {TIPO_DOC}</label>
-              </div >
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Nro. Doc.: {NRO_DOC}</label>
-              </div >
-            </div>
-            <br></br>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{marginRight: '80px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Fecha Emi: {FECHA_EMI}</label>
-              </div >
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Elaboró: {ELABORO}</label>
-              </div >
-            </div>
-            <br></br>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{marginRight: '30px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Emisor:</label>
-              </div >
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>{EMISOR}</label>
-              </div >
-            </div>
-            <br></br>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{marginRight: '30px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Asunto:</label>
-              </div >
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                <textarea style={{borderWidth: 4, fontSize: '16px', width:'700px', height:'50px'}}>{ASUNTO}</textarea>
-              </div >
-            </div>
-            <br></br>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{marginRight: '30px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Estado:</label>
-              </div >
-              <div style={{marginRight: '50px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>{ESTADO}</label>
-              </div >
-              <div style={{marginRight: '30px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Folios:</label>
-              </div >
-              <div style={{marginRight: '90px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>{NU_DES}</label>
-              </div >
-              <div style={{marginRight: '5px', display: 'flex', alignItems: 'center'}}>
-                <Button style={{display:'flex', alignItems:'center',
-                 justifyContent:'center', padding:'8px 8px',
-                 backgroundColor:'#78bc44', border:'none',
-                 color:'white', marginRight: '10px', cursor:'pointer'}} 
-                 >
-                <img src='assets/images/abrir_archivo.svg' style={{width: '24px', height: '24px', marginRight: '8px'}}/>
-                <span style={{fontSize: '16px'}}>Abrir Documento</span>
-                </Button>
-              </div>
-              <div>
-                <Button style={{display:'flex', alignItems:'center',
-                 justifyContent:'center', padding:'8px 8px',
-                 backgroundColor:'#0874cc', border:'none',
-                 color:'white', marginRight: '10px', cursor:'pointer'}} 
-                 >
-                  <img src='assets/images/adjunto_1.svg' style={{width: '24px', height: '24px', marginRight: '8px'}}/>
-                  <span style={{fontSize: '16px'}}>Doc. Anexos</span>
-                </Button>
-              </div>
-            </div>
-            <br></br>
-          </tr>)}
+          {dataTrackingDetail?.length &&
+            dataTrackingDetail.map((item: ITrackingDetail, index: number) => (
+              <>
+                <tr key={index}>
+                  <div>
+                    <label style={{ color: "#083474", fontSize: "16px" }}>Remitente</label>
+                  </div>
+                  <br></br>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>Tipo Doc.: {item.tipo_doc}</label>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>Nro. Doc.: {item.nro_doc}</label>
+                    </div>
+                  </div>
+                  <br></br>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ marginRight: "80px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>Fecha Emi: {item.fecha_emi}</label>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>Elaboró: {item.elaboro}</label>
+                    </div>
+                  </div>
+                  <br></br>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>Emisor:</label>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>{item.emisor}</label>
+                    </div>
+                  </div>
+                  <br></br>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>Asunto:</label>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <textarea style={{ borderWidth: 4, fontSize: "16px", width: "700px", height: "50px" }}>{item.asunto}</textarea>
+                    </div>
+                  </div>
+                  <br></br>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>Estado:</label>
+                    </div>
+                    <div style={{ marginRight: "50px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>{item.estado}</label>
+                    </div>
+                    <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>Folios:</label>
+                    </div>
+                    <div style={{ marginRight: "90px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>{item.nu_des}</label>
+                    </div>
+                    <div style={{ marginRight: "5px", display: "flex", alignItems: "center" }}>
+                      <Button
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          padding: "8px 8px",
+                          backgroundColor: "#78bc44",
+                          border: "none",
+                          color: "white",
+                          marginRight: "10px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <img src="assets/images/abrir_archivo.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
+                        <span style={{ fontSize: "16px" }}>Abrir Documento</span>
+                      </Button>
+                    </div>
+                    <div>
+                      <Button
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          padding: "8px 8px",
+                          backgroundColor: "#0874cc",
+                          border: "none",
+                          color: "white",
+                          marginRight: "10px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <img src="assets/images/adjunto_1.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
+                        <span style={{ fontSize: "16px" }}>Doc. Anexos</span>
+                      </Button>
+                    </div>
+                  </div>
+                  <br></br>
+                </tr>
+
+                <tr key={index}>
+                  <div>
+                    <label style={{ color: "#083474", fontSize: "16px" }}>Destinatario</label>
+                  </div>
+                  <br></br>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>Dependencia:</label>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>{}</label>
+                    </div>
+                  </div>
+                  <br></br>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ marginRight: "50px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>Receptor:</label>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>{item.receptor}</label>
+                    </div>
+                  </div>
+                  <br></br>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ marginRight: "65px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>Estado:</label>
+                    </div>
+                    <div style={{ marginRight: "90px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>{item.estado_destinatario}</label>
+                    </div>
+                    <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>Fecha Rec.:</label>
+                    </div>
+                    <div style={{ marginRight: "60px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>{item.fecha_rec}</label>
+                    </div>
+                    <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>Fecha Ate.:</label>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>{item.fecha_ate}</label>
+                    </div>
+                  </div>
+                  <br></br>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ marginRight: "60px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>Trámite:</label>
+                    </div>
+                    <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>{item.tramite}</label>
+                    </div>
+                    <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>Prioridad:</label>
+                    </div>
+                    <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>{item.prioridad}</label>
+                    </div>
+                    <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>Indicaciones:</label>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <label style={{ fontSize: "16px" }}>{item.indicaciones}</label>
+                    </div>
+                  </div>
+                </tr>
+              </>
+            ))}
           <br></br>
-          {dataTrackingDetail?.length && dataTrackingDetail.map( 
-              ({DEPENDENCIA,ESTADO_DESTINATARIO,FECHA_ATE,FECHA_REC,INDICACIONES,PRIORIDAD,RECEPTOR,TRAMITE}:any) =>
-          <tr>
-            <div>
-              <label style={{color:'#083474', fontSize: '16px'}}>Destinatario</label>
-            </div>
-            <br></br>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{marginRight: '20px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Dependencia:</label>
-              </div >
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>{DEPENDENCIA}</label>
-              </div >
-            </div>
-            <br></br>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{marginRight: '50px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Receptor:</label>
-              </div >
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>{RECEPTOR}</label>
-              </div >
-            </div>
-            <br></br>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{marginRight: '65px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Estado:</label>
-              </div >
-              <div style={{marginRight: '90px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>{ESTADO_DESTINATARIO}</label>
-              </div >
-              <div style={{marginRight: '20px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Fecha Rec.:</label>
-              </div >
-              <div style={{marginRight: '60px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>{FECHA_REC}</label>
-              </div >
-              <div style={{marginRight: '20px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Fecha Ate.:</label>
-              </div >
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>{FECHA_ATE}</label>
-              </div >
-            </div>
-            <br></br>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{marginRight: '60px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Trámite:</label>
-              </div >
-              <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>{TRAMITE}</label>
-              </div >
-              <div style={{marginRight: '20px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Prioridad:</label>
-              </div >
-              <div style={{marginRight: '40px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>{PRIORIDAD}</label>
-              </div >
-              <div style={{marginRight: '20px', display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>Indicaciones:</label>
-              </div >
-              <div style={{display: 'flex', alignItems: 'center'}}>
-                <label style={{fontSize: '16px'}}>{INDICACIONES}</label>
-              </div >
-            </div>
-          </tr>)}
         </Modal>
       </Card>
     </>
