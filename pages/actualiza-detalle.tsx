@@ -169,32 +169,32 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
     if (fechaInicioInputValue !== "") {
       newFormatFechaInicio = `${fechaInicioInputValue.slice(0, 10)} ${fechaInicioInputValue.slice(11, 19)}:00`;
-    }
+    } 
 
-    const tok = GetTokenAuthService();
-    if (tok) {
-      const formData = new FormData();
-      formData.append("comment", comentarioTextareaValue);
-      formData.append("current_responsible", gerenciaSelectedOption);
-      formData.append("document", documentoRelacionadoinputValue);
-      formData.append("new_responsible", gerenciaAsignadaSelectedOption);
-      formData.append("start_at", newFormatFechaInicio);
-      formData.append("type_document", tipoDocumentoSelectedOption);
-      formData.append("status", operationSelectedOption.toLowerCase());
-      try {
-        const reqInit = {
-          headers: {
-            "Content-Type": "application/json",
-            "x-access-tokens": `${tok}`,
-          },
-        };
-        const response = await axios.put(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/tracking/${id}/edit/`, formData, reqInit);
-        console.log(response.data);
-        alert("El detalle se actualizó correctamente!!!");
-        goBack("/detallepas", { itemprop });
-      } catch (error) {
-        console.log(error);
-      }
+    const tok =  GetTokenAuthService();
+    if (tok) {      
+        const formData = new FormData();
+        formData.append('comment', comentarioTextareaValue);
+        formData.append('current_responsible', gerenciaSelectedOption);
+        formData.append('document', documentoRelacionadoinputValue);
+        formData.append('new_responsible', gerenciaAsignadaSelectedOption);
+        formData.append('start_at', newFormatFechaInicio);
+        formData.append('type_document', tipoDocumentoSelectedOption);
+        formData.append('tracking_action', operationSelectedOption.toLowerCase());
+        try {
+            const reqInit = {
+                headers: {
+                  'Content-Type': 'application/json',
+                  'x-access-tokens': `${tok}`
+                } 
+              }
+            const response = await axios.put(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/tracking/${id}/edit/`, formData, reqInit);
+            console.log(response.data);
+            alert('El detalle se actualizó correctamente!!!')
+            goBack("/detallepas",  { itemprop })
+        } catch (error) {
+            console.log(error);
+        }
     }
   };
 
