@@ -65,15 +65,12 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [isCheckedOP, setIsCheckedOP] = useState(false);
   const { IdSelectedProcess } = useMenuStore();
   const [openAnexos, setOpenAnexos] = useState(false);
-
   const [dataAnexos, setDataAnexos] = useState<IAnexos[]>([]);
-
-  const [dataAnexosDetail, setDataAnexosDetail] = useState<any>([]);
-
+  const [dataAnexosDetail, setDataAnexosDetail] = useState<IAnexosDetail[]>([]);
+  console.log({ dataAnexosDetail });
   const [openTracking, setOpenTracking] = useState(false);
   const [dataTracking, setDataTracking] = useState<ITracking[]>([]);
-  const [dataTrackingDetail, setDataTrackingDetail] = useState<any>([]);
-  console.log({ dataTrackingDetail, dataTracking });
+  const [dataTrackingDetail, setDataTrackingDetail] = useState<ITrackingDetail[]>([]);
   const processApi = async (IdSelectedProcess: any, label: any) => {
     const { processes } = await api.listpas.getProcesses(IdSelectedProcess, label);
 
@@ -165,7 +162,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       setDataTracking(tracking);
       const { trackingDetail } = await api.listpas.getTrackingDetail(tracking[0].nu_ann, tracking[0].nu_emi);
       if (trackingDetail) {
-        setDataTrackingDetail([{ id: `${0}-${trackingDetail[0].id}`, ...trackingDetail[0] }]);
+        setDataTrackingDetail([{ ...trackingDetail[0], id: `${0}-${trackingDetail[0].id}` }]);
       }
     }
     setOpenTracking(true);
@@ -187,7 +184,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       setDataAnexos(anexos);
       const { anexosDetail } = await api.listpas.getAnexosDetail(anexos[0].nu_ann, anexos[0].nu_emi_ref);
       if (anexosDetail) {
-        setDataAnexosDetail([{ id: `${0}-${anexosDetail[0].nro_doc}`, ...anexosDetail[0] }]);
+        setDataAnexosDetail([{ ...anexosDetail[0], id: `${0}-${anexosDetail[0].nro_doc}` }]);
       }
     }
     setOpenAnexos(true);
@@ -279,6 +276,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       key: "acciones",
       render: (_: any, item: any) => (
         <Space>
+          {item.btnDisabled && <div className="w-[50px] h-[30px]"></div>}
+
           <Button
             hidden={item.btnDisabled}
             style={{ height: "30px", width: "50px", color: "white", cursor: "pointer", fontSize: "1rem" }}
@@ -299,6 +298,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           >
             <img src="assets/images/descargar.svg" />
           </Button>
+          {!item.sgd && <div className="w-[50px] h-[30px]"></div>}
           <Button
             style={{ height: "30px", width: "50px", color: "white", cursor: "pointer", fontSize: "1rem" }}
             onClick={() => getAnexos({ item })}
@@ -657,7 +657,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                 dataAnexos.map((item: IAnexos, index: number) => (
                   <AnexoItem key={index} item={item} getAnexosDetail={getAnexosDetail} anexoDetail={dataAnexosDetail} />
                 ))}
-              {/* {dataAnexos?.length > 0 && <Anexo items={dataAnexos} isOpen={isOpen} toggle={toggle} />} */}
             </div>
           </tr>
           <br></br>
@@ -763,18 +762,40 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                   </div>
                 </div>
                 <br></br>
+                <div>
+                  <label style={{ color: "#083474", fontSize: "16px" }}>Documentos Anexos</label>
+                </div>
+                <br />
+                {item?.docs.length ? (
+                  <table>
+                    <thead>
+                      <tr className="border">
+                        <th className="border border-black flex-1 pl-2 py-1.5 bg-[#5191c1] text-[#083474]">Descripción</th>
+                        <th className="border border-black flex-1 pl-2 py-1.5 bg-[#5191c1] text-[#083474]">Nombre de Anexo</th>
+                        <th className="border border-black w-28 pl-2 py-1.5 bg-[#5191c1] text-[#083474]">Opciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {item?.docs?.map((i) => (
+                        <tr key={i.id_archivo} className="border">
+                          <td className="border pl-2 py-1">{i.de_det}</td>
+                          <td className="border pl-2 py-1">{i.de_rut_ori}</td>
+                          <td className="border pl-2 py-1">
+                            <button className="px-1 border rounded">
+                              <img src="assets/images/abrir.svg" alt="Abrir" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <div>
+                    <label style={{ fontSize: "16px" }}>No se encuentran registros</label>
+                  </div>
+                )}
               </tr>
             ))}
-          <br></br>
-          <tr>
-            <div>
-              <label style={{ color: "#083474", fontSize: "16px" }}>Documentos Anexos</label>
-            </div>
-            <br></br>
-            <div>
-              <label style={{ fontSize: "16px" }}>No se encuentran registros</label>
-            </div>
-          </tr>
         </Modal>
         <Modal
           bodyStyle={{
@@ -804,11 +825,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                 resize: "vertical",
               }}
             >
-              {/* {dataTracking?.length &&
-                dataTracking.map((item, index) => {
-                  return <Tracking onValueSelectedTracking={onValueSelectedTracking} item={item} key={index.toString()} />;
-                })} */}
-
               {dataTracking?.length &&
                 dataTracking.map((item: ITracking, index: number) => (
                   <TrackingItem key={index} item={item} getTrackingDetail={getTrackingDetail} tackingDetail={dataTrackingDetail} />

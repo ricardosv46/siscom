@@ -292,10 +292,13 @@ const api = {
         const {
           data: { data, message, success },
         }: IResponseAnexosDetail = await apiService.get(`processes/sgd/annex-detail/${año}/${id}/`);
+        const {data:docs}: any = await apiService.get(`processes/sgd/annexes/list/${año}/${id}/`);
+        console.log({docs})
+
         if (data === undefined || success === undefined || message === undefined) {
           return { anexosDetail: [] };
         } else {
-          return { anexosDetail: data, message, success };
+          return { anexosDetail:[ {...data[0],docs}], message, success };
         }
         
       } else {

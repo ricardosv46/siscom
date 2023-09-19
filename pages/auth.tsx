@@ -21,6 +21,7 @@ const Home = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const { storeUser } = useAuthStore();
+  const [form] = Form.useForm();
   const { changeStateSelectedProcess } = useMenuStore();
   const onFinish = async (body: auth) => {
     setLoading(true);
@@ -78,18 +79,18 @@ const Home = () => {
             <IconOnpe />
             <h1>Monitoreo de PAS</h1>
           </div>
-          <Form name="basic" layout="vertical" onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off">
-            <Form.Item
-              name="username"
-              rules={[
-                { required: true, message: "¡Por favor ingrese un usuario" },
-                {
-                  pattern: /^[a-zA-Z]+$/,
-                  message: "El usuario debe contener solo letras (alfabéticas).",
-                },
-              ]}
-            >
-              <Input size="large" placeholder="Usuario" />
+          <Form name="basic" layout="vertical" onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off" form={form}>
+            <Form.Item name="username" rules={[{ required: true, message: "¡Por favor ingrese un usuario" }]}>
+              <Input
+                size="large"
+                placeholder="Usuario"
+                value={form.getFieldValue("username")}
+                onChange={(e) => {
+                  const newValue = e.target.value.replace(/[^a-zA-Z]/g, "");
+                  e.target.value = newValue;
+                  form.setFieldValue("username", newValue);
+                }}
+              />
             </Form.Item>
 
             <Form.Item

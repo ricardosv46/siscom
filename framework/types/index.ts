@@ -136,8 +136,31 @@ export interface IAnexosDetail{
   prioridad?: string | undefined
   tipo_doc?: string | undefined
   tramite?: string | undefined
-  
+  docs:IDocs[]
 }
+
+interface IDocs {
+  asunto: string;
+  'año': string;
+  de_det: string;
+  de_rut_ori: string;
+  destino: string;
+  emite: string;
+  fecha_emi: string;
+  id_archivo: number;
+  indicaciones: string;
+  nro_doc: string;
+  nu_ane: number;
+  nu_ann: string;
+  nu_ann_exp: string;
+  nu_des: string;
+  nu_emi: string;
+  nu_sec_exp: string;
+  prioridad: string;
+  tipo_doc: string;
+  tramite: string;
+}
+
 
 export interface UserSave{
   username: string
