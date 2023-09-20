@@ -9,7 +9,7 @@ export const ExportExcel = (body: any) => {
       "Número de Expediente",
       "Resolución Gerencial",
       "Estado",
-      "DNI Candidato",
+      "N° DOC",
       "Nombre",
       "Responsable",
       "Etapa",

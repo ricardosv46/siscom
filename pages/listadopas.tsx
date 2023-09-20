@@ -67,7 +67,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [openAnexos, setOpenAnexos] = useState(false);
   const [dataAnexos, setDataAnexos] = useState<IAnexos[]>([]);
   const [dataAnexosDetail, setDataAnexosDetail] = useState<IAnexosDetail[]>([]);
-  console.log({ dataAnexosDetail });
   const [openTracking, setOpenTracking] = useState(false);
   const [dataTracking, setDataTracking] = useState<ITracking[]>([]);
   const [dataTrackingDetail, setDataTrackingDetail] = useState<ITrackingDetail[]>([]);
@@ -118,7 +117,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
     const newData = processes.map((item) => {
       const { estado, responsable } = item;
-      if (responsable == profile) {
+      if (responsable == profile || user.is_admin) {
         return {
           ...item,
           btnDisabled: false,
@@ -132,6 +131,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
         };
       }
     });
+
     setMemory(newData);
     setProcess(newData);
   };
@@ -226,7 +226,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       key: "estado",
     },
     {
-      title: "DNI",
+      title: "N° DOC",
       dataIndex: "dni_candidato",
       key: "dni_candidato",
     },
@@ -275,7 +275,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       dataIndex: "acciones",
       key: "acciones",
       render: (_: any, item: any) => (
-        <Space>
+        <div className="flex gap-2">
           {item.btnDisabled && <div className="w-[50px] h-[30px]"></div>}
 
           <Button
@@ -311,7 +311,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           >
             <img src="assets/images/hitos.svg" />
           </Button>
-        </Space>
+        </div>
       ),
     },
   ];
@@ -745,7 +745,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                     <label style={{ fontSize: "16px" }}>Asunto:</label>
                   </div>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    <textarea style={{ borderWidth: 4, fontSize: "16px", width: "700px", height: "50px" }}>{item.asunto}</textarea>
+                    <textarea style={{ borderWidth: 4, fontSize: "16px", width: "700px", height: "50px", padding: "0px 8px" }} disabled>
+                      {item.asunto}
+                    </textarea>
                   </div>
                 </div>
                 <br></br>
@@ -880,7 +882,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                       <label style={{ fontSize: "16px" }}>Asunto:</label>
                     </div>
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      <textarea style={{ borderWidth: 4, fontSize: "16px", width: "700px", height: "50px" }}>{item.asunto}</textarea>
+                      <textarea style={{ borderWidth: 4, fontSize: "16px", width: "700px", height: "50px", padding: "0px 8px" }} disabled>
+                        {item.asunto}
+                      </textarea>
                     </div>
                   </div>
                   <br></br>

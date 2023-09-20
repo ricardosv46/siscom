@@ -200,7 +200,7 @@ const api = {
       const tok =  GetTokenAuthService();
       if (tok) {
 
-        const responseExcel = await apiService.post(`/tracking/download/`,{processes: payload.slice(0,645)},{responseType: 'arraybuffer',
+        const responseExcel = await apiService.post(`/tracking/download/`,{processes: payload},{responseType: 'arraybuffer',
         headers: {'Content-Type': 'application/json'}});
         const outputFilename = `report_${new Date().getTime()}.xlsx`;
 
@@ -246,7 +246,7 @@ const api = {
     },
     downloadDocuments: async (payload: any) => {
       const tok =  GetTokenAuthService();
-      if (tok) {        
+      if (tok) { 
         try {
           const response = await apiService.get(`processes/${payload}/documents/download/`,  
           {
@@ -256,7 +256,8 @@ const api = {
           if (response.status == 400 || response.data === undefined){
             alert("No se encontraron documentos para descargar");
           } else {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
+           
+            const url = window.URL.createObjectURL(new Blob([response.data],{type: "application/zip"}));
             const link = document.createElement('a');
             link.href = url;
             link.setAttribute('download', 'archivo.zip');
