@@ -199,19 +199,49 @@ const api = {
     downloadExcelInformation: async (payload: any) => {
       const tok =  GetTokenAuthService();
       if (tok) {
-        const { headers,  status, data } = await apiService.post(`/tracking/download/`, {
-          processes: payload
-        },{responseType: "blob",});
-        if(status === 200) {
-          const resp = data
-          var blob = new Blob([resp], {
-            type: headers["content-type"],
-          });
-          const link = document.createElement("a");
-          link.href = window.URL.createObjectURL(blob);
-          link.download = `report_${new Date().getTime()}.xlsx`;
-          link.click();          
-        }
+
+        const responseExcel = await apiService.post(`/tracking/download/`,{processes: payload.slice(0,645)},{responseType: 'arraybuffer',
+        headers: {'Content-Type': 'application/json'}});
+        const outputFilename = `report_${new Date().getTime()}.xlsx`;
+
+        // If you want to download file automatically using link attribute.
+        const url = URL.createObjectURL(new Blob([responseExcel.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', outputFilename);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        // console.log({payload})
+        
+
+        // const { headers,  status, data } = await apiService.post(`/tracking/download/`, {
+        //   processes: payload
+        // },{
+        //   responseType: "blob",
+        //   headers: {
+        //     "Content-Type": "application/json"
+        //   }});
+        // if(status === 200) {
+        //   const blob = new Blob([data], {
+        //       type: headers["content-type"],
+        //     });
+        //   const url = window.URL.createObjectURL(blob);
+        //   const a = document.createElement("a");
+        //   a.href = url;
+        //   a.download = `report_${new Date().getTime()}`;
+        //   a.click();
+
+          // const resp = data
+          // var blob = new Blob([resp], {
+          //   type: headers["content-type"],
+          // });
+          // const link = document.createElement("a");
+          // link.href = window.URL.createObjectURL(blob);
+          // link.download = `report_${new Date().getTime()}.xlsx`;
+          // link.click();          
+        
       }
     },
     downloadDocuments: async (payload: any) => {

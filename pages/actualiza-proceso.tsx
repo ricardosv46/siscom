@@ -70,6 +70,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [gerenciaInicialSelectedOption, setGerenciaInicialSelectedOption] = useState("");
   const [comentarioTextareaValue, setComentarioTextareaValue] = useState("");
 
+  const maxCaracteres = 250;
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -170,7 +172,10 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   };
 
   const handleTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setComentarioTextareaValue(event.target.value);
+    const inputValue = event.target.value;
+    if (inputValue.length <= maxCaracteres) {
+      setComentarioTextareaValue(inputValue);
+    }
   };
 
   function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
@@ -364,6 +369,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 placeholder="Ingrese número de documento"
                 value={documentoRelacionadoinputValue}
                 onChange={handleInputChange}
+                maxLength={50}
                 id="documento_relacionado"
                 className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
               />
@@ -418,14 +424,14 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           <div className="w-1/2 py-50">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label htmlFor="comentario" className="text-gray-600">
-                Comentarios (0/250 caracteres):
+                Comentarios ({comentarioTextareaValue.length}/250 caracteres):
               </label>
               <textarea
                 placeholder="Ingrese un comentario (máx. 250 caraceteres)"
                 value={comentarioTextareaValue}
                 onChange={handleTextareaChange}
                 id="comentario"
-                maxLength={250}
+                maxLength={maxCaracteres}
                 className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
               />
             </div>

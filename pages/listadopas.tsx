@@ -485,6 +485,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     await api.listpas.downloadExcelInformation(dataExcel);
   };
 
+  const disabledDate = (current: any) => {
+    // Obten la fecha actual
+    const today = new Date();
+
+    // Devuelve true si la fecha actual es mayor que la fecha seleccionada
+    return current && current > today;
+  };
+
   return (
     <>
       <Head>
@@ -554,7 +562,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             </div>
           </div>
           <div>
-            <RangePicker locale={locale} onChange={onChangeDate} />
+            <RangePicker locale={locale} onChange={onChangeDate} disabledDate={disabledDate} />
           </div>
           <div style={{ display: "flex" }}>
             <div style={{ display: "flex", alignItems: "center" }}>

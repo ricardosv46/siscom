@@ -80,7 +80,7 @@ const Home = () => {
             <h1>Monitoreo de PAS</h1>
           </div>
           <Form name="basic" layout="vertical" onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off" form={form}>
-            <Form.Item name="username" rules={[{ required: true, message: "¡Por favor ingrese un usuario" }]}>
+            <Form.Item name="username" rules={[{ required: true, message: "¡Por favor ingrese un usuario!" }]}>
               <Input
                 size="large"
                 placeholder="Usuario"
