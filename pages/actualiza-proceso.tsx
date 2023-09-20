@@ -427,7 +427,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 Comentarios ({comentarioTextareaValue.length}/250 caracteres):
               </label>
               <textarea
-                placeholder="Ingrese un comentario (máx. 250 caraceteres)"
+                placeholder="Ingrese un comentario (máx. 250 caracteres)"
                 value={comentarioTextareaValue}
                 onChange={handleTextareaChange}
                 id="comentario"

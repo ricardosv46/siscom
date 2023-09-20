@@ -67,7 +67,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [openAnexos, setOpenAnexos] = useState(false);
   const [dataAnexos, setDataAnexos] = useState<IAnexos[]>([]);
   const [dataAnexosDetail, setDataAnexosDetail] = useState<IAnexosDetail[]>([]);
-  console.log({ dataAnexosDetail });
   const [openTracking, setOpenTracking] = useState(false);
   const [dataTracking, setDataTracking] = useState<ITracking[]>([]);
   const [dataTrackingDetail, setDataTrackingDetail] = useState<ITrackingDetail[]>([]);
