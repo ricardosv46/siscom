@@ -26,6 +26,7 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
   const router = useRouter();
   const [añoSelectedOption, setAñoSelectedOption] = useState("");
   const [procesoSelectedOption, setProcesoSelectedOption] = useState("");
+  console.log({ añoSelectedOption, procesoSelectedOption });
   const [options, setOptions] = useState([]);
   const [optionsYear, setOptionsYear] = useState([]);
   const [processGlobal, setProcessGlobal] = useState("");
@@ -49,7 +50,7 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
   };
 
   const onGotoList = () => {
-    if (procesoSelectedOption == "") {
+    if (procesoSelectedOption === "" && añoSelectedOption === "") {
       alert("Debe seleccionar un año y un Proceso Electoral !");
       return;
     }
@@ -59,12 +60,13 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
 
   const handleChange = async (event: { target: { value: any } }) => {
     const value = event.target.value;
+    setAñoSelectedOption(value);
+
     if (value) {
-      setAñoSelectedOption(value);
       listProcessApi(value);
     } else {
-      setAñoSelectedOption("");
-      setAñoSelectedOption("");
+      setOptions([]);
+      setProcesoSelectedOption("");
     }
   };
 

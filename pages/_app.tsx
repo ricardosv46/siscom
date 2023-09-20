@@ -1,6 +1,6 @@
 import "../styles/globals.css";
 import "antd/dist/antd.css";
-import { ReactElement, ReactNode, useEffect, useState } from "react";
+import { ReactElement, ReactNode, useEffect } from "react";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
 import { ManagedUIContext } from "@components/ui/context";
@@ -19,7 +19,7 @@ type AppPropsWithLayout = AppProps & {
 };
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-  const { user: usersesion, storeUser, islogged } = useAuthStore();
+  const { storeUser, islogged } = useAuthStore();
   const router = useRouter();
 
   const getLayout = Component.getLayout ?? ((page) => page);
