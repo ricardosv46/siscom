@@ -33,7 +33,7 @@ let responsable_actual = "";
 let resolucion_gerencial = "";
 let tipo = "";
 let newFormatFechaInicio = "";
-let newFormatFechaFin = "";
+//let newFormatFechaFin = "";
 
 const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [item, setItem] = useState<IPropsItem>();
@@ -62,7 +62,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
   const [documentoRelacionadoinputValue, setDocumentoRelacionadoinputValue] = useState("");
   const [fechaInicioInputValue, setFechaInicioInputValue] = useState("");
-  const [fechaFinInputValue, setFechaFinInputValue] = useState("");
+  //const [fechaFinInputValue, setFechaFinInputValue] = useState("");
   const [operationSelectedOption, setOperationSelectedOption] = useState("");
   const [options, setOptions] = useState([]);
   const [tipoDocumentoSelectedOption, setTipoDocumentoSelectedOption] = useState("");
@@ -86,7 +86,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       return;
     } else if (
       operationSelectedOption == "finalizado" &&
-      (!fechaFinInputValue || !documentoRelacionadoinputValue || !tipoDocumentoSelectedOption)
+      (!fechaInicioInputValue || !documentoRelacionadoinputValue || !tipoDocumentoSelectedOption)
     ) {
       alert("Por favor, ingrese los datos solicitados");
       return;
@@ -97,9 +97,9 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
     if (fechaInicioInputValue !== "") {
       newFormatFechaInicio = `${fechaInicioInputValue.slice(0, 10)} ${fechaInicioInputValue.slice(11, 19)}:00`;
-    } else if (fechaFinInputValue !== "") {
+    } /*else if (fechaFinInputValue !== "") {
       newFormatFechaFin = `${fechaFinInputValue.slice(0, 10)} ${fechaFinInputValue.slice(11, 19)}:00`;
-    }
+    }*/
 
     const formData = new FormData();
     formData.append("comment", comentarioTextareaValue);
@@ -117,7 +117,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     formData.append("type_document", tipoDocumentoSelectedOption);
     formData.append("type", tipo);
     formData.append("status", operationSelectedOption);
-    formData.append("fecha_fin", newFormatFechaFin);
+    //formData.append("fecha_fin", newFormatFechaFin);
 
     try {
       const token = localStorage.getItem("token");
@@ -155,9 +155,9 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     setFechaInicioInputValue(event.target.value);
   };
 
-  const handleFechaFinDateTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  /*const handleFechaFinDateTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFechaFinInputValue(event.target.value);
-  };
+  };*/
 
   const handleGerenciaSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setGerenciaSelectedOption(event.target.value);
@@ -186,7 +186,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   function limpiarDatos() {
     setDocumentoRelacionadoinputValue("");
     setFechaInicioInputValue("");
-    setFechaFinInputValue("");
+    //setFechaFinInputValue("");
     setTipoDocumentoSelectedOption("");
     setGerenciaSelectedOption("");
     //setGerenciaInicialSelectedOption('');
@@ -315,7 +315,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         </div>
 
-        {operationSelectedOption === "finalizado" && (
+        {/*operationSelectedOption === "finalizado" && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label htmlFor="fecha_fin" className="text-gray-600">
@@ -331,7 +331,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               />
             </div>
           </div>
-        )}
+        )*/}
 
         {(operationSelectedOption === "notificado" ||
           operationSelectedOption === "actualizado" ||
