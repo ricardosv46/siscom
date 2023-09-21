@@ -129,6 +129,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         //TODO: optimizar esto para que lo haga en el config del axios por default.
         if (response.status === 400 && response.data.success === false) {
           alert(response.data.message);
+          // alert("Por favor, ingrese los datos solicitados");
         } else {
           limpiarDatos();
           alert("El registro se procesó correctamente!!!");

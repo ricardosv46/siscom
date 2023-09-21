@@ -50,7 +50,7 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
   };
 
   const onGotoList = () => {
-    if (procesoSelectedOption === "" && añoSelectedOption === "") {
+    if (procesoSelectedOption === "" || añoSelectedOption === "") {
       alert("Debe seleccionar un año y un Proceso Electoral !");
       return;
     }
