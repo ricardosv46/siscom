@@ -65,6 +65,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   //const [fechaFinInputValue, setFechaFinInputValue] = useState("");
   const [operationSelectedOption, setOperationSelectedOption] = useState("");
   const [options, setOptions] = useState([]);
+  console.log({ options });
   const [tipoDocumentoSelectedOption, setTipoDocumentoSelectedOption] = useState("");
   const [gerenciaSelectedOption, setGerenciaSelectedOption] = useState("");
   const [gerenciaInicialSelectedOption, setGerenciaInicialSelectedOption] = useState("");
@@ -392,11 +393,20 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 onChange={handleTipoDocumentoSelectChange}
               >
                 <option value="">Seleccione tipo de documento</option>
-                {options.map((item: any, index) => (
-                  <option value={item.name} key={index}>
-                    {item.name}
-                  </option>
-                ))}
+                {operationSelectedOption === "finalizado"
+                  ? options
+                      .filter((item: any) => item.id === 8)
+                      .map((item: any, index) => (
+                        <option value={item.name} key={index}>
+                          {item.name}
+                        </option>
+                      ))
+                  : options.map((item: any, index) => (
+                      <option value={item.name} key={index}>
+                        {item.name}
+                      </option>
+                    ))}
+                8
               </select>
             </div>
           </div>

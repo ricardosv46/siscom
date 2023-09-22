@@ -54,53 +54,11 @@ const Home: NextPageWithLayout = () => {
     const dataStats: any = {};
     const { data } = await api.home.getProcessesSummary(localStorage.getItem("IdSelectedProcess"));
     const total = Object.values(data).reduce((a, b) => a + b, 0);
-    // console.log({ total });
     const empty = Object.assign(data, dataStats);
 
-    // for (let k in data) {
-    //   // @ts-ignore
-    //   dataStats[k] = Math.round((data[k] / total) * 100 * 100) / 100;
-    // }
-
-    // const dayta = {
-    //   finalized: 183,
-    //   less_3_months: 4,
-    //   less_6_months: 2130,
-    //   more_6_months: 653,
-    //   out_of_date: 0,
-    //   to_start: 1998,
-    //   undefined: 0,
-    // };
-
-    // // Calculamos el total de procesos.
-    // const total = Object.values(dayta).reduce((a, b) => a + b, 0);
-
-    // // Creamos un nuevo objeto con los porcentajes.
-    // const daytaStats = {};
-    // for (const key in dayta) {
-    //   // Calculamos el porcentaje.
-    //   const percentage = (dayta[key] / total) * 100;
-
-    //   // Redondeamos el porcentaje a dos decimales.
-    //   daytaStats[key] = percentage.toFixed(2);
-    // }
-
-    // // Actualizamos el porcentaje de procesos indefinidos.
-    // daytaStats.undefined = 0;
-
-    // // Verificamos que la suma de los porcentajes sea 100%.
-    // const totalPercentage = Object.values(daytaStats).reduce((a, b) => a + b, 0);
-
-    // console.log({ daytaStats }); // { finalized: 8.85%, less_3_months: 0.19%, less_6_months: 90.96%, more_6_months: 29.04%, out_of_date: 0.00%, to_start: 90.77%, undefined: 0.00% }
-    // console.log({ totalPercentage });
-
     for (let k in data) {
-      dataStats[k] = (data[k] / total) * 100;
-    }
-
-    // Redondear todos los porcentajes a dos decimales al final
-    for (let k in dataStats) {
-      dataStats[k] = Math.round(dataStats[k] * 100) / 100;
+      // @ts-ignore
+      dataStats[k] = ((data[k] / total) * 100).toFixed(2);
     }
 
     // Redondeamos el valor de la propiedad `undefined` al número entero más cercano.

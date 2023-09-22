@@ -76,7 +76,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [dataTrackingDetail, setDataTrackingDetail] = useState<ITrackingDetail[]>([]);
 
   console.log({ estado, search, responsable, operationSelectedOption });
-
+  console.log({ process });
   const processApi = async (IdSelectedProcess: any, label: any) => {
     const { processes } = await api.listpas.getProcesses(IdSelectedProcess, "all");
 

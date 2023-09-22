@@ -60,9 +60,14 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     setGerenciaOtions(data);
   };
   let itemprop: any;
+  let detailEmi: any;
+
   if (typeof window !== "undefined") {
     itemprop = history?.state?.item;
+    detailEmi = history?.state?.detailEmi;
   }
+
+  const dateEmi = new Date(detailEmi?.created_at);
 
   useEffect(() => {
     getTypeDocumentsApi();
@@ -299,7 +304,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </label>
             <input
               type="datetime-local"
-              min="2023-03-01T00:00"
+              min={dateEmi.toISOString().slice(0, 16)}
               max={new Date().toISOString().slice(0, 16)}
               value={fechaInicioInputValue}
               onChange={handleFechaInicioDateTimeChange}

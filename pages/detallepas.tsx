@@ -30,7 +30,7 @@ export interface IPropsItem {
 }
 
 export interface IDetailItem {
-  key: number
+  key: number;
   comment: string;
   created_at: string;
   current_responsible: string;
@@ -43,21 +43,8 @@ export interface IDetailItem {
   tracking_action: string;
 }
 
-const Detallepas: NextPageWithLayout<DetallepasProps> = ({
-  pageNum,
-  pageSize,
-  total,
-}) => {
-  const {
-    openModal,
-    setModalView,
-    clients,
-    removeUser,
-    openNotification,
-    setNotification,
-    setEditId,
-    addClients,
-  } = useUI();
+const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, total }) => {
+  const { openModal, setModalView, clients, removeUser, openNotification, setNotification, setEditId, addClients } = useUI();
   const [pagConfig, setPagConfig] = useState({
     pageNum: pageNum,
     pageSize: pageSize,
@@ -86,18 +73,18 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({
     } else {
       router.push("/listadopas");
     }
-
   }, []);
 
- const getDetailInfo = async(id: number) => {
- const { processes } =  await api.listpas.getProcessesByTracking(id)
- console.log(processes)
-     setDetail(processes)
- }
- 
+  const detailEmi = detail?.filter((item) => item.tracking_action === "EMISION")[0];
+
+  const getDetailInfo = async (id: number) => {
+    const { processes } = await api.listpas.getProcessesByTracking(id);
+    setDetail(processes);
+  };
+
   const onGotoBack = (page: string) => {
-    router.push({pathname:page, })
-  }
+    router.push({ pathname: page });
+  };
 
   return (
     <>
@@ -113,9 +100,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({
             {nombre} - R.G. {resolucion_gerencial}
           </h1>
         </div>
-        <hr
-          style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }}
-        />
+        <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
 
         {/* <div>
           <p style={{ color: "rgb(256,188,28)" }}>
@@ -129,32 +114,40 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({
         </div> */}
 
         <div className="relative wrap overflow-hidden p-10 h-full">
-          <div
-            className="border-2 absolute border-opacity-20 border-gray-700 h-full border"
-            style={{ left: "50%" }}
-          ></div>
-          
-          {
-            detail?.map((item, key)=> {
-              return (
-                   <>    
-                   {
-                    key % 2 === 0  ?  <LeftCard item={item}   idx={key}/> :   <RightCard item={item}  idx={key} />
-                   }   
-                  </>
-              )
-            })
-          }    
+          <div className="border-2 absolute border-opacity-20 border-gray-700 h-full border" style={{ left: "50%" }}></div>
+
+          {detail?.map((item, key) => {
+            return (
+              <>
+                {key % 2 === 0 ? (
+                  <LeftCard item={item} idx={key} detailEmi={detailEmi} />
+                ) : (
+                  <RightCard item={item} idx={key} detailEmi={detailEmi} />
+                )}
+              </>
+            );
+          })}
         </div>
-        <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }}/>
-        <div style={{display:'flex', gap:'50px'}}>
-          <button style={{color:'white', backgroundColor:'#2596be', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'10px 60px'}} onClick={()=> onGotoBack('/listadopas')} >Regresar</button>
+        <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
+        <div style={{ display: "flex", gap: "50px" }}>
+          <button
+            style={{
+              color: "white",
+              backgroundColor: "#2596be",
+              borderRadius: "10px",
+              cursor: "pointer",
+              fontSize: "1rem",
+              padding: "10px 60px",
+            }}
+            onClick={() => onGotoBack("/listadopas")}
+          >
+            Regresar
+          </button>
         </div>
       </Card>
     </>
   );
 };
- 
 
 Detallepas.getLayout = function getLayout(page: ReactElement) {
   return <LayoutFirst>{page}</LayoutFirst>;

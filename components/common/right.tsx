@@ -8,6 +8,7 @@ import { GetAuthService } from "services/auth/ServiceAuth";
 interface IProps {
   item: IDetailItem;
   idx: number;
+  detailEmi: any;
 }
 
 const onGoDetail = (page: string, props: any) => {
@@ -15,7 +16,7 @@ const onGoDetail = (page: string, props: any) => {
   router.push({ pathname: page });
   const { estado, ...res } = props.item;
   const newDatos = { item: { ...res } };
-  history.pushState(newDatos, "", page);
+  history.pushState({ detailEmi: props.detailEmi, ...newDatos }, "", page);
 };
 
 const RightCard: FC<IProps> = (props): ReactElement => {
@@ -62,7 +63,7 @@ const RightCard: FC<IProps> = (props): ReactElement => {
           type="dashed"
           hidden={idx === 0 || !user?.is_admin}
           icon={<EditOutlined />}
-          onClick={() => onGoDetail("/actualiza-detalle", { item })}
+          onClick={() => onGoDetail("/actualiza-detalle", { item, detailEmi: props.detailEmi })}
         >
           Editar
         </Button>

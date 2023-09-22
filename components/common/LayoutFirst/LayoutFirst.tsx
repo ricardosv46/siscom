@@ -143,7 +143,15 @@ const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
           <div className="logo justify-center mx-10">
             <IconOnpe width={88} />
           </div>
-          <Menu mode="inline" defaultSelectedKeys={[`${router.pathname}`]} items={items} onClick={handleMenu} />
+          <Menu
+            mode="inline"
+            activeKey={`${router.pathname}`}
+            selectable={false}
+            defaultSelectedKeys={[`4`]}
+            // selectedKeys={[`${router.pathname}`]}
+            items={items}
+            onClick={handleMenu}
+          />
         </Sider>
         <Layout className="site-layout" style={{ marginLeft: 200 }}>
           <Header className="header-layout">
