@@ -114,7 +114,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
     setDataResponsable([{ value: "", label: "Todos" }, ...uniqueArr]);
 
-    let valuefilter = "";
+    let valuefilter: any = undefined;
     if (label === "all") {
       valuefilter = "";
     }
@@ -139,15 +139,19 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     if (label === "undefined") {
       valuefilter = "Indefinido";
     }
+    console.log({ valuefilter, label });
 
-    const dataFilter = newData?.filter((item: any) => {
-      return item.estado_proceso === valuefilter;
-    });
-
-    setEstado(valuefilter);
-
+    if (valuefilter) {
+      const dataFilter = newData?.filter((item: any) => {
+        return item.estado_proceso === valuefilter;
+      });
+      console.log({ dataFilter });
+      setEstado(valuefilter);
+      setProcess(dataFilter);
+    } else {
+      setProcess(newData);
+    }
     setMemory(newData);
-    setProcess(dataFilter);
   };
 
   const processApiByDate = async (label: any, start_at: string, end_at: string) => {
@@ -256,6 +260,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     console.log({ IdSelectedProcess, label });
     processApi(IdSelectedProcess, label);
   }, [IdSelectedProcess]);
+
+  // useEffect(() => {
+  //   const labelIndex = router.query;
+  //   console.log({ labelIndex });
+  // }, []);
 
   const columns = [
     {
