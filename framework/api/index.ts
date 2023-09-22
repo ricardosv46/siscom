@@ -160,6 +160,7 @@ const api = {
           const response = resultApi.data;
 
           if (response){
+            console.log({response})
             alert(response.message);
             if (response.data.length > 0){
               let dataExcel = [];
