@@ -65,7 +65,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [dataResponsable, setDataResponsable] = useState<any>();
   const [estado, setEstado] = useState("");
   const [search, setSearch] = useState("");
-  const [responsable, setResponsable] = useState("");
+  const [responsable, setResponsable] = useState("all");
   const [isCheckedOP, setIsCheckedOP] = useState(false);
   const { IdSelectedProcess } = useMenuStore();
   const [openAnexos, setOpenAnexos] = useState(false);
@@ -107,12 +107,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       }
     });
 
-    const uniqueArr = Array.from(new Set(processes.map((item) => item.responsable))).map((responsable) => ({
-      value: responsable,
-      label: responsable,
-    }));
+    const uniqueArr = Array.from(new Set(processes.map((item) => item.responsable)))
+      .map((responsable) => ({
+        value: responsable,
+        label: responsable,
+      }))
+      .filter((item) => item.value !== "");
 
-    setDataResponsable([{ value: "", label: "Todos" }, ...uniqueArr]);
+    setDataResponsable([{ value: "all", label: "Todos" }, ...uniqueArr, { value: "", label: "Sin Responsable" }]);
 
     let valuefilter: any = undefined;
     if (label === "all") {
@@ -398,7 +400,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           return (
             item.estado_proceso === estado &&
             doesItemMatchSearch(item, search) &&
-            (responsable === "" || item.responsable === responsable) &&
+            (responsable === "all" || item.responsable === responsable) &&
             (operationSelectedOption === "" || item.type === operationSelectedOption)
           );
         });
@@ -413,7 +415,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
         return (
           (estado === "" || item.estado_proceso === estado) &&
           doesItemMatchSearch(item, search) &&
-          (responsable === "" || item.responsable === responsable) &&
+          (responsable === "all" || item.responsable === responsable) &&
           (operationSelectedOption === "" || item.type === operationSelectedOption)
         );
       });
@@ -512,7 +514,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       return (
         (valueEstado === "" || item.estado_proceso === valueEstado) &&
         doesItemMatchSearch(item, search) &&
-        (responsable === "" || item.responsable === responsable) &&
+        (responsable === "all" || item.responsable === responsable) &&
         (operationSelectedOption === "" || item.type === operationSelectedOption)
       );
     });
@@ -526,7 +528,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       return (
         (estado === "" || item.estado_proceso === estado) &&
         doesItemMatchSearch(item, search) &&
-        (valueResponsabLe === "" || item.responsable === valueResponsabLe) &&
+        (valueResponsabLe === "all" || item.responsable === valueResponsabLe) &&
         (operationSelectedOption === "" || item.type === operationSelectedOption)
       );
     });
