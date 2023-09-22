@@ -324,7 +324,6 @@ const api = {
           data: { data, message, success },
         }: IResponseAnexosDetail = await apiService.get(`processes/sgd/annex-detail/${año}/${id}/`);
         const {data:docs}: any = await apiService.get(`processes/sgd/annexes/list/${año}/${id}/`);
-        console.log({docs})
 
         if (data === undefined || success === undefined || message === undefined) {
           return { anexosDetail: [] };

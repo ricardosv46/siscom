@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Button, Space, Table, DatePicker, Modal } from "antd";
+import { Button, Space, Table, DatePicker, Modal, Radio, RadioChangeEvent, Select } from "antd";
 import React, { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import { LayoutFirst } from "@components/common";
 import { NextPageWithLayout } from "pages/_app";
@@ -62,6 +62,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [isCheckedTodos, setIsCheckedTodos] = useState(false);
   const [isCheckedCandidato, setIsCheckedCandidato] = useState(false);
   const [operationSelectedOption, setOperationSelectedOption] = useState("");
+  const [dataResponsable, setDataResponsable] = useState<any>();
+  const [estado, setEstado] = useState("");
+  const [search, setSearch] = useState("");
+  const [responsable, setResponsable] = useState("");
   const [isCheckedOP, setIsCheckedOP] = useState(false);
   const { IdSelectedProcess } = useMenuStore();
   const [openAnexos, setOpenAnexos] = useState(false);
@@ -70,8 +74,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [openTracking, setOpenTracking] = useState(false);
   const [dataTracking, setDataTracking] = useState<ITracking[]>([]);
   const [dataTrackingDetail, setDataTrackingDetail] = useState<ITrackingDetail[]>([]);
+
+  console.log({ estado, search, responsable, operationSelectedOption });
+
   const processApi = async (IdSelectedProcess: any, label: any) => {
-    const { processes } = await api.listpas.getProcesses(IdSelectedProcess, label);
+    const { processes } = await api.listpas.getProcesses(IdSelectedProcess, "all");
 
     const statusImg: any = {
       less_3_months: "less_3_months",
@@ -99,12 +106,52 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
         };
       }
     });
+
+    const uniqueArr = Array.from(new Set(processes.map((item) => item.responsable))).map((responsable) => ({
+      value: responsable,
+      label: responsable,
+    }));
+
+    setDataResponsable([{ value: "", label: "Todos" }, ...uniqueArr]);
+
+    let valuefilter = "";
+    if (label === "all") {
+      valuefilter = "";
+    }
+    if (label === "to_start") {
+      valuefilter = "Por Iniciar";
+    }
+    if (label === "out_of_date") {
+      valuefilter = "Fuera de fecha";
+    }
+    if (label === "finalized") {
+      valuefilter = "Finalizado";
+    }
+    if (label === "more_6_months") {
+      valuefilter = "Mas de 6 meses";
+    }
+    if (label === "less_6_months") {
+      valuefilter = "De 3 a 6 meses";
+    }
+    if (label === "less_3_months") {
+      valuefilter = "Menos de 3 meses";
+    }
+    if (label === "undefined") {
+      valuefilter = "Indefinido";
+    }
+
+    const dataFilter = newData?.filter((item: any) => {
+      return item.estado_proceso === valuefilter;
+    });
+
+    setEstado(valuefilter);
+
     setMemory(newData);
-    setProcess(newData);
+    setProcess(dataFilter);
   };
 
   const processApiByDate = async (label: any, start_at: string, end_at: string) => {
-    const { processes } = await api.listpas.getProcessesByDate(label, start_at, end_at);
+    const { processes } = await api.listpas.getProcessesByDate("all", start_at, end_at);
 
     const statusImg: any = {
       less_3_months: "less_3_months",
@@ -206,6 +253,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     setIsCheckedTodos(true);
     const labelIndex = router.query;
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado;
+    console.log({ IdSelectedProcess, label });
     processApi(IdSelectedProcess, label);
   }, [IdSelectedProcess]);
 
@@ -316,108 +364,170 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     },
   ];
 
-  const onSearch = (search: any = "") => {
-    /*console.log(isCheckedTodos)
-    console.log(isCheckedCandidato)
-    console.log(isCheckedOP)*/
-    if (search.length > 0) {
-      if (isCheckedOP) {
-        filterData = memory?.filter(
-          (item: {
-            type: any;
-            fecha_fin: any;
-            fecha_inicio: any;
-            dni_candidato: any;
-            num_expediente: any;
-            estado_proceso: any;
-            actualizacion: any;
-            resolution_number: any;
-            responsable: string;
-            name: string;
-            etapa: string;
-          }) =>
-            (item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.type?.toLowerCase()?.includes(search.toLowerCase())) &&
-            item?.type?.includes("OP")
-        );
-      } else if (isCheckedCandidato) {
-        filterData = memory?.filter(
-          (item: {
-            type: any;
-            fecha_fin: any;
-            fecha_inicio: any;
-            dni_candidato: any;
-            num_expediente: any;
-            estado_proceso: any;
-            actualizacion: any;
-            resolution_number: any;
-            responsable: string;
-            name: string;
-            etapa: string;
-          }) =>
-            (item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
-              item?.type?.toLowerCase()?.includes(search.toLowerCase())) &&
-            item?.type?.includes("CANDIDATO")
-        );
-      } else {
-        filterData = memory?.filter(
-          (item: {
-            type: any;
-            fecha_fin: any;
-            fecha_inicio: any;
-            dni_candidato: any;
-            num_expediente: any;
-            estado_proceso: any;
-            actualizacion: any;
-            resolution_number: any;
-            responsable: string;
-            name: string;
-            etapa: string;
-          }) =>
-            item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
-            item?.type?.toLowerCase()?.includes(search.toLowerCase())
-        );
-      }
+  function doesItemMatchSearch(item: any, search: any) {
+    return (
+      item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
+      item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
+      item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
+      item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
+      item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
+      item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
+      item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
+      item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
+      item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
+      item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
+      item?.type?.toLowerCase()?.includes(search.toLowerCase())
+    );
+  }
 
-      if (filterData?.length) {
-        setProcess(filterData);
+  const onSearch = (search: any = "") => {
+    setSearch(search);
+
+    if (search === "") {
+      if (estado.length > 0 || responsable.length > 0 || operationSelectedOption.length > 0) {
+        const dataFilter = memory.filter((item: any) => {
+          return (
+            item.estado_proceso === estado &&
+            doesItemMatchSearch(item, search) &&
+            (responsable === "" || item.responsable === responsable) &&
+            (operationSelectedOption === "" || item.type === operationSelectedOption)
+          );
+        });
+        return setProcess(dataFilter);
       } else {
-        setProcess(null);
+        return setProcess(memory);
       }
     }
+
+    if (search) {
+      const dataFilter = memory?.filter((item: any) => {
+        return (
+          (estado === "" || item.estado_proceso === estado) &&
+          doesItemMatchSearch(item, search) &&
+          (responsable === "" || item.responsable === responsable) &&
+          (operationSelectedOption === "" || item.type === operationSelectedOption)
+        );
+      });
+      setProcess(dataFilter);
+    }
+
+    // /*console.log(isCheckedTodos)
+    // console.log(isCheckedCandidato)
+    // console.log(isCheckedOP)*/
+    // if (search.length > 0) {
+    //   if (isCheckedOP) {
+    //     filterData = memory?.filter(
+    //       (item:any) =>
+    //         (item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.type?.toLowerCase()?.includes(search.toLowerCase())) &&
+    //         item?.type?.includes("OP")
+    //     );
+    //   } else if (isCheckedCandidato) {
+    //     filterData = memory?.filter(
+    //       (item: any) =>
+    //         (item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //           item?.type?.toLowerCase()?.includes(search.toLowerCase())) &&
+    //         item?.type?.includes("CANDIDATO")
+    //     );
+    //   } else {
+    //     filterData = memory?.filter(
+    //       (item: any) =>
+    //         item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //         item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //         item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //         item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //         item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //         item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //         item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //         item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //         item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //         item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
+    //         item?.type?.toLowerCase()?.includes(search.toLowerCase())
+    //     );
+    //   }
+    //   if (filterData?.length) {
+    //     setProcess(filterData);
+    //   } else {
+    //     setProcess(null);
+    //   }
+    // }
+  };
+  const handleChangeEstado = async (valueEstado: string) => {
+    // let label = "";
+    // if (valueEstado === "Por Iniciar") {
+    //   label = "to_start";
+    // }
+    // if (valueEstado === "Fuera de fecha") {
+    //   label = "out_of_date";
+    // }
+    // if (valueEstado === "Finalizado") {
+    //   label = "finalized";
+    // }
+    // if (valueEstado === "Mas de 6 meses") {
+    //   label = "more_6_months";
+    // }
+    // if (valueEstado === "De 3 a 6 meses") {
+    //   label = "less_6_months";
+    // }
+    // if (valueEstado === "Menos de 3 meses") {
+    //   label = "to_start";
+    // }
+    // if (valueEstado === "Indefinido") {
+    //   label = "";
+    // }
+
+    // const { processes } = await api.listpas.getProcesses(IdSelectedProcess, label);
+    // setMemory(processes);
+    // setProcess(processes);
+    setEstado(valueEstado);
+
+    const dataFilter = memory.filter((item: any) => {
+      return (
+        (valueEstado === "" || item.estado_proceso === valueEstado) &&
+        doesItemMatchSearch(item, search) &&
+        (responsable === "" || item.responsable === responsable) &&
+        (operationSelectedOption === "" || item.type === operationSelectedOption)
+      );
+    });
+
+    setProcess(dataFilter);
+  };
+  const handleChangeResponsable = (valueResponsabLe: string) => {
+    setResponsable(valueResponsabLe);
+
+    const dataFilter = memory.filter((item: any) => {
+      return (
+        (estado === "" || item.estado_proceso === estado) &&
+        doesItemMatchSearch(item, search) &&
+        (valueResponsabLe === "" || item.responsable === valueResponsabLe) &&
+        (operationSelectedOption === "" || item.type === operationSelectedOption)
+      );
+    });
+
+    setProcess(dataFilter);
   };
 
   function onChangeDate(date: any, dateStrings: [string, string]) {
     const start_at = dateStrings[0].split("-").reverse().join("");
     const end_at = dateStrings[1].split("-").reverse().join("");
-
     const labelIndex = router.query;
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado;
     if (start_at === "" || end_at === "") {
@@ -428,10 +538,22 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     }
   }
 
-  function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
+  function handleCheckboxChange(event: RadioChangeEvent) {
     setOperationSelectedOption(event.target.value);
-    console.log(operationSelectedOption);
+
+    const dataFilter = memory.filter((item: any) => {
+      return (
+        (estado === "" || item.estado_proceso === estado) &&
+        doesItemMatchSearch(item, search) &&
+        (responsable === "" || item.responsable === responsable) &&
+        (event.target.value === "" || item.type === event.target.value)
+      );
+    });
+
+    setProcess(dataFilter);
   }
+
+  // const [value, setValue] = useState(1);
 
   async function loadFile() {
     try {
@@ -446,36 +568,36 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     clear();
   }
 
-  const otionFilters = {
-    1: "all",
-    2: "CANDIDATO",
-    3: "OP",
-  };
+  // const otionFilters = {
+  //   1: "all",
+  //   2: "CANDIDATO",
+  //   3: "OP",
+  // };
 
-  const onfilterlist = (option: IOptionFilter) => {
-    setProcess(memory);
-    switch (option) {
-      case 1:
-        setIsCheckedTodos(true);
-        setIsCheckedCandidato(false);
-        setIsCheckedOP(false);
-        break;
-      case 2:
-        setIsCheckedCandidato(true);
-        setIsCheckedTodos(false);
-        setIsCheckedOP(false);
-        setProcess(memory.filter((element: any) => element.type == otionFilters[option]));
-        break;
-      case 3:
-        setIsCheckedOP(true);
-        setIsCheckedCandidato(false);
-        setIsCheckedTodos(false);
-        setProcess(memory.filter((element: any) => element.type == otionFilters[option]));
-        break;
-      default:
-        break;
-    }
-  };
+  // const onfilterlist = (option: IOptionFilter) => {
+  //   setProcess(memory);
+  //   switch (option) {
+  //     case 1:
+  //       setIsCheckedTodos(true);
+  //       setIsCheckedCandidato(false);
+  //       setIsCheckedOP(false);
+  //       break;
+  //     case 2:
+  //       setIsCheckedCandidato(true);
+  //       setIsCheckedTodos(false);
+  //       setIsCheckedOP(false);
+  //       setProcess(memory.filter((element: any) => element.type == otionFilters[option]));
+  //       break;
+  //     case 3:
+  //       setIsCheckedOP(true);
+  //       setIsCheckedCandidato(false);
+  //       setIsCheckedTodos(false);
+  //       setProcess(memory.filter((element: any) => element.type == otionFilters[option]));
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // };
 
   const DescargarExcel = async () => {
     let dataExcel: any[] = [];
@@ -543,9 +665,63 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           <div>
             <Input value={inputValue} onChange={(e) => onSearch(e.target.value)} placeholder="Buscar" prefix={<SearchOutlined />} />
           </div>
+
+          <Select
+            style={{ width: 150 }}
+            placeholder="Estado"
+            value={estado}
+            onChange={handleChangeEstado}
+            options={[
+              {
+                value: "",
+                label: "Todos",
+              },
+              {
+                value: "Por Iniciar",
+                label: "Por Iniciar",
+              },
+              {
+                value: "Fuera de fecha",
+                label: "Fuera de fecha",
+              },
+              {
+                value: "Finalizado",
+                label: "Finalizado",
+              },
+              {
+                value: "Mas de 6 meses",
+                label: "Mas de 6 meses",
+              },
+              {
+                value: "De 3 a 6 meses",
+                label: "De 3 a 6 meses",
+              },
+              {
+                value: "Menos de 3 meses",
+                label: "Menos de 3 meses",
+              },
+              {
+                value: "Indefinido",
+                label: "Indefinido",
+              },
+            ]}
+          />
+          <Select
+            style={{ width: 150 }}
+            value={responsable}
+            placeholder="Responsable"
+            onChange={handleChangeResponsable}
+            options={dataResponsable}
+          />
           <div style={{ display: "flex", alignItems: "center" }}>
-            <div className="text-red-500 text-xs"></div>
-            <div style={{ marginRight: "20px" }}>
+            <Radio.Group onChange={handleCheckboxChange} value={operationSelectedOption}>
+              <Radio value="">Todos</Radio>
+              <Radio value="CANDIDATO">Candidato</Radio>
+              <Radio value="OP">Organización Política</Radio>
+            </Radio.Group>
+
+            {/* <div className="text-red-500 text-xs"></div> */}
+            {/* <div style={{ marginRight: "20px" }}>
               <input style={{ marginRight: "10px" }} type="radio" checked={isCheckedTodos} onChange={() => onfilterlist(1)} />
               <span className="checkmark"></span>
               <label className="form-checkbottom">Todos</label>
@@ -559,7 +735,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               <input style={{ marginRight: "10px" }} type="radio" checked={isCheckedOP} onChange={() => onfilterlist(3)} />
               <span className="checkmark"></span>
               <label className="form-checkbottom">Organización Política</label>
-            </div>
+            </div> */}
           </div>
           <div>
             <RangePicker locale={locale} onChange={onChangeDate} disabledDate={disabledDate} />
