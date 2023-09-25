@@ -14,6 +14,7 @@ import { RightCard } from "../components/common/right";
 import { Button, Modal, message } from "antd";
 import { GetTokenAuthService } from "services/auth/ServiceAuth";
 import { parse, format } from "date-fns";
+import apiService from "services/axios/configAxios";
 
 interface IPropsItem {
   id: string | number | null;
@@ -193,10 +194,13 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             "x-access-tokens": `${tok}`,
           },
         };
-        const response = await axios.put(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/tracking/${id}/edit/`, formData, reqInit);
-        console.log(response.data);
-        alert("El detalle se actualizó correctamente!!!");
-        goBack("/detallepas", { itemprop });
+        const response = await apiService.put(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/tracking/${id}/edit/`, formData, reqInit);
+        if (response.status === 400 && response.data.success === false) {
+          alert(response.data.message);
+        } else {
+          alert("El detalle se actualizó correctamente.");
+          goBack("/detallepas", { itemprop });
+        }
       } catch (error) {
         console.log(error);
       }
