@@ -156,7 +156,6 @@ const api = {
         try {
           const token = localStorage.getItem("token");
           const resultApi = await axios.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/bulk/tracking/create/`, formData, {headers: {'x-access-tokens': token}});
-          //const resultApi = await apiService.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/bulk/tracking/create`, formData);
           const response = resultApi.data;
 
           if (response){
@@ -165,11 +164,13 @@ const api = {
             if (response.data.length > 0){
               let dataExcel = [];
               let headers: any[];
-              headers = ['DNI_CANDIDATO', 'NRO_RG_PAS','TIPO_DOC_EMITIDO', 'NRO_DOC_EMITIDO', 'NUEVO_RESPONSABLE', 'ERROR']
+              headers = ['FILA', 'EXPEDIENTE', 'NRO_RG_PAS', 'DNI_CANDIDATO', 'TIPO_DOC_EMITIDO', 'NRO_DOC_EMITIDO', 'NUEVO_RESPONSABLE', 'ERROR']
               for (let i = 0; i < response.data.length; i++) {
                 dataExcel.push({
-                  dni_candidato: response.data[i].DNI_CANDIDATO,
+                  fila: response.data[i].FILA,
+                  expediente: response.data[i].expediente,
                   nro_rg_pas: response.data[i].NRO_RG_PAS,
+                  dni_candidato: response.data[i].DNI_CANDIDATO,
                   tipo_doc_emitido: response.data[i].TIPO_DOC_EMITIDO,
                   nro_doc_emitido: response.data[i].NRO_DOC_EMITIDO,
                   nuevo_responsable: response.data[i].NUEVO_RESPONSABLE,
