@@ -394,33 +394,38 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const onSearch = (search: any = "") => {
     setSearch(search);
 
-    if (search === "") {
-      if (estado.length > 0 || responsable.length > 0 || operationSelectedOption.length > 0) {
-        const dataFilter = memory.filter((item: any) => {
-          return (
-            item.estado_proceso === estado &&
-            doesItemMatchSearch(item, search) &&
-            (responsable === "all" || item.responsable === responsable) &&
-            (operationSelectedOption === "" || item.type === operationSelectedOption)
-          );
-        });
-        return setProcess(dataFilter);
-      } else {
-        return setProcess(memory);
-      }
-    }
+    // if (search === "") {
+    //   if (estado.length > 0 || operationSelectedOption.length > 0 || responsable.length > 0) {
+    //     console.log("holiiiiiiiii");
 
-    if (search) {
-      const dataFilter = memory?.filter((item: any) => {
-        return (
-          (estado === "" || item.estado_proceso === estado) &&
-          doesItemMatchSearch(item, search) &&
-          (responsable === "all" || item.responsable === responsable) &&
-          (operationSelectedOption === "" || item.type === operationSelectedOption)
-        );
-      });
-      setProcess(dataFilter);
-    }
+    //     const dataFilter = memory.filter((item: any) => {
+    //       return (
+    //         (estado === "" || item.estado_proceso === estado) &&
+    //         (search === "" || doesItemMatchSearch(item, search)) &&
+    //         (responsable === "" || item.responsable === responsable) &&
+    //         (operationSelectedOption === "" || item.type === operationSelectedOption)
+    //       );
+    //     });
+    //     setProcess(dataFilter);
+    //   } else {
+    //     setProcess(memory);
+    //   }
+    // }
+
+    // if (search) {
+    //   const dataFilter = memory?.filter((item: any) => {
+    //     return (
+    //       (estado === "" || item.estado_proceso === estado) &&
+    //       doesItemMatchSearch(item, search) &&
+    //       (responsable === "all" || item.responsable === responsable) &&
+    //       (operationSelectedOption === "" || item.type === operationSelectedOption)
+    //     );
+    //   });
+    //   setProcess(dataFilter);
+    // }
+
+    const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption });
+    setProcess(dataFilter);
 
     // /*console.log(isCheckedTodos)
     // console.log(isCheckedCandidato)
@@ -510,28 +515,37 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     // setProcess(processes);
     setEstado(valueEstado);
 
-    const dataFilter = memory.filter((item: any) => {
-      return (
-        (valueEstado === "" || item.estado_proceso === valueEstado) &&
-        doesItemMatchSearch(item, search) &&
-        (responsable === "all" || item.responsable === responsable) &&
-        (operationSelectedOption === "" || item.type === operationSelectedOption)
-      );
-    });
+    const dataFilter = filterUpdate({ search, estado: valueEstado, responsable, type: operationSelectedOption });
 
     setProcess(dataFilter);
   };
+
+  const filterUpdate = ({ search, estado, responsable, type }: any) => {
+    return memory?.filter((item: any) => {
+      return (
+        doesItemMatchSearch(item, search) &&
+        (estado === "" || item.estado_proceso === estado) &&
+        (responsable === "all" || item.responsable === responsable) &&
+        (type === "" || item.type === type)
+      );
+    });
+  };
+
+  console.log({ update: filterUpdate({ search, estado, responsable, type: operationSelectedOption }) });
+
   const handleChangeResponsable = (valueResponsabLe: string) => {
     setResponsable(valueResponsabLe);
 
-    const dataFilter = memory.filter((item: any) => {
-      return (
-        (estado === "" || item.estado_proceso === estado) &&
-        doesItemMatchSearch(item, search) &&
-        (valueResponsabLe === "all" || item.responsable === valueResponsabLe) &&
-        (operationSelectedOption === "" || item.type === operationSelectedOption)
-      );
-    });
+    // const dataFilter = memory.filter((item: any) => {
+    //   return (
+    //     (estado === "" || item.estado_proceso === estado) &&
+    //     doesItemMatchSearch(item, search) &&
+    //     (valueResponsabLe === "all" || item.responsable === valueResponsabLe) &&
+    //     (operationSelectedOption === "" || item.type === operationSelectedOption)
+    //   );
+    // });
+
+    const dataFilter = filterUpdate({ search, estado, responsable: valueResponsabLe, type: operationSelectedOption });
 
     setProcess(dataFilter);
   };
@@ -552,14 +566,16 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   function handleCheckboxChange(event: RadioChangeEvent) {
     setOperationSelectedOption(event.target.value);
 
-    const dataFilter = memory.filter((item: any) => {
-      return (
-        (estado === "" || item.estado_proceso === estado) &&
-        doesItemMatchSearch(item, search) &&
-        (responsable === "" || item.responsable === responsable) &&
-        (event.target.value === "" || item.type === event.target.value)
-      );
-    });
+    // const dataFilter = memory.filter((item: any) => {
+    //   return (
+    //     (estado === "" || item.estado_proceso === estado) &&
+    //     doesItemMatchSearch(item, search) &&
+    //     (responsable === "" || item.responsable === responsable) &&
+    //     (event.target.value === "" || item.type === event.target.value)
+    //   );
+    // });
+
+    const dataFilter = filterUpdate({ search, estado, responsable, type: event.target.value });
 
     setProcess(dataFilter);
   }

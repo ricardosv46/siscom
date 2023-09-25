@@ -123,7 +123,7 @@ const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
       infoNotification();
     }
   }, [displayNotification]);
-
+  console.log({ router, items });
   return (
     <>
       {contextHolder}
@@ -143,7 +143,21 @@ const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
           <div className="logo justify-center mx-10">
             <IconOnpe width={88} />
           </div>
-          <Menu
+          <div className="flex flex-col">
+            {items.map((item: any) => (
+              <button
+                key={item.key}
+                onClick={() => handleMenu({ key: item.key })}
+                className={`${router.pathname === item.key ? "text-[#1890ff]" : ""} ${
+                  `/${item.key}` === router.pathname ? "text-[#1890ff]" : ""
+                } p-3 px-5  text-left flex gap-2 items-center`}
+              >
+                {item.icon}
+                {item.label}
+              </button>
+            ))}
+          </div>
+          {/* <Menu
             mode="inline"
             activeKey={`${router.pathname}`}
             selectable={false}
@@ -151,7 +165,7 @@ const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
             // selectedKeys={[`${router.pathname}`]}
             items={items}
             onClick={handleMenu}
-          />
+          /> */}
         </Sider>
         <Layout className="site-layout" style={{ marginLeft: 200 }}>
           <Header className="header-layout">
