@@ -59,17 +59,30 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       router.push("/listadopas");
     }
   }, []);
-
+  const [formData, setFormData] = useState(new FormData());
   const [documentoRelacionadoinputValue, setDocumentoRelacionadoinputValue] = useState("");
   const [fechaInicioInputValue, setFechaInicioInputValue] = useState("");
+  console.log({ fechaInicioInputValue });
   //const [fechaFinInputValue, setFechaFinInputValue] = useState("");
   const [operationSelectedOption, setOperationSelectedOption] = useState("");
   const [options, setOptions] = useState([]);
-  console.log({ options });
   const [tipoDocumentoSelectedOption, setTipoDocumentoSelectedOption] = useState("");
   const [gerenciaSelectedOption, setGerenciaSelectedOption] = useState("");
   const [gerenciaInicialSelectedOption, setGerenciaInicialSelectedOption] = useState("");
   const [comentarioTextareaValue, setComentarioTextareaValue] = useState("");
+
+  useEffect(() => {
+    return () => {
+      setFormData(new FormData());
+
+      formData.delete("start_at");
+
+      formData.set("start_at", {
+        comment: `${fechaInicioInputValue.slice(0, 10)} ${fechaInicioInputValue.slice(11, 19)}:00`,
+        delete: true,
+      });
+    };
+  }, []);
 
   const maxCaracteres = 250;
 
@@ -97,12 +110,11 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     }
 
     if (fechaInicioInputValue !== "") {
-      newFormatFechaInicio = `${fechaInicioInputValue.slice(0, 10)} ${fechaInicioInputValue.slice(11, 19)}:00`;
+      newFormatFechaInicio = fechaInicioInputValue ? `${fechaInicioInputValue.slice(0, 10)} ${fechaInicioInputValue.slice(11, 19)}:00` : "";
     } /*else if (fechaFinInputValue !== "") {
       newFormatFechaFin = `${fechaFinInputValue.slice(0, 10)} ${fechaFinInputValue.slice(11, 19)}:00`;
     }*/
 
-    const formData = new FormData();
     formData.append("comment", comentarioTextareaValue);
     formData.append("document", documentoRelacionadoinputValue);
     formData.append("new_responsible", gerenciaSelectedOption);
@@ -119,6 +131,15 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     formData.append("type", tipo);
     formData.append("status", operationSelectedOption);
     //formData.append("fecha_fin", newFormatFechaFin);
+    setFormData(formData);
+
+    console.log({ formData, fechaInicioInputValue, newFormatFechaInicio });
+
+    // Actualiza el estado formData
+
+    for (const [clave, valor] of formData.entries()) {
+      console.log(`Clave: ${clave}, Valor: ${valor}`);
+    }
 
     try {
       const token = localStorage.getItem("token");
@@ -134,6 +155,16 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         } else {
           limpiarDatos();
           alert("El registro se procesó correctamente!!!");
+          formData.append("comment", "");
+          formData.append("document", "");
+          formData.append("new_responsible", "");
+          formData.append("current_responsible", "");
+          formData.append("is_admin", "false");
+          formData.append("resolution_number", "");
+          formData.append("start_at", "");
+          formData.append("type_document", "");
+          formData.append("type", "");
+          formData.append("status", "");
           router.push("./listadopas");
         }
       } else {

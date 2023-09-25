@@ -67,7 +67,27 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     detailEmi = history?.state?.detailEmi;
   }
 
-  const dateEmi = new Date(detailEmi?.created_at);
+  function toDate(dateString: any) {
+    const [day, month, year] = dateString.split(" ");
+
+    return new Date(year, month - 1, day);
+  }
+
+  const dateEmi = new Date(detailEmi?.start_at_dt);
+
+  // const fechax = toDate(dateEmi);
+
+  // Formatear la fecha en el formato deseado (opcional)
+  // // const fechaFormateada = format(fechax, "yyyy-MM-dd");
+  // const fechaParseada = parse(detailEmi?.start_at_dt, "EEE MMM dd yyyy HH:mm:ss 'GMT'XXX", new Date());
+  // console.log({ fechaParseada, detailEmi, dateEmiX }); // Fecha como instancia de Date
+
+  // Convierte la fecha parseada a un nuevo formato
+  // const dateEmi = format(fechaParseada, "dd MMM yyyy HH:mm:ss");
+  // console.log({ dateEmi }); // Fecha como instancia de Date
+  // // console.log({ fechaFormateada }); // Fecha formatea
+
+  // console.log({ dateEmi, detailEmi });
 
   useEffect(() => {
     getTypeDocumentsApi();
@@ -302,15 +322,17 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             <label htmlFor="fecha_inicio" className="text-gray-600">
               Fecha:
             </label>
-            <input
-              type="datetime-local"
-              min={dateEmi?.toISOString().slice(0, 16)}
-              max={new Date().toISOString().slice(0, 16)}
-              value={fechaInicioInputValue}
-              onChange={handleFechaInicioDateTimeChange}
-              id="fecha_inicio"
-              className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-            />
+            {dateEmi && (
+              <input
+                type="datetime-local"
+                min={dateEmi?.toISOString().slice(0, 16)}
+                max={new Date().toISOString().slice(0, 16)}
+                value={fechaInicioInputValue}
+                onChange={handleFechaInicioDateTimeChange}
+                id="fecha_inicio"
+                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+              />
+            )}
             {/*</div>{fechaInicioInputValue}*/}
           </div>
         </div>

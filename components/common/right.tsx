@@ -34,6 +34,8 @@ const RightCard: FC<IProps> = (props): ReactElement => {
     start_at,
     tracking_action,
   } = item;
+
+  console.log({ props });
   return (
     <div className="mb-8 flex  justify-between items-center w-full right-timeline">
       <div className="order-1 w-5/12"></div>
