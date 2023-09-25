@@ -304,7 +304,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </label>
             <input
               type="datetime-local"
-              min={dateEmi.toISOString().slice(0, 16)}
+              min={dateEmi?.toISOString().slice(0, 16)}
               max={new Date().toISOString().slice(0, 16)}
               value={fechaInicioInputValue}
               onChange={handleFechaInicioDateTimeChange}
