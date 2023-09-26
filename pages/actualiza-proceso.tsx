@@ -31,11 +31,17 @@ interface IPropsItem {
 //let newFormatFechaFin = "";
 
 const Actualizaproceso: NextPageWithLayout = ({}) => {
-  let id = "";
-  let responsable_actual = "";
-  let resolucion_gerencial = "";
-  let tipo = "";
-  let newFormatFechaInicio = "";
+  const [id, setId] = useState("");
+  const [responsable_actual, setTesponsable_actual] = useState("");
+  const [resolucion_gerencial, setTesolucion_gerencial] = useState("");
+  const [tipo, setTipo] = useState("");
+  // const [newFormatFechaInicio, setNewFormatFechaInicio] = useState("");
+
+  // let id = "";
+  // let responsable_actual = "";
+  // let resolucion_gerencial = "";
+  // let tipo = "";
+  // let newFormatFechaInicio = "";
 
   const [item, setItem] = useState<IPropsItem>();
   const router = useRouter();
@@ -52,10 +58,14 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     let itemprop = history?.state?.item;
     if (itemprop) {
       setItem(itemprop);
-      id = itemprop?.numero;
-      responsable_actual = itemprop?.responsable;
-      resolucion_gerencial = itemprop?.resolution_number;
-      tipo = itemprop?.type;
+      setId(itemprop?.numero);
+      setTesponsable_actual(itemprop?.responsable);
+      setTesolucion_gerencial(itemprop?.resolution_number);
+      setTipo(itemprop?.type);
+      // id = itemprop?.numero;
+      // responsable_actual = itemprop?.responsable;
+      // resolucion_gerencial = itemprop?.resolution_number;
+      // tipo = itemprop?.type;
     } else {
       router.push("/listadopas");
     }
@@ -116,9 +126,10 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       return;
     }
 
-    if (fechaInicioInputValue !== "") {
-      newFormatFechaInicio = fechaInicioInputValue ? `${fechaInicioInputValue.slice(0, 10)} ${fechaInicioInputValue.slice(11, 19)}:00` : "";
-    } /*else if (fechaFinInputValue !== "") {
+    // if (fechaInicioInputValue !== "") {
+    //   setNewFormatFechaInicio();
+    // }
+    /*else if (fechaFinInputValue !== "") {
       newFormatFechaFin = `${fechaFinInputValue.slice(0, 10)} ${fechaFinInputValue.slice(11, 19)}:00`;
     }*/
     const formData = new FormData();
@@ -133,7 +144,14 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       formData.set("is_admin", "false");
     }
     formData.set("resolution_number", resolucion_gerencial);
-    formData.set("start_at", newFormatFechaInicio);
+
+    if (fechaInicioInputValue !== "") {
+      formData.set(
+        "start_at",
+        fechaInicioInputValue ? `${fechaInicioInputValue.slice(0, 10)} ${fechaInicioInputValue.slice(11, 19)}:00` : ""
+      );
+    }
+
     formData.set("type_document", tipoDocumentoSelectedOption);
     formData.set("type", tipo);
     formData.set("status", operationSelectedOption);
@@ -234,7 +252,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           <h2 style={{ fontSize: 25, color: "#4F5172" }}>{item?.name}</h2>
         </div>
         <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
-
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="resolucion_gerencial" className="text-gray-600">
@@ -245,7 +262,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </label>
           </div>
         </div>
-
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="tipo" className="text-gray-600">
@@ -256,7 +272,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </label>
           </div>
         </div>
-
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="responsable_actual" className="text-gray-600">
@@ -282,7 +297,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             )}
           </div>
         </div>
-
+        {responsable_actual}
+        fafasf
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="operacion" className="text-gray-40">
@@ -348,7 +364,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </div>
           </div>
         </div>
-
         {/*operationSelectedOption === "finalizado" && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
@@ -366,7 +381,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </div>
           </div>
         )*/}
-
         {(operationSelectedOption === "notificado" ||
           operationSelectedOption === "actualizado" ||
           operationSelectedOption === "observado") && (
@@ -389,7 +403,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </div>
           </div>
         )}
-
         {(operationSelectedOption === "actualizado" ||
           operationSelectedOption === "observado" ||
           operationSelectedOption === "finalizado") && (
@@ -410,7 +423,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </div>
           </div>
         )}
-
         {(operationSelectedOption === "actualizado" ||
           operationSelectedOption === "observado" ||
           operationSelectedOption === "finalizado") && (
@@ -443,7 +455,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </div>
           </div>
         )}
-
         {operationSelectedOption && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
@@ -462,7 +473,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </div>
           </div>
         )}
-
         {operationSelectedOption && (
           <div className="w-1/2 py-50">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
@@ -480,7 +490,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </div>
           </div>
         )}
-
         <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
         <div style={{ display: "flex", gap: "50px" }}>
           <button
@@ -513,7 +522,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             Regresar
           </button>
         </div>
-
         {/* s{showAlert && (<div style={{color:'#fff', backgroundColor:'#f0ad4e', borderColor: '#eea236', borderRadius:'5px', marginTop:'10px', padding:'10px'}} role="alert">El registro del proceso se ha enviado correctamente.</div>)} */}
       </Card>
     </form>
