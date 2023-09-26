@@ -382,7 +382,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             <label htmlFor="tipo_documento" className="text-gray-600">
               Tipo de documento:
             </label>
-            <select
+            {/* <select
               className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
               value={tipoDocumentoSelectedOption}
               onChange={handleTipoDocumentoSelectChange}
@@ -393,6 +393,27 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                   {item.name}
                 </option>
               ))}
+            </select> */}
+            <select
+              className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+              value={tipoDocumentoSelectedOption}
+              onChange={handleTipoDocumentoSelectChange}
+            >
+              <option value="">Seleccione tipo de documento</option>
+              {operationSelectedOption === "FINALIZACION"
+                ? options
+                    .filter((item: any) => item.id === 8)
+                    .map((item: any, index) => (
+                      <option value={item.name} key={index}>
+                        {item.name}
+                      </option>
+                    ))
+                : options.map((item: any, index) => (
+                    <option value={item.name} key={index}>
+                      {item.name}
+                    </option>
+                  ))}
+              8
             </select>
           </div>
         </div>

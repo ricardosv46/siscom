@@ -59,7 +59,22 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       router.push("/listadopas");
     }
   }, []);
-  const [formData, setFormData] = useState(new FormData());
+
+  useEffect(() => {
+    console.log("componteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+    formData.delete("start_at");
+
+    return () => {
+      // setFormData(new FormData());
+      console.log("componteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+      formData.delete("start_at");
+    };
+  }, []);
+
+  // useEffect(() => {
+
+  // }, []);// const [formData, setFormData] = useState(new FormData());
+  const formData = new FormData();
   const [documentoRelacionadoinputValue, setDocumentoRelacionadoinputValue] = useState("");
   const [fechaInicioInputValue, setFechaInicioInputValue] = useState("");
   console.log({ fechaInicioInputValue });
@@ -70,19 +85,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [gerenciaSelectedOption, setGerenciaSelectedOption] = useState("");
   const [gerenciaInicialSelectedOption, setGerenciaInicialSelectedOption] = useState("");
   const [comentarioTextareaValue, setComentarioTextareaValue] = useState("");
-
-  useEffect(() => {
-    return () => {
-      setFormData(new FormData());
-
-      formData.delete("start_at");
-
-      formData.set("start_at", {
-        comment: `${fechaInicioInputValue.slice(0, 10)} ${fechaInicioInputValue.slice(11, 19)}:00`,
-        delete: true,
-      });
-    };
-  }, []);
 
   const maxCaracteres = 250;
 
@@ -131,15 +133,15 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     formData.append("type", tipo);
     formData.append("status", operationSelectedOption);
     //formData.append("fecha_fin", newFormatFechaFin);
-    setFormData(formData);
+    // setFormData(formData);
 
     console.log({ formData, fechaInicioInputValue, newFormatFechaInicio });
 
     // Actualiza el estado formData
 
-    for (const [clave, valor] of formData.entries()) {
-      console.log(`Clave: ${clave}, Valor: ${valor}`);
-    }
+    // for (const [clave, valor] of formData.entries()) {
+    //   console.log(`Clave: ${clave}, Valor: ${valor}`);
+    // }
 
     try {
       const token = localStorage.getItem("token");
