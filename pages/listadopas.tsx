@@ -204,9 +204,21 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   };
 
   const DescargarDocumentos = async (props: any) => {
+    const instance = Modal.info({
+      title: "Cargando",
+      content: (
+        <div>
+          <p>Espere mientras termine la descarga...</p>
+        </div>
+      ),
+      onOk() {},
+      okButtonProps: { disabled: true, style: { backgroundColor: "#0874cc", display: "none" } },
+      centered: true,
+    });
     const { estado, ...res } = props.item;
     const newDatos = { item: { ...res } };
     await api.listpas.downloadDocuments(newDatos.item.numero);
+    instance.destroy();
   };
 
   const getTracking = async (props: any) => {

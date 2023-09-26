@@ -400,7 +400,12 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               onChange={handleTipoDocumentoSelectChange}
             >
               <option value="">Seleccione tipo de documento</option>
-              {operationSelectedOption === "FINALIZACION"
+              {options.map((item: any, index) => (
+                <option value={item.name} key={index}>
+                  {item.name}
+                </option>
+              ))}
+              {/* {operationSelectedOption === "FINALIZACION"
                 ? options
                     .filter((item: any) => item.id === 8)
                     .map((item: any, index) => (
@@ -412,8 +417,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                     <option value={item.name} key={index}>
                       {item.name}
                     </option>
-                  ))}
-              8
+                  ))} */}
             </select>
           </div>
         </div>
