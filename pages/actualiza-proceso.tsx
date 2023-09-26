@@ -28,14 +28,15 @@ interface IPropsItem {
   type: string | null;
 }
 
-let id = "";
-let responsable_actual = "";
-let resolucion_gerencial = "";
-let tipo = "";
-let newFormatFechaInicio = "";
 //let newFormatFechaFin = "";
 
 const Actualizaproceso: NextPageWithLayout = ({}) => {
+  let id = "";
+  let responsable_actual = "";
+  let resolucion_gerencial = "";
+  let tipo = "";
+  let newFormatFechaInicio = "";
+
   const [item, setItem] = useState<IPropsItem>();
   const router = useRouter();
 
@@ -60,24 +61,28 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     }
   }, []);
 
-  useEffect(() => {
-    console.log("componteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-    formData.delete("start_at");
+  // useEffect(() => {
+  //   console.log("mount");
+  //   for (const [clave, valor] of formData.entries()) {
+  //     console.log(`Clave: ${clave}, Valor: ${valor}`);
+  //   }
+  //   formData.delete("start_at");
 
-    return () => {
-      // setFormData(new FormData());
-      console.log("componteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-      formData.delete("start_at");
-    };
-  }, []);
+  //   return () => {
+  //     // setFormData(new FormData());
+  //     console.log("unmount");
+  //     for (const [clave, valor] of formData.entries()) {
+  //       console.log(`Clave: ${clave}, Valor: ${valor}`);
+  //     }
+  //     formData.delete("start_at");
+  //   };
+  // }, []);
 
   // useEffect(() => {
 
   // }, []);// const [formData, setFormData] = useState(new FormData());
-  const formData = new FormData();
   const [documentoRelacionadoinputValue, setDocumentoRelacionadoinputValue] = useState("");
   const [fechaInicioInputValue, setFechaInicioInputValue] = useState("");
-  console.log({ fechaInicioInputValue });
   //const [fechaFinInputValue, setFechaFinInputValue] = useState("");
   const [operationSelectedOption, setOperationSelectedOption] = useState("");
   const [options, setOptions] = useState([]);
@@ -116,32 +121,26 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     } /*else if (fechaFinInputValue !== "") {
       newFormatFechaFin = `${fechaFinInputValue.slice(0, 10)} ${fechaFinInputValue.slice(11, 19)}:00`;
     }*/
-
-    formData.append("comment", comentarioTextareaValue);
-    formData.append("document", documentoRelacionadoinputValue);
-    formData.append("new_responsible", gerenciaSelectedOption);
+    const formData = new FormData();
+    formData.set("comment", comentarioTextareaValue);
+    formData.set("document", documentoRelacionadoinputValue);
+    formData.set("new_responsible", gerenciaSelectedOption);
     if (user.is_admin) {
-      formData.append("current_responsible", gerenciaInicialSelectedOption);
-      formData.append("is_admin", "true");
+      formData.set("current_responsible", gerenciaInicialSelectedOption);
+      formData.set("is_admin", "true");
     } else {
-      formData.append("current_responsible", responsable_actual);
-      formData.append("is_admin", "false");
+      formData.set("current_responsible", responsable_actual);
+      formData.set("is_admin", "false");
     }
-    formData.append("resolution_number", resolucion_gerencial);
-    formData.append("start_at", newFormatFechaInicio);
-    formData.append("type_document", tipoDocumentoSelectedOption);
-    formData.append("type", tipo);
-    formData.append("status", operationSelectedOption);
+    formData.set("resolution_number", resolucion_gerencial);
+    formData.set("start_at", newFormatFechaInicio);
+    formData.set("type_document", tipoDocumentoSelectedOption);
+    formData.set("type", tipo);
+    formData.set("status", operationSelectedOption);
     //formData.append("fecha_fin", newFormatFechaFin);
     // setFormData(formData);
 
-    console.log({ formData, fechaInicioInputValue, newFormatFechaInicio });
-
     // Actualiza el estado formData
-
-    // for (const [clave, valor] of formData.entries()) {
-    //   console.log(`Clave: ${clave}, Valor: ${valor}`);
-    // }
 
     try {
       const token = localStorage.getItem("token");
