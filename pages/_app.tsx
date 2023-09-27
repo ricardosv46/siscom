@@ -1,6 +1,6 @@
 import "../styles/globals.css";
 import "antd/dist/antd.css";
-import { ReactElement, ReactNode, useEffect } from "react";
+import { ReactElement, ReactNode, useEffect, useState } from "react";
 import type { NextPage } from "next";
 import type { AppProps } from "next/app";
 import { ManagedUIContext } from "@components/ui/context";
@@ -37,7 +37,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       router.push("/auth");
       RemoveSessionAuthService();
     }
-  }, [router.asPath]);
+  }, []);
 
   return (
     <>

@@ -19,7 +19,20 @@ interface DoughnutChartOptions {
 const Home: NextPageWithLayout = () => {
   const [processGrouped, setProcessGrouped] = useState<any>([]);
   const [processSummary, setProcessSummary] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
   const [processSummaryStats, setProcessSummaryStats] = useState<any>([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    const datalocal = localStorage.getItem("IdSelectedProcess");
+
+    if (!datalocal) {
+      router.push("/procesos");
+    } else {
+      setLoading(true);
+    }
+  }, []);
+
   let savedProcess = "";
 
   //const processGroupedApi = async() => {
@@ -111,8 +124,6 @@ const Home: NextPageWithLayout = () => {
     processGroupedApi(savedProcess);
     processSummaryApi(savedProcess);
   }, []);
-
-  const router = useRouter();
 
   const options: ChartOptions<"doughnut"> = {
     onClick: (event: any, elements: any, chart: any) => {
@@ -266,6 +277,10 @@ const Home: NextPageWithLayout = () => {
   //     setCurrentPage(nextPage);
   //   }, 20000);
   // }, [currentPage]);
+
+  if (!loading) {
+    return <div></div>;
+  }
 
   return (
     <>

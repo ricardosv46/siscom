@@ -123,7 +123,18 @@ const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
       infoNotification();
     }
   }, [displayNotification]);
-  console.log({ router, items });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (profile) {
+      setLoading(true);
+    }
+  }, [profile]);
+
+  if (!loading) {
+    return <div></div>;
+  }
+
   return (
     <>
       {contextHolder}

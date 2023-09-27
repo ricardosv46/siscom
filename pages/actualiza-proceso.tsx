@@ -502,6 +502,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 onChange={handleFechaInicioDateTimeChange}
                 disabledDate={disabledDate}
                 disabledTime={disabledTime}
+                popupStyle={{ color: "black" }}
+                style={{ color: "black" }}
               />
               {/* <input
                 type="datetime-local"

@@ -107,6 +107,16 @@ body{
   padding: 4px 15px !important;
 }
 
+.ant-btn-primary {
+  color: black !important;
+}
+
+.ant-btn-primary[disabled] {
+  color: rgba(0, 0, 0, 0.25) !important;
+}
+
+
+
 /* @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
