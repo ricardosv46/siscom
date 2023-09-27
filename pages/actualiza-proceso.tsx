@@ -11,10 +11,11 @@ import { mergeArray } from "@lib/general";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { RightCard } from "../components/common/right";
-import { Button, Modal, message } from "antd";
+import { Button, DatePicker, Modal, message } from "antd";
 import { format } from "date-fns";
 import useAuthStore from "store/auth/auth";
 import apiService from "services/axios/configAxios";
+import moment from "moment";
 
 interface IPropsItem {
   actualizacion: string;
@@ -35,6 +36,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [responsable_actual, setTesponsable_actual] = useState("");
   const [resolucion_gerencial, setTesolucion_gerencial] = useState("");
   const [tipo, setTipo] = useState("");
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   // const [newFormatFechaInicio, setNewFormatFechaInicio] = useState("");
 
   // let id = "";
@@ -92,7 +94,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
   // }, []);// const [formData, setFormData] = useState(new FormData());
   const [documentoRelacionadoinputValue, setDocumentoRelacionadoinputValue] = useState("");
-  const [fechaInicioInputValue, setFechaInicioInputValue] = useState("");
+  const [fechaInicioInputValue, setFechaInicioInputValue] = useState<any>();
   //const [fechaFinInputValue, setFechaFinInputValue] = useState("");
   const [operationSelectedOption, setOperationSelectedOption] = useState("");
   const [options, setOptions] = useState([]);
@@ -146,10 +148,12 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     formData.set("resolution_number", resolucion_gerencial);
 
     if (fechaInicioInputValue !== "") {
-      formData.set(
-        "start_at",
-        fechaInicioInputValue ? `${fechaInicioInputValue.slice(0, 10)} ${fechaInicioInputValue.slice(11, 19)}:00` : ""
-      );
+      const currentDate = moment(fechaInicioInputValue).format("YYYY-MM-DD"); // Formato de fecha: "2023-03-01"
+      const currentTime = moment(fechaInicioInputValue).format("HH:mm:ss");
+
+      const formattedDateTime = `${currentDate} ${currentTime}`; // Formato completo: "2023-03-01T00:00"
+
+      formData.set("start_at", formattedDateTime);
     }
 
     formData.set("type_document", tipoDocumentoSelectedOption);
@@ -203,10 +207,24 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     setDocumentoRelacionadoinputValue(event.target.value);
   };
 
-  const handleFechaInicioDateTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  // const handleFechaInicioDateTimeChange = (value: any) => {
+  //   console.log({ value });
+  //   setFechaInicioInputValue(value);
+  // };
+
+  // const handleFechaInicioDateTimeChange = (value: moment.Moment | null, dateString: string) => {
+  //   console.log("Selected Time: ", value);
+  //   setFechaInicioInputValue(value ? value.toDate() : null); // Guarda la fecha seleccionada en el estado
+  // };
+
+  const handleFechaInicioDateTimeChange = (value: any, dateString: any) => {
+    console.log("Selected Time: ", { value });
+
+    setFechaInicioInputValue(value);
+  };
+  const handleFechaInicioDateTimeChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFechaInicioInputValue(event.target.value);
   };
-
   /*const handleFechaFinDateTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFechaFinInputValue(event.target.value);
   };*/
@@ -244,6 +262,26 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     //setGerenciaInicialSelectedOption('');
     setComentarioTextareaValue("");
   }
+
+  const disabledDate = (current: any) => {
+    // Deshabilita fechas futuras
+    return current && current > new Date();
+  };
+
+  const disabledTime = (current: any) => {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+
+    // Si la fecha es hoy, deshabilita horas y minutos futuros
+    if (current && current.isSame(now, "day")) {
+      return {
+        disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
+        disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute),
+      };
+    }
+    return {};
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -458,15 +496,22 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               <label htmlFor="fecha_inicio" className="text-gray-600">
                 Fecha y hora:
               </label>
-              <input
+              <DatePicker
+                showTime={{ format: "HH:mm" }}
+                value={fechaInicioInputValue}
+                onChange={handleFechaInicioDateTimeChange}
+                disabledDate={disabledDate}
+                disabledTime={disabledTime}
+              />
+              {/* <input
                 type="datetime-local"
                 min="2023-03-01T00:00"
                 max={new Date().toISOString().slice(0, 16)}
                 value={fechaInicioInputValue}
-                onChange={handleFechaInicioDateTimeChange}
+                onChange={handleFechaInicioDateTimeChange2}
                 id="fecha_inicio"
                 className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-              />
+              /> */}
             </div>
           </div>
         )}
