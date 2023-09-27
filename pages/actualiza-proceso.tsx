@@ -297,8 +297,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             )}
           </div>
         </div>
-        {responsable_actual}
-        fafasf
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="operacion" className="text-gray-40">
@@ -450,7 +448,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                         {item.name}
                       </option>
                     ))}
-                8
               </select>
             </div>
           </div>
