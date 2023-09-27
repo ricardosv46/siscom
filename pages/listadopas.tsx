@@ -555,53 +555,61 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             <Input value={inputValue} onChange={(e) => onSearch(e.target.value)} placeholder="Buscar" prefix={<SearchOutlined />} />
           </div>
 
-          <Select
-            style={{ width: 150 }}
-            placeholder="Estado"
-            value={estado}
-            onChange={handleChangeEstado}
-            options={[
-              {
-                value: "",
-                label: "Todos",
-              },
-              {
-                value: "Por Iniciar",
-                label: "Por Iniciar",
-              },
-              {
-                value: "Fuera de fecha",
-                label: "Fuera de fecha",
-              },
-              {
-                value: "Finalizado",
-                label: "Finalizado",
-              },
-              {
-                value: "Mas de 6 meses",
-                label: "Mas de 6 meses",
-              },
-              {
-                value: "De 3 a 6 meses",
-                label: "De 3 a 6 meses",
-              },
-              {
-                value: "Menos de 3 meses",
-                label: "Menos de 3 meses",
-              },
-              {
-                value: "Indefinido",
-                label: "Indefinido",
-              },
-            ]}
-          />
-          <Select
-            style={{ width: 150 }}
-            value={responsable}
-            placeholder="Responsable"
-            onChange={handleChangeResponsable}
-            options={dataResponsable}
-          />
+          <div className="flex flex-col mb-5">
+            Por estado:
+            <Select
+              style={{ width: 150 }}
+              placeholder="Estado"
+              value={estado}
+              onChange={handleChangeEstado}
+              options={[
+                {
+                  value: "",
+                  label: "Todos",
+                },
+                {
+                  value: "Por Iniciar",
+                  label: "Por Iniciar",
+                },
+                {
+                  value: "Fuera de fecha",
+                  label: "Fuera de fecha",
+                },
+                {
+                  value: "Finalizado",
+                  label: "Finalizado",
+                },
+                {
+                  value: "Mas de 6 meses",
+                  label: "Mas de 6 meses",
+                },
+                {
+                  value: "De 3 a 6 meses",
+                  label: "De 3 a 6 meses",
+                },
+                {
+                  value: "Menos de 3 meses",
+                  label: "Menos de 3 meses",
+                },
+                {
+                  value: "Indefinido",
+                  label: "Indefinido",
+                },
+              ]}
+            />
+          </div>
+
+          <div className="flex flex-col mb-5">
+            Por responsable:
+            <Select
+              style={{ width: 150 }}
+              value={responsable}
+              placeholder="Responsable"
+              onChange={handleChangeResponsable}
+              options={dataResponsable}
+            />
+          </div>
+
           <div style={{ display: "flex", alignItems: "center" }}>
             <Radio.Group onChange={handleCheckboxChange} value={operationSelectedOption}>
               <Radio value="">Todos</Radio>
