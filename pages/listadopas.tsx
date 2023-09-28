@@ -158,6 +158,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       setProcess(newData);
     }
     setMemory(newData);
+
+    return newData;
   };
 
   const processApiByDate = async (globalProcess: any, label: any, start_at: string, end_at: string) => {
@@ -191,6 +193,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
     setMemory(newData);
     setProcess(newData);
+
+    return newData;
   };
 
   const loadExcelApi = async (excelFile: any) => {
@@ -288,14 +292,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   //   const labelIndex = router.query;
   //   console.log({ labelIndex });
   // }, []);
-  const [state, setState] = useState<any>({
-    width: 1000,
-    height: 600,
-  });
-
-  const onResize = (event: any, { node, size, handle }: any) => {
-    setState({ width: size.width, height: size.height });
-  };
 
   const columns = [
     {
@@ -419,22 +415,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       item?.type?.toLowerCase()?.includes(search.toLowerCase())
     );
   }
-
-  const onSearch = (search: any = "") => {
-    setSearch(search);
-
-    const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption });
-    setProcess(dataFilter);
-  };
-  const handleChangeEstado = async (valueEstado: string) => {
-    setEstado(valueEstado);
-
-    const dataFilter = filterUpdate({ search, estado: valueEstado, responsable, type: operationSelectedOption });
-
-    setProcess(dataFilter);
-  };
-
-  const filterUpdate = ({ search, estado, responsable, type }: any) => {
+  const filterUpdate = ({ search, estado, responsable, type, memory }: any) => {
     return memory?.filter((item: any) => {
       return (
         doesItemMatchSearch(item, search) &&
@@ -445,33 +426,56 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     });
   };
 
-  console.log({ update: filterUpdate({ search, estado, responsable, type: operationSelectedOption }) });
+  const onSearch = (search: any = "") => {
+    setSearch(search);
 
-  const handleChangeResponsable = (valueResponsabLe: string) => {
-    setResponsable(valueResponsabLe);
+    const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory });
+    setProcess(dataFilter);
+  };
+  const handleChangeEstado = async (valueEstado: string) => {
+    setEstado(valueEstado);
 
-    const dataFilter = filterUpdate({ search, estado, responsable: valueResponsabLe, type: operationSelectedOption });
+    const dataFilter = filterUpdate({ search, estado: valueEstado, responsable, type: operationSelectedOption, memory });
 
     setProcess(dataFilter);
   };
 
-  function onChangeDate(date: any, dateStrings: [string, string]) {
+  console.log({ update: filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory }) });
+
+  const handleChangeResponsable = (valueResponsabLe: string) => {
+    setResponsable(valueResponsabLe);
+
+    const dataFilter = filterUpdate({ search, estado, responsable: valueResponsabLe, type: operationSelectedOption, memory });
+
+    setProcess(dataFilter);
+  };
+
+  async function onChangeDate(date: any, dateStrings: [string, string]) {
     const start_at = dateStrings[0].split("-").reverse().join("");
     const end_at = dateStrings[1].split("-").reverse().join("");
     const labelIndex = router.query;
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado;
     if (start_at === "" || end_at === "") {
-      processApi(IdSelectedProcess, label);
+      const newData = await processApi(IdSelectedProcess, label);
+
+      const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
+      console.log({ filtro: dataFilter });
+
+      setProcess(dataFilter);
       //processApi(label);
     } else {
-      processApiByDate(IdSelectedProcess, label, start_at, end_at);
+      const newData = await processApiByDate(IdSelectedProcess, label, start_at, end_at);
+
+      const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
+      console.log({ filtro: dataFilter });
+      setProcess(dataFilter);
     }
   }
 
   function handleCheckboxChange(valueType: string) {
     setOperationSelectedOption(valueType);
 
-    const dataFilter = filterUpdate({ search, estado, responsable, type: valueType });
+    const dataFilter = filterUpdate({ search, estado, responsable, type: valueType, memory });
 
     setProcess(dataFilter);
   }
@@ -1105,13 +1109,13 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                           <label style={{ fontSize: "16px" }}>{item.estado_destinatario}</label>
                         </div>
                         <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
-                          <label style={{ fontSize: "16px" }}>Fecha Rec.:</label>
+                          <label style={{ fontSize: "16px" }}>Fecha Recepción:</label>
                         </div>
                         <div style={{ marginRight: "60px", display: "flex", alignItems: "center" }}>
                           <label style={{ fontSize: "16px" }}>{item.fecha_rec}</label>
                         </div>
                         <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
-                          <label style={{ fontSize: "16px" }}>Fecha Ate.:</label>
+                          <label style={{ fontSize: "16px" }}>Fecha Atención.:</label>
                         </div>
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <label style={{ fontSize: "16px" }}>{item.fecha_ate}</label>
