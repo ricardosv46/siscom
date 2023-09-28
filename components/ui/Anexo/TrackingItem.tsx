@@ -16,7 +16,9 @@ const TrackingItem = ({
   const paddingLeft = `${level + 14}px`;
   const id = `${level}-${item.document}`;
 
-  const toggleOpen = () => {
+  const toggleOpen = (e: any) => {
+    e.stopPropagation();
+
     // getAnexosDetail({ id, ...item });
     setIsOpen((prevState) => !prevState);
   };
@@ -26,16 +28,19 @@ const TrackingItem = ({
     // setIsOpen((prevState) => !prevState);
   };
 
+  console.log({ item: item.references });
+
   const isSelected = id === tackingDetail[0].id;
 
   return (
     <button style={{ paddingLeft }} className="flex flex-col">
       <div className="flex gap-1">
-        <button onClick={toggleOpen}>
-          {item.references?.length! > 0 && <img src="assets/images/arrow.svg" alt="Arrow" className={`${isOpen ? "rotate-90" : ""}`} />}
-        </button>
+        {/* <img src="assets/images/arrow.svg" alt="Arrow" className={`${isOpen ? "rotate-90" : ""}`} /> */}
+        {item?.references?.length! > 0 && (
+          <img src="assets/images/arrow.svg" alt="Arrow" className={`${isOpen ? "rotate-90" : ""}`} onClick={toggleOpen} />
+        )}
 
-        {item.references?.length! > 0 ? (
+        {item?.references?.length! > 0 ? (
           isOpen ? (
             <img src="assets/images/abrir.svg" alt="Abrir" />
           ) : (

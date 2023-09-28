@@ -1146,7 +1146,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                   </tr>
                 </>
               ))}
-            <br></br>
           </Modal>
         )}
 
