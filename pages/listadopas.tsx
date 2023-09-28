@@ -276,8 +276,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     accept: [".xlsx", ".xls"],
   });
 
-  console.log({ dataAnexosDetail });
-
   useEffect(() => {
     setIsCheckedTodos(true);
     const labelIndex = router.query;
@@ -974,22 +972,16 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                       <div>
                         <label style={{ color: "#083474", fontSize: "16px" }}>Remitente</label>
                       </div>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
-                          <label style={{ fontSize: "16px" }}>Tipo Doc.: {item.tipo_doc}</label>
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <label style={{ fontSize: "16px" }}>Nro. Doc.: {item.nro_doc}</label>
-                        </div>
-                      </div>
+
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <div style={{ marginRight: "80px", display: "flex", alignItems: "center" }}>
-                          <label style={{ fontSize: "16px" }}>Fecha Emi: {item.fecha_emi}</label>
+                          <label style={{ fontSize: "16px" }}>Fecha Emisión: {item.fecha_emi}</label>
                         </div>
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <label style={{ fontSize: "16px" }}>Elaboró: {item.elaboro}</label>
                         </div>
                       </div>
+
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
                           <label style={{ fontSize: "16px" }}>Emisor:</label>
@@ -1000,24 +992,13 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                       </div>
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
-                          <label style={{ fontSize: "16px" }}>Asunto:</label>
+                          <label style={{ fontSize: "16px" }}>Tipo Doc.: {item.tipo_doc}</label>
                         </div>
                         <div style={{ display: "flex", alignItems: "center" }}>
-                          <textarea
-                            style={{
-                              borderWidth: 4,
-                              fontSize: "16px",
-                              width: "700px",
-                              height: "80px",
-                              padding: "0px 8px",
-                              marginBottom: "5px",
-                            }}
-                            disabled
-                          >
-                            {item.asunto}
-                          </textarea>
+                          <label style={{ fontSize: "16px" }}>Nro. Doc.: {item.nro_doc}</label>
                         </div>
                       </div>
+
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
                           <label style={{ fontSize: "16px" }}>Estado:</label>
@@ -1066,6 +1047,27 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                             <img src="assets/images/adjunto_1.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
                             <span style={{ fontSize: "16px" }}>Doc. Anexos</span>
                           </Button>
+                        </div>
+                      </div>
+
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>Asunto:</label>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <textarea
+                            style={{
+                              borderWidth: 4,
+                              fontSize: "16px",
+                              width: "700px",
+                              height: "80px",
+                              padding: "0px 8px",
+                              marginBottom: "5px",
+                            }}
+                            disabled
+                          >
+                            {item.asunto}
+                          </textarea>
                         </div>
                       </div>
                     </div>

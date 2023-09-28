@@ -266,7 +266,7 @@ const api = {
         const outputFilename = payload?.nombreArchivo;
 
         // If you want to download file automatically using link attribute.
-        const url = URL.createObjectURL(new Blob([responsePDF.data],{ type: 'application/pdf' }));
+        const url = URL.createObjectURL(new Blob([responsePDF.data]));
         const link = document.createElement('a');
         link.href = url;
         link.setAttribute('download', outputFilename);
