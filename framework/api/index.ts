@@ -246,6 +246,37 @@ const api = {
         
       }
     },
+    downloadExcelDetail: async (payload: any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+
+        const formData = new FormData();
+
+        console.log({payload})
+        formData.set('idArchivo', payload?.idArchivo);
+        formData.set('nombreArchivo', payload?.nombreArchivo);
+        const responsePDF = await apiService.post(`/processes/sgd/downloadFile`,
+        formData,{
+          headers: {
+            'x-access-tokens': tok,
+            'Content-Type': 'multipart/form-data', // Cambiar a 'multipart/form-data'
+          },
+          responseType: 'arraybuffer',
+        }) 
+        const outputFilename = payload?.nombreArchivo;
+
+        // If you want to download file automatically using link attribute.
+        const url = URL.createObjectURL(new Blob([responsePDF.data],{ type: 'application/pdf' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', outputFilename);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        
+      }
+    },
     downloadDocuments: async (payload: any) => {
       const tok =  GetTokenAuthService();
       if (tok) { 

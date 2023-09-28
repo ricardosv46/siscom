@@ -15,8 +15,10 @@ import "moment/locale/es";
 import locale from "antd/lib/date-picker/locale/es_ES";
 import { useFilePicker } from "use-file-picker";
 import useMenuStore from "store/menu/menu";
+import { Resizable } from "react-resizable";
 import { IAnexos, IAnexosDetail, ITracking, ITrackingDetail } from "@framework/types";
 import { ExportExcel } from "@components/ui/ExportExcel/ExportExcel";
+import "react-resizable/css/styles.css"; // Importa los estilos de react-resizable
 
 moment.locale("es");
 const { RangePicker } = DatePicker;
@@ -53,7 +55,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const router = useRouter();
   const [process, setProcess] = useState<any>();
   const [loadingReportePass, setLooadingReportePass] = useState(false);
-
+  const [width, setWidth] = useState(1000);
   const [memory, setMemory] = useState<any>();
   let inputValue: any | undefined;
   let filterData: any | undefined;
@@ -261,13 +263,20 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     const { anexosDetail } = await api.listpas.getAnexosDetail(anexos.nu_ann, anexos.nu_emi_ref);
     if (anexosDetail) {
       setDataAnexosDetail([{ id: anexos.id, ...anexosDetail[0] }]);
+      console.log({ anexosDetail });
     }
+  };
+
+  const donwloadAnexosDetail = async (idArchivo: number, nombreArchivo: string) => {
+    await api.listpas.downloadExcelDetail({ idArchivo, nombreArchivo });
   };
 
   //FilePicker
   const [openFileSelector, { filesContent, plainFiles, loading, clear }] = useFilePicker({
     accept: [".xlsx", ".xls"],
   });
+
+  console.log({ dataAnexosDetail });
 
   useEffect(() => {
     setIsCheckedTodos(true);
@@ -281,6 +290,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   //   const labelIndex = router.query;
   //   console.log({ labelIndex });
   // }, []);
+  const [state, setState] = useState<any>({
+    width: 1000,
+    height: 600,
+  });
+
+  const onResize = (event: any, { node, size, handle }: any) => {
+    setState({ width: size.width, height: size.height });
+  };
 
   const columns = [
     {
@@ -453,10 +470,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     }
   }
 
-  function handleCheckboxChange(event: RadioChangeEvent) {
-    setOperationSelectedOption(event.target.value);
+  function handleCheckboxChange(valueType: string) {
+    setOperationSelectedOption(valueType);
 
-    const dataFilter = filterUpdate({ search, estado, responsable, type: event.target.value });
+    const dataFilter = filterUpdate({ search, estado, responsable, type: valueType });
 
     setProcess(dataFilter);
   }
@@ -609,14 +626,37 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               options={dataResponsable}
             />
           </div>
+          <div className="flex flex-col mb-5">
+            Por Tipo Proceso:
+            <Select
+              style={{ width: 150 }}
+              value={operationSelectedOption}
+              placeholder="Responsable"
+              onChange={handleCheckboxChange}
+              options={[
+                {
+                  value: "",
+                  label: "Todos",
+                },
+                {
+                  value: "CANDIDATO",
+                  label: "Candidato",
+                },
+                {
+                  value: "OP",
+                  label: "Organización Política",
+                },
+              ]}
+            />
+          </div>
 
-          <div style={{ display: "flex", alignItems: "center" }}>
+          {/* <div style={{ display: "flex", alignItems: "center" }}>
             <Radio.Group onChange={handleCheckboxChange} value={operationSelectedOption}>
               <Radio value="">Todos</Radio>
               <Radio value="CANDIDATO">Candidato</Radio>
               <Radio value="OP">Organización Política</Radio>
             </Radio.Group>
-          </div>
+          </div> */}
           <div>
             <RangePicker locale={locale} onChange={onChangeDate} disabledDate={disabledDate} />
           </div>
@@ -702,384 +742,444 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
         <div style={{ overflowX: "auto" }}>
           <Table style={{ width: "100%", borderCollapse: "collapse" }} columns={columns} dataSource={process} />
         </div>
-        <Modal
-          bodyStyle={{
-            margin: 10,
-            overflowY: "scroll",
-            height: 600,
-            overflowX: "hidden",
-          }}
-          title={<p style={{ textAlign: "center", fontWeight: "bold" }}>Documentos Anexos</p>}
-          centered
-          open={openAnexos}
-          onOk={() => setOpenAnexos(false)}
-          onCancel={() => setOpenAnexos(false)}
-          okButtonProps={{ style: { backgroundColor: "#0874cc" }, className: "ant-btn-primary" }}
-          width={1000}
-        >
-          <tr>
-            <div
-              style={{
-                borderWidth: 4,
-                padding: 5,
-                margin: 10,
-                overflowX: "scroll",
-                width: 880,
-                overflowY: "scroll",
-                height: 200,
-                whiteSpace: "nowrap",
-                resize: "vertical",
-              }}
-            >
-              {dataAnexos?.length > 0 &&
-                dataAnexos.map((item: IAnexos, index: number) => (
-                  <AnexoItem key={index} item={item} getAnexosDetail={getAnexosDetail} anexoDetail={dataAnexosDetail} />
-                ))}
-            </div>
-          </tr>
-          <br></br>
+        {openAnexos && (
+          <Modal
+            bodyStyle={{
+              margin: 10,
+              overflow: "scroll",
+              height: 600,
+              whiteSpace: "nowrap",
+              resize: "both",
+              width: 1000,
+            }}
+            width={"auto"}
+            title={<p style={{ textAlign: "center", fontWeight: "bold" }}>Documentos Anexos</p>}
+            centered
+            open={openAnexos}
+            onOk={() => setOpenAnexos(false)}
+            onCancel={() => setOpenAnexos(false)}
+            okButtonProps={{ style: { backgroundColor: "#0874cc" }, className: "ant-btn-primary" }}
+          >
+            <tr>
+              <div
+                style={{
+                  borderWidth: 4,
+                  padding: 5,
+                  margin: 10,
+                  overflowX: "scroll",
+                  width: 880,
+                  overflowY: "scroll",
+                  height: 200,
+                  whiteSpace: "nowrap",
+                  resize: "both",
+                }}
+              >
+                {dataAnexos?.length > 0 &&
+                  dataAnexos.map((item: IAnexos, index: number) => (
+                    <AnexoItem key={index} item={item} getAnexosDetail={getAnexosDetail} anexoDetail={dataAnexosDetail} />
+                  ))}
+              </div>
+            </tr>
+            <br></br>
 
-          {dataAnexosDetail?.length &&
-            dataAnexosDetail.map((item: IAnexosDetail, index: number) => (
-              <tr key={index}>
-                <div>
-                  <label style={{ color: "#083474", fontSize: "16px" }}>Detalles</label>
-                </div>
-                {item.nro_doc}
-                <br></br>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <div style={{ marginRight: "55px", display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>Año:</label>
-                  </div>
-                  <div style={{ marginRight: "60px", display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>{item.año}</label>
-                  </div>
-                  <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>Fecha Emisión:</label>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>{item.fecha_emi}</label>
-                  </div>
-                </div>
-                <br></br>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <div style={{ marginRight: "45px", display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>Emite:</label>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>{item.emite}</label>
-                  </div>
-                </div>
-                <br></br>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>Destino:</label>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>{item.destino}</label>
-                  </div>
-                </div>
-                <br></br>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>Tipo Doc.:</label>
-                  </div>
-                  <div style={{ marginRight: "60px", display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>{item.tipo_doc}</label>
-                  </div>
-                  <div style={{ marginRight: "80px", display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>Nro. Doc.: {item.nro_doc}</label>
-                  </div>
-                  <div style={{ marginRight: "5px", display: "flex", alignItems: "center" }}>
-                    <Button
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: "8px 8px",
-                        backgroundColor: "#e6002d",
-                        border: "none",
-                        color: "white",
-                        marginRight: "10px",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <img src="assets/images/icono_pdf.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
-                      <span style={{ fontSize: "16px" }}>Abrir Documento</span>
-                    </Button>
-                  </div>
-                </div>
-                <br></br>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>Asunto:</label>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <textarea style={{ borderWidth: 4, fontSize: "16px", width: "700px", height: "50px", padding: "0px 8px" }} disabled>
-                      {item.asunto}
-                    </textarea>
-                  </div>
-                </div>
-                <br></br>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>Trámite:</label>
-                  </div>
-                  <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>{item.tramite}</label>
-                  </div>
-                  <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>Prioridad:</label>
-                  </div>
-                  <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>{item.prioridad}</label>
-                  </div>
-                  <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>Indicaciones:</label>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <label style={{ fontSize: "16px" }}>{item.indicaciones}</label>
-                  </div>
-                </div>
-                <br></br>
-                <div>
-                  <label style={{ color: "#083474", fontSize: "16px" }}>Documentos Anexos</label>
-                </div>
-                <br />
-                {item?.docs.length ? (
-                  <table>
-                    <thead>
-                      <tr className="border">
-                        <th className="border border-black flex-1 pl-2 py-1.5 bg-[#5191c1] text-[#083474]">Descripción</th>
-                        <th className="border border-black flex-1 pl-2 py-1.5 bg-[#5191c1] text-[#083474]">Nombre de Anexo</th>
-                        <th className="border border-black w-28 pl-2 py-1.5 bg-[#5191c1] text-[#083474]">Opciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {item?.docs?.map((i) => (
-                        <tr key={i.id_archivo} className="border">
-                          <td className="border pl-2 py-1">{i.de_det}</td>
-                          <td className="border pl-2 py-1">{i.de_rut_ori}</td>
-                          <td className="border pl-2 py-1">
-                            <button className="px-1 border rounded">
-                              <img src="assets/images/abrir.svg" alt="Abrir" />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <div>
-                    <label style={{ fontSize: "16px" }}>No se encuentran registros</label>
-                  </div>
-                )}
-              </tr>
-            ))}
-        </Modal>
-        <Modal
-          bodyStyle={{
-            margin: 10,
-            overflowY: "scroll",
-            height: 600,
-            overflowX: "hidden",
-          }}
-          title={<p style={{ textAlign: "center", fontWeight: "bold" }}>Seguimiento de documento </p>}
-          centered
-          open={openTracking}
-          onOk={() => setOpenTracking(false)}
-          onCancel={() => setOpenTracking(false)}
-          okButtonProps={{ style: { backgroundColor: "#0874cc" }, className: "ant-btn-primary" }}
-          width={1000}
-        >
-          <tr>
-            <div
-              style={{
-                borderWidth: 4,
-                padding: 5,
-                margin: 10,
-                width: 880,
-                overflow: "scroll",
-                height: 200,
-                whiteSpace: "nowrap",
-                resize: "vertical",
-              }}
-            >
-              {dataTracking?.length &&
-                dataTracking.map((item: ITracking, index: number) => (
-                  <TrackingItem key={index} item={item} getTrackingDetail={getTrackingDetail} tackingDetail={dataTrackingDetail} />
-                ))}
-            </div>
-          </tr>
-          <br></br>
-          {dataTrackingDetail?.length &&
-            dataTrackingDetail.map((item: ITrackingDetail, index: number) => (
-              <>
+            {dataAnexosDetail?.length &&
+              dataAnexosDetail.map((item: IAnexosDetail, index: number) => (
                 <tr key={index}>
-                  <div>
-                    <label style={{ color: "#083474", fontSize: "16px" }}>Remitente</label>
-                  </div>
-                  <br></br>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>Tipo Doc.: {item.tipo_doc}</label>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <div>
+                      <label style={{ color: "#083474", fontSize: "16px" }}>Detalles</label>
+                    </div>
+                    {item.nro_doc}
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <div style={{ marginRight: "55px", display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>Año:</label>
+                      </div>
+                      <div style={{ marginRight: "60px", display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>{item.año}</label>
+                      </div>
+                      <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>Fecha Emisión:</label>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>{item.fecha_emi}</label>
+                      </div>
+                    </div>
+
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <div style={{ marginRight: "45px", display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>Emite:</label>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>{item.emite}</label>
+                      </div>
                     </div>
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>Nro. Doc.: {item.nro_doc}</label>
-                    </div>
-                  </div>
-                  <br></br>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <div style={{ marginRight: "80px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>Fecha Emi: {item.fecha_emi}</label>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>Elaboró: {item.elaboro}</label>
-                    </div>
-                  </div>
-                  <br></br>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>Emisor:</label>
+                      <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>Destino:</label>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>{item.destino}</label>
+                      </div>
                     </div>
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>{item.emisor}</label>
-                    </div>
-                  </div>
-                  <br></br>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>Asunto:</label>
+                      <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>Tipo Doc.:</label>
+                      </div>
+                      <div style={{ marginRight: "60px", display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>{item.tipo_doc}</label>
+                      </div>
+                      <div style={{ marginRight: "80px", display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>Nro. Doc.: {item.nro_doc}</label>
+                      </div>
+                      <div style={{ marginRight: "5px", display: "flex", alignItems: "center" }}>
+                        <Button
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            padding: "8px 8px",
+                            backgroundColor: "#e6002d",
+                            border: "none",
+                            color: "white",
+                            marginRight: "10px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <img src="assets/images/icono_pdf.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
+                          <span style={{ fontSize: "16px" }}>Abrir Documento</span>
+                        </Button>
+                      </div>
                     </div>
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      <textarea style={{ borderWidth: 4, fontSize: "16px", width: "700px", height: "50px", padding: "0px 8px" }} disabled>
-                        {item.asunto}
-                      </textarea>
+                      <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>Asunto:</label>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <textarea
+                          style={{
+                            borderWidth: 4,
+                            fontSize: "16px",
+                            width: "700px",
+                            height: "80px",
+                            padding: "0px 8px",
+                            marginBottom: "5px",
+                          }}
+                          disabled
+                        >
+                          {item.asunto}
+                        </textarea>
+                      </div>
                     </div>
-                  </div>
-                  <br></br>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>Estado:</label>
-                    </div>
-                    <div style={{ marginRight: "50px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>{item.estado}</label>
-                    </div>
-                    <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>Folios:</label>
-                    </div>
-                    <div style={{ marginRight: "90px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>{item.nu_des}</label>
-                    </div>
-                    <div style={{ marginRight: "5px", display: "flex", alignItems: "center" }}>
-                      <Button
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          padding: "8px 8px",
-                          backgroundColor: "#78bc44",
-                          border: "none",
-                          color: "white",
-                          marginRight: "10px",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <img src="assets/images/abrir_archivo.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
-                        <span style={{ fontSize: "16px" }}>Abrir Documento</span>
-                      </Button>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>Trámite:</label>
+                      </div>
+                      <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>{item.tramite}</label>
+                      </div>
+                      <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>Prioridad:</label>
+                      </div>
+                      <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>{item.prioridad}</label>
+                      </div>
+                      <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>Indicaciones:</label>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <label style={{ fontSize: "16px" }}>{item.indicaciones}</label>
+                      </div>
                     </div>
                     <div>
-                      <Button
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          padding: "8px 8px",
-                          backgroundColor: "#0874cc",
-                          border: "none",
-                          color: "white",
-                          marginRight: "10px",
-                          cursor: "pointer",
-                        }}
-                      >
-                        <img src="assets/images/adjunto_1.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
-                        <span style={{ fontSize: "16px" }}>Doc. Anexos</span>
-                      </Button>
+                      <label style={{ color: "#083474", fontSize: "16px" }}>Documentos Anexos</label>
                     </div>
+                    {item?.docs.length ? (
+                      <table>
+                        <thead>
+                          <tr className="border">
+                            <th className="border border-black flex-1 pl-2 py-1.5 bg-[#5191c1] text-[#083474]">Descripción</th>
+                            <th className="border border-black flex-1 pl-2 py-1.5 bg-[#5191c1] text-[#083474]">Nombre de Anexo</th>
+                            <th className="border border-black w-28 pl-2 py-1.5 bg-[#5191c1] text-[#083474]">Opciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {item?.docs?.map((i) => (
+                            <tr key={i.id_archivo} className="border">
+                              <td className="border pl-2 py-1">{i.de_det}</td>
+                              <td className="border pl-2 py-1">{i.de_rut_ori}</td>
+                              <td className="border pl-2 py-1">
+                                <button className="px-1 border rounded" onClick={() => donwloadAnexosDetail(i.id_archivo, i.de_rut_ori)}>
+                                  <img src="assets/images/abrir.svg" alt="Abrir" />
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <div>
+                        <label style={{ fontSize: "16px" }}>No se encuentran registros</label>
+                      </div>
+                    )}
                   </div>
-                  <br></br>
                 </tr>
+              ))}
+          </Modal>
+        )}
+        {openTracking && (
+          <Modal
+            bodyStyle={{
+              margin: 10,
+              overflow: "scroll",
+              height: 600,
+              whiteSpace: "nowrap",
+              resize: "both",
+              width: 1000,
+            }}
+            width={"auto"}
+            title={<p style={{ textAlign: "center", fontWeight: "bold" }}>Seguimiento de documento </p>}
+            centered
+            open={openTracking}
+            onOk={() => setOpenTracking(false)}
+            onCancel={() => {
+              setOpenTracking(false);
+            }}
+            okButtonProps={{ style: { backgroundColor: "#0874cc" }, className: "ant-btn-primary" }}
+          >
+            <tr>
+              <div
+                style={{
+                  borderWidth: 4,
+                  padding: 5,
+                  margin: 10,
+                  width: 880,
+                  overflow: "scroll",
+                  height: 200,
+                  whiteSpace: "nowrap",
+                  resize: "both",
+                }}
+              >
+                {dataTracking?.length &&
+                  dataTracking.map((item: ITracking, index: number) => (
+                    <TrackingItem key={index} item={item} getTrackingDetail={getTrackingDetail} tackingDetail={dataTrackingDetail} />
+                  ))}
+              </div>
+            </tr>
+            <br></br>
+            {dataTrackingDetail?.length &&
+              dataTrackingDetail.map((item: ITrackingDetail, index: number) => (
+                <>
+                  <tr key={index}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                      <div>
+                        <label style={{ color: "#083474", fontSize: "16px" }}>Remitente</label>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>Tipo Doc.: {item.tipo_doc}</label>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>Nro. Doc.: {item.nro_doc}</label>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div style={{ marginRight: "80px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>Fecha Emi: {item.fecha_emi}</label>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>Elaboró: {item.elaboro}</label>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>Emisor:</label>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>{item.emisor}</label>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>Asunto:</label>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <textarea
+                            style={{
+                              borderWidth: 4,
+                              fontSize: "16px",
+                              width: "700px",
+                              height: "80px",
+                              padding: "0px 8px",
+                              marginBottom: "5px",
+                            }}
+                            disabled
+                          >
+                            {item.asunto}
+                          </textarea>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>Estado:</label>
+                        </div>
+                        <div style={{ marginRight: "50px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>{item.estado}</label>
+                        </div>
+                        <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>Folios:</label>
+                        </div>
+                        <div style={{ marginRight: "90px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>{item.nu_des}</label>
+                        </div>
+                        <div style={{ marginRight: "5px", display: "flex", alignItems: "center" }}>
+                          <Button
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              padding: "8px 8px",
+                              backgroundColor: "#78bc44",
+                              border: "none",
+                              color: "white",
+                              marginRight: "10px",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <img src="assets/images/abrir_archivo.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
+                            <span style={{ fontSize: "16px" }}>Abrir Documento</span>
+                          </Button>
+                        </div>
+                        <div>
+                          <Button
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              padding: "8px 8px",
+                              backgroundColor: "#0874cc",
+                              border: "none",
+                              color: "white",
+                              marginRight: "10px",
+                              cursor: "pointer",
+                            }}
+                          >
+                            <img src="assets/images/adjunto_1.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
+                            <span style={{ fontSize: "16px" }}>Doc. Anexos</span>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </tr>
 
-                <tr key={index}>
-                  <div>
-                    <label style={{ color: "#083474", fontSize: "16px" }}>Destinatario</label>
-                  </div>
-                  <br></br>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>Dependencia:</label>
+                  <tr key={index}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "20px" }}>
+                      <div>
+                        <label style={{ color: "#083474", fontSize: "16px" }}>Destinatario</label>
+                      </div>
+
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>Dependencia:</label>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>{}</label>
+                        </div>
+                      </div>
+
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div style={{ marginRight: "50px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>Receptor:</label>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>{item.receptor}</label>
+                        </div>
+                      </div>
+
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div style={{ marginRight: "65px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>Estado:</label>
+                        </div>
+                        <div style={{ marginRight: "90px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>{item.estado_destinatario}</label>
+                        </div>
+                        <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>Fecha Rec.:</label>
+                        </div>
+                        <div style={{ marginRight: "60px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>{item.fecha_rec}</label>
+                        </div>
+                        <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>Fecha Ate.:</label>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>{item.fecha_ate}</label>
+                        </div>
+                      </div>
+
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div style={{ marginRight: "60px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>Trámite:</label>
+                        </div>
+                        <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>{item.tramite}</label>
+                        </div>
+                        <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>Prioridad:</label>
+                        </div>
+                        <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>{item.prioridad}</label>
+                        </div>
+                        <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>Indicaciones:</label>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <label style={{ fontSize: "16px" }}>{item.indicaciones}</label>
+                        </div>
+                      </div>
                     </div>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>{}</label>
-                    </div>
-                  </div>
-                  <br></br>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <div style={{ marginRight: "50px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>Receptor:</label>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>{item.receptor}</label>
-                    </div>
-                  </div>
-                  <br></br>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <div style={{ marginRight: "65px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>Estado:</label>
-                    </div>
-                    <div style={{ marginRight: "90px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>{item.estado_destinatario}</label>
-                    </div>
-                    <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>Fecha Rec.:</label>
-                    </div>
-                    <div style={{ marginRight: "60px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>{item.fecha_rec}</label>
-                    </div>
-                    <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>Fecha Ate.:</label>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>{item.fecha_ate}</label>
-                    </div>
-                  </div>
-                  <br></br>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <div style={{ marginRight: "60px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>Trámite:</label>
-                    </div>
-                    <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>{item.tramite}</label>
-                    </div>
-                    <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>Prioridad:</label>
-                    </div>
-                    <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>{item.prioridad}</label>
-                    </div>
-                    <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>Indicaciones:</label>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <label style={{ fontSize: "16px" }}>{item.indicaciones}</label>
-                    </div>
-                  </div>
-                </tr>
-              </>
-            ))}
-          <br></br>
-        </Modal>
+                  </tr>
+                </>
+              ))}
+            <br></br>
+          </Modal>
+        )}
+
+        {/* <div className="container">
+          <Resizable
+            className="resizable-box"
+            width={200}
+            height={200}
+            minConstraints={[100, 100]} // Establece las dimensiones mínimas
+            maxConstraints={[400, 400]} // Establece las dimensiones máximas
+          >
+            <div className="resizable-content">/div>
+          </Resizable>
+        </div>
+
+        <div className="container">
+          <Resizable className="resizable" width={200} height={200}>
+            <div className="resizable-content"></div>
+          </Resizable>
+          <style jsx>{`
+            .container {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 100vh;
+            }
+
+            .resizable {
+              border: 1px solid #000;
+              overflow: auto;
+            }
+
+            .resizable-content {
+              width: 100%;
+              height: 100%;
+            }
+          `}</style>
+        </div> */}
+
         {/* <Modal
           bodyStyle={{
             margin: 10,

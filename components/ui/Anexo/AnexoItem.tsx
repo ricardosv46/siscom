@@ -18,17 +18,24 @@ const AnexoItem = ({
   const paddingLeft = `${level + 14}px`;
   const id = `${level}-${item.document}`;
 
-  const toggleOpen = async () => {
-    getAnexosDetail({ id, ...item });
+  const toggleOpen = () => {
+    // getAnexosDetail({ id, ...item });
     setIsOpen((prevState) => !prevState);
+  };
+
+  const toogleDetail = async () => {
+    getAnexosDetail({ id, ...item });
+    // setIsOpen((prevState) => !prevState);
   };
 
   const isSelected = id === anexoDetail[0].id;
 
   return (
     <div style={{ paddingLeft }} className="flex flex-col">
-      <button className="flex gap-1 items-center" onClick={toggleOpen}>
-        {item.references?.length! > 0 && <img src="assets/images/arrow.svg" alt="Arrow" className={`${isOpen ? "rotate-90" : ""}`} />}
+      <div className="flex gap-1 items-center">
+        <button onClick={toggleOpen}>
+          {item.references?.length! > 0 && <img src="assets/images/arrow.svg" alt="Arrow" className={`${isOpen ? "rotate-90" : ""}`} />}
+        </button>
 
         {item.references?.length! > 0 ? (
           isOpen ? (
@@ -40,10 +47,10 @@ const AnexoItem = ({
           <img src="assets/images/clip.svg" alt="Clip" />
         )}
 
-        <p style={{ backgroundColor: isSelected ? "#fffbc5" : "", fontSize: "15px" }}>
+        <p style={{ backgroundColor: isSelected ? "#fffbc5" : "", fontSize: "15px", cursor: "pointer" }} onClick={toogleDetail}>
           {item?.document_type} {item?.document} - {item.from}
         </p>
-      </button>
+      </div>
       {isOpen &&
         item.references &&
         item.references.map((refItem: any, index: any) => (
