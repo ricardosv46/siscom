@@ -79,8 +79,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [dataTracking, setDataTracking] = useState<ITracking[]>([]);
   const [dataTrackingDetail, setDataTrackingDetail] = useState<ITrackingDetail[]>([]);
 
-  console.log({ estado, search, responsable, operationSelectedOption });
-  console.log({ process });
   const processApi = async (IdSelectedProcess: any, label: any) => {
     const { processes } = await api.listpas.getProcesses(IdSelectedProcess, "all");
 
@@ -223,7 +221,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     });
     const { estado, ...res } = props.item;
     const newDatos = { item: { ...res } };
-    await api.listpas.downloadDocuments(newDatos.item.numero);
+    await api.listpas.downloadDocuments(newDatos.item, newDatos.item.numero);
     instance.destroy();
   };
 

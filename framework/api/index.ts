@@ -261,11 +261,11 @@ const api = {
         formData,{
           headers: {
             'x-access-tokens': tok,
-            'Content-Type': 'multipart/form-data', // Cambiar a 'multipart/form-data'
+            // 'Content-Type': 'multipart/form-data', // Cambiar a 'multipart/form-data'
           },
-          responseType: 'arraybuffer',
+          // responseType: 'arraybuffer',
         }) 
-        const outputFilename = 'elmo.pdf';
+        const outputFilename = `${payload?.tipo_doc} ${payload?.nro_cod}.pdf`;
 
         // If you want to download file automatically using link attribute.
         const url = URL.createObjectURL(new Blob([responsePDF.data]));
@@ -278,7 +278,8 @@ const api = {
 
       }
     },
-    downloadDocuments: async (payload: any) => {
+    downloadDocuments: async (item:any,payload: any) => {
+      console.log({item})
       const tok =  GetTokenAuthService();
       if (tok) { 
         try {
@@ -290,7 +291,8 @@ const api = {
           if (response.status == 400 || response.data === undefined){
             alert("No se encontraron documentos para descargar");
           } else {
-           
+            const outputFilename = item?.dni_candidato ? `${item?.dni_candidato} ${item?.num_expediente}.pdf` :  `${item?.num_expediente}.pdf`
+
             const url = window.URL.createObjectURL(new Blob([response.data],{type: "application/zip"}));
             const link = document.createElement('a');
             link.href = url;
