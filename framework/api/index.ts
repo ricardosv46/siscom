@@ -223,7 +223,6 @@ const api = {
 
         const formData = new FormData();
 
-        console.log({payload})
         formData.set('idArchivo', payload?.idArchivo);
         formData.set('nombreArchivo', payload?.nombreArchivo);
         const responsePDF = await apiService.post(`/processes/sgd/downloadFile/`,
@@ -251,7 +250,6 @@ const api = {
       const tok =  GetTokenAuthService();
       if (tok) {
 
-        console.log({payload})
 
         const formData = new FormData();
         console.log({payload})
@@ -265,7 +263,7 @@ const api = {
           },
           // responseType: 'arraybuffer',
         }) 
-        const outputFilename = `${payload?.tipo_doc} ${payload?.nro_cod}.pdf`;
+        const outputFilename = `${payload?.tipo_doc} ${payload?.nro_doc}.pdf`;
 
         // If you want to download file automatically using link attribute.
         const url = URL.createObjectURL(new Blob([responsePDF.data]));
@@ -279,7 +277,6 @@ const api = {
       }
     },
     downloadDocuments: async (item:any,payload: any) => {
-      console.log({item})
       const tok =  GetTokenAuthService();
       if (tok) { 
         try {
@@ -291,12 +288,12 @@ const api = {
           if (response.status == 400 || response.data === undefined){
             alert("No se encontraron documentos para descargar");
           } else {
-            const outputFilename = item?.dni_candidato ? `${item?.dni_candidato} ${item?.num_expediente}.pdf` :  `${item?.num_expediente}.pdf`
+            const outputFilename = item?.dni_candidato.length > 0 ? `${item?.dni_candidato} ${item?.num_expediente}.pdf` :  `${item?.num_expediente}.zip`
 
             const url = window.URL.createObjectURL(new Blob([response.data],{type: "application/zip"}));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', 'archivo.zip');
+            link.setAttribute('download', outputFilename);
             document.body.appendChild(link);
             link.click();
           }
