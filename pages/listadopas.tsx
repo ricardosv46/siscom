@@ -633,7 +633,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           <div className="flex flex-col mb-5">
             Por Tipo Proceso:
             <Select
-              style={{ width: 150 }}
+              style={{ width: 200 }}
               value={operationSelectedOption}
               placeholder="Responsable"
               onChange={handleCheckboxChange}
