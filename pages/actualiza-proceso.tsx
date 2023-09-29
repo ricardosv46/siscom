@@ -73,26 +73,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   console.log("mount");
-  //   for (const [clave, valor] of formData.entries()) {
-  //     console.log(`Clave: ${clave}, Valor: ${valor}`);
-  //   }
-  //   formData.delete("start_at");
-
-  //   return () => {
-  //     // setFormData(new FormData());
-  //     console.log("unmount");
-  //     for (const [clave, valor] of formData.entries()) {
-  //       console.log(`Clave: ${clave}, Valor: ${valor}`);
-  //     }
-  //     formData.delete("start_at");
-  //   };
-  // }, []);
-
-  // useEffect(() => {
-
-  // }, []);// const [formData, setFormData] = useState(new FormData());
   const [documentoRelacionadoinputValue, setDocumentoRelacionadoinputValue] = useState("");
   const [fechaInicioInputValue, setFechaInicioInputValue] = useState<any>();
   //const [fechaFinInputValue, setFechaFinInputValue] = useState("");
@@ -117,23 +97,17 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     ) {
       alert("Por favor, ingrese los datos solicitados");
       return;
-    } else if (
+    } /*else if (
       operationSelectedOption == "finalizado" &&
       (!fechaInicioInputValue || !documentoRelacionadoinputValue || !tipoDocumentoSelectedOption)
     ) {
       alert("Por favor, ingrese los datos solicitados");
       return;
-    } else if (!operationSelectedOption) {
+    } */else if (!operationSelectedOption) {
       alert("Por favor, marque una operación");
       return;
     }
-
-    // if (fechaInicioInputValue !== "") {
-    //   setNewFormatFechaInicio();
-    // }
-    /*else if (fechaFinInputValue !== "") {
-      newFormatFechaFin = `${fechaFinInputValue.slice(0, 10)} ${fechaFinInputValue.slice(11, 19)}:00`;
-    }*/
+    
     const formData = new FormData();
     formData.set("comment", comentarioTextareaValue);
     formData.set("document", documentoRelacionadoinputValue);
@@ -440,8 +414,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
         {(operationSelectedOption === "actualizado" ||
-          operationSelectedOption === "observado" ||
-          operationSelectedOption === "finalizado") && (
+          operationSelectedOption === "observado") && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label htmlFor="documento_relacionado" className="text-gray-600">
@@ -460,8 +433,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
         {(operationSelectedOption === "actualizado" ||
-          operationSelectedOption === "observado" ||
-          operationSelectedOption === "finalizado") && (
+          operationSelectedOption === "observado") && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label htmlFor="tipo_documento" className="text-gray-600">
@@ -473,24 +445,18 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 onChange={handleTipoDocumentoSelectChange}
               >
                 <option value="">Seleccione tipo de documento</option>
-                {operationSelectedOption === "finalizado"
-                  ? options
-                      .filter((item: any) => item.id === 8)
-                      .map((item: any, index) => (
-                        <option value={item.name} key={index}>
-                          {item.name}
-                        </option>
-                      ))
-                  : options.map((item: any, index) => (
+                {
+                  options.map((item: any, index) => (
                       <option value={item.name} key={index}>
                         {item.name}
                       </option>
-                    ))}
+                    ))
+                }
               </select>
             </div>
           </div>
         )}
-        {operationSelectedOption && (
+        {operationSelectedOption && operationSelectedOption !== "finalizado" && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label htmlFor="fecha_inicio" className="text-gray-600">
