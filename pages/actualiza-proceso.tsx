@@ -36,6 +36,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [responsable_actual, setTesponsable_actual] = useState("");
   const [resolucion_gerencial, setTesolucion_gerencial] = useState("");
   const [tipo, setTipo] = useState("");
+  const [confirm, setConfirm] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   // const [newFormatFechaInicio, setNewFormatFechaInicio] = useState("");
 
@@ -85,17 +86,17 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
   const maxCaracteres = 250;
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const handleSubmit = async () => {
     if (operationSelectedOption == "notificado" && (!gerenciaSelectedOption || !fechaInicioInputValue)) {
       alert("Por favor, ingrese los datos solicitados");
+      setConfirm(false);
       return;
     } else if (
       operationSelectedOption == "actualizado" &&
       (!gerenciaSelectedOption || !documentoRelacionadoinputValue || !tipoDocumentoSelectedOption || !fechaInicioInputValue)
     ) {
       alert("Por favor, ingrese los datos solicitados");
+      setConfirm(false);
       return;
     } /*else if (
       operationSelectedOption == "finalizado" &&
@@ -103,11 +104,12 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     ) {
       alert("Por favor, ingrese los datos solicitados");
       return;
-    } */else if (!operationSelectedOption) {
+    } */ else if (!operationSelectedOption) {
       alert("Por favor, marque una operación");
+      setConfirm(false);
       return;
     }
-    
+
     const formData = new FormData();
     formData.set("comment", comentarioTextareaValue);
     formData.set("document", documentoRelacionadoinputValue);
@@ -148,10 +150,12 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         //TODO: optimizar esto para que lo haga en el config del axios por default.
         if (response.status === 400 && response.data.success === false) {
           alert(response.data.message);
+          setConfirm(false);
           // alert("Por favor, ingrese los datos solicitados");
         } else {
           limpiarDatos();
           alert("El registro se procesó correctamente!!!");
+          setConfirm(false);
           formData.append("comment", "");
           formData.append("document", "");
           formData.append("new_responsible", "");
@@ -171,6 +175,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       console.log(error);
       //alert('Registro incorrecto!!!')
     }
+    setConfirm(false);
   };
 
   const onGotoBack = (page: string) => {
@@ -257,8 +262,13 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     return {};
   };
 
+  const openModal = (e: any) => {
+    e.preventDefault();
+    setConfirm(true);
+  };
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={openModal}>
       <Card title="Crear usuario">
         <div style={{ marginBottom: "0.4rem" }}>
           <h2 style={{ fontSize: 25, color: "#4F5172" }}>{item?.name}</h2>
@@ -413,8 +423,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </div>
           </div>
         )}
-        {(operationSelectedOption === "actualizado" ||
-          operationSelectedOption === "observado") && (
+        {(operationSelectedOption === "actualizado" || operationSelectedOption === "observado") && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label htmlFor="documento_relacionado" className="text-gray-600">
@@ -432,8 +441,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </div>
           </div>
         )}
-        {(operationSelectedOption === "actualizado" ||
-          operationSelectedOption === "observado") && (
+        {(operationSelectedOption === "actualizado" || operationSelectedOption === "observado") && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label htmlFor="tipo_documento" className="text-gray-600">
@@ -445,13 +453,11 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 onChange={handleTipoDocumentoSelectChange}
               >
                 <option value="">Seleccione tipo de documento</option>
-                {
-                  options.map((item: any, index) => (
-                      <option value={item.name} key={index}>
-                        {item.name}
-                      </option>
-                    ))
-                }
+                {options.map((item: any, index) => (
+                  <option value={item.name} key={index}>
+                    {item.name}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -534,6 +540,41 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         </div>
         {/* s{showAlert && (<div style={{color:'#fff', backgroundColor:'#f0ad4e', borderColor: '#eea236', borderRadius:'5px', marginTop:'10px', padding:'10px'}} role="alert">El registro del proceso se ha enviado correctamente.</div>)} */}
       </Card>
+      <Modal
+        bodyStyle={{
+          margin: 10,
+          height: 300,
+          whiteSpace: "nowrap",
+          width: 700,
+        }}
+        width={"auto"}
+        // title={<p style={{ textAlign: "center", fontWeight: "bold" }}>Confirmar</p>}
+        centered
+        open={confirm}
+        onOk={handleSubmit}
+        onCancel={() => setConfirm(false)}
+        okText="Confirmar"
+        cancelText="Cancelar"
+        okButtonProps={{
+          style: { backgroundColor: "#0874cc", fontSize: "20px", height: "40px", width: "335px" },
+          className: "ant-btn-primary",
+        }}
+        cancelButtonProps={{ style: { fontSize: "20px", width: "335px", height: "40px", marginRight: "18px" } }}
+      >
+        <div className="flex flex-col justify-center items-center gap-10 mt-5">
+          <svg width="100" height="91" viewBox="0 0 60 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M0.666504 51L29.9998 0.333313L59.3332 51H0.666504ZM9.8665 45.6666H50.1332L29.9998 11L9.8665 45.6666ZM29.9998 43C30.7554 43 31.3892 42.744 31.9012 42.232C32.4132 41.72 32.6683 41.0871 32.6665 40.3333C32.6665 39.5778 32.4105 38.944 31.8985 38.432C31.3865 37.92 30.7536 37.6649 29.9998 37.6666C29.2443 37.6666 28.6105 37.9226 28.0985 38.4346C27.5865 38.9466 27.3314 39.5795 27.3332 40.3333C27.3332 41.0889 27.5892 41.7226 28.1012 42.2346C28.6132 42.7466 29.2461 43.0018 29.9998 43ZM27.3332 35H32.6665V21.6666H27.3332V35Z"
+              fill="#0073CF"
+            />
+          </svg>
+
+          <p className="text-3xl">
+            ¿Estás seguro de finalizar el proceso PAS?
+            <br /> Posteriormente no será posible reaperturarlo.
+          </p>
+        </div>
+      </Modal>
     </form>
   );
 };
