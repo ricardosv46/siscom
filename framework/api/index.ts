@@ -226,7 +226,7 @@ const api = {
         console.log({payload})
         formData.set('idArchivo', payload?.idArchivo);
         formData.set('nombreArchivo', payload?.nombreArchivo);
-        const responsePDF = await apiService.post(`/processes/sgd/downloadFile`,
+        const responsePDF = await apiService.post(`/processes/sgd/downloadFile/`,
         formData,{
           headers: {
             'x-access-tokens': tok,
@@ -257,7 +257,7 @@ const api = {
         console.log({payload})
         formData.set('nu_ann_sgd', payload?.nu_ann);
         formData.set('nu_emi_sgd', payload?.nu_emi);
-        const responsePDF = await apiService.post(`/processes/sgd/downloadFile2`,
+        const responsePDF = await apiService.post(`/processes/sgd/downloadFile2/`,
         formData,{
           headers: {
             'x-access-tokens': tok,
