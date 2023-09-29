@@ -271,8 +271,12 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     }
   };
 
-  const donwloadAnexosDetail = async (idArchivo: number, nombreArchivo: string) => {
-    await api.listpas.downloadExcelDetail({ idArchivo, nombreArchivo });
+  const donwloadAnexosDetail = async (idArchivo: any, nombreArchivo: any) => {
+    await api.listpas.downloadFileDetail({ idArchivo, nombreArchivo });
+  };
+
+  const donwloadAnexosDetailPdf = async (item: any) => {
+    await api.listpas.downloadFileDetailPdf({ ...item });
   };
 
   //FilePicker
@@ -845,6 +849,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                             color: "white",
                             marginRight: "10px",
                             cursor: "pointer",
+                          }}
+                          onClick={async () => {
+                            donwloadAnexosDetailPdf(item);
                           }}
                         >
                           <img src="assets/images/icono_pdf.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />

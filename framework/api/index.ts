@@ -213,40 +213,11 @@ const api = {
         link.setAttribute('download', outputFilename);
         document.body.appendChild(link);
         link.click();
-        link.remove();
-
-        // console.log({payload})
-        
-
-        // const { headers,  status, data } = await apiService.post(`/tracking/download/`, {
-        //   processes: payload
-        // },{
-        //   responseType: "blob",
-        //   headers: {
-        //     "Content-Type": "application/json"
-        //   }});
-        // if(status === 200) {
-        //   const blob = new Blob([data], {
-        //       type: headers["content-type"],
-        //     });
-        //   const url = window.URL.createObjectURL(blob);
-        //   const a = document.createElement("a");
-        //   a.href = url;
-        //   a.download = `report_${new Date().getTime()}`;
-        //   a.click();
-
-          // const resp = data
-          // var blob = new Blob([resp], {
-          //   type: headers["content-type"],
-          // });
-          // const link = document.createElement("a");
-          // link.href = window.URL.createObjectURL(blob);
-          // link.download = `report_${new Date().getTime()}.xlsx`;
-          // link.click();          
+        link.remove();      
         
       }
     },
-    downloadExcelDetail: async (payload: any) => {
+    downloadFileDetail: async (payload: any) => {
       const tok =  GetTokenAuthService();
       if (tok) {
 
@@ -274,7 +245,37 @@ const api = {
         link.click();
         link.remove();
 
-        
+      }
+    },
+    downloadFileDetailPdf: async (payload: any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+
+        console.log({payload})
+
+        const formData = new FormData();
+        console.log({payload})
+        formData.set('nu_ann_sgd', payload?.nu_ann);
+        formData.set('nu_emi_sgd', payload?.nu_emi);
+        const responsePDF = await apiService.post(`/processes/sgd/downloadFile2`,
+        formData,{
+          headers: {
+            'x-access-tokens': tok,
+            'Content-Type': 'multipart/form-data', // Cambiar a 'multipart/form-data'
+          },
+          responseType: 'arraybuffer',
+        }) 
+        const outputFilename = 'elmo.pdf';
+
+        // If you want to download file automatically using link attribute.
+        const url = URL.createObjectURL(new Blob([responsePDF.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', outputFilename);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
       }
     },
     downloadDocuments: async (payload: any) => {
