@@ -340,7 +340,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             {/*</div>{fechaInicioInputValue}*/}
           </div>
         </div>
-
+        {(operationSelectedOption !== "FINALIZACION") && (
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label className="text-gray-600">Creado por:</label>
@@ -357,8 +357,9 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               ))}
             </select>
           </div>
-        </div>
-
+        </div>)}
+        
+        {(operationSelectedOption !== "FINALIZACION") && (
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label className="text-gray-600">Asignado a:</label>
@@ -375,25 +376,13 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               ))}
             </select>
           </div>
-        </div>
-
+        </div>)}
+        {(operationSelectedOption !== "FINALIZACION") && (
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="tipo_documento" className="text-gray-600">
               Tipo de documento:
             </label>
-            {/* <select
-              className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-              value={tipoDocumentoSelectedOption}
-              onChange={handleTipoDocumentoSelectChange}
-            >
-              <option value="">Seleccione tipo de documento</option>
-              {options.map((item: any, index) => (
-                <option value={item.name} key={index}>
-                  {item.name}
-                </option>
-              ))}
-            </select> */}
             <select
               className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
               value={tipoDocumentoSelectedOption}
@@ -405,23 +394,11 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                   {item.name}
                 </option>
               ))}
-              {/* {operationSelectedOption === "FINALIZACION"
-                ? options
-                    .filter((item: any) => item.id === 8)
-                    .map((item: any, index) => (
-                      <option value={item.name} key={index}>
-                        {item.name}
-                      </option>
-                    ))
-                : options.map((item: any, index) => (
-                    <option value={item.name} key={index}>
-                      {item.name}
-                    </option>
-                  ))} */}
             </select>
           </div>
-        </div>
-
+        </div>)}
+        
+        {(operationSelectedOption !== "FINALIZACION") && (
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label className="text-gray-600">Documento relacionado:</label>
@@ -434,6 +411,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             />
           </div>
         </div>
+        )}
 
         <div className="w-1/2 py-50">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
