@@ -27,6 +27,7 @@ interface IPropsItem {
   resolution_number: string | null;
   responsable: string | null;
   type: string | null;
+  estado_proceso: any;
 }
 
 //let newFormatFechaFin = "";
@@ -73,7 +74,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       router.push("/listadopas");
     }
   }, []);
-
+  console.log({ item });
   const [documentoRelacionadoinputValue, setDocumentoRelacionadoinputValue] = useState("");
   const [fechaInicioInputValue, setFechaInicioInputValue] = useState<any>();
   //const [fechaFinInputValue, setFechaFinInputValue] = useState("");
@@ -371,18 +372,23 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                   <div className="text-red-500 text-xs"></div>
                 </>
               )}
-              {(user.is_admin || responsable_actual === "JN") && (
+
+              {item?.estado_proceso !== "Finalizado" && (
                 <>
-                  <input
-                    type="checkbox"
-                    name="finalizado"
-                    value="finalizado"
-                    checked={operationSelectedOption === "finalizado"}
-                    onChange={handleCheckboxChange}
-                  />
-                  <span className="checkmark"></span>
-                  <label className="form-checkbottom"> Finalización</label>
-                  <div className="text-red-500 text-xs"></div>
+                  {(user.is_admin || responsable_actual === "JN") && (
+                    <>
+                      <input
+                        type="checkbox"
+                        name="finalizado"
+                        value="finalizado"
+                        checked={operationSelectedOption === "finalizado"}
+                        onChange={handleCheckboxChange}
+                      />
+                      <span className="checkmark"></span>
+                      <label className="form-checkbottom"> Finalización</label>
+                      <div className="text-red-500 text-xs"></div>
+                    </>
+                  )}
                 </>
               )}
             </div>
