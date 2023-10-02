@@ -259,9 +259,9 @@ const api = {
         formData,{
           headers: {
             'x-access-tokens': tok,
-            // 'Content-Type': 'multipart/form-data', // Cambiar a 'multipart/form-data'
+            'Content-Type': 'multipart/form-data', // Cambiar a 'multipart/form-data'
           },
-          // responseType: 'arraybuffer',
+           responseType: 'arraybuffer',
         }) 
         const outputFilename = `${payload?.tipo_doc} ${payload?.nro_doc}.pdf`;
 
@@ -288,7 +288,7 @@ const api = {
           if (response.status == 400 || response.data === undefined){
             alert("No se encontraron documentos para descargar");
           } else {
-            const outputFilename = item?.dni_candidato.length > 0 ? `${item?.dni_candidato} ${item?.num_expediente}.pdf` :  `${item?.num_expediente}.zip`
+            const outputFilename = item?.dni_candidato.length > 0 ? `${item?.dni_candidato} ${item?.num_expediente}.zip` :  `${item?.num_expediente}.zip`
 
             const url = window.URL.createObjectURL(new Blob([response.data],{type: "application/zip"}));
             const link = document.createElement('a');
