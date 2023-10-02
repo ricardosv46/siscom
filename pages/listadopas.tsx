@@ -214,7 +214,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
     if (res?.data?.message === "2") {
       const instance = Modal.info({
-        title: "No permitido",
+        icon: "",
         content: (
           <div>
             <p>Su usuario no tiene permitido realizar registro de finalizaciones de procedimientos PAS</p>
@@ -230,10 +230,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
     if (res?.data?.message === "1") {
       const instance = Modal.confirm({
-        title: "No permitido",
+        icon: "",
         content: (
           <div>
-            <p>El excel contiene registros de finalizaciones de procedimientos PAS, desea continuar?</p>
+            <p>El excel contiene registros de finalizaciones de procedimientos PAS. ¿Desea continuar?</p>
           </div>
         ),
         async onOk() {
