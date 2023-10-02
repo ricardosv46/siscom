@@ -264,7 +264,11 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
   const openModal = (e: any) => {
     e.preventDefault();
-    setConfirm(true);
+    if (operationSelectedOption === "finalizado") {
+      setConfirm(true);
+    } else {
+      handleSubmit();
+    }
   };
 
   return (
@@ -550,7 +554,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         width={"auto"}
         // title={<p style={{ textAlign: "center", fontWeight: "bold" }}>Confirmar</p>}
         centered
-        open={confirm}
+        open={confirm && operationSelectedOption === "finalizado"}
         onOk={handleSubmit}
         onCancel={() => setConfirm(false)}
         okText="Confirmar"

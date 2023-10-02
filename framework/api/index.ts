@@ -276,6 +276,26 @@ const api = {
 
       }
     },
+    validateFile: async (payload: any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+
+
+        const formData = new FormData();
+        formData.set('user_id', payload?.id);
+        formData.set('xlsx_file', payload?.excelFile);
+        const {data} = await apiService.post(`/processes/validateExcel/`,
+        formData,{
+          headers: {
+            'x-access-tokens': tok,
+            'Content-Type': 'multipart/form-data', // Cambiar a 'multipart/form-data'
+          },
+          
+        }) 
+        return { data };
+
+      }
+    },
     downloadDocuments: async (item:any,payload: any) => {
       const tok =  GetTokenAuthService();
       if (tok) { 

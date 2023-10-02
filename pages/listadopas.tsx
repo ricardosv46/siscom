@@ -196,8 +196,87 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   };
 
   const loadExcelApi = async (excelFile: any) => {
-    const result = await api.listpas.loadExcelInformation(excelFile);
-    processApi(IdSelectedProcess, "all");
+    const instance1 = Modal.info({
+      title: "Cargando",
+      content: (
+        <div>
+          <p>Espere mientras termine la descarga...</p>
+        </div>
+      ),
+      onOk() {},
+      okButtonProps: { disabled: true, style: { backgroundColor: "#0874cc", display: "none" } },
+      centered: true,
+    });
+
+    const res = await api.listpas.validateFile({ excelFile, id: user.id });
+
+    instance1.destroy();
+
+    if (res?.data?.message === "2") {
+      const instance = Modal.info({
+        title: "No permitido",
+        content: (
+          <div>
+            <p>Su usuario no tiene permitido realizar registro de finalizaciones de procedimientos PAS</p>
+          </div>
+        ),
+        onOk() {
+          instance.destroy();
+        },
+        okButtonProps: { style: { backgroundColor: "#0874cc" } },
+        centered: true,
+      });
+    }
+
+    if (res?.data?.message === "1") {
+      const instance = Modal.confirm({
+        title: "No permitido",
+        content: (
+          <div>
+            <p>El excel contiene registros de finalizaciones de procedimientos PAS, desea continuar?</p>
+          </div>
+        ),
+        async onOk() {
+          const instance3 = Modal.info({
+            title: "Cargando",
+            content: (
+              <div>
+                <p>Espere mientras termine la descarga...</p>
+              </div>
+            ),
+            onOk() {},
+            okButtonProps: { disabled: true, style: { backgroundColor: "#0874cc", display: "none" } },
+            centered: true,
+          });
+
+          instance.destroy();
+          const result = await api.listpas.loadExcelInformation(excelFile);
+          processApi(IdSelectedProcess, "all");
+
+          instance3.destroy();
+        },
+        okButtonProps: { style: { backgroundColor: "#0874cc" } },
+        centered: true,
+      });
+    }
+
+    if (res?.data?.message === "3") {
+      const instance4 = Modal.info({
+        title: "Cargando",
+        content: (
+          <div>
+            <p>Espere mientras termine la descarga...</p>
+          </div>
+        ),
+        onOk() {},
+        okButtonProps: { disabled: true, style: { backgroundColor: "#0874cc", display: "none" } },
+        centered: true,
+      });
+
+      const result = await api.listpas.loadExcelInformation(excelFile);
+      processApi(IdSelectedProcess, "all");
+      instance4.destroy();
+    }
   };
 
   const onGoDetail = (page: string, props: any) => {
