@@ -32,6 +32,7 @@ const LeftCard: FC<IProps> = (props): ReactElement => {
     resolution_number,
     start_at,
     tracking_action,
+    register_user,
   } = item;
 
   return (
@@ -60,6 +61,7 @@ const LeftCard: FC<IProps> = (props): ReactElement => {
         )}
         <br></br>
         {created_at && <h3 className="font-bold text-gray-500 text-x">Fecha de Actualización: {created_at} </h3>}
+        {register_user && <h3 className="font-bold text-gray-500 text-x">Usuario Registrador: {register_user} </h3>}
         <br></br>
         <Button
           type="dashed"

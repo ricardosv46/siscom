@@ -33,6 +33,7 @@ const RightCard: FC<IProps> = (props): ReactElement => {
     resolution_number,
     start_at,
     tracking_action,
+    register_user,
   } = item;
 
   console.log({ props });
@@ -60,6 +61,7 @@ const RightCard: FC<IProps> = (props): ReactElement => {
         {comment && <p className="mt-2 text-sm font-medium leading-snug tracking-wide text-gray-500 text-opacity-100">{comment}</p>}
         <br></br>
         {created_at && <h3 className="font-bold text-gray-500 text-x">Fecha de Actualización: {created_at} </h3>}
+        {register_user && <h3 className="font-bold text-gray-500 text-x">Usuario Registrador: {register_user} </h3>}
         <br></br>
         <Button
           type="dashed"

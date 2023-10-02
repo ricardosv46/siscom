@@ -41,6 +41,7 @@ export interface IDetailItem {
   resolution_number: string;
   start_at: string;
   tracking_action: string;
+  register_user: string;
 }
 
 const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, total }) => {

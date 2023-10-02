@@ -146,10 +146,12 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       if (token) {
         //config.headers['x-access-tokens'] = token;
         //const response = await axios.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/${id}/tracking/create/`, formData, {headers: {'x-access-tokens': token}});
-        const response = await apiService.post(`processes/${id}/tracking/create/`, formData, { headers: { "x-access-tokens": token } });
+        //const response = await apiService.post(`processes/${id}/tracking/create/`, formData, { headers: { "x-access-tokens": token } });
+        const response = await api.listpas.createTracking(id, formData);
 
         //TODO: optimizar esto para que lo haga en el config del axios por default.
-        if (response.status === 400 && response.data.success === false) {
+        //if (response.status === 400 && response.data.success === false) {
+        if (response){
           alert(response.data.message);
           setConfirm(false);
           // alert("Por favor, ingrese los datos solicitados");
