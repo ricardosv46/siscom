@@ -197,6 +197,23 @@ const api = {
         return {data: []}
       }
     },
+    createTracking: async (id: any, payload: any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        try{
+          const response = await apiService.post(`processes/${id}/tracking/create/`, payload, { headers: { "x-access-tokens": tok } });
+          if (response.status === 400 && response.data.success === false){
+            return response.data
+          } else {
+            return true
+          }
+
+        } catch(error) {
+          alert("Ocurrió un error al guardar el registro!");
+        }
+        
+      }
+    },
      
     downloadExcelInformation: async (payload: any) => {
       const tok =  GetTokenAuthService();

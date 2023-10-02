@@ -51,6 +51,15 @@ export interface IResponseAnexos extends axiosDefaultData{
     }
 }
 
+export interface IResponseTrackingCreate extends axiosDefaultData{
+    data: 
+    {   
+        data: [],
+        message: string,
+        success: boolean
+    }
+}
+
 export interface IResponseTrackingDetail extends axiosDefaultData{
     data: 
     {
