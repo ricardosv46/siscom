@@ -146,7 +146,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         const response = await api.listpas.createTracking(id, formData);
 
         //TODO: optimizar esto para que lo haga en el config del axios por default.
-        if (response.success) {
+        if (!response.success) {
           alert(response.message);
           setConfirm(false);
           // alert("Por favor, ingrese los datos solicitados");
