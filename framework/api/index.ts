@@ -205,7 +205,7 @@ const api = {
           if (response.status === 400 && response.data.success === false){
             return response.data
           } else {
-            return {"sucess": true, "message": "ok"}
+            return {"success": true, "message": "ok"}
           }
 
         } catch(error) {
