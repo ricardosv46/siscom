@@ -225,6 +225,11 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
     setOperationSelectedOption(event.target.value);
     limpiarDatos();
+    // if (event.target.value === "finalizado") {
+    //   setGerenciaInicialSelectedOption("JN");
+    // } else {
+    //   setGerenciaInicialSelectedOption("");
+    // }
   }
 
   function limpiarDatos() {
@@ -293,31 +298,33 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </label>
           </div>
         </div>
-        <div className="w-1/2 py-5">
-          <div className="grid grid-cols-2 gap-5 items-center mb-5">
-            <label htmlFor="responsable_actual" className="text-gray-600">
-              Responsable actual
-            </label>
-            {!user.is_admin && (
+        {operationSelectedOption !== "finalizado" && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label htmlFor="responsable_actual" className="text-gray-600">
-                {responsable_actual}
+                Responsable actual
               </label>
-            )}
-            {user.is_admin && (
-              <select
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-                value={gerenciaInicialSelectedOption}
-                onChange={handleGerenciaInicialSelectChange}
-              >
-                <option value="">Seleccione Gerencia</option>
-                <option value="GAJ">Gerencia de Asesoría Jurídica</option>
-                <option value="SG">Secretaría General</option>
-                <option value="GSFP">Gerencia de Supervisión y Fondos Partidarios</option>
-                <option value="JN">Jefatura Nacional</option>
-              </select>
-            )}
+              {!user.is_admin && (
+                <label htmlFor="responsable_actual" className="text-gray-600">
+                  {responsable_actual}
+                </label>
+              )}
+              {user.is_admin && (
+                <select
+                  className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                  value={gerenciaInicialSelectedOption}
+                  onChange={handleGerenciaInicialSelectChange}
+                >
+                  <option value="">Seleccione Gerencia</option>
+                  <option value="GAJ">Gerencia de Asesoría Jurídica</option>
+                  <option value="SG">Secretaría General</option>
+                  <option value="GSFP">Gerencia de Supervisión y Fondos Partidarios</option>
+                  <option value="JN">Jefatura Nacional</option>
+                </select>
+              )}
+            </div>
           </div>
-        </div>
+        )}
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="operacion" className="text-gray-40">
@@ -405,6 +412,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </div>
           </div>
         )*/}
+
         {(operationSelectedOption === "notificado" ||
           operationSelectedOption === "actualizado" ||
           operationSelectedOption === "observado") && (
@@ -419,10 +427,10 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 onChange={handleGerenciaSelectChange}
               >
                 <option value="">Seleccione Gerencia</option>
-                <option value="GAJ">Gerencia de Asesoría Jurídica</option>
-                <option value="SG">Secretaría General</option>
-                <option value="GSFP">Gerencia de Supervisión y Fondos Partidarios</option>
-                <option value="JN">Jefatura Nacional</option>
+                {responsable_actual !== "GAJ" && <option value="GAJ">Gerencia de Asesoría Jurídica</option>}
+                {responsable_actual !== "SG" && <option value="SG">Secretaría General</option>}
+                {responsable_actual !== "GSFP" && <option value="GSFP">Gerencia de Supervisión y Fondos Partidarios</option>}
+                {responsable_actual !== "JN" && <option value="JN">Jefatura Nacional</option>}
               </select>
             </div>
           </div>
