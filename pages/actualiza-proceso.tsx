@@ -28,6 +28,7 @@ interface IPropsItem {
   responsable: string | null;
   type: string | null;
   estado_proceso: any;
+  fecha_inicio_dt: any;
 }
 
 //let newFormatFechaFin = "";
@@ -74,6 +75,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       router.push("/listadopas");
     }
   }, []);
+  console.log({ item });
   const [documentoRelacionadoinputValue, setDocumentoRelacionadoinputValue] = useState("");
   const [fechaInicioInputValue, setFechaInicioInputValue] = useState<any>();
   //const [fechaFinInputValue, setFechaFinInputValue] = useState("");
@@ -243,8 +245,13 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   }
 
   const disabledDate = (current: any) => {
-    // Deshabilita fechas futuras
-    return current && current > new Date();
+    // disabledDate={(d) => !d || d.isAfter("2002-12-31") || d.isSameOrBefore("1960-01-01")}
+
+    const dateEmi = new Date(item?.fecha_inicio_dt);
+
+    // Deshabilita fechas fuera del rango de fechas permitidas
+    const isOutOfRange = !moment(current).isBetween(moment(dateEmi), moment(new Date()));
+    return isOutOfRange;
   };
 
   const disabledTime = (current: any) => {
