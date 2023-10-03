@@ -483,17 +483,17 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
   function doesItemMatchSearch(item: any, search: any) {
     return (
-      item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
       item?.name?.toLowerCase()?.includes(search.toLowerCase()) ||
       item?.etapa?.toLowerCase()?.includes(search.toLowerCase()) ||
       item?.resolution_number?.toLowerCase()?.includes(search.toLowerCase()) ||
       item?.estado_proceso?.toLowerCase()?.includes(search.toLowerCase()) ||
       item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
-      item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
-      item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
       item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
-      item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase()) ||
-      item?.type?.toLowerCase()?.includes(search.toLowerCase())
+      item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase())
+      // item?.type?.toLowerCase()?.includes(search.toLowerCase())
+      // item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
+      // item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
+      // item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
     );
   }
   const filterUpdate = ({ search, estado, responsable, type, memory }: any) => {

@@ -11,10 +11,11 @@ import { mergeArray } from "@lib/general";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { RightCard } from "../components/common/right";
-import { Button, Modal, message } from "antd";
+import { Button, DatePicker, Modal, message } from "antd";
 import { GetTokenAuthService } from "services/auth/ServiceAuth";
 import { parse, format } from "date-fns";
 import apiService from "services/axios/configAxios";
+import moment from "moment";
 
 interface IPropsItem {
   id: string | number | null;
@@ -151,7 +152,9 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         start_at = año + '-' + mes + '-' + dia + ' 00:00'*/
 
       setOperationSelectedOption(tracking_action);
-      setFechaInicioInputValue(año + "-" + mes + "-" + dia + " 00:00");
+      const date = moment(itemprop?.created_at_dt);
+      // console.log({ date });
+      setFechaInicioInputValue(date);
       setGerenciaSelectedOption(current_responsible);
       setGerenciaAsignadaSelectedOption(new_responsible);
       setTipoDocumentoSelectedOption(related_document);
@@ -163,7 +166,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   }, []);
 
   const [documentoRelacionadoinputValue, setDocumentoRelacionadoinputValue] = useState("");
-  const [fechaInicioInputValue, setFechaInicioInputValue] = useState("");
+  const [fechaInicioInputValue, setFechaInicioInputValue] = useState<any>("");
   const [operationSelectedOption, setOperationSelectedOption] = useState("");
   const [options, setOptions] = useState([]);
   const [gerenciaOtions, setGerenciaOtions] = useState([]);
@@ -192,19 +195,23 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       alert("No se ha modificado la información");
       return;
     }
+    const formData = new FormData();
 
     if (fechaInicioInputValue !== "") {
-      newFormatFechaInicio = `${fechaInicioInputValue.slice(0, 10)} ${fechaInicioInputValue.slice(11, 19)}:00`;
+      const currentDate = moment(fechaInicioInputValue).format("YYYY-MM-DD"); // Formato de fecha: "2023-03-01"
+      const currentTime = moment(fechaInicioInputValue).format("HH:mm:ss");
+
+      const formattedDateTime = `${currentDate} ${currentTime}`; // Formato completo: "2023-03-01T00:00"
+
+      formData.append("start_at", formattedDateTime);
     }
 
     const tok = GetTokenAuthService();
     if (tok) {
-      const formData = new FormData();
       formData.append("comment", comentarioTextareaValue);
       formData.append("current_responsible", gerenciaSelectedOption);
       formData.append("document", documentoRelacionadoinputValue);
       formData.append("new_responsible", gerenciaAsignadaSelectedOption);
-      formData.append("start_at", newFormatFechaInicio);
       formData.append("type_document", tipoDocumentoSelectedOption);
       formData.append("tracking_action", operationSelectedOption.toLowerCase());
       try {
@@ -231,8 +238,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     setDocumentoRelacionadoinputValue(event.target.value);
   };
 
-  const handleFechaInicioDateTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFechaInicioInputValue(event.target.value);
+  const handleFechaInicioDateTimeChange = (value: any, dateString: any) => {
+    setFechaInicioInputValue(value);
   };
 
   const handleGerenciaSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -262,6 +269,26 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     console.log({ newDatos });
     history.pushState(newDatos, "", page);
   }
+
+  const disabledDate = (current: any) => {
+    // Deshabilita fechas futuras
+    return current && current > new Date();
+  };
+
+  const disabledTime = (current: any) => {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+
+    // Si la fecha es hoy, deshabilita horas y minutos futuros
+    if (current && current.isSame(now, "day")) {
+      return {
+        disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
+        disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute),
+      };
+    }
+    return {};
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -326,7 +353,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             <label htmlFor="fecha_inicio" className="text-gray-600">
               Fecha:
             </label>
-            {dateEmi && (
+            {/* {dateEmi && (
               <input
                 type="datetime-local"
                 min={dateEmi?.toISOString().slice(0, 16)}
@@ -336,81 +363,95 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 id="fecha_inicio"
                 className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
               />
-            )}
+            )} */}
+
+            <DatePicker
+              showTime={{ format: "HH:mm" }}
+              value={fechaInicioInputValue}
+              onChange={handleFechaInicioDateTimeChange}
+              disabledDate={disabledDate}
+              disabledTime={disabledTime}
+              popupStyle={{ color: "black" }}
+              style={{ color: "black" }}
+            />
+
             {/*</div>{fechaInicioInputValue}*/}
           </div>
         </div>
-        {(operationSelectedOption !== "FINALIZACION") && (
-        <div className="w-1/2 py-5">
-          <div className="grid grid-cols-2 gap-5 items-center mb-5">
-            <label className="text-gray-600">Creado por:</label>
-            <select
-              className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-              value={gerenciaSelectedOption}
-              onChange={handleGerenciaSelectChange}
-            >
-              <option value="">Seleccione Gerencia</option>
-              {gerenciaOtions.map((item: any, index) => (
-                <option value={item.code} key={index}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
+        {operationSelectedOption !== "FINALIZACION" && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <label className="text-gray-600">Creado por:</label>
+              <select
+                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                value={gerenciaSelectedOption}
+                onChange={handleGerenciaSelectChange}
+              >
+                <option value="">Seleccione Gerencia</option>
+                {gerenciaOtions.map((item: any, index) => (
+                  <option value={item.code} key={index}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-        </div>)}
-        
-        {(operationSelectedOption !== "FINALIZACION") && (
-        <div className="w-1/2 py-5">
-          <div className="grid grid-cols-2 gap-5 items-center mb-5">
-            <label className="text-gray-600">Asignado a:</label>
-            <select
-              className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-              value={gerenciaAsignadaSelectedOption}
-              onChange={handleGerenciaAsignadaSelectChange}
-            >
-              <option value="">Seleccione Gerencia</option>
-              {gerenciaOtions.map((item: any, index) => (
-                <option value={item.code} key={index}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
+        )}
+
+        {operationSelectedOption !== "FINALIZACION" && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <label className="text-gray-600">Asignado a:</label>
+              <select
+                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                value={gerenciaAsignadaSelectedOption}
+                onChange={handleGerenciaAsignadaSelectChange}
+              >
+                <option value="">Seleccione Gerencia</option>
+                {gerenciaOtions.map((item: any, index) => (
+                  <option value={item.code} key={index}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-        </div>)}
-        {(operationSelectedOption !== "FINALIZACION") && (
-        <div className="w-1/2 py-5">
-          <div className="grid grid-cols-2 gap-5 items-center mb-5">
-            <label htmlFor="tipo_documento" className="text-gray-600">
-              Tipo de documento:
-            </label>
-            <select
-              className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-              value={tipoDocumentoSelectedOption}
-              onChange={handleTipoDocumentoSelectChange}
-            >
-              <option value="">Seleccione tipo de documento</option>
-              {options.map((item: any, index) => (
-                <option value={item.name} key={index}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
+        )}
+        {operationSelectedOption !== "FINALIZACION" && operationSelectedOption !== "NOTIFICACION" && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <label htmlFor="tipo_documento" className="text-gray-600">
+                Tipo de documento:
+              </label>
+              <select
+                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                value={tipoDocumentoSelectedOption}
+                onChange={handleTipoDocumentoSelectChange}
+              >
+                <option value="">Seleccione tipo de documento</option>
+                {options.map((item: any, index) => (
+                  <option value={item.name} key={index}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-        </div>)}
-        
-        {(operationSelectedOption !== "FINALIZACION") && (
-        <div className="w-1/2 py-5">
-          <div className="grid grid-cols-2 gap-5 items-center mb-5">
-            <label className="text-gray-600">Documento relacionado:</label>
-            <input
-              type="text"
-              placeholder="Ingrese número de documento"
-              value={documentoRelacionadoinputValue}
-              onChange={handleInputChange}
-              className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-            />
+        )}
+
+        {operationSelectedOption !== "FINALIZACION" && operationSelectedOption !== "NOTIFICACION" && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <label className="text-gray-600">Documento relacionado:</label>
+              <input
+                type="text"
+                placeholder="Ingrese número de documento"
+                value={documentoRelacionadoinputValue}
+                onChange={handleInputChange}
+                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+              />
+            </div>
           </div>
-        </div>
         )}
 
         <div className="w-1/2 py-50">

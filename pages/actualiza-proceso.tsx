@@ -74,7 +74,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       router.push("/listadopas");
     }
   }, []);
-  console.log({ item });
   const [documentoRelacionadoinputValue, setDocumentoRelacionadoinputValue] = useState("");
   const [fechaInicioInputValue, setFechaInicioInputValue] = useState<any>();
   //const [fechaFinInputValue, setFechaFinInputValue] = useState("");
@@ -151,7 +150,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
         //TODO: optimizar esto para que lo haga en el config del axios por default.
         //if (response.status === 400 && response.data.success === false) {
-        if (response){
+        if (response) {
           alert(response.data.message);
           setConfirm(false);
           // alert("Por favor, ingrese los datos solicitados");
@@ -203,9 +202,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     console.log("Selected Time: ", { value });
 
     setFechaInicioInputValue(value);
-  };
-  const handleFechaInicioDateTimeChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFechaInicioInputValue(event.target.value);
   };
   /*const handleFechaFinDateTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFechaFinInputValue(event.target.value);
@@ -489,15 +485,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 popupStyle={{ color: "black" }}
                 style={{ color: "black" }}
               />
-              {/* <input
-                type="datetime-local"
-                min="2023-03-01T00:00"
-                max={new Date().toISOString().slice(0, 16)}
-                value={fechaInicioInputValue}
-                onChange={handleFechaInicioDateTimeChange2}
-                id="fecha_inicio"
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-              /> */}
             </div>
           </div>
         )}
