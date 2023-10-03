@@ -225,11 +225,11 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
     setOperationSelectedOption(event.target.value);
     limpiarDatos();
-    // if (event.target.value === "finalizado") {
-    //   setGerenciaInicialSelectedOption("JN");
-    // } else {
-    //   setGerenciaInicialSelectedOption("");
-    // }
+    if (event.target.value === "finalizado") {
+      setGerenciaInicialSelectedOption("JN");
+    } else {
+      setGerenciaInicialSelectedOption("");
+    }
   }
 
   function limpiarDatos() {
