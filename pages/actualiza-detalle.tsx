@@ -75,8 +75,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     return new Date(year, month - 1, day);
   }
 
-  const dateEmi = new Date(detailEmi?.start_at_dt);
-
   // const fechax = toDate(dateEmi);
 
   // Formatear la fecha en el formato deseado (opcional)
@@ -271,8 +269,13 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   }
 
   const disabledDate = (current: any) => {
-    // Deshabilita fechas futuras
-    return current && current > new Date();
+    // disabledDate={(d) => !d || d.isAfter("2002-12-31") || d.isSameOrBefore("1960-01-01")}
+
+    const dateEmi = new Date(detailEmi?.start_at_dt);
+
+    // Deshabilita fechas fuera del rango de fechas permitidas
+    const isOutOfRange = !moment(current).isBetween(moment(dateEmi), moment(new Date()));
+    return isOutOfRange;
   };
 
   const disabledTime = (current: any) => {
