@@ -453,10 +453,22 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 onChange={handleGerenciaSelectChange}
               >
                 <option value="">Seleccione Gerencia</option>
-                {responsable_actual !== "GAJ" && <option value="GAJ">Gerencia de Asesoría Jurídica</option>}
-                {responsable_actual !== "SG" && <option value="SG">Secretaría General</option>}
-                {responsable_actual !== "GSFP" && <option value="GSFP">Gerencia de Supervisión y Fondos Partidarios</option>}
-                {responsable_actual !== "JN" && <option value="JN">Jefatura Nacional</option>}
+                {!user.is_admin && (
+                  <>
+                    {responsable_actual !== "GAJ" && <option value="GAJ">Gerencia de Asesoría Jurídica</option>}
+                    {responsable_actual !== "SG" && <option value="SG">Secretaría General</option>}
+                    {responsable_actual !== "GSFP" && <option value="GSFP">Gerencia de Supervisión y Fondos Partidarios</option>}
+                    {responsable_actual !== "JN" && <option value="JN">Jefatura Nacional</option>}
+                  </>
+                )}
+                {user.is_admin && (
+                  <>
+                    <option value="GAJ">Gerencia de Asesoría Jurídica</option>
+                    <option value="SG">Secretaría General</option>
+                    <option value="GSFP">Gerencia de Supervisión y Fondos Partidarios</option>
+                    <option value="JN">Jefatura Nacional</option>
+                  </>
+                )}
               </select>
             </div>
           </div>
