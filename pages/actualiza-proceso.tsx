@@ -62,7 +62,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   useEffect(() => {
     getData();
   }, []);
-  console.log({ dateEmi });
 
   const getData = async () => {
     getTypeDocumentsApi();
