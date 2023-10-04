@@ -143,7 +143,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     if (label === "undefined") {
       valuefilter = "Indefinido";
     }
-    console.log({ valuefilter, label });
 
     if (valuefilter) {
       const dataFilter = newData?.filter((item: any) => {

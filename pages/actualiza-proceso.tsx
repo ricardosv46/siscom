@@ -49,6 +49,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   // let newFormatFechaInicio = "";
 
   const [item, setItem] = useState<IPropsItem>();
+  const [dateEmi, setDateEmi] = useState<any>();
   const router = useRouter();
 
   const { user } = useAuthStore();
@@ -59,9 +60,28 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   };
 
   useEffect(() => {
+    getData();
+  }, []);
+  console.log({ dateEmi });
+
+  const getData = async () => {
     getTypeDocumentsApi();
     let itemprop = history?.state?.item;
     if (itemprop) {
+      const dataitems = await api.listpas.getProcessesByTracking(itemprop?.numero);
+      const detailEmiUsers = dataitems.processes?.pop() as any;
+      const detailEmiAdmin = dataitems.processes?.filter((item) => item.tracking_action === "EMISION")[0] as any;
+
+      if (user?.is_admin) {
+        const date = moment(detailEmiAdmin?.created_at_dt);
+        setDateEmi(date);
+        setFechaInicioInputValue(date);
+      } else {
+        const date = moment(detailEmiUsers?.start_at_dt);
+        setDateEmi(date);
+        setFechaInicioInputValue(date);
+      }
+
       setItem(itemprop);
       setId(itemprop?.numero);
       setTesponsable_actual(itemprop?.responsable);
@@ -74,8 +94,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     } else {
       router.push("/listadopas");
     }
-  }, []);
-  console.log({ item });
+  };
+
   const [documentoRelacionadoinputValue, setDocumentoRelacionadoinputValue] = useState("");
   const [fechaInicioInputValue, setFechaInicioInputValue] = useState<any>();
   //const [fechaFinInputValue, setFechaFinInputValue] = useState("");
@@ -247,7 +267,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const disabledDate = (current: any) => {
     // disabledDate={(d) => !d || d.isAfter("2002-12-31") || d.isSameOrBefore("1960-01-01")}
 
-    const dateEmi = new Date(item?.fecha_inicio_dt);
+    // const dateEmision = new Date(dateEmi);
 
     // Deshabilita fechas fuera del rango de fechas permitidas
     const isOutOfRange = !moment(current).isBetween(moment(dateEmi), moment(new Date()));

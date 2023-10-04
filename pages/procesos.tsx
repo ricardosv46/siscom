@@ -26,7 +26,6 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
   const router = useRouter();
   const [añoSelectedOption, setAñoSelectedOption] = useState("");
   const [procesoSelectedOption, setProcesoSelectedOption] = useState("");
-  console.log({ añoSelectedOption, procesoSelectedOption });
   const [options, setOptions] = useState([]);
   const [optionsYear, setOptionsYear] = useState([]);
   const [processGlobal, setProcessGlobal] = useState("");
@@ -92,7 +91,7 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
               onChange={handleChange}
             >
               <option value="">Seleccionar año</option>
-              {optionsYear.map((item: any, index) => (
+              {optionsYear?.map((item: any, index) => (
                 <option value={item.year} key={index}>
                   {item.year}
                 </option>
