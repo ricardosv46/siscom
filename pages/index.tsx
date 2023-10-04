@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Breadcrumb, Pagination, Table } from "antd";
+import { Breadcrumb, Empty, Pagination, Table } from "antd";
 import { ReactElement, Suspense, useState, useCallback } from "react";
 import { NextPageWithLayout } from "./_app";
 import { LayoutFirst } from "@components/common";
@@ -208,6 +208,7 @@ const Home: NextPageWithLayout = () => {
   if (processGrouped) {
     currentData = processGrouped.slice(startIndex, endIndex);
   }
+  console.log({ processSummaryStats });
 
   let dataPie;
   if (processSummary && processSummaryStats) {
@@ -216,43 +217,43 @@ const Home: NextPageWithLayout = () => {
         estado: <img src="assets/images/to_start.png" />,
         descripcion: "Por iniciar",
         cantidad: processSummary.to_start,
-        percentage: processSummaryStats.to_start + "%",
+        percentage: `${processSummaryStats?.to_start >= 0 ? processSummaryStats?.to_start : "0.00"} %`,
       },
       {
         estado: <img src="assets/images/out_of_date.png" />,
         descripcion: "Fuera de Fecha",
         cantidad: processSummary.out_of_date,
-        percentage: processSummaryStats.out_of_date + "%",
+        percentage: `${processSummaryStats?.out_of_date >= 0 ? processSummaryStats?.out_of_date : "0.00"} %`,
       },
       {
         estado: <img src="assets/images/finalized.png" />,
         descripcion: "Finalizado",
         cantidad: processSummary.finalized,
-        percentage: processSummaryStats.finalized + "%",
+        percentage: `${processSummaryStats?.finalized >= 0 ? processSummaryStats?.finalized : "0.00"} %`,
       },
       {
         estado: <img src="assets/images/more_6_months.png" />,
         descripcion: "Más de 6 meses",
         cantidad: processSummary.more_6_months,
-        percentage: processSummaryStats.more_6_months + "%",
+        percentage: `${processSummaryStats?.more_6_months >= 0 ? processSummaryStats?.more_6_months : "0.00"} %`,
       },
       {
         estado: <img src="assets/images/less_6_months.png" />,
         descripcion: "De 3 a 6 meses",
         cantidad: processSummary.less_6_months,
-        percentage: processSummaryStats.less_6_months + "%",
+        percentage: `${processSummaryStats?.less_6_months >= 0 ? processSummaryStats?.less_6_months : "0.00"} %`,
       },
       {
         estado: <img src="assets/images/less_3_months.png" />,
         descripcion: "Menos de 3 meses",
         cantidad: processSummary.less_3_months,
-        percentage: processSummaryStats.less_3_months + "%",
+        percentage: `${processSummaryStats?.less_3_months >= 0 ? processSummaryStats?.less_3_months : "0.00"} %`,
       },
       {
         estado: <img src="assets/images/undefined.png" />,
         descripcion: "Indefinido",
         cantidad: processSummary.undefined,
-        percentage: processSummaryStats.undefined + "%",
+        percentage: `${processSummaryStats?.undefined >= 0 ? processSummaryStats?.undefined : "0.00"} %`,
       },
     ];
   }
@@ -282,6 +283,8 @@ const Home: NextPageWithLayout = () => {
     return <div></div>;
   }
 
+  const total = Object.values(processSummary).reduce((a: any, b: any) => a + b, 0) as number;
+
   return (
     <>
       <Head>
@@ -298,16 +301,18 @@ const Home: NextPageWithLayout = () => {
             </div>
             <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
             <div style={{ paddingLeft: "3rem", paddingRight: "3rem" }}>
-              <Doughnut data={dataFi} options={options} />
+              {total === 0 ? (
+                <Empty description="No hay datos disponibles" style={{ padding: "40px 0" }} />
+              ) : (
+                <Doughnut data={dataFi} options={options} />
+              )}
             </div>
             <br></br>
 
             <Table columns={columns_legend} dataSource={dataPie} pagination={false} />
 
             <br></br>
-            <div style={{ textAlign: "right" }}>
-              Total de registros: {Object.values(processSummary).reduce((a: any, b: any) => a + b, 0) as number}
-            </div>
+            <div style={{ textAlign: "right" }}>Total de registros: {total}</div>
           </div>
         </Card>
 
