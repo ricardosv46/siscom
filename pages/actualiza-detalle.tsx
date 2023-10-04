@@ -75,20 +75,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     return new Date(year, month - 1, day);
   }
 
-  // const fechax = toDate(dateEmi);
-
-  // Formatear la fecha en el formato deseado (opcional)
-  // // const fechaFormateada = format(fechax, "yyyy-MM-dd");
-  // const fechaParseada = parse(detailEmi?.start_at_dt, "EEE MMM dd yyyy HH:mm:ss 'GMT'XXX", new Date());
-  // console.log({ fechaParseada, detailEmi, dateEmiX }); // Fecha como instancia de Date
-
-  // Convierte la fecha parseada a un nuevo formato
-  // const dateEmi = format(fechaParseada, "dd MMM yyyy HH:mm:ss");
-  // console.log({ dateEmi }); // Fecha como instancia de Date
-  // // console.log({ fechaFormateada }); // Fecha formatea
-
-  // console.log({ dateEmi, detailEmi });
-
   useEffect(() => {
     getTypeDocumentsApi();
     getOrganizationsApi();
@@ -135,23 +121,9 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         mes = "12";
       }
 
-      /*if (start_at){
-          año = start_at.substring(13, 8)
-          mes = start_at.substring(4, 7)
-          dia = start_at.substring(1, 3)
-          
-          if (mes === "Ene") {mes = "01"} else if (mes === "Feb") {mes = "02"} else if (mes === "Mar") {mes = "03"}
-          else if (mes === "Abr") {mes = "04"} else if (mes === "May") {mes = "05"} else if (mes === "Jun") {mes = "06"}
-          else if (mes === "Jul") {mes = "07"} else if (mes === "Ago") {mes = "08"} else if (mes === "Set" || mes === "Sep") {mes = "09"}
-          else if (mes === "Oct") {mes = "10"} else if (mes === "Nov") {mes = "11"} else if (mes === "Dic") {mes = "12"}
-        }
-
-        start_atTMP = año + '-' + mes + '-' + dia + 'T00:00'
-        start_at = año + '-' + mes + '-' + dia + ' 00:00'*/
-
       setOperationSelectedOption(tracking_action);
-      const date = moment(itemprop?.created_at_dt);
-      // console.log({ date });
+      //const date = moment(itemprop?.created_at_dt);
+      const date = moment(itemprop?.start_at_dt);
       setFechaInicioInputValue(date);
       setGerenciaSelectedOption(current_responsible);
       setGerenciaAsignadaSelectedOption(new_responsible);
