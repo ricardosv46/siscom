@@ -35,6 +35,7 @@ import axios from "axios";
 import { utils, writeFile } from 'xlsx'
 
 import { GetAuthService } from 'services/auth/ServiceAuth';
+import { Modal } from "antd";
 
 const api = {
   login: async (body: any) => {
@@ -159,8 +160,13 @@ const api = {
           const response = resultApi.data;
 
           if (response){
-            console.log({response})
-            alert(response.message);
+            const instance = Modal.info({
+              content: response.message,
+              centered:true,
+              async onOk() {
+                instance.destroy();
+              }, });
+
             if (response.data.length > 0){
               let dataExcel = [];
               let headers: any[];
@@ -191,7 +197,12 @@ const api = {
             console.log("ssssss");
           }
         } catch (error) {
-          alert("Ocurrió un error al procesar el archivo!");
+          const instance = Modal.info({
+            content: "Ocurrió un error al procesar el archivo!",
+            centered:true,
+            async onOk() {
+              instance.destroy();
+            }, });
         }
         
         return {data: []}
@@ -209,7 +220,6 @@ const api = {
           }
 
         } catch(error) {
-          // alert("Ocurrió un error al guardar el registro!");
         }
         
       }
@@ -323,7 +333,12 @@ const api = {
           });
           
           if (response.status == 400 || response.data === undefined){
-            alert("No se encontraron documentos para descargar");
+            const instance = Modal.info({
+              content: 'No se encontraron documentos para descargar',
+              centered:true,
+              async onOk() {
+                instance.destroy();
+              }, });
           } else {
             const outputFilename = item?.dni_candidato.length > 0 ? `${item?.dni_candidato} ${item?.num_expediente}.zip` :  `${item?.num_expediente}.zip`
 

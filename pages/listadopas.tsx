@@ -199,7 +199,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       title: "Cargando",
       content: (
         <div>
-          <p>Espere mientras termine la descarga...</p>
+          <p>Espere mientras termine la carga...</p>
         </div>
       ),
       onOk() {},
@@ -235,6 +235,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             <p>El excel contiene registros de finalizaciones de procedimientos PAS. ¿Desea continuar?</p>
           </div>
         ),
+        okText: "Si",
+        cancelText: "No",
         async onOk() {
           const instance3 = Modal.info({
             title: "Cargando",
@@ -736,7 +738,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               <Radio value="OP">Organización Política</Radio>
             </Radio.Group>
           </div> */}
-          <div>
+          <div className="flex flex-col mb-5">
+            Por Fecha de inicio:
             <RangePicker locale={locale} onChange={onChangeDate} disabledDate={disabledDate} />
           </div>
           <div style={{ display: "flex" }}>
@@ -835,8 +838,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             title={<p style={{ textAlign: "center", fontWeight: "bold" }}>Documentos Anexos</p>}
             centered
             open={openAnexos}
+            okText="Cerrar"
+            cancelButtonProps={{ hidden: true }}
             onOk={() => setOpenAnexos(false)}
-            onCancel={() => setOpenAnexos(false)}
             okButtonProps={{ style: { backgroundColor: "#0874cc" }, className: "ant-btn-primary" }}
           >
             <tr>
@@ -1022,10 +1026,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             title={<p style={{ textAlign: "center", fontWeight: "bold" }}>Seguimiento de documento </p>}
             centered
             open={openTracking}
+            okText="Cerrar"
+            cancelButtonProps={{ hidden: true }}
             onOk={() => setOpenTracking(false)}
-            onCancel={() => {
-              setOpenTracking(false);
-            }}
             okButtonProps={{ style: { backgroundColor: "#0874cc" }, className: "ant-btn-primary" }}
           >
             <tr>

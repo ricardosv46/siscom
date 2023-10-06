@@ -96,24 +96,41 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
   const handleSubmit = async () => {
     if (operationSelectedOption == "notificado" && (!gerenciaSelectedOption || !fechaInicioInputValue)) {
-      alert("Por favor, ingrese los datos solicitados");
+      const instance = Modal.info({
+        content: "Por favor, ingrese los datos solicitados",
+        centered: true,
+        async onOk() {
+          instance.destroy();
+        },
+      });
       setConfirm(false);
       return;
     } else if (
       operationSelectedOption == "actualizado" &&
       (!gerenciaSelectedOption || !documentoRelacionadoinputValue || !tipoDocumentoSelectedOption || !fechaInicioInputValue)
     ) {
-      alert("Por favor, ingrese los datos solicitados");
+      const instance = Modal.info({
+        content: "Por favor, ingrese los datos solicitados",
+        centered: true,
+        async onOk() {
+          instance.destroy();
+        },
+      });
       setConfirm(false);
       return;
     } /*else if (
       operationSelectedOption == "finalizado" &&
       (!fechaInicioInputValue || !documentoRelacionadoinputValue || !tipoDocumentoSelectedOption)
     ) {
-      alert("Por favor, ingrese los datos solicitados");
       return;
     } */ else if (!operationSelectedOption) {
-      alert("Por favor, marque una operación");
+      const instance = Modal.info({
+        content: "Por favor, marque una operación",
+        centered: true,
+        async onOk() {
+          instance.destroy();
+        },
+      });
       setConfirm(false);
       return;
     }
@@ -151,12 +168,16 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
         //TODO: optimizar esto para que lo haga en el config del axios por default.
         if (!response.success) {
-          // alert(response.message);
           setConfirm(false);
-          // alert("Por favor, ingrese los datos solicitados");
         } else {
           limpiarDatos();
-          alert("El registro se procesó correctamente!!!");
+          const instance = Modal.info({
+            content: "El registro se procesó correctamente!!!",
+            centered: true,
+            async onOk() {
+              instance.destroy();
+            },
+          });
           setConfirm(false);
           formData.append("comment", "");
           formData.append("document", "");
@@ -175,7 +196,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       }
     } catch (error) {
       console.log(error);
-      //alert('Registro incorrecto!!!')
     }
     setConfirm(false);
   };
@@ -571,7 +591,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             Regresar
           </button>
         </div>
-        {/* s{showAlert && (<div style={{color:'#fff', backgroundColor:'#f0ad4e', borderColor: '#eea236', borderRadius:'5px', marginTop:'10px', padding:'10px'}} role="alert">El registro del proceso se ha enviado correctamente.</div>)} */}
       </Card>
       <Modal
         bodyStyle={{

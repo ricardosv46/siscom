@@ -55,6 +55,9 @@ apiService.interceptors.response.use(
       return Promise.reject(error.response);
     } else {
       const instance = Modal.info({
+        width:500,
+        
+        bodyStyle:{padding:'35px 30px 35px 30px',},
         content: error.response.data.message,
         centered:true,
         async onOk() {
