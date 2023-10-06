@@ -235,6 +235,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             <p>El excel contiene registros de finalizaciones de procedimientos PAS. ¿Desea continuar?</p>
           </div>
         ),
+        okText: "Si",
+        cancelText: "No",
         async onOk() {
           const instance3 = Modal.info({
             title: "Cargando",
