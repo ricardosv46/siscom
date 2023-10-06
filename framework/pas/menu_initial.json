@@ -7,17 +7,27 @@
     "role":  "user"
   },
   {
-    "id": 4,
+    "id": 2,
     "key": "nuevoacceso",
     "icon": "UserOutlined",
     "label": "Nuevo acceso",
     "role":  "admin"
   },
   {
-    "id": 5,
+    "id": 3,
     "key": "listadoacceso",
     "icon": "KeyOutlined",
     "label": "Listado de accesos",
     "role":  "admin"
+  },
+  {
+    "id": 4,
+    "key": "estadistica",
+    "icon": "BarChartOutlined",
+    "label": "Estadística",
+    "role":  "admin"
   }
+
+
+  
 ]

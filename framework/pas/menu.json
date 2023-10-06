@@ -21,6 +21,13 @@
     "role":  "user"
   },
   {
+    "id": 6,
+    "key": "estadistica",
+    "icon": "BarChartOutlined",
+    "label": "Estadística",
+    "role":  "user"
+  },
+  {
     "id": 4,
     "key": "nuevoacceso",
     "icon": "UserOutlined",
@@ -34,4 +41,5 @@
     "label": "Listado de accesos",
     "role":  "admin"
   }
+  
 ]
