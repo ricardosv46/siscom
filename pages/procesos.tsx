@@ -59,6 +59,7 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
       });
       return;
     }
+    localStorage.setItem("IdSelectedYear", añoSelectedOption);
     changeStateSelectedProcess(procesoSelectedOption);
     router.push("/");
   };

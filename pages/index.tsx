@@ -88,7 +88,6 @@ const Home: NextPageWithLayout = () => {
     setProcessSummary(data);
     setProcessSummaryStats(dataStats);
   };
-  console.log({ processSummary, processSummaryStats });
 
   const canvas = useRef();
 
@@ -208,7 +207,6 @@ const Home: NextPageWithLayout = () => {
   if (processGrouped) {
     currentData = processGrouped.slice(startIndex, endIndex);
   }
-  console.log({ processSummaryStats });
 
   let dataPie;
   if (processSummary && processSummaryStats) {
@@ -309,7 +307,15 @@ const Home: NextPageWithLayout = () => {
             </div>
             <br></br>
 
-            <Table columns={columns_legend} dataSource={dataPie} pagination={false} />
+            <Table
+              columns={columns_legend}
+              dataSource={
+                new Date(localStorage.getItem("IdSelectedYear")!).valueOf() < new Date("2022").valueOf()
+                  ? dataPie
+                  : dataPie?.slice(0, dataPie.length - 1)
+              }
+              pagination={false}
+            />
 
             <br></br>
             <div style={{ textAlign: "right" }}>Total de registros: {total}</div>
