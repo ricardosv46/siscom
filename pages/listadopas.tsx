@@ -195,23 +195,45 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   };
 
   const loadExcelApi = async (excelFile: any) => {
-    const instance1 = Modal.info({
-      title: "Cargando",
+    const instanceProcesando = Modal.info({
+      title: "Procesando",
       content: (
         <div>
           <p>Espere mientras termine la carga...</p>
         </div>
       ),
-      onOk() {},
-      okButtonProps: { disabled: true, style: { backgroundColor: "#0874cc", display: "none" } },
+      okButtonProps: { hidden: true },
       centered: true,
     });
 
     const res = await api.listpas.validateFile({ excelFile, id: user.id });
 
-    instance1.destroy();
+    if (res?.data?.message === "1") {
+      instanceProcesando.destroy();
+      const instance = Modal.confirm({
+        icon: "",
+        content: (
+          <div>
+            <p>El excel contiene registros de finalizaciones de procedimientos PAS. ¿Desea continuar?</p>
+          </div>
+        ),
+        okText: "Si",
+        cancelText: "No",
+        async onOk() {
+          const result = await api.listpas.loadExcelInformation(excelFile);
+          processApi(IdSelectedProcess, "all");
+          instance.destroy();
+        },
+        async onCancel() {
+          instance.destroy();
+        },
+        okButtonProps: { style: { backgroundColor: "#0874cc" } },
+        centered: true,
+      });
+    }
 
     if (res?.data?.message === "2") {
+      instanceProcesando.destroy();
       const instance = Modal.info({
         icon: "",
         content: (
@@ -227,56 +249,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       });
     }
 
-    if (res?.data?.message === "1") {
-      const instance = Modal.confirm({
-        icon: "",
-        content: (
-          <div>
-            <p>El excel contiene registros de finalizaciones de procedimientos PAS. ¿Desea continuar?</p>
-          </div>
-        ),
-        okText: "Si",
-        cancelText: "No",
-        async onOk() {
-          const instance3 = Modal.info({
-            title: "Cargando",
-            content: (
-              <div>
-                <p>Espere mientras termine la descarga...</p>
-              </div>
-            ),
-            onOk() {},
-            okButtonProps: { disabled: true, style: { backgroundColor: "#0874cc", display: "none" } },
-            centered: true,
-          });
-
-          instance.destroy();
-          const result = await api.listpas.loadExcelInformation(excelFile);
-          processApi(IdSelectedProcess, "all");
-
-          instance3.destroy();
-        },
-        okButtonProps: { style: { backgroundColor: "#0874cc" } },
-        centered: true,
-      });
-    }
-
     if (res?.data?.message === "3") {
-      const instance4 = Modal.info({
-        title: "Cargando",
-        content: (
-          <div>
-            <p>Espere mientras termine la descarga...</p>
-          </div>
-        ),
-        onOk() {},
-        okButtonProps: { disabled: true, style: { backgroundColor: "#0874cc", display: "none" } },
-        centered: true,
-      });
-
       const result = await api.listpas.loadExcelInformation(excelFile);
       processApi(IdSelectedProcess, "all");
-      instance4.destroy();
+      instanceProcesando.destroy();
     }
   };
 
@@ -641,10 +617,13 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             <img style={{ marginRight: "10px" }} src="assets/images/less_3_months.png" />
             <label className="form-checkbottom">Menos de 3 meses</label>
           </div>
-          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-            <img style={{ marginRight: "10px" }} src="assets/images/undefined.png" />
-            <label className="form-checkbottom">Indefinido</label>
-          </div>
+
+          {new Date(localStorage.getItem("IdSelectedYear")!).valueOf() < new Date("2022").valueOf() && (
+            <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+              <img style={{ marginRight: "10px" }} src="assets/images/undefined.png" />
+              <label className="form-checkbottom">Indefinido</label>
+            </div>
+          )}
         </div>
         <br></br>
 
@@ -841,6 +820,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             okText="Cerrar"
             cancelButtonProps={{ hidden: true }}
             onOk={() => setOpenAnexos(false)}
+            onCancel={() => setOpenAnexos(false)}
             okButtonProps={{ style: { backgroundColor: "#0874cc" }, className: "ant-btn-primary" }}
           >
             <tr>
@@ -1029,6 +1009,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             okText="Cerrar"
             cancelButtonProps={{ hidden: true }}
             onOk={() => setOpenTracking(false)}
+            onCancel={() => setOpenTracking(false)}
             okButtonProps={{ style: { backgroundColor: "#0874cc" }, className: "ant-btn-primary" }}
           >
             <tr>

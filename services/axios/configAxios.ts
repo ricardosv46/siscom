@@ -53,7 +53,22 @@ apiService.interceptors.response.use(
       localStorage.removeItem("user");
       Router.push("/auth");
       return Promise.reject(error.response);
-    } else {
+    }
+    if (error.response.status === 413) {
+      const instance = Modal.info({
+        width:500,
+        
+        bodyStyle:{padding:'35px 30px 35px 30px',},
+        content: 'El archivo es muy grande',
+        centered:true,
+        async onOk() {
+          instance.destroy();
+        },
+      });
+
+      return Promise.reject(error.response);
+    }
+    else {
       const instance = Modal.info({
         width:500,
         
