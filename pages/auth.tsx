@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import IconOnpe from "@components/icons/IconOnpe";
 import Head from "next/head";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Modal } from "antd";
 import { useRouter } from "next/router";
 import { auth } from "@framework/types";
 import { useState, useEffect } from "react";
@@ -44,7 +44,13 @@ const Home = () => {
       }
     } catch (error) {
       setLoading(false);
-      alert("Usuario y/o contraseña inválido !!!");
+      const instance = Modal.info({
+        content: "Usuario y/o contraseña inválido !!!",
+        centered: true,
+        async onOk() {
+          instance.destroy();
+        },
+      });
     } finally {
       setTimeout(() => {
         setLoading(false);

@@ -7,7 +7,7 @@ import api from "@framework/api";
 import { useUI } from "@components/ui/context";
 import { useRouter } from "next/router";
 import "moment/locale/es";
-import { Button } from "antd";
+import { Button, Modal } from "antd";
 import useMenuStore from "store/menu/menu";
 
 interface ProcesosProps {
@@ -50,7 +50,13 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
 
   const onGotoList = () => {
     if (procesoSelectedOption === "" || añoSelectedOption === "") {
-      alert("Debe seleccionar un año y un Proceso Electoral !");
+      const instance = Modal.info({
+        content: "Debe seleccionar un año y un Proceso Electoral !",
+        centered: true,
+        async onOk() {
+          instance.destroy();
+        },
+      });
       return;
     }
     changeStateSelectedProcess(procesoSelectedOption);

@@ -149,7 +149,13 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     event.preventDefault();
 
     if (fechaInicioInputValue === "") {
-      alert("Por favor, ingrese la fecha");
+      const instance = Modal.info({
+        content: "Por favor, ingrese la fecha",
+        centered: true,
+        async onOk() {
+          instance.destroy();
+        },
+      });
       return;
     }
 
@@ -162,7 +168,14 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       documentoRelacionadoinputValue === document &&
       comentarioTextareaValue === comment
     ) {
-      alert("No se ha modificado la información");
+      const instance = Modal.info({
+        content: "No se ha modificado la información",
+        centered: true,
+        async onOk() {
+          instance.destroy();
+        },
+      });
+
       return;
     }
     const formData = new FormData();
@@ -190,10 +203,15 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         };
         const response = await apiService.put(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/tracking/${id}/edit/`, formData, reqInit);
         if (response.status === 400 && response.data.success === false) {
-          // alert(response.data.message);
         } else {
-          alert("El detalle se actualizó correctamente.");
-          goBack("/detallepas", { itemprop });
+          const instance = Modal.info({
+            content: "El detalle se actualizó correctamente.",
+            centered: true,
+            async onOk() {
+              goBack("/detallepas", { itemprop });
+              instance.destroy();
+            },
+          });
         }
       } catch (error) {
         console.log(error);
