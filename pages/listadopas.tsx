@@ -736,7 +736,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               <Radio value="OP">Organización Política</Radio>
             </Radio.Group>
           </div> */}
-          <div>
+          <div className="flex flex-col mb-5">
+            Por Fecha de inicio:
             <RangePicker locale={locale} onChange={onChangeDate} disabledDate={disabledDate} />
           </div>
           <div style={{ display: "flex" }}>
