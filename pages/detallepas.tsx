@@ -77,7 +77,6 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
   }, []);
 
   const detailEmi = detail?.filter((item) => item.tracking_action === "EMISION")[0];
-
   const getDetailInfo = async (id: number) => {
     const { processes } = await api.listpas.getProcessesByTracking(id);
     setDetail(processes);

@@ -168,12 +168,9 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     const formData = new FormData();
 
     if (fechaInicioInputValue !== "") {
-      const currentDate = moment(fechaInicioInputValue).format("YYYY-MM-DD"); // Formato de fecha: "2023-03-01"
-      const currentTime = moment(fechaInicioInputValue).format("HH:mm:ss");
+      const currentDate = moment(fechaInicioInputValue).format("YYYY-MM-DD HH:mm:ss"); // Formato de fecha: "2023-03-01"
 
-      const formattedDateTime = `${currentDate} ${currentTime}`; // Formato completo: "2023-03-01T00:00"
-
-      formData.append("start_at", formattedDateTime);
+      formData.append("start_at", currentDate);
     }
 
     const tok = GetTokenAuthService();
@@ -193,7 +190,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         };
         const response = await apiService.put(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/tracking/${id}/edit/`, formData, reqInit);
         if (response.status === 400 && response.data.success === false) {
-          alert(response.data.message);
+          // alert(response.data.message);
         } else {
           alert("El detalle se actualizó correctamente.");
           goBack("/detallepas", { itemprop });
@@ -236,30 +233,42 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     router.push({ pathname: page });
     const { estado, ...res } = props;
     const newDatos = { ...res };
-    console.log({ newDatos });
     history.pushState(newDatos, "", page);
   }
 
   const disabledDate = (current: any) => {
-    // disabledDate={(d) => !d || d.isAfter("2002-12-31") || d.isSameOrBefore("1960-01-01")}
-
-    const dateEmi = new Date(detailEmi?.start_at_dt);
-
-    // Deshabilita fechas fuera del rango de fechas permitidas
-    const isOutOfRange = !moment(current).isBetween(moment(dateEmi), moment(new Date()));
+    const date = moment(detailEmi?.start_at_dt).startOf("day");
+    const isOutOfRange = !moment(current).isBetween(date, moment());
     return isOutOfRange;
   };
 
   const disabledTime = (current: any) => {
-    const now = new Date();
-    const currentHour = now.getHours();
-    const currentMinute = now.getMinutes();
+    const now = moment();
+    const currentHour = now.hour();
+    const currentHourActive = current.hour();
+    const currentMinute = now.minute();
 
     // Si la fecha es hoy, deshabilita horas y minutos futuros
     if (current && current.isSame(now, "day")) {
+      if (currentHourActive === currentHour) {
+        return {
+          disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
+          disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute),
+        };
+      }
+
       return {
         disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
-        disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute),
+      };
+    }
+    const nowinit = moment(detailEmi?.start_at_dt);
+    const currentHourinit = nowinit.hour();
+    const currentMinuteinit = nowinit.minute();
+
+    if (current && current.isSame(nowinit, "day")) {
+      return {
+        disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHourinit),
+        disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinuteinit),
       };
     }
     return {};

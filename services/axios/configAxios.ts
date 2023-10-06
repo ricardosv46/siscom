@@ -33,15 +33,13 @@ apiService.interceptors.response.use(
       }
     }
 
-    console.log(response.status);
-
     return Promise.reject(response);
   },
   function (error) {
 
       if (error.code === 'ERR_NETWORK') {
         const instance = Modal.info({
-          content: html,
+          content: error.message,
           centered:true,
           async onOk() {
             instance.destroy();
@@ -57,7 +55,7 @@ apiService.interceptors.response.use(
       return Promise.reject(error.response);
     } else {
       const instance = Modal.info({
-        content: html,
+        content: error.response.data.message,
         centered:true,
         async onOk() {
           instance.destroy();

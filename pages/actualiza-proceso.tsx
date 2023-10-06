@@ -39,14 +39,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [resolucion_gerencial, setTesolucion_gerencial] = useState("");
   const [tipo, setTipo] = useState("");
   const [confirm, setConfirm] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  // const [newFormatFechaInicio, setNewFormatFechaInicio] = useState("");
-
-  // let id = "";
-  // let responsable_actual = "";
-  // let resolucion_gerencial = "";
-  // let tipo = "";
-  // let newFormatFechaInicio = "";
 
   const [item, setItem] = useState<IPropsItem>();
   const [dateEmi, setDateEmi] = useState<any>();
@@ -70,14 +62,12 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       const dataitems = await api.listpas.getProcessesByTracking(itemprop?.numero);
       const detailEmiUsers = dataitems.processes?.pop() as any;
       const detailEmiAdmin = dataitems.processes?.filter((item) => item.tracking_action === "EMISION")[0] as any;
-
       if (user?.is_admin) {
         const date = moment(detailEmiAdmin?.created_at_dt);
         setDateEmi(date);
         setFechaInicioInputValue(date);
       } else {
         const date = moment(detailEmiUsers?.start_at_dt);
-        setDateEmi(date);
         setFechaInicioInputValue(date);
       }
 
@@ -86,10 +76,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       setTesponsable_actual(itemprop?.responsable);
       setTesolucion_gerencial(itemprop?.resolution_number);
       setTipo(itemprop?.type);
-      // id = itemprop?.numero;
-      // responsable_actual = itemprop?.responsable;
-      // resolucion_gerencial = itemprop?.resolution_number;
-      // tipo = itemprop?.type;
     } else {
       router.push("/listadopas");
     }
@@ -145,12 +131,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     formData.set("resolution_number", resolucion_gerencial);
 
     if (fechaInicioInputValue !== "") {
-      const currentDate = moment(fechaInicioInputValue).format("YYYY-MM-DD"); // Formato de fecha: "2023-03-01"
-      const currentTime = moment(fechaInicioInputValue).format("HH:mm:ss");
-
-      const formattedDateTime = `${currentDate} ${currentTime}`; // Formato completo: "2023-03-01T00:00"
-
-      formData.set("start_at", formattedDateTime);
+      const currentDate = moment(fechaInicioInputValue).format("YYYY-MM-DD HH:mm:ss"); // Formato de fecha: "2023-03-01"
+      formData.set("start_at", currentDate);
     }
 
     formData.set("type_document", tipoDocumentoSelectedOption);
@@ -168,7 +150,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
         //TODO: optimizar esto para que lo haga en el config del axios por default.
         if (!response.success) {
-          alert(response.message);
+          // alert(response.message);
           setConfirm(false);
           // alert("Por favor, ingrese los datos solicitados");
         } else {
@@ -205,24 +187,9 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     setDocumentoRelacionadoinputValue(event.target.value);
   };
 
-  // const handleFechaInicioDateTimeChange = (value: any) => {
-  //   console.log({ value });
-  //   setFechaInicioInputValue(value);
-  // };
-
-  // const handleFechaInicioDateTimeChange = (value: moment.Moment | null, dateString: string) => {
-  //   console.log("Selected Time: ", value);
-  //   setFechaInicioInputValue(value ? value.toDate() : null); // Guarda la fecha seleccionada en el estado
-  // };
-
   const handleFechaInicioDateTimeChange = (value: any, dateString: any) => {
-    console.log("Selected Time: ", { value });
-
     setFechaInicioInputValue(value);
   };
-  /*const handleFechaFinDateTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFechaFinInputValue(event.target.value);
-  };*/
 
   const handleGerenciaSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setGerenciaSelectedOption(event.target.value);
@@ -264,25 +231,49 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   }
 
   const disabledDate = (current: any) => {
-    // disabledDate={(d) => !d || d.isAfter("2002-12-31") || d.isSameOrBefore("1960-01-01")}
-
-    // const dateEmision = new Date(dateEmi);
-
-    // Deshabilita fechas fuera del rango de fechas permitidas
-    const isOutOfRange = !moment(current).isBetween(moment(dateEmi), moment(new Date()));
+    // const fecha = moment(current).startOf("day");
+    // const fechaInicio = moment(dateEmi).startOf("day");
+    // const fechaFin = moment().startOf("day");
+    // const fechaInicioValido = fecha.isSame(fechaInicio) || fecha.isAfter(fechaInicio);
+    // const fechaFinValido = fecha.isSame(fechaFin) || fecha.isBefore(fechaFin);
+    // const isValid = fechaInicioValido && fechaFinValido;
+    // return !isValid;
+    const date = moment(dateEmi).startOf("day");
+    const isOutOfRange = !moment(current).isBetween(date, moment());
     return isOutOfRange;
   };
 
   const disabledTime = (current: any) => {
-    const now = new Date();
-    const currentHour = now.getHours();
-    const currentMinute = now.getMinutes();
+    let now = moment();
+
+    const currentHour = now.hour();
+    const currentHourActive = current.hour();
+    const currentMinute = now.minute();
 
     // Si la fecha es hoy, deshabilita horas y minutos futuros
     if (current && current.isSame(now, "day")) {
+      if (currentHourActive === currentHour) {
+        return {
+          disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
+          disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute),
+        };
+      }
+
       return {
         disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
-        disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute),
+        // disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute),
+      };
+    }
+
+    let nowinit = moment(dateEmi);
+
+    const currentHourinit = nowinit.hour();
+    const currentMinuteinit = nowinit.minute();
+
+    if (current && current.isSame(nowinit, "day")) {
+      return {
+        disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHourinit),
+        disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinuteinit),
       };
     }
     return {};

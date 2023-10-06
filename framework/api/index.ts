@@ -209,7 +209,7 @@ const api = {
           }
 
         } catch(error) {
-          alert("Ocurrió un error al guardar el registro!");
+          // alert("Ocurrió un error al guardar el registro!");
         }
         
       }

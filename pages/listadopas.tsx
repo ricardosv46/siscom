@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Button, Space, Table, DatePicker, Modal, Radio, RadioChangeEvent, Select } from "antd";
+import { Button, Space, Table, DatePicker, Modal, Radio, RadioChangeEvent, Select, Tooltip } from "antd";
 import React, { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import { LayoutFirst } from "@components/common";
 import { NextPageWithLayout } from "pages/_app";
@@ -439,42 +439,39 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       dataIndex: "acciones",
       key: "acciones",
       render: (_: any, item: any) => (
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           {item.btnDisabled && <div className="w-[50px] h-[30px]"></div>}
 
-          <Button
-            hidden={item.btnDisabled}
-            style={{ height: "30px", width: "50px", color: "white", cursor: "pointer", fontSize: "1rem" }}
-            onClick={() => onGoDetail("/actualiza-proceso", { item })}
-          >
-            <img src="assets/images/editar.svg" />
-          </Button>
-          <Button
-            style={{ height: "30px", width: "50px", color: "white", cursor: "pointer", fontSize: "1rem" }}
-            onClick={() => onGoDetail("/detallepas", { item })}
-          >
-            <img src="assets/images/buscar.svg" />
-          </Button>
-          <Button
-            hidden={!item.sgd}
-            style={{ height: "30px", width: "50px", color: "white", cursor: "pointer", fontSize: "1rem" }}
-            onClick={() => DescargarDocumentos({ item })}
-          >
-            <img src="assets/images/descargar.svg" />
-          </Button>
+          {!item.btnDisabled && (
+            <Tooltip title="Agregar Registro">
+              <button className="cursor-pointer hover:opacity-50 w-10 h-8" onClick={() => onGoDetail("/actualiza-proceso", { item })}>
+                <img src="assets/images/btn_agregar_registros.png" />
+              </button>
+            </Tooltip>
+          )}
+          <Tooltip title="Historial de Registros">
+            <button className="cursor-pointer hover:opacity-50 w-10 h-8" onClick={() => onGoDetail("/detallepas", { item })}>
+              <img src="assets/images/btn_historial.png" />
+            </button>
+          </Tooltip>
+          {item.sgd && (
+            <Tooltip title="Descargar documentos">
+              <button className="cursor-pointer hover:opacity-50 w-10 h-8" onClick={() => DescargarDocumentos({ item })}>
+                <img src="assets/images/btn_descargas.png" />
+              </button>
+            </Tooltip>
+          )}
           {!item.sgd && <div className="w-[50px] h-[30px]"></div>}
-          <Button
-            style={{ height: "30px", width: "50px", color: "white", cursor: "pointer", fontSize: "1rem" }}
-            onClick={() => getAnexos({ item })}
-          >
-            <img src="assets/images/anexos.svg" />
-          </Button>
-          <Button
-            style={{ height: "30px", width: "50px", color: "white", cursor: "pointer", fontSize: "1rem" }}
-            onClick={() => getTracking({ item })}
-          >
-            <img src="assets/images/hitos.svg" />
-          </Button>
+          <Tooltip title="Documentos anexos">
+            <button className="cursor-pointer hover:opacity-50 w-10 h-8" onClick={() => getAnexos({ item })}>
+              <img src="assets/images/btn_anexos.png" />
+            </button>
+          </Tooltip>
+          <Tooltip title="Seguimiento de documento">
+            <button className="cursor-pointer hover:opacity-50 w-10 h-8" onClick={() => getTracking({ item })}>
+              <img src="assets/images/btn_seguimiento.png" />
+            </button>
+          </Tooltip>
         </div>
       ),
     },
