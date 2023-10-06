@@ -247,7 +247,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     let now = moment();
 
     const currentHour = now.hour();
-    const currentHourActive = current.hour();
+    const currentHourActive = moment(current).hour();
     const currentMinute = now.minute();
 
     // Si la fecha es hoy, deshabilita horas y minutos futuros
