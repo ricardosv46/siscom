@@ -838,8 +838,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             title={<p style={{ textAlign: "center", fontWeight: "bold" }}>Documentos Anexos</p>}
             centered
             open={openAnexos}
+            okText="Cerrar"
+            cancelButtonProps={{ hidden: true }}
             onOk={() => setOpenAnexos(false)}
-            onCancel={() => setOpenAnexos(false)}
             okButtonProps={{ style: { backgroundColor: "#0874cc" }, className: "ant-btn-primary" }}
           >
             <tr>
@@ -1025,10 +1026,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             title={<p style={{ textAlign: "center", fontWeight: "bold" }}>Seguimiento de documento </p>}
             centered
             open={openTracking}
+            okText="Cerrar"
+            cancelButtonProps={{ hidden: true }}
             onOk={() => setOpenTracking(false)}
-            onCancel={() => {
-              setOpenTracking(false);
-            }}
             okButtonProps={{ style: { backgroundColor: "#0874cc" }, className: "ant-btn-primary" }}
           >
             <tr>
