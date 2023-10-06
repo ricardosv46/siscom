@@ -199,7 +199,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       title: "Cargando",
       content: (
         <div>
-          <p>Espere mientras termine la descarga...</p>
+          <p>Espere mientras termine la carga...</p>
         </div>
       ),
       onOk() {},
