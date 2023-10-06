@@ -68,6 +68,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         setFechaInicioInputValue(date);
       } else {
         const date = moment(detailEmiUsers?.start_at_dt);
+        setDateEmi(date);
         setFechaInicioInputValue(date);
       }
 
@@ -272,8 +273,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
     if (current && current.isSame(nowinit, "day")) {
       return {
-        disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHourinit),
-        disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinuteinit),
+        disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour < currentHourinit),
+        disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit),
       };
     }
     return {};

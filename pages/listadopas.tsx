@@ -440,7 +440,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       key: "acciones",
       render: (_: any, item: any) => (
         <div className="flex gap-2 items-center">
-          {item.btnDisabled && <div className="w-[50px] h-[30px]"></div>}
+          {item.btnDisabled && <div className="w-[40px] h-[20px]"></div>}
 
           {!item.btnDisabled && (
             <Tooltip title="Agregar Registro">
@@ -461,7 +461,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               </button>
             </Tooltip>
           )}
-          {!item.sgd && <div className="w-[50px] h-[30px]"></div>}
+          {!item.sgd && <div className="w-[40px] h-[20px]"></div>}
           <Tooltip title="Documentos anexos">
             <button className="cursor-pointer hover:opacity-50 w-10 h-8" onClick={() => getAnexos({ item })}>
               <img src="assets/images/btn_anexos.png" />
