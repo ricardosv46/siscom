@@ -22,7 +22,6 @@ import "react-resizable/css/styles.css"; // Importa los estilos de react-resizab
 
 moment.locale("es");
 const { RangePicker } = DatePicker;
-
 type IOptionFilter = 1 | 2 | 3;
 
 interface ListadopasProps {
@@ -78,6 +77,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [openTracking, setOpenTracking] = useState(false);
   const [dataTracking, setDataTracking] = useState<ITracking[]>([]);
   const [dataTrackingDetail, setDataTrackingDetail] = useState<ITrackingDetail[]>([]);
+  console.log({ dataTrackingDetail });
 
   const processApi = async (IdSelectedProcess: any, label: any) => {
     const { processes } = await api.listpas.getProcesses(IdSelectedProcess, "all");
@@ -1092,6 +1092,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                               marginRight: "10px",
                               cursor: "pointer",
                             }}
+                            onClick={() => donwloadAnexosDetailPdf(item)}
                           >
                             <img src="assets/images/abrir_archivo.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
                             <span style={{ fontSize: "16px" }}>Abrir Documento</span>

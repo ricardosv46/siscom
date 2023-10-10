@@ -277,30 +277,39 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
   const disabledTime = (current: any) => {
     if (arrayNoti?.length > 0 && arrayNoti[0]?.id === itemprop?.id && itemprop.tracking_action === "NOTIFICACION") {
-      // const datefinish = moment(arrayNoti[1]?.start_at_dt);
       const nowFinish = moment(arrayNoti[1]?.start_at_dt);
-
+      const currentHourActive = moment(current).hour();
       const currentHourinit = nowFinish.hour();
       const currentMinuteinit = nowFinish.minute();
 
       if (current && current.isSame(nowFinish, "day")) {
+        if (currentHourActive === currentHourinit) {
+          return {
+            disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHourinit),
+            disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinuteinit),
+          };
+        }
         return {
           disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHourinit),
-          disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinuteinit),
         };
       }
     }
 
     if (arrayNoti?.length > 1 && itemprop.tracking_action === "NOTIFICACION") {
-      // const datefinish = moment(arrayNoti[1]?.start_at_dt);
       const nowInit = moment(arrayNoti[0]?.start_at_dt);
+      const currentHourActive = moment(current).hour();
       const currentHourinit = nowInit.hour();
       const currentMinuteinit = nowInit.minute();
 
       if (current && current.isSame(nowInit, "day")) {
+        if (currentHourActive === currentHourinit) {
+          return {
+            disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour < currentHourinit),
+            disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit),
+          };
+        }
         return {
-          disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHourinit),
-          disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinuteinit),
+          disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour < currentHourinit),
         };
       }
     }
