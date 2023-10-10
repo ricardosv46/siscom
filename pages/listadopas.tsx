@@ -1098,7 +1098,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                             <span style={{ fontSize: "16px" }}>Abrir Documento</span>
                           </Button>
                         </div>
-                        <div>
+                        {/* <div>
                           <Button
                             style={{
                               display: "flex",
@@ -1115,7 +1115,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                             <img src="assets/images/adjunto_1.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
                             <span style={{ fontSize: "16px" }}>Doc. Anexos</span>
                           </Button>
-                        </div>
+                        </div> */}
                       </div>
 
                       <div style={{ display: "flex", alignItems: "center" }}>
