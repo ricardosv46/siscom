@@ -309,6 +309,10 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     }
   };
 
+  const onPickerChange = (date: any, dateString: any) => {
+    console.log(date, dateString);
+  };
+
   return (
     <form onSubmit={openModal}>
       <Card title="Crear usuario">
@@ -531,6 +535,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 Fecha y hora:
               </label>
               <DatePicker
+                showNow={false}
                 showTime={{ format: "HH:mm" }}
                 value={fechaInicioInputValue}
                 onChange={handleFechaInicioDateTimeChange}
