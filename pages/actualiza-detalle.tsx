@@ -63,10 +63,12 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   };
   let itemprop: any;
   let detailEmi: any;
+  let arrayNoti: any;
 
   if (typeof window !== "undefined") {
     itemprop = history?.state?.item;
     detailEmi = history?.state?.detailEmi;
+    arrayNoti = history?.state?.arrayNoti;
   }
 
   function toDate(dateString: any) {
@@ -255,12 +257,54 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   }
 
   const disabledDate = (current: any) => {
+    if (arrayNoti?.length > 0 && arrayNoti[0]?.id === itemprop?.id && itemprop.tracking_action === "NOTIFICACION") {
+      const date = moment(detailEmi?.start_at_dt).startOf("day");
+      const datefinish = moment(arrayNoti[1]?.start_at_dt);
+      const isOutOfRange = !moment(current).isBetween(date, datefinish);
+      return isOutOfRange;
+    }
+
+    if (arrayNoti?.length > 1 && itemprop.tracking_action === "NOTIFICACION") {
+      const date = moment(arrayNoti[0]?.start_at_dt).startOf("day");
+      const isOutOfRange = !moment(current).isBetween(date, moment());
+      return isOutOfRange;
+    }
+
     const date = moment(detailEmi?.start_at_dt).startOf("day");
     const isOutOfRange = !moment(current).isBetween(date, moment());
     return isOutOfRange;
   };
 
   const disabledTime = (current: any) => {
+    if (arrayNoti?.length > 0 && arrayNoti[0]?.id === itemprop?.id && itemprop.tracking_action === "NOTIFICACION") {
+      // const datefinish = moment(arrayNoti[1]?.start_at_dt);
+      const nowFinish = moment(arrayNoti[1]?.start_at_dt);
+
+      const currentHourinit = nowFinish.hour();
+      const currentMinuteinit = nowFinish.minute();
+
+      if (current && current.isSame(nowFinish, "day")) {
+        return {
+          disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHourinit),
+          disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinuteinit),
+        };
+      }
+    }
+
+    if (arrayNoti?.length > 1 && itemprop.tracking_action === "NOTIFICACION") {
+      // const datefinish = moment(arrayNoti[1]?.start_at_dt);
+      const nowInit = moment(arrayNoti[0]?.start_at_dt);
+      const currentHourinit = nowInit.hour();
+      const currentMinuteinit = nowInit.minute();
+
+      if (current && current.isSame(nowInit, "day")) {
+        return {
+          disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHourinit),
+          disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinuteinit),
+        };
+      }
+    }
+
     const now = moment();
     const currentHour = now.hour();
     const currentHourActive = moment(current).hour();
@@ -279,6 +323,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
       };
     }
+
     const nowinit = moment(detailEmi?.start_at_dt);
     const currentHourinit = nowinit.hour();
     const currentMinuteinit = nowinit.minute();

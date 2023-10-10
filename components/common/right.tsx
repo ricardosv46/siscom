@@ -9,14 +9,14 @@ interface IProps {
   item: IDetailItem;
   idx: number;
   detailEmi: any;
+  arrayNoti: any;
 }
 
 const onGoDetail = (page: string, props: any) => {
-  console.log(page, props);
   router.push({ pathname: page });
   const { estado, ...res } = props.item;
   const newDatos = { item: { ...res } };
-  history.pushState({ detailEmi: props.detailEmi, ...newDatos }, "", page);
+  history.pushState({ arrayNoti: props.arrayNoti, detailEmi: props.detailEmi, ...newDatos }, "", page);
 };
 
 const RightCard: FC<IProps> = (props): ReactElement => {
@@ -36,7 +36,6 @@ const RightCard: FC<IProps> = (props): ReactElement => {
     register_user,
   } = item;
 
-  console.log({ props });
   return (
     <div className="mb-8 flex  justify-between items-center w-full right-timeline">
       <div className="order-1 w-5/12"></div>
@@ -67,7 +66,7 @@ const RightCard: FC<IProps> = (props): ReactElement => {
           type="dashed"
           hidden={idx === 0 || !user?.is_admin}
           icon={<EditOutlined />}
-          onClick={() => onGoDetail("/actualiza-detalle", { item, detailEmi: props.detailEmi })}
+          onClick={() => onGoDetail("/actualiza-detalle", { item, detailEmi: props.detailEmi, arrayNoti: props.arrayNoti })}
         >
           Editar
         </Button>

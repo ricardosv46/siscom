@@ -221,7 +221,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
         cancelText: "No",
         async onOk() {
           const result = await api.listpas.loadExcelInformation(excelFile);
-          processApi(IdSelectedProcess, "all");
+          const newData = await processApi(IdSelectedProcess, "all");
+          const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
+          setProcess(dataFilter);
           instance.destroy();
         },
         async onCancel() {
@@ -251,7 +253,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
     if (res?.data?.message === "3") {
       const result = await api.listpas.loadExcelInformation(excelFile);
-      processApi(IdSelectedProcess, "all");
+      const newData = await processApi(IdSelectedProcess, "all");
+      const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
+      setProcess(dataFilter);
       instanceProcesando.destroy();
     }
   };
@@ -495,8 +499,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     setProcess(dataFilter);
   };
 
-  console.log({ update: filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory }) });
-
   const handleChangeResponsable = (valueResponsabLe: string) => {
     setResponsable(valueResponsabLe);
 
@@ -514,15 +516,12 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       const newData = await processApi(IdSelectedProcess, label);
 
       const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
-      console.log({ filtro: dataFilter });
 
       setProcess(dataFilter);
-      //processApi(label);
     } else {
       const newData = await processApiByDate(IdSelectedProcess, label, start_at, end_at);
 
       const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
-      console.log({ filtro: dataFilter });
       setProcess(dataFilter);
     }
   }

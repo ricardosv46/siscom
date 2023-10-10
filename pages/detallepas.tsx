@@ -77,6 +77,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
   }, []);
 
   const detailEmi = detail?.filter((item) => item.tracking_action === "EMISION")[0];
+  const arrayNoti = detail?.filter((item) => item.tracking_action === "NOTIFICACION");
   const getDetailInfo = async (id: number) => {
     const { processes } = await api.listpas.getProcessesByTracking(id);
     setDetail(processes);
@@ -120,9 +121,9 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
             return (
               <>
                 {key % 2 === 0 ? (
-                  <LeftCard item={item} idx={key} detailEmi={detailEmi} />
+                  <LeftCard item={item} idx={key} detailEmi={detailEmi} arrayNoti={arrayNoti} />
                 ) : (
-                  <RightCard item={item} idx={key} detailEmi={detailEmi} />
+                  <RightCard item={item} idx={key} detailEmi={detailEmi} arrayNoti={arrayNoti} />
                 )}
               </>
             );
