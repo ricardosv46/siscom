@@ -415,6 +415,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             <DatePicker
               showTime={{ format: "HH:mm" }}
               value={fechaInicioInputValue}
+              showNow={false}
               onChange={handleFechaInicioDateTimeChange}
               disabledDate={disabledDate}
               disabledTime={disabledTime}
