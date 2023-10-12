@@ -22,7 +22,6 @@ import "react-resizable/css/styles.css"; // Importa los estilos de react-resizab
 
 moment.locale("es");
 const { RangePicker } = DatePicker;
-
 type IOptionFilter = 1 | 2 | 3;
 
 interface ListadopasProps {
@@ -78,6 +77,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [openTracking, setOpenTracking] = useState(false);
   const [dataTracking, setDataTracking] = useState<ITracking[]>([]);
   const [dataTrackingDetail, setDataTrackingDetail] = useState<ITrackingDetail[]>([]);
+  console.log({ dataTrackingDetail });
 
   const processApi = async (IdSelectedProcess: any, label: any) => {
     const { processes } = await api.listpas.getProcesses(IdSelectedProcess, "all");
@@ -195,23 +195,47 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   };
 
   const loadExcelApi = async (excelFile: any) => {
-    const instance1 = Modal.info({
-      title: "Cargando",
+    const instanceProcesando = Modal.info({
+      title: "Procesando",
       content: (
         <div>
           <p>Espere mientras termine la carga...</p>
         </div>
       ),
-      onOk() {},
-      okButtonProps: { disabled: true, style: { backgroundColor: "#0874cc", display: "none" } },
+      okButtonProps: { hidden: true },
       centered: true,
     });
 
     const res = await api.listpas.validateFile({ excelFile, id: user.id });
 
-    instance1.destroy();
+    if (res?.data?.message === "1") {
+      instanceProcesando.destroy();
+      const instance = Modal.confirm({
+        icon: "",
+        content: (
+          <div>
+            <p>El excel contiene registros de finalizaciones de procedimientos PAS. ¿Desea continuar?</p>
+          </div>
+        ),
+        okText: "Si",
+        cancelText: "No",
+        async onOk() {
+          const result = await api.listpas.loadExcelInformation(excelFile);
+          const newData = await processApi(IdSelectedProcess, "all");
+          const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
+          setProcess(dataFilter);
+          instance.destroy();
+        },
+        async onCancel() {
+          instance.destroy();
+        },
+        okButtonProps: { style: { backgroundColor: "#0874cc" } },
+        centered: true,
+      });
+    }
 
     if (res?.data?.message === "2") {
+      instanceProcesando.destroy();
       const instance = Modal.info({
         icon: "",
         content: (
@@ -227,56 +251,12 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       });
     }
 
-    if (res?.data?.message === "1") {
-      const instance = Modal.confirm({
-        icon: "",
-        content: (
-          <div>
-            <p>El excel contiene registros de finalizaciones de procedimientos PAS. ¿Desea continuar?</p>
-          </div>
-        ),
-        okText: "Si",
-        cancelText: "No",
-        async onOk() {
-          const instance3 = Modal.info({
-            title: "Cargando",
-            content: (
-              <div>
-                <p>Espere mientras termine la descarga...</p>
-              </div>
-            ),
-            onOk() {},
-            okButtonProps: { disabled: true, style: { backgroundColor: "#0874cc", display: "none" } },
-            centered: true,
-          });
-
-          instance.destroy();
-          const result = await api.listpas.loadExcelInformation(excelFile);
-          processApi(IdSelectedProcess, "all");
-
-          instance3.destroy();
-        },
-        okButtonProps: { style: { backgroundColor: "#0874cc" } },
-        centered: true,
-      });
-    }
-
     if (res?.data?.message === "3") {
-      const instance4 = Modal.info({
-        title: "Cargando",
-        content: (
-          <div>
-            <p>Espere mientras termine la descarga...</p>
-          </div>
-        ),
-        onOk() {},
-        okButtonProps: { disabled: true, style: { backgroundColor: "#0874cc", display: "none" } },
-        centered: true,
-      });
-
       const result = await api.listpas.loadExcelInformation(excelFile);
-      processApi(IdSelectedProcess, "all");
-      instance4.destroy();
+      const newData = await processApi(IdSelectedProcess, "all");
+      const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
+      setProcess(dataFilter);
+      instanceProcesando.destroy();
     }
   };
 
@@ -519,8 +499,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     setProcess(dataFilter);
   };
 
-  console.log({ update: filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory }) });
-
   const handleChangeResponsable = (valueResponsabLe: string) => {
     setResponsable(valueResponsabLe);
 
@@ -538,15 +516,12 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       const newData = await processApi(IdSelectedProcess, label);
 
       const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
-      console.log({ filtro: dataFilter });
 
       setProcess(dataFilter);
-      //processApi(label);
     } else {
       const newData = await processApiByDate(IdSelectedProcess, label, start_at, end_at);
 
       const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
-      console.log({ filtro: dataFilter });
       setProcess(dataFilter);
     }
   }
@@ -641,10 +616,13 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             <img style={{ marginRight: "10px" }} src="assets/images/less_3_months.png" />
             <label className="form-checkbottom">Menos de 3 meses</label>
           </div>
-          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-            <img style={{ marginRight: "10px" }} src="assets/images/undefined.png" />
-            <label className="form-checkbottom">Indefinido</label>
-          </div>
+
+          {new Date(localStorage.getItem("IdSelectedYear")!).valueOf() < new Date("2022").valueOf() && (
+            <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+              <img style={{ marginRight: "10px" }} src="assets/images/undefined.png" />
+              <label className="form-checkbottom">Indefinido</label>
+            </div>
+          )}
         </div>
         <br></br>
 
@@ -841,6 +819,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             okText="Cerrar"
             cancelButtonProps={{ hidden: true }}
             onOk={() => setOpenAnexos(false)}
+            onCancel={() => setOpenAnexos(false)}
             okButtonProps={{ style: { backgroundColor: "#0874cc" }, className: "ant-btn-primary" }}
           >
             <tr>
@@ -1029,6 +1008,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             okText="Cerrar"
             cancelButtonProps={{ hidden: true }}
             onOk={() => setOpenTracking(false)}
+            onCancel={() => setOpenTracking(false)}
             okButtonProps={{ style: { backgroundColor: "#0874cc" }, className: "ant-btn-primary" }}
           >
             <tr>
@@ -1112,12 +1092,13 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                               marginRight: "10px",
                               cursor: "pointer",
                             }}
+                            onClick={() => donwloadAnexosDetailPdf(item)}
                           >
                             <img src="assets/images/abrir_archivo.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
                             <span style={{ fontSize: "16px" }}>Abrir Documento</span>
                           </Button>
                         </div>
-                        <div>
+                        {/* <div>
                           <Button
                             style={{
                               display: "flex",
@@ -1134,7 +1115,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                             <img src="assets/images/adjunto_1.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
                             <span style={{ fontSize: "16px" }}>Doc. Anexos</span>
                           </Button>
-                        </div>
+                        </div> */}
                       </div>
 
                       <div style={{ display: "flex", alignItems: "center" }}>
