@@ -75,9 +75,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [dataAnexos, setDataAnexos] = useState<IAnexos[]>([]);
   const [dataAnexosDetail, setDataAnexosDetail] = useState<IAnexosDetail[]>([]);
   const [openTracking, setOpenTracking] = useState(false);
+  const [openTrackingAnexos, setOpenTrackingAnexos] = useState(false);
   const [dataTracking, setDataTracking] = useState<ITracking[]>([]);
   const [dataTrackingDetail, setDataTrackingDetail] = useState<ITrackingDetail[]>([]);
-  console.log({ dataTrackingDetail });
 
   const processApi = async (IdSelectedProcess: any, label: any) => {
     const { processes } = await api.listpas.getProcesses(IdSelectedProcess, "all");
@@ -116,7 +116,12 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       }))
       .filter((item) => item.value !== "");
 
-    setDataResponsable([{ value: "all", label: "Todos" }, ...uniqueArr, { value: "", label: "Sin Responsable" }]);
+    const newDataResponsable = [{ value: "all", label: "Todos" }, ...uniqueArr, { value: "", label: "Sin Responsable" }];
+    const newInfoRes =
+      new Date(localStorage.getItem("IdSelectedYear")!).valueOf() < new Date("2022").valueOf()
+        ? newDataResponsable
+        : newDataResponsable.slice(0, -1);
+    setDataResponsable(newInfoRes);
 
     let valuefilter: any = undefined;
     if (label === "all") {
@@ -148,7 +153,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       const dataFilter = newData?.filter((item: any) => {
         return item.estado_proceso === valuefilter;
       });
-      console.log({ dataFilter });
       setEstado(valuefilter);
       setProcess(dataFilter);
     } else {
@@ -194,6 +198,16 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     return newData;
   };
 
+  function assignUniqueIds(array: any[], parentUniqueId = "") {
+    return array.map((obj: any, index: number) => {
+      const uniqueId = `${parentUniqueId}-${index}`; // Genera un id único para este objeto
+
+      if (obj.references) {
+        obj.references = assignUniqueIds(obj.references, uniqueId); // Llama a la función recursivamente para los objetos referenciados
+      }
+      return { id: uniqueId, ...obj };
+    });
+  }
   const loadExcelApi = async (excelFile: any) => {
     const instanceProcesando = Modal.info({
       title: "Procesando",
@@ -290,7 +304,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     const newDatos = { item: { ...res } };
     const { success, tracking } = await api.listpas.getTracking(newDatos.item.numero);
     if (success) {
-      setDataTracking(tracking);
+      const newTrackings = assignUniqueIds(tracking);
+      setDataTracking(newTrackings);
       const { trackingDetail } = await api.listpas.getTrackingDetail(tracking[0].nu_ann, tracking[0].nu_emi);
       if (trackingDetail) {
         setDataTrackingDetail([{ ...trackingDetail[0], id: `${0}-${trackingDetail[0].id}` }]);
@@ -301,9 +316,15 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
   const getTrackingDetail = async (tracking: any) => {
     const { trackingDetail } = await api.listpas.getTrackingDetail(tracking.nu_ann, tracking.nu_emi);
-    console.log({ trackingDetail, nu: tracking.nu_ann, emi: tracking.nu_emi_ref, tracking });
     if (trackingDetail) {
       setDataTrackingDetail([{ id: tracking.id, ...trackingDetail[0] }]);
+    }
+  };
+
+  const getTrackingDetailAnexos = async (tracking: any) => {
+    const { trackingDetailAnexos } = await api.listpas.getTrackingDetailAnexos(tracking.nu_ann, tracking.nu_emi);
+    if (trackingDetailAnexos) {
+      console.log({ trackingDetailAnexos });
     }
   };
 
@@ -312,7 +333,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     const newDatos = { item: { ...res } };
     const { success, anexos } = await api.listpas.getAnexos(newDatos.item.numero);
     if (success) {
-      setDataAnexos(anexos);
+      const newAnexos = assignUniqueIds(anexos);
+      setDataAnexos(newAnexos);
       const { anexosDetail } = await api.listpas.getAnexosDetail(anexos[0].nu_ann, anexos[0].nu_emi_ref);
       if (anexosDetail) {
         setDataAnexosDetail([{ ...anexosDetail[0], id: `${0}-${anexosDetail[0].nro_doc}` }]);
@@ -325,7 +347,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     const { anexosDetail } = await api.listpas.getAnexosDetail(anexos.nu_ann, anexos.nu_emi_ref);
     if (anexosDetail) {
       setDataAnexosDetail([{ id: anexos.id, ...anexosDetail[0] }]);
-      console.log({ anexosDetail });
     }
   };
 
@@ -578,6 +599,44 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     return current && current > today;
   };
 
+  const optionsEstado = [
+    {
+      value: "",
+      label: "Todos",
+    },
+    {
+      value: "Por Iniciar",
+      label: "Por Iniciar",
+    },
+    {
+      value: "Fuera de fecha",
+      label: "Fuera de fecha",
+    },
+    {
+      value: "Finalizado",
+      label: "Finalizado",
+    },
+    {
+      value: "Mas de 6 meses",
+      label: "Mas de 6 meses",
+    },
+    {
+      value: "De 3 a 6 meses",
+      label: "De 3 a 6 meses",
+    },
+    {
+      value: "Menos de 3 meses",
+      label: "Menos de 3 meses",
+    },
+    {
+      value: "Indefinido",
+      label: "Indefinido",
+    },
+  ];
+
+  const dataOptionsSelect =
+    new Date(localStorage.getItem("IdSelectedYear")!).valueOf() < new Date("2022").valueOf() ? optionsEstado : optionsEstado.slice(0, -1);
+
   return (
     <>
       <Head>
@@ -633,46 +692,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
           <div className="flex flex-col mb-5">
             Por estado:
-            <Select
-              style={{ width: 150 }}
-              placeholder="Estado"
-              value={estado}
-              onChange={handleChangeEstado}
-              options={[
-                {
-                  value: "",
-                  label: "Todos",
-                },
-                {
-                  value: "Por Iniciar",
-                  label: "Por Iniciar",
-                },
-                {
-                  value: "Fuera de fecha",
-                  label: "Fuera de fecha",
-                },
-                {
-                  value: "Finalizado",
-                  label: "Finalizado",
-                },
-                {
-                  value: "Mas de 6 meses",
-                  label: "Mas de 6 meses",
-                },
-                {
-                  value: "De 3 a 6 meses",
-                  label: "De 3 a 6 meses",
-                },
-                {
-                  value: "Menos de 3 meses",
-                  label: "Menos de 3 meses",
-                },
-                {
-                  value: "Indefinido",
-                  label: "Indefinido",
-                },
-              ]}
-            />
+            <Select style={{ width: 150 }} placeholder="Estado" value={estado} onChange={handleChangeEstado} options={dataOptionsSelect} />
           </div>
 
           <div className="flex flex-col mb-5">
@@ -1031,6 +1051,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               </div>
             </tr>
             <br></br>
+
             {dataTrackingDetail?.length &&
               dataTrackingDetail.map((item: ITrackingDetail, index: number) => (
                 <>
@@ -1111,6 +1132,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                               marginRight: "10px",
                               cursor: "pointer",
                             }}
+                            onClick={() => {
+                              getTrackingDetailAnexos(item);
+                              setOpenTrackingAnexos(true);
+                            }}
                           >
                             <img src="assets/images/adjunto_1.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
                             <span style={{ fontSize: "16px" }}>Doc. Anexos</span>
@@ -1147,14 +1172,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                         <label style={{ color: "#083474", fontSize: "16px" }}>Destinatario</label>
                       </div>
 
-                      <div style={{ display: "flex", alignItems: "center" }}>
+                      {/* <div style={{ display: "flex", alignItems: "center" }}>
                         <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
                           <label style={{ fontSize: "16px" }}>Dependencia:</label>
                         </div>
                         <div style={{ display: "flex", alignItems: "center" }}>
                           <label style={{ fontSize: "16px" }}>{}</label>
                         </div>
-                      </div>
+                      </div> */}
 
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <div style={{ marginRight: "50px", display: "flex", alignItems: "center" }}>
@@ -1213,57 +1238,50 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           </Modal>
         )}
 
-        {/* <div className="container">
-          <Resizable
-            className="resizable-box"
-            width={200}
-            height={200}
-            minConstraints={[100, 100]} // Establece las dimensiones mínimas
-            maxConstraints={[400, 400]} // Establece las dimensiones máximas
+        {openTrackingAnexos && (
+          <Modal
+            bodyStyle={{
+              margin: 10,
+              overflow: "scroll",
+              height: 600,
+              whiteSpace: "nowrap",
+              resize: "both",
+              width: 1000,
+            }}
+            width={"auto"}
+            title={<p style={{ textAlign: "center", fontWeight: "bold" }}>Documentos Anexos</p>}
+            centered
+            open={openTrackingAnexos}
+            okText="Cerrar"
+            cancelButtonProps={{ hidden: true }}
+            onOk={() => setOpenTrackingAnexos(false)}
+            onCancel={() => setOpenTrackingAnexos(false)}
+            okButtonProps={{ style: { backgroundColor: "#0874cc" }, className: "ant-btn-primary" }}
           >
-            <div className="resizable-content">/div>
-          </Resizable>
-        </div>
-
-        <div className="container">
-          <Resizable className="resizable" width={200} height={200}>
-            <div className="resizable-content"></div>
-          </Resizable>
-          <style jsx>{`
-            .container {
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              height: 100vh;
-            }
-
-            .resizable {
-              border: 1px solid #000;
-              overflow: auto;
-            }
-
-            .resizable-content {
-              width: 100%;
-              height: 100%;
-            }
-          `}</style>
-        </div> */}
-
-        {/* <Modal
-          bodyStyle={{
-            margin: 10,
-            height: 50,
-          }}
-          title={<p style={{ textAlign: "center", fontWeight: "bold" }}>Cargando </p>}
-          centered
-          open={true}
-          // onOk={() => setLoadingReportePass(false)}
-          // onCancel={() => setLoadingReportePass(false)}
-          // okButtonProps={{ style: { backgroundColor: "#0874cc" }, className: "ant-btn-primary" }}
-          width={500}
-        >
-          <div>Cargando</div>
-        </Modal> */}
+            <table>
+              <thead>
+                <tr className="border">
+                  <th className="border border-black flex-1 pl-2 py-1.5 bg-[#5191c1] text-[#083474]">Descripción</th>
+                  <th className="border border-black flex-1 pl-2 py-1.5 bg-[#5191c1] text-[#083474]">Nombre de Anexo</th>
+                  <th className="border border-black w-28 pl-2 py-1.5 bg-[#5191c1] text-[#083474]">Opciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* {item?.docs?.map((i) => (
+                  <tr key={i.id_archivo} className="border">
+                    <td className="border pl-2 py-1">{i.de_det}</td>
+                    <td className="border pl-2 py-1">{i.de_rut_ori}</td>
+                    <td className="border pl-2 py-1">
+                      <button className="px-1 border rounded" onClick={() => donwloadAnexosDetail(i.id_archivo, i.de_rut_ori)}>
+                        <img src="assets/images/abrir.svg" alt="Abrir" />
+                      </button>
+                    </td>
+                  </tr>
+                ))} */}
+              </tbody>
+            </table>
+          </Modal>
+        )}
       </Card>
     </>
   );

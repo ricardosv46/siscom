@@ -402,6 +402,25 @@ const api = {
         return { trackingDetail: [] };
       }
     },
+
+    getTrackingDetailAnexos: async (año:any, id:any) => {
+      const tok =  GetTokenAuthService();
+      console.log({año,id});
+      if (tok) {
+        const {
+          data: { data, message, success },
+        }: any = await apiService.get(`processes/sgd/annexes/list/${año}/${id}/`);
+        if (data === undefined || success === undefined || message === undefined) {
+          return { trackingDetailAnexos: [] };
+        } else {
+          return { trackingDetailAnexos: data, message, success };
+        }
+        
+      } else {
+        return { trackingDetailAnexos: [] };
+      }
+    },
+
     getAnexosDetail: async (año:any, id:any) => {
       const tok =  GetTokenAuthService();
       if (tok) {

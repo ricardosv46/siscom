@@ -474,7 +474,10 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                     {responsable_actual !== "GAJ" && <option value="GAJ">Gerencia de Asesoría Jurídica</option>}
                     {responsable_actual !== "SG" && <option value="SG">Secretaría General</option>}
                     {responsable_actual !== "GSFP" && <option value="GSFP">Gerencia de Supervisión y Fondos Partidarios</option>}
-                    {responsable_actual !== "JN" && <option value="JN">Jefatura Nacional</option>}
+                    {(responsable_actual !== "JN" ||
+                      (tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && responsable_actual === "JN")) && (
+                      <option value="JN">Jefatura Nacional</option>
+                    )}
                   </>
                 )}
                 {user.is_admin && (
