@@ -582,10 +582,30 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       okButtonProps: { disabled: true, style: { backgroundColor: "#0874cc", display: "none" } },
       centered: true,
     });
+
     let dataExcel: any[] = [];
     process.map((item: any) => {
       dataExcel.push(item.numero);
     });
+
+    if (dataExcel?.length === 0) {
+      instance.destroy();
+
+      const excelVacio = Modal.info({
+        content: (
+          <div>
+            <p>No hay registros para descargar</p>
+          </div>
+        ),
+        centered: true,
+        onOk() {
+          excelVacio.destroy();
+        },
+      });
+
+      return;
+    }
+
     await api.listpas.downloadExcelInformation(dataExcel);
 
     instance.destroy();
