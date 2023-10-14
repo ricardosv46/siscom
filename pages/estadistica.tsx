@@ -68,7 +68,7 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
     return labels.map(() => Math.floor(Math.random() * 1000));
   };
 
-  const labels = ["January", "February", "March", "April", "May", "June", "July"];
+  const labels = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio"];
 
   const data = {
     labels,
@@ -137,7 +137,7 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
               />
               <path d="M21 28V21M21 14H21.0175" stroke="#0073CF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
-            <p className="text-[#003770] font-semibold">Reporte Generado: {dateInit?.format("M/D/YY h:mm a")}</p>
+            <p className="text-[#003770] font-semibold">Reporte Generado: {dateInit?.format("D/M/YY h:mm:ss a")}</p>
           </div>
           <Button
             color="#78bc44"
@@ -184,7 +184,9 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
           </div>
           <Card title="Listado de personal de ODPE" className="bg-white py-6 px-[33px] rounded-[15px] flex-1">
             <div className="flex-1">
-              <h2 className="text-[#2B3674] text-lg font-semibold">ETAPA INSTRUCTIVA - RESOLUTIVA : 15 896</h2>
+              <h2 className="text-[#2B3674] text-lg font-semibold">
+                ETAPA INSTRUCTIVA - RESOLUTIVA - <strong>RECURSIVA</strong> : 15 896
+              </h2>
               <hr style={{ marginTop: "10px", borderTop: "2px solid #A8CFEB" }} />
             </div>
             <div className=" flex gap-5">
