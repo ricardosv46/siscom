@@ -14,8 +14,7 @@ const TrackingItem = ({
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const paddingLeft = `${level + 14}px`;
-  const id = `${level}-${item.document}`;
-
+  const id = item.id;
   const toggleOpen = (e: any) => {
     e.stopPropagation();
 
@@ -27,8 +26,6 @@ const TrackingItem = ({
     getTrackingDetail({ id, ...item });
     // setIsOpen((prevState) => !prevState);
   };
-
-  console.log({ item: item.references });
 
   const isSelected = id === tackingDetail[0].id;
 
