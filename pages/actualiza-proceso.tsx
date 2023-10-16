@@ -16,6 +16,10 @@ import { format } from "date-fns";
 import useAuthStore from "store/auth/auth";
 import apiService from "services/axios/configAxios";
 import moment from "moment";
+import locale from "antd/es/date-picker/locale/es_ES";
+// import locale from "antd/es/date-picker/locale/es_ES";
+// import "moment/locale/es";
+// moment.locale("es");
 
 interface IPropsItem {
   actualizacion: string;
@@ -538,7 +542,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 Fecha y hora:
               </label>
               <DatePicker
-                showNow={false}
+                locale={locale}
                 showTime={{ format: "HH:mm" }}
                 value={fechaInicioInputValue}
                 onChange={handleFechaInicioDateTimeChange}

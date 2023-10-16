@@ -16,7 +16,7 @@ import { GetTokenAuthService } from "services/auth/ServiceAuth";
 import { parse, format } from "date-fns";
 import apiService from "services/axios/configAxios";
 import moment from "moment";
-
+import locale from "antd/es/date-picker/locale/es_ES";
 interface IPropsItem {
   id: string | number | null;
   resolution_number: string | null;
@@ -422,6 +422,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             )} */}
 
             <DatePicker
+              locale={locale}
               showTime={{ format: "HH:mm" }}
               value={fechaInicioInputValue}
               showNow={false}
