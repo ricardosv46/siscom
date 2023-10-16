@@ -809,7 +809,28 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                     okButtonProps: { disabled: true, style: { backgroundColor: "#0874cc", display: "none" } },
                     centered: true,
                   });
-                  ExportExcel(inputValue ? filterData : process);
+
+                  if (process?.length === 0) {
+                    instance.destroy();
+
+                    const excelVacio = Modal.info({
+                      content: (
+                        <div>
+                          <p>No hay registros para descargar</p>
+                        </div>
+                      ),
+                      centered: true,
+                      onOk() {
+                        excelVacio.destroy();
+                      },
+                    });
+
+                    return;
+                  }
+
+                  // ExportExcel(inputValue ? filterData : process);
+                  ExportExcel(process);
+
                   instance.destroy();
                 }}
               >
