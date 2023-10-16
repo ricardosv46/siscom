@@ -184,9 +184,7 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
           </div>
           <Card title="Listado de personal de ODPE" className="bg-white py-6 px-[33px] rounded-[15px] flex-1">
             <div className="flex-1">
-              <h2 className="text-[#2B3674] text-lg font-semibold">
-                ETAPA INSTRUCTIVA - RESOLUTIVA - <strong>RECURSIVA</strong> : 15 896
-              </h2>
+              <h2 className="text-[#2B3674] text-lg font-semibold">ETAPA INSTRUCTIVA - RESOLUTIVA - RECURSIVA : 15 896</h2>
               <hr style={{ marginTop: "10px", borderTop: "2px solid #A8CFEB" }} />
             </div>
             <div className=" flex gap-5">
