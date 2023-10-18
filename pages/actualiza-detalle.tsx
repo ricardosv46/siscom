@@ -305,7 +305,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         if (currentHourActive === currentHourinit) {
           return {
             disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour < currentHourinit),
-            disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit),
+            disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit+1),
           };
         }
         return {
