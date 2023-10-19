@@ -491,7 +491,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               </label>
               <input
                 type="text"
-                placeholder="Seleccione número de documento"
+                placeholder="Ingrese número de documento"
                 value={documentoRelacionadoinputValue}
                 onChange={handleInputChange}
                 maxLength={50}

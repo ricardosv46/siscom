@@ -485,7 +485,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               <label className="text-gray-600">Número de documento:</label>
               <input
                 type="text"
-                placeholder="Seleccione número de documento"
+                placeholder="Ingrese número de documento"
                 value={documentoRelacionadoinputValue}
                 onChange={handleInputChange}
                 className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
