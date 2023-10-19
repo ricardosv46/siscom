@@ -33,6 +33,7 @@ interface IPropsItem {
   type: string | null;
   estado_proceso: any;
   fecha_inicio_dt: any;
+  num_expediente: string;
 }
 
 //let newFormatFechaFin = "";
@@ -317,11 +318,12 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     console.log(date, dateString);
   };
 
+  const headrName = `${item?.name} - R.G. ${item?.resolution_number} - Exp. ${item?.num_expediente}`;
   return (
     <form onSubmit={openModal}>
       <Card title="Crear usuario">
         <div style={{ marginBottom: "0.4rem" }}>
-          <h2 style={{ fontSize: 25, color: "#4F5172" }}>{item?.name}</h2>
+          <h2 style={{ fontSize: 25, color: "#4F5172" }}>{headrName}</h2>
         </div>
         <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
         <div className="w-1/2 py-5">
@@ -485,11 +487,11 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label htmlFor="documento_relacionado" className="text-gray-600">
-                Documento relacionado:
+                Número de documento:
               </label>
               <input
                 type="text"
-                placeholder="Número de documento"
+                placeholder="Seleccione número de documento"
                 value={documentoRelacionadoinputValue}
                 onChange={handleInputChange}
                 maxLength={50}

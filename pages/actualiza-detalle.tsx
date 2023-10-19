@@ -28,6 +28,7 @@ interface IPropsItem {
   document: string | null;
   comment: string | null;
   created_at: string | null;
+  headerName: string;
 }
 
 let newFormatFechaInicio = "";
@@ -350,7 +351,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     <form onSubmit={handleSubmit}>
       <Card title="Crear usuario">
         <div style={{ marginBottom: "0.4rem" }}>
-          <h2 style={{ fontSize: 25, color: "#4F5172" }}>{item?.resolution_number}</h2>
+          <h2 style={{ fontSize: 25, color: "#4F5172" }}>{item?.headerName}</h2>
         </div>
         <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
 
@@ -481,10 +482,10 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         {operationSelectedOption !== "FINALIZACION" && operationSelectedOption !== "NOTIFICACION" && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
-              <label className="text-gray-600">Documento relacionado:</label>
+              <label className="text-gray-600">Número de documento:</label>
               <input
                 type="text"
-                placeholder="Número de documento"
+                placeholder="Seleccione número de documento"
                 value={documentoRelacionadoinputValue}
                 onChange={handleInputChange}
                 className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
