@@ -484,11 +484,27 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               <label className="text-gray-600">Documento relacionado:</label>
               <input
                 type="text"
-                placeholder="Ingrese número de documento"
+                placeholder="Número de documento"
                 value={documentoRelacionadoinputValue}
                 onChange={handleInputChange}
                 className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
               />
+            </div>
+          </div>
+        )}
+
+        {tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <label htmlFor="nuevo_responsable" className="text-gray-600">
+                Tipo de resolución jefatural:
+              </label>
+              <select className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}>
+                <option value="">Seleccione tipo de resolución jefatural</option>
+                <option value="sancion">Sanción</option>
+                <option value="nulidad">Nulidad</option>
+                <option value="archivo">Archivo</option>
+              </select>
             </div>
           </div>
         )}
