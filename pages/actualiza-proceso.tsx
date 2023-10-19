@@ -459,6 +459,47 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )*/}
 
+        {(operationSelectedOption === "actualizado" || operationSelectedOption === "observado") && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <label htmlFor="tipo_documento" className="text-gray-600">
+                Tipo de documento:
+              </label>
+              <select
+                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                value={tipoDocumentoSelectedOption}
+                onChange={handleTipoDocumentoSelectChange}
+              >
+                <option value="">Seleccione tipo de documento</option>
+                {options.map((item: any, index) => (
+                  <option value={item.name} key={index}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
+
+        {(operationSelectedOption === "actualizado" || operationSelectedOption === "observado") && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <label htmlFor="documento_relacionado" className="text-gray-600">
+                Documento relacionado:
+              </label>
+              <input
+                type="text"
+                placeholder="Ingrese número de documento"
+                value={documentoRelacionadoinputValue}
+                onChange={handleInputChange}
+                maxLength={50}
+                id="documento_relacionado"
+                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+              />
+            </div>
+          </div>
+        )}
+
         {(operationSelectedOption === "notificado" ||
           operationSelectedOption === "actualizado" ||
           operationSelectedOption === "observado") && (
@@ -496,45 +537,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </div>
           </div>
         )}
-        {(operationSelectedOption === "actualizado" || operationSelectedOption === "observado") && (
-          <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
-              <label htmlFor="documento_relacionado" className="text-gray-600">
-                Documento relacionado:
-              </label>
-              <input
-                type="text"
-                placeholder="Ingrese número de documento"
-                value={documentoRelacionadoinputValue}
-                onChange={handleInputChange}
-                maxLength={50}
-                id="documento_relacionado"
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-              />
-            </div>
-          </div>
-        )}
-        {(operationSelectedOption === "actualizado" || operationSelectedOption === "observado") && (
-          <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
-              <label htmlFor="tipo_documento" className="text-gray-600">
-                Tipo de documento:
-              </label>
-              <select
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-                value={tipoDocumentoSelectedOption}
-                onChange={handleTipoDocumentoSelectChange}
-              >
-                <option value="">Seleccione tipo de documento</option>
-                {options.map((item: any, index) => (
-                  <option value={item.name} key={index}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        )}
+
         {operationSelectedOption && operationSelectedOption !== "finalizado" && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">

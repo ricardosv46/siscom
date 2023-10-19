@@ -305,7 +305,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         if (currentHourActive === currentHourinit) {
           return {
             disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour < currentHourinit),
-            disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit+1),
+            disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit + 1),
           };
         }
         return {
@@ -456,25 +456,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
-        {operationSelectedOption !== "FINALIZACION" && (
-          <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
-              <label className="text-gray-600">Asignado a:</label>
-              <select
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-                value={gerenciaAsignadaSelectedOption}
-                onChange={handleGerenciaAsignadaSelectChange}
-              >
-                <option value="">Seleccione Gerencia</option>
-                {gerenciaOtions.map((item: any, index) => (
-                  <option value={item.code} key={index}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        )}
         {operationSelectedOption !== "FINALIZACION" && operationSelectedOption !== "NOTIFICACION" && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
@@ -489,6 +470,26 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 <option value="">Seleccione tipo de documento</option>
                 {options.map((item: any, index) => (
                   <option value={item.name} key={index}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
+
+        {operationSelectedOption !== "FINALIZACION" && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <label className="text-gray-600">Asignado a:</label>
+              <select
+                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                value={gerenciaAsignadaSelectedOption}
+                onChange={handleGerenciaAsignadaSelectChange}
+              >
+                <option value="">Seleccione Gerencia</option>
+                {gerenciaOtions.map((item: any, index) => (
+                  <option value={item.code} key={index}>
                     {item.name}
                   </option>
                 ))}
