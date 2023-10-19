@@ -478,6 +478,21 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
+        {operationSelectedOption !== "FINALIZACION" && operationSelectedOption !== "NOTIFICACION" && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <label className="text-gray-600">Documento relacionado:</label>
+              <input
+                type="text"
+                placeholder="Ingrese número de documento"
+                value={documentoRelacionadoinputValue}
+                onChange={handleInputChange}
+                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+              />
+            </div>
+          </div>
+        )}
+
         {operationSelectedOption !== "FINALIZACION" && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
@@ -494,21 +509,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                   </option>
                 ))}
               </select>
-            </div>
-          </div>
-        )}
-
-        {operationSelectedOption !== "FINALIZACION" && operationSelectedOption !== "NOTIFICACION" && (
-          <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
-              <label className="text-gray-600">Documento relacionado:</label>
-              <input
-                type="text"
-                placeholder="Ingrese número de documento"
-                value={documentoRelacionadoinputValue}
-                onChange={handleInputChange}
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-              />
             </div>
           </div>
         )}
