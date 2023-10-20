@@ -16,7 +16,7 @@ import { format } from "date-fns";
 import useAuthStore from "store/auth/auth";
 import apiService from "services/axios/configAxios";
 import moment from "moment";
-import locale from "antd/es/date-picker/locale/es_ES";
+import locale from "antd/lib/date-picker/locale/es_ES";
 // import locale from "antd/es/date-picker/locale/es_ES";
 // import "moment/locale/es";
 // moment.locale("es");
