@@ -494,7 +494,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
-        {tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && (
+        {tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && operationSelectedOption === "ACTUALIZACION" && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label htmlFor="nuevo_responsable" className="text-gray-600">
