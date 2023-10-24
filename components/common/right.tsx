@@ -5,8 +5,11 @@ import { IDetailItem } from "pages/detallepas";
 import React, { ReactElement, FC } from "react";
 import { GetAuthService } from "services/auth/ServiceAuth";
 
+interface IDetailItemName extends IDetailItem {
+  headerName: string;
+}
 interface IProps {
-  item: IDetailItem;
+  item: IDetailItemName;
   idx: number;
   detailEmi: any;
   arrayNoti: any;

@@ -501,6 +501,19 @@ const api = {
       }
     },
   },
+  estadistica:{
+    statsGeneral: async (proceso:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.get(`/stats/general/${proceso}/`);
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
+  }
 };
 
 export default api;

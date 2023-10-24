@@ -16,7 +16,7 @@ import { GetTokenAuthService } from "services/auth/ServiceAuth";
 import { parse, format } from "date-fns";
 import apiService from "services/axios/configAxios";
 import moment from "moment";
-import locale from "antd/es/date-picker/locale/es_ES";
+import locale from "antd/lib/date-picker/locale/es_ES";
 interface IPropsItem {
   id: string | number | null;
   resolution_number: string | null;
@@ -28,6 +28,7 @@ interface IPropsItem {
   document: string | null;
   comment: string | null;
   created_at: string | null;
+  headerName: string;
 }
 
 let newFormatFechaInicio = "";
@@ -305,7 +306,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         if (currentHourActive === currentHourinit) {
           return {
             disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour < currentHourinit),
-            disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit),
+            disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit + 1),
           };
         }
         return {
@@ -350,7 +351,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     <form onSubmit={handleSubmit}>
       <Card title="Crear usuario">
         <div style={{ marginBottom: "0.4rem" }}>
-          <h2 style={{ fontSize: 25, color: "#4F5172" }}>{item?.resolution_number}</h2>
+          <h2 style={{ fontSize: 25, color: "#4F5172" }}>{item?.headerName}</h2>
         </div>
         <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
 
@@ -456,25 +457,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
-        {operationSelectedOption !== "FINALIZACION" && (
-          <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
-              <label className="text-gray-600">Asignado a:</label>
-              <select
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-                value={gerenciaAsignadaSelectedOption}
-                onChange={handleGerenciaAsignadaSelectChange}
-              >
-                <option value="">Seleccione Gerencia</option>
-                {gerenciaOtions.map((item: any, index) => (
-                  <option value={item.code} key={index}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        )}
         {operationSelectedOption !== "FINALIZACION" && operationSelectedOption !== "NOTIFICACION" && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
@@ -500,7 +482,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         {operationSelectedOption !== "FINALIZACION" && operationSelectedOption !== "NOTIFICACION" && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
-              <label className="text-gray-600">Documento relacionado:</label>
+              <label className="text-gray-600">Número de documento:</label>
               <input
                 type="text"
                 placeholder="Ingrese número de documento"
@@ -508,6 +490,42 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 onChange={handleInputChange}
                 className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
               />
+            </div>
+          </div>
+        )}
+
+        {tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && operationSelectedOption === "ACTUALIZACION" && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <label htmlFor="nuevo_responsable" className="text-gray-600">
+                Tipo de resolución jefatural:
+              </label>
+              <select className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}>
+                <option value="">Seleccione tipo de resolución jefatural</option>
+                <option value="sancion">Sanción</option>
+                <option value="nulidad">Nulidad</option>
+                <option value="archivo">Archivo</option>
+              </select>
+            </div>
+          </div>
+        )}
+
+        {operationSelectedOption !== "FINALIZACION" && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <label className="text-gray-600">Asignado a:</label>
+              <select
+                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                value={gerenciaAsignadaSelectedOption}
+                onChange={handleGerenciaAsignadaSelectChange}
+              >
+                <option value="">Seleccione Gerencia</option>
+                {gerenciaOtions.map((item: any, index) => (
+                  <option value={item.code} key={index}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         )}
