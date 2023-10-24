@@ -16,7 +16,7 @@ const AnexoItem = ({
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const paddingLeft = `${level + 14}px`;
-  const id = `${level}-${item.document}`;
+  const id = item.id;
 
   const toggleOpen = () => {
     // getAnexosDetail({ id, ...item });

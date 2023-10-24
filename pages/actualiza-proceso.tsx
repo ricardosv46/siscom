@@ -16,6 +16,10 @@ import { format } from "date-fns";
 import useAuthStore from "store/auth/auth";
 import apiService from "services/axios/configAxios";
 import moment from "moment";
+import locale from "antd/lib/date-picker/locale/es_ES";
+// import locale from "antd/es/date-picker/locale/es_ES";
+// import "moment/locale/es";
+// moment.locale("es");
 
 interface IPropsItem {
   actualizacion: string;
@@ -29,6 +33,7 @@ interface IPropsItem {
   type: string | null;
   estado_proceso: any;
   fecha_inicio_dt: any;
+  num_expediente: string;
 }
 
 //let newFormatFechaFin = "";
@@ -313,11 +318,12 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     console.log(date, dateString);
   };
 
+  const headrName = `${item?.name} - R.G. ${item?.resolution_number} - Exp. ${item?.num_expediente}`;
   return (
     <form onSubmit={openModal}>
       <Card title="Crear usuario">
         <div style={{ marginBottom: "0.4rem" }}>
-          <h2 style={{ fontSize: 25, color: "#4F5172" }}>{item?.name}</h2>
+          <h2 style={{ fontSize: 25, color: "#4F5172" }}>{headrName}</h2>
         </div>
         <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
         <div className="w-1/2 py-5">
@@ -455,6 +461,63 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )*/}
 
+        {(operationSelectedOption === "actualizado" || operationSelectedOption === "observado") && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <label htmlFor="tipo_documento" className="text-gray-600">
+                Tipo de documento:
+              </label>
+              <select
+                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                value={tipoDocumentoSelectedOption}
+                onChange={handleTipoDocumentoSelectChange}
+              >
+                <option value="">Seleccione tipo de documento</option>
+                {options.map((item: any, index) => (
+                  <option value={item.name} key={index}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
+
+        {(operationSelectedOption === "actualizado" || operationSelectedOption === "observado") && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <label htmlFor="documento_relacionado" className="text-gray-600">
+                Número de documento:
+              </label>
+              <input
+                type="text"
+                placeholder="Ingrese número de documento"
+                value={documentoRelacionadoinputValue}
+                onChange={handleInputChange}
+                maxLength={50}
+                id="documento_relacionado"
+                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+              />
+            </div>
+          </div>
+        )}
+
+        {tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && operationSelectedOption === "actualizado" && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <label htmlFor="nuevo_responsable" className="text-gray-600">
+                Tipo de resolución jefatural:
+              </label>
+              <select className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}>
+                <option value="">Seleccione tipo de resolución jefatural</option>
+                <option value="sancion">Sanción</option>
+                <option value="nulidad">Nulidad</option>
+                <option value="archivo">Archivo</option>
+              </select>
+            </div>
+          </div>
+        )}
+
         {(operationSelectedOption === "notificado" ||
           operationSelectedOption === "actualizado" ||
           operationSelectedOption === "observado") && (
@@ -492,45 +555,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </div>
           </div>
         )}
-        {(operationSelectedOption === "actualizado" || operationSelectedOption === "observado") && (
-          <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
-              <label htmlFor="documento_relacionado" className="text-gray-600">
-                Documento relacionado:
-              </label>
-              <input
-                type="text"
-                placeholder="Ingrese número de documento"
-                value={documentoRelacionadoinputValue}
-                onChange={handleInputChange}
-                maxLength={50}
-                id="documento_relacionado"
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-              />
-            </div>
-          </div>
-        )}
-        {(operationSelectedOption === "actualizado" || operationSelectedOption === "observado") && (
-          <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
-              <label htmlFor="tipo_documento" className="text-gray-600">
-                Tipo de documento:
-              </label>
-              <select
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-                value={tipoDocumentoSelectedOption}
-                onChange={handleTipoDocumentoSelectChange}
-              >
-                <option value="">Seleccione tipo de documento</option>
-                {options.map((item: any, index) => (
-                  <option value={item.name} key={index}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        )}
+
         {operationSelectedOption && operationSelectedOption !== "finalizado" && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
@@ -538,7 +563,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 Fecha y hora:
               </label>
               <DatePicker
-                showNow={false}
+                locale={locale}
                 showTime={{ format: "HH:mm" }}
                 value={fechaInicioInputValue}
                 onChange={handleFechaInicioDateTimeChange}
