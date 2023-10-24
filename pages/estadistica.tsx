@@ -1,6 +1,6 @@
 import Head from "next/head";
-import { Button, Select } from "antd";
-import React, { ReactElement, useEffect, useRef, useState } from "react";
+import { Button, Select, Switch } from "antd";
+import React, { ReactElement, useEffect, useMemo, useRef, useState } from "react";
 import { LayoutFirst } from "@components/common";
 import { NextPageWithLayout } from "pages/_app";
 import { Card } from "@components/ui";
@@ -8,8 +8,9 @@ import "moment/locale/es";
 import "react-resizable/css/styles.css"; // Importa los estilos de react-resizable
 import { SearchOutlined } from "@ant-design/icons";
 import moment, { Moment } from "moment";
-import { Bar } from "react-chartjs-2";
+import { Bar, getElementAtEvent } from "react-chartjs-2";
 import { Chart as ChartJS, Legend, Title, Tooltip, BarElement, CategoryScale, LinearScale } from "chart.js";
+import api from "@framework/api";
 interface EstadisticaProps {
   pageNum: number;
   pageSize: number;
@@ -29,9 +30,77 @@ interface IPropsItem {
   estado_proceso: string | null;
   sgd: boolean;
 }
+
+type DataInfo = {
+  iniciado_rg: {
+    no_notificado: number;
+    notificado: {
+      con_rj: {
+        archivo: number;
+        nulidad: number;
+        sancion: number;
+        total: number;
+      };
+      en_proceso: {
+        instructiva: number;
+        resolutiva: number;
+        total: number;
+      };
+      fuera_plazo: number;
+      total: number;
+    };
+    total: number;
+  };
+  no_iniciado: number;
+};
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, total }) => {
   const [dateInit, setDateInit] = useState<Moment | null>(null);
+  const [dataInfo, setDatainfo] = useState<DataInfo>();
+  const [checkInteraction, setCheckInteraction] = useState(false);
+  const [valuesChart, setValuesChart] = useState<{ label: string; value: number }[]>([
+    { label: "Iniciado con RG", value: dataInfo?.iniciado_rg.total ?? 0 },
+    { label: "No iniciado", value: dataInfo?.no_iniciado ?? 0 },
+  ]);
+
+  const [valuesChartAll, setValuesChartAll] = useState<{ label: string; value: number }[]>([
+    { label: "RJ Sancion", value: dataInfo?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
+    { label: "RJ Archivo", value: dataInfo?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
+    { label: "RJ Nulidad", value: dataInfo?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
+    { label: "Fase Resolutiva", value: dataInfo?.iniciado_rg.notificado.en_proceso.resolutiva ?? 0 },
+    { label: "Fase Instructiva", value: dataInfo?.iniciado_rg.notificado.en_proceso.instructiva ?? 0 },
+    { label: "Fuera del plazo", value: dataInfo?.iniciado_rg.notificado.fuera_plazo ?? 0 },
+    { label: "Pendiente Notificar", value: dataInfo?.iniciado_rg.no_notificado ?? 0 },
+    { label: "No iniciado", value: dataInfo?.no_iniciado ?? 0 },
+  ]);
+
+  console.log({ valuesChartAll });
+  const [valuesChartType, setValuesChartType] = useState<string>("todos");
+
+  useEffect(() => {
+    const getStatsGeneral = async () => {
+      const proceso = localStorage.getItem("IdSelectedProcess")!;
+      const { data } = await api.estadistica.statsGeneral(proceso);
+      setDatainfo(data);
+      setValuesChart([
+        { label: "Iniciado con RG", value: data?.iniciado_rg.total ?? 0 },
+        { label: "No iniciado", value: data?.no_iniciado ?? 0 },
+      ]);
+
+      setValuesChartAll([
+        { label: "RJ Sancion", value: data?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
+        { label: "RJ Archivo", value: data?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
+        { label: "RJ Nulidad", value: data?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
+        { label: "Fase Resolutiva", value: data?.iniciado_rg.notificado.en_proceso.resolutiva ?? 0 },
+        { label: "Fase Instructiva", value: data?.iniciado_rg.notificado.en_proceso.instructiva ?? 0 },
+        { label: "Fuera del plazo", value: data?.iniciado_rg.notificado.fuera_plazo ?? 0 },
+        { label: "Pendiente Notificar", value: data?.iniciado_rg.no_notificado ?? 0 },
+        { label: "No iniciado", value: data?.no_iniciado ?? 0 },
+      ]);
+    };
+
+    getStatsGeneral();
+  }, []);
 
   const options = [
     {
@@ -63,24 +132,140 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
         display: false,
       },
     },
-  };
-  const generateRandomData = () => {
-    return labels.map(() => Math.floor(Math.random() * 1000));
+    onClick: (event: any, elements: any) => {
+      const index = elements[0]?.element.$context.index;
+
+      // const value = elements[0].element.$context.raw;
+
+      if (valuesChart.length === 2 && valuesChartType === "todos") {
+        // caso 2) {
+        // caso 1
+        if (index === 0) {
+          const newData = [
+            { label: "Notificados", value: dataInfo?.iniciado_rg.notificado.total ?? 0 },
+            { label: "Pendiente Notificar", value: dataInfo?.iniciado_rg.no_notificado ?? 0 },
+          ];
+
+          setValuesChart(newData);
+          setValuesChartType("iniciados");
+        }
+      }
+
+      if (valuesChart.length === 2 && valuesChartType === "iniciados") {
+        // caso 2
+        if (index === 0) {
+          const newData = [
+            { label: "RJ Emitida", value: dataInfo?.iniciado_rg.notificado.con_rj.total ?? 0 },
+            { label: "En proceso", value: dataInfo?.iniciado_rg.notificado.en_proceso.total ?? 0 },
+            { label: "Fuera del plazo", value: dataInfo?.iniciado_rg.notificado.fuera_plazo ?? 0 },
+          ];
+          setValuesChart(newData);
+          setValuesChartType("notificados");
+        }
+      }
+
+      if (valuesChartType === "plazo") {
+        return null;
+      }
+      if (valuesChartType === "proceso") {
+        return null;
+      }
+      if (valuesChartType === "rj") {
+        return null;
+      }
+
+      if (valuesChart.length === 3 && valuesChartType === "notificados") {
+        // caso 3
+        if (index === 0) {
+          const newData = [
+            { label: "RJ Sancion", value: dataInfo?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
+            { label: "RJ Archivo", value: dataInfo?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
+            { label: "RJ Nulidad", value: dataInfo?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
+          ];
+          setValuesChart(newData);
+          setValuesChartType("rj");
+        }
+        if (index === 1) {
+          const newData = [
+            { label: "Fase Resolutiva", value: dataInfo?.iniciado_rg.notificado.en_proceso.resolutiva ?? 0 },
+            { label: "Fase Instructiva", value: dataInfo?.iniciado_rg.notificado.en_proceso.instructiva ?? 0 },
+          ];
+          setValuesChart(newData);
+          setValuesChartType("proceso");
+        }
+      }
+      if (index === 2) {
+        const newData = [{ label: "Fuera del plazo", value: dataInfo?.iniciado_rg.notificado.fuera_plazo ?? 0 }];
+        setValuesChart(newData);
+        setValuesChartType("plazo");
+      }
+
+      // const clickedElementInfo = data.datasets[0].informacion[clickedElementIndex];
+
+      // Muestra la información en una alerta
+
+      return null;
+    },
   };
 
-  const labels = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio"];
+  const labels = useMemo(() => {
+    if (dataInfo) {
+      return valuesChart.map((item) => item.label);
+    }
+  }, [dataInfo, valuesChart]);
+
+  const datasets = useMemo(() => {
+    if (dataInfo) {
+      return valuesChart.map((item) => item.value);
+    }
+  }, [dataInfo, valuesChart]);
+
+  const labelsAll = useMemo(() => {
+    if (dataInfo) {
+      return valuesChartAll.map((item) => item.label);
+    }
+  }, [dataInfo, valuesChartAll]);
+
+  const datasetsAll = useMemo(() => {
+    if (dataInfo) {
+      return valuesChartAll.map((item) => item.value);
+    }
+  }, [dataInfo, valuesChartAll]);
 
   const data = {
     labels,
     datasets: [
       {
         label: "Dataset 1",
-        data: generateRandomData(),
-        backgroundColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#003770", "#FF6B38", "#FFFFFF"],
-        borderColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#003770", "#FF6B38", "#003770"],
+        data: datasets,
+        backgroundColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#E25266", "#000000", "#FF6B38", "#FFFFFF"],
+        borderColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#E25266", "#000000", "#FF6B38", "#003770"],
+        borderWidth: 1,
+        info: [],
+      },
+    ],
+  };
+
+  const dataAll = {
+    labels: labelsAll,
+    datasets: [
+      {
+        label: "Dataset 1",
+        data: datasetsAll,
+        backgroundColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#E25266", "#000000", "#FF6B38", "#FFFFFF"],
+        borderColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#E25266", "#000000", "#FF6B38", "#003770"],
         borderWidth: 1,
       },
     ],
+  };
+  console.log({ dataAll });
+  const options2 = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
   };
 
   return (
@@ -200,7 +385,7 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
                   <tbody>
                     <tr className="border-b border-[#BDBDBD] ">
                       <td className="pl-3 py-1.5">1. Iniciado con RG</td>
-                      <td className="text-center py-1.5">3896</td>
+                      <td className="text-center py-1.5">{dataInfo?.iniciado_rg.total}</td>
                       <td className="py-1.5"></td>
                     </tr>
                     <tr className="border-b border-[#BDBDBD] ">
@@ -215,32 +400,41 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
                     <tr className="border-b border-[#BDBDBD] ">
                       <td className="pl-14 py-1.5">
                         <ul className="list-disc">
-                          <li>Finalizado Sancionado</li>
+                          <li>RJ Emitida </li>
                         </ul>
                       </td>
-                      <td className="text-center py-1.5">1000</td>
+                      <td className="text-center py-1.5">{dataInfo?.iniciado_rg.notificado.con_rj.total}</td>
+                      <td className="py-1.5"></td>
+                    </tr>
+                    <tr className="border-b border-[#BDBDBD] ">
+                      <td className="pl-20 py-1.5">
+                        <ul className="list-disc">
+                          <li>RJ Sancion</li>
+                        </ul>
+                      </td>
+                      <td className="text-center py-1.5">{dataInfo?.iniciado_rg.notificado.con_rj.sancion}</td>
                       <td className="py-1.5 text-center flex justify-center items-center">
                         <div className="w-6 h-6 rounded-full bg-[#0073CF]"></div>
                       </td>
                     </tr>
                     <tr className="border-b border-[#BDBDBD] ">
-                      <td className="pl-14 py-1.5">
+                      <td className="pl-20 py-1.5">
                         <ul className="list-disc">
-                          <li>Finalizado Archivado</li>
+                          <li>RJ Archivo</li>
                         </ul>
                       </td>
-                      <td className="text-center py-1.5">1000</td>
+                      <td className="text-center py-1.5">{dataInfo?.iniciado_rg.notificado.con_rj.archivo}</td>
                       <td className="py-1.5 text-center flex justify-center items-center">
                         <div className="w-6 h-6 rounded-full bg-[#9B51E0]"></div>
                       </td>
                     </tr>
                     <tr className="border-b border-[#BDBDBD] ">
-                      <td className="pl-14 py-1.5">
+                      <td className="pl-20 py-1.5">
                         <ul className="list-disc">
-                          <li>Finalizado Nulidad</li>
+                          <li>RJ Nulidad</li>
                         </ul>
                       </td>
-                      <td className="text-center py-1.5">1000</td>
+                      <td className="text-center py-1.5">{dataInfo?.iniciado_rg.notificado.con_rj.nulidad}</td>
                       <td className="py-1.5 text-center flex justify-center items-center">
                         <div className="w-6 h-6 rounded-full bg-[#E3002B]"></div>
                       </td>
@@ -251,9 +445,29 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
                           <li>En proceso </li>
                         </ul>
                       </td>
-                      <td className="text-center py-1.5">1000</td>
+                      <td className="text-center py-1.5">{dataInfo?.iniciado_rg.notificado.en_proceso.total}</td>
+                      <td className="py-1.5"></td>
+                    </tr>
+                    <tr className="border-b border-[#BDBDBD] ">
+                      <td className="pl-20 py-1.5">
+                        <ul className="list-disc">
+                          <li>Fase Resolutiva</li>
+                        </ul>
+                      </td>
+                      <td className="text-center py-1.5">{dataInfo?.iniciado_rg.notificado.en_proceso.resolutiva}</td>
                       <td className="py-1.5 text-center flex justify-center items-center">
                         <div className="w-6 h-6 rounded-full bg-[#76BD43]"></div>
+                      </td>
+                    </tr>
+                    <tr className="border-b border-[#BDBDBD] ">
+                      <td className="pl-20 py-1.5">
+                        <ul className="list-disc">
+                          <li>Fase Instructiva</li>
+                        </ul>
+                      </td>
+                      <td className="text-center py-1.5">{dataInfo?.iniciado_rg.notificado.en_proceso.instructiva}</td>
+                      <td className="py-1.5 text-center flex justify-center items-center">
+                        <div className="w-6 h-6 rounded-full bg-[#E25266]"></div>
                       </td>
                     </tr>
                     <tr className="border-b border-[#BDBDBD] ">
@@ -262,7 +476,7 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
                           <li>Fuera del plazo</li>
                         </ul>
                       </td>
-                      <td className="text-center py-1.5">1000</td>
+                      <td className="text-center py-1.5">{dataInfo?.iniciado_rg.notificado.fuera_plazo}</td>
                       <td className="py-1.5 text-center flex justify-center items-center">
                         <div className="w-6 h-6 rounded-full bg-[#000000]"></div>
                       </td>
@@ -273,14 +487,14 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
                           <li>Pendiente Notificar</li>
                         </ul>
                       </td>
-                      <td className="text-center py-1.5">1000</td>
+                      <td className="text-center py-1.5">{dataInfo?.iniciado_rg.no_notificado}</td>
                       <td className="py-1.5 text-center flex justify-center items-center">
                         <div className="w-6 h-6 rounded-full bg-[#FF6B38]"></div>
                       </td>
                     </tr>
                     <tr className="border-b border-[#BDBDBD] ">
-                      <td className="pl-3 py-1.5">2. Por Iniciar</td>
-                      <td className="text-center py-1.5">3896</td>
+                      <td className="pl-3 py-1.5">2. No iniciado</td>
+                      <td className="text-center py-1.5">{dataInfo?.no_iniciado}</td>
                       <td className="py-1.5 text-center flex justify-center items-center">
                         <div className="w-6 h-6 rounded-full bg-[#FFF] border border-[#003770]"></div>
                       </td>
@@ -289,7 +503,17 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
                 </table>
               </div>
               <div className="flex-1 h-[350px]">
-                <Bar options={options1} data={data} />
+                <div className="my-5 flex justify-center">
+                  <div className="flex items-center flex-col gap-2">
+                    <p>Interaccion</p>
+                    <Switch
+                      defaultChecked={false}
+                      className={`${checkInteraction ? "bg-blue-500" : "bg-gray-300"}`}
+                      onChange={setCheckInteraction}
+                    />
+                  </div>
+                </div>
+                {checkInteraction ? <Bar options={options1} data={data} /> : <Bar options={options2} data={dataAll} />}
               </div>
             </div>
           </Card>
