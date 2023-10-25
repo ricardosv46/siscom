@@ -524,23 +524,23 @@ const api = {
         return { data: [] };
       }
     },
-    provincias: async (ubigeo:string) => {
+    provincias: async (ubigeos:string[],proceso:string) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
           data: { data },
-        }: any = await apiService.get(`/stats/provincias/${ubigeo}/`);
+        }: any = await apiService.post(`/stats/provincias/`,{departamentos:ubigeos,proceso_electoral:proceso});
         return { data };
       } else {
         return { data: [] };
       }
     },
-    distritos: async (ubigeo:string) => {
+    distritos: async (ubigeos:string[],proceso:string) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
           data: { data },
-        }: any = await apiService.get(`/stats/distritos/${ubigeo}/`);
+        }: any = await apiService.post(`/stats/distritos/`,{provincias:ubigeos,proceso_electoral:proceso});
         return { data };
       } else {
         return { data: [] };
