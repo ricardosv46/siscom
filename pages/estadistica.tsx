@@ -90,13 +90,16 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = () => {
 const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   const [dateInit, setDateInit] = useState<Moment | null>(null);
   const [dataInfo, setDatainfo] = useState<DataInfo>();
-  const [cargos, setCargos] = useState<{ label: string; value: number }[]>([]);
   const [departamentos, setDepartamentos] = useState<{ label: string; value: string }[]>([]);
   const [departamento, setDepartamento] = useState<string[]>([]);
   const [provincias, setProvincias] = useState<{ label: string; value: string }[]>([]);
   const [provincia, setProvincia] = useState<string[]>([]);
   const [distritos, setDistritos] = useState<{ label: string; value: string }[]>([]);
   const [distrito, setDistrito] = useState<string[]>([]);
+  const [cargos, setCargos] = useState<{ label: string; value: number }[]>([]);
+  const [cargo, setCargo] = useState<string[]>([]);
+  const [ops, setOps] = useState<{ label: string; value: number }[]>([]);
+  const [op, setOp] = useState<string[]>([]);
   const [checkInteraction, setCheckInteraction] = useState(false);
   const [valuesChart, setValuesChart] = useState<{ label: string; value: number }[]>([
     { label: "Iniciado con RG", value: dataInfo?.iniciado_rg.total ?? 0 },
@@ -213,6 +216,21 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
     console.log({ newData, distrito, distritos });
     setDistrito(newData);
   }, [departamento, provincias, provincia, distritos]);
+
+  useEffect(() => {
+    const getOps = async () => {
+      const proceso = localStorage.getItem("IdSelectedProcess")!;
+      const datadeps = (await api.estadistica.op(departamento, provincia, distrito, proceso)) as any;
+      const dataops = datadeps?.data?.map((item: any) => ({
+        value: item.id_op,
+        label: item.nombre_op,
+      }));
+      setOps(dataops);
+    };
+    if (departamento.length > 0) {
+      getOps();
+    }
+  }, [departamento, provincia, distrito]);
 
   useEffect(() => {
     setDateInit(moment());
@@ -407,10 +425,6 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
         </div>
 
         <div className="pt-8  pb-4 flex gap-[17px] w-full items-center">
-          <div className="flex flex-col  font-poppins">
-            <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Cargo</p>
-            <Select mode="multiple" style={{ minWidth: 200, maxWidth: 350 }} placeholder="Cargo" options={cargos} />
-          </div>
           <div className="flex flex-col ">
             <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Departamento</p>
             <Select
@@ -446,9 +460,29 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
               options={distritos?.length > 0 ? distritos : []}
             />
           </div>
+          <div className="flex flex-col  font-poppins">
+            <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Cargo</p>
+            <Select
+              mode="multiple"
+              value={cargo}
+              onChange={setCargo}
+              style={{ minWidth: 200, maxWidth: 350 }}
+              placeholder="Cargo"
+              disabled={departamento?.length === 0}
+              options={cargos}
+            />
+          </div>
           <div className="flex flex-col ">
             <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Org. Política</p>
-            <Select style={{ minWidth: 200, maxWidth: 350 }} placeholder="Org. Política" options={options} />
+            <Select
+              mode="multiple"
+              value={op}
+              onChange={setOp}
+              style={{ minWidth: 200, maxWidth: 350 }}
+              placeholder="Org. Política"
+              disabled={departamento?.length === 0}
+              options={ops?.length > 0 ? ops : []}
+            />
           </div>
           <div className="flex flex-col ">
             <Button className="flex justify-center items-center w-14 mt-8">
