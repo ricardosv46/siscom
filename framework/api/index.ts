@@ -513,6 +513,50 @@ const api = {
         return { data: [] };
       }
     },
+    departamentos: async (proceso:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.get(`/stats/departamentos/${proceso}/`);
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
+    provincias: async (ubigeo:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.get(`/stats/provincias/${ubigeo}/`);
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
+    distritos: async (ubigeo:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.get(`/stats/distritos/${ubigeo}/`);
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
+    cargos: async (proceso:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.get(`/stats/cargos/${proceso}/`);
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
   }
 };
 

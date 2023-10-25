@@ -57,6 +57,13 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, total }) => {
   const [dateInit, setDateInit] = useState<Moment | null>(null);
   const [dataInfo, setDatainfo] = useState<DataInfo>();
+  const [cargos, setCargos] = useState<{ label: string; value: number }[]>([]);
+  const [departamentos, setDepartamentos] = useState<{ label: string; value: number }[]>([]);
+  const [departamento, setDepartamento] = useState<string[]>([]);
+  const [provincias, setProvincias] = useState<{ label: string; value: number }[]>([]);
+  const [provincia, setProvincia] = useState<string[]>([]);
+  const [distritos, setDistritos] = useState<{ label: string; value: number }[]>([]);
+  const [distrito, setDistrito] = useState<string[]>([]);
   const [checkInteraction, setCheckInteraction] = useState(false);
   const [valuesChart, setValuesChart] = useState<{ label: string; value: number }[]>([
     { label: "Iniciado con RG", value: dataInfo?.iniciado_rg.total ?? 0 },
@@ -74,7 +81,6 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
     { label: "No iniciado", value: dataInfo?.no_iniciado ?? 0 },
   ]);
 
-  console.log({ valuesChartAll });
   const [valuesChartType, setValuesChartType] = useState<string>("todos");
 
   useEffect(() => {
@@ -97,6 +103,20 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
         { label: "Pendiente Notificar", value: data?.iniciado_rg.no_notificado ?? 0 },
         { label: "No iniciado", value: data?.no_iniciado ?? 0 },
       ]);
+
+      const datadeps = (await api.estadistica.departamentos(proceso)) as any;
+      const deps = datadeps?.data?.map((item: any) => ({
+        value: item.cod_ubigeo,
+        label: item.name_ubigeo,
+      }));
+      setDepartamentos(deps);
+
+      const datacargos = (await api.estadistica.cargos(proceso)) as any;
+      const crg = datacargos?.data?.map((item: any) => ({
+        value: item.id,
+        label: item.nombre_cargo,
+      }));
+      setCargos(crg);
     };
 
     getStatsGeneral();
@@ -116,6 +136,32 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
       label: "Valor2",
     },
   ];
+
+  useEffect(() => {
+    const getProvincias = async () => {
+      const datadeps = (await api.estadistica.provincias(departamento[0])) as any;
+      const deps = datadeps?.data?.map((item: any) => ({
+        value: item.cod_ubigeo,
+        label: item.name_ubigeo,
+      }));
+      setProvincias(deps);
+    };
+
+    getProvincias();
+  }, [departamento]);
+
+  useEffect(() => {
+    const getDistritos = async () => {
+      const datadeps = (await api.estadistica.distritos(provincia[0])) as any;
+      const deps = datadeps?.data?.map((item: any) => ({
+        value: item.cod_ubigeo,
+        label: item.name_ubigeo,
+      }));
+      setDistritos(deps);
+    };
+
+    getDistritos();
+  }, [provincia]);
 
   useEffect(() => {
     setDateInit(moment());
@@ -236,7 +282,7 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
     labels,
     datasets: [
       {
-        label: "Dataset 1",
+        label: "Cantidad",
         data: datasets,
         backgroundColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#E25266", "#000000", "#FF6B38", "#FFFFFF"],
         borderColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#E25266", "#000000", "#FF6B38", "#003770"],
@@ -250,7 +296,7 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
     labels: labelsAll,
     datasets: [
       {
-        label: "Dataset 1",
+        label: "Cantidad",
         data: datasetsAll,
         backgroundColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#E25266", "#000000", "#FF6B38", "#FFFFFF"],
         borderColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#E25266", "#000000", "#FF6B38", "#003770"],
@@ -258,7 +304,6 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
       },
     ],
   };
-  console.log({ dataAll });
   const options2 = {
     responsive: true,
     plugins: {
@@ -267,6 +312,14 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
       },
     },
   };
+
+  useEffect(() => {
+    setValuesChart([
+      { label: "Iniciado con RG", value: dataInfo?.iniciado_rg.total ?? 0 },
+      { label: "No iniciado", value: dataInfo?.no_iniciado ?? 0 },
+    ]);
+    setValuesChartType("todos");
+  }, [checkInteraction]);
 
   return (
     <>
@@ -285,23 +338,44 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = ({ pageNum, pageSize, 
           <div className="pt-8  pb-4 flex gap-[17px] w-full items-center">
             <div className="flex flex-col  font-poppins">
               <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Cargo</p>
-              <Select style={{ width: 160 }} placeholder="Cargo" options={options} />
+              <Select style={{ minWidth: 160 }} placeholder="Cargo" options={cargos} />
             </div>
             <div className="flex flex-col ">
               <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Departamento</p>
-              <Select style={{ width: 160 }} placeholder="Departamento" options={options} />
+              <Select
+                mode="multiple"
+                value={departamento}
+                onChange={setDepartamento}
+                style={{ minWidth: 160 }}
+                placeholder="Departamento"
+                options={departamentos}
+              />
             </div>
             <div className="flex flex-col ">
               <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Provincia</p>
-              <Select style={{ width: 160 }} placeholder="Provincia" options={options} />
+              <Select
+                mode="multiple"
+                value={provincia}
+                onChange={setProvincia}
+                style={{ minWidth: 160 }}
+                placeholder="Provincia"
+                disabled={departamento?.length === 0}
+                options={provincias?.length > 0 ? provincias : []}
+              />
             </div>
             <div className="flex flex-col ">
               <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Distrito</p>
-              <Select style={{ width: 160 }} placeholder="Distrito" options={options} />
+              <Select
+                mode="multiple"
+                style={{ minWidth: 160 }}
+                placeholder="Distrito"
+                disabled={provincia?.length === 0}
+                options={distritos?.length > 0 ? distritos : []}
+              />
             </div>
             <div className="flex flex-col ">
               <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Org. Política</p>
-              <Select style={{ width: 160 }} placeholder="Org. Política" options={options} />
+              <Select style={{ minWidth: 160 }} placeholder="Org. Política" options={options} />
             </div>
             <div className="flex flex-col ">
               <Button className="flex justify-center items-center w-14 mt-8">
