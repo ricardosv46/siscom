@@ -91,11 +91,11 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   const [dateInit, setDateInit] = useState<Moment | null>(null);
   const [dataInfo, setDatainfo] = useState<DataInfo>();
   const [cargos, setCargos] = useState<{ label: string; value: number }[]>([]);
-  const [departamentos, setDepartamentos] = useState<{ label: string; value: number }[]>([]);
+  const [departamentos, setDepartamentos] = useState<{ label: string; value: string }[]>([]);
   const [departamento, setDepartamento] = useState<string[]>([]);
-  const [provincias, setProvincias] = useState<{ label: string; value: number }[]>([]);
+  const [provincias, setProvincias] = useState<{ label: string; value: string }[]>([]);
   const [provincia, setProvincia] = useState<string[]>([]);
-  const [distritos, setDistritos] = useState<{ label: string; value: number }[]>([]);
+  const [distritos, setDistritos] = useState<{ label: string; value: string }[]>([]);
   const [distrito, setDistrito] = useState<string[]>([]);
   const [checkInteraction, setCheckInteraction] = useState(false);
   const [valuesChart, setValuesChart] = useState<{ label: string; value: number }[]>([
@@ -182,6 +182,8 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
     };
     if (departamento.length > 0) {
       getProvincias();
+    } else {
+      setProvincias([]);
     }
   }, [departamento]);
 
@@ -197,8 +199,20 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
     };
     if (provincia.length > 0) {
       getDistritos();
+    } else {
     }
   }, [provincia]);
+
+  useEffect(() => {
+    const newData = provincia.filter((ubigeo) => provincias.some((objeto) => objeto.value === ubigeo));
+    setProvincia(newData);
+  }, [departamento, provincias]);
+
+  useEffect(() => {
+    const newData = distrito.filter((ubigeo) => distritos.some((objeto) => objeto.value === ubigeo));
+    console.log({ newData, distrito, distritos });
+    setDistrito(newData);
+  }, [departamento, provincias, provincia, distritos]);
 
   useEffect(() => {
     setDateInit(moment());
@@ -424,6 +438,8 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
             <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Distrito</p>
             <Select
               mode="multiple"
+              value={distrito}
+              onChange={setDistrito}
               style={{ minWidth: 200, maxWidth: 350 }}
               placeholder="Distrito"
               disabled={provincia?.length === 0}
