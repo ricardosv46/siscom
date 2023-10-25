@@ -557,6 +557,17 @@ const api = {
         return { data: [] };
       }
     },
+    op: async (departamentos:string[],provincias:string[],distritos:string[],proceso:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.post(`/stats/op/`,{departamentos,provincias,distritos,proceso_electoral:proceso});
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
   }
 };
 
