@@ -91,7 +91,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   const [dateInit, setDateInit] = useState<Moment | null>(null);
   const [dataInfo, setDatainfo] = useState<DataInfo>();
   const [departamentos, setDepartamentos] = useState<{ label: string; value: string }[]>([]);
-  const [departamento, setDepartamento] = useState<string[]>(["100000"]);
+  const [departamento, setDepartamento] = useState<string[]>([]);
   const [provincias, setProvincias] = useState<{ label: string; value: string }[]>([]);
   const [provincia, setProvincia] = useState<string[]>([]);
   const [distritos, setDistritos] = useState<{ label: string; value: string }[]>([]);
@@ -122,7 +122,8 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   useEffect(() => {
     const getStatsGeneral = async () => {
       const proceso = localStorage.getItem("IdSelectedProcess")!;
-      const { data } = await api.estadistica.statsGeneral(departamento, provincia, distrito, cargo, op, proceso);
+
+      const { data } = await api.estadistica.statsGeneral(proceso);
       setDatainfo(data);
       setValuesChart([
         { label: "Iniciado con RG", value: data?.iniciado_rg.total ?? 0 },
@@ -172,6 +173,28 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
       label: "Valor2",
     },
   ];
+
+  const getDashboard = async () => {
+    const proceso = localStorage.getItem("IdSelectedProcess")!;
+
+    const { data } = await api.estadistica.statsGeneralFiltro(departamento, provincia, distrito, cargo, op, proceso);
+    setDatainfo(data);
+    setValuesChart([
+      { label: "Iniciado con RG", value: data?.iniciado_rg.total ?? 0 },
+      { label: "No iniciado", value: data?.no_iniciado ?? 0 },
+    ]);
+
+    setValuesChartAll([
+      { label: "RJ Sancion", value: data?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
+      { label: "RJ Archivo", value: data?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
+      { label: "RJ Nulidad", value: data?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
+      { label: "Fase Resolutiva", value: data?.iniciado_rg.notificado.en_proceso.resolutiva ?? 0 },
+      { label: "Fase Instructiva", value: data?.iniciado_rg.notificado.en_proceso.instructiva ?? 0 },
+      { label: "Fuera del plazo", value: data?.iniciado_rg.notificado.fuera_plazo ?? 0 },
+      { label: "Pendiente Notificar", value: data?.iniciado_rg.no_notificado ?? 0 },
+      { label: "No iniciado", value: data?.no_iniciado ?? 0 },
+    ]);
+  };
 
   useEffect(() => {
     const getProvincias = async () => {
@@ -485,7 +508,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
             />
           </div>
           <div className="flex flex-col ">
-            <Button className="flex justify-center items-center w-14 mt-8">
+            <Button className="flex justify-center items-center w-14 mt-8" onClick={getDashboard}>
               <SearchOutlined />
             </Button>
           </div>
