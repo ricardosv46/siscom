@@ -12,6 +12,7 @@ import { Bar, getElementAtEvent } from "react-chartjs-2";
 import { Chart as ChartJS, Legend, Title, Tooltip, BarElement, CategoryScale, LinearScale } from "chart.js";
 import api from "@framework/api";
 import { useReactToPrint } from "react-to-print";
+import { useRouter } from "next/router";
 interface EstadisticaProps {
   pageNum: number;
   pageSize: number;
@@ -88,6 +89,7 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = () => {
 };
 
 const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
+  const router = useRouter();
   const [dateInit, setDateInit] = useState<Moment | null>(null);
   const [dataInfo, setDatainfo] = useState<DataInfo>();
   const [departamentos, setDepartamentos] = useState<{ label: string; value: string }[]>([]);
@@ -303,7 +305,20 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
     setValuesChart(newData);
     setValuesChartType("plazo");
   };
+  const handleFilterListadoPas = (filter: string) => {
+    const proceso = localStorage.getItem("IdSelectedProcess")!;
 
+    const filters = JSON.stringify({
+      departamentos: departamento,
+      provincias: provincia,
+      distritos: distrito,
+      ops: op,
+      cargos: cargo,
+      proceso_electoral: proceso,
+      filter,
+    });
+    router.push(`/listadopas?filters=${filters}`);
+  };
   const options1 = {
     responsive: true,
     plugins: {
@@ -577,7 +592,9 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                 <tbody>
                   <tr className="border-b border-[#BDBDBD] ">
                     <td className="pl-3 py-1.5">1. Iniciado con RG</td>
-                    <td className="text-center py-1.5">{dataInfo?.iniciado_rg.total}</td>
+                    <td className="text-center py-1.5">
+                      <button onClick={() => handleFilterListadoPas("iniciado_rg")}>{dataInfo?.iniciado_rg.total}</button>
+                    </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
                       {checkInteraction && valuesChartType === "todos" ? (
                         <div className="w-6 h-6 rounded-full bg-[#0073CF]"></div>

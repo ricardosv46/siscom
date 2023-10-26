@@ -58,7 +58,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [memory, setMemory] = useState<any>();
   let inputValue: any | undefined;
   let filterData: any | undefined;
-  const [date, setDate] = useState({ from: "", to: "" });
+  const [date, setDate] = useState<any>();
   const { user } = useAuthStore();
   const profile = user.profile.toUpperCase();
   let label: string | string[] | undefined;
@@ -79,7 +79,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [dataTracking, setDataTracking] = useState<ITracking[]>([]);
   const [dataTrackingDetail, setDataTrackingDetail] = useState<ITrackingDetail[]>([]);
 
-  const processApi = async (IdSelectedProcess: any, label: any) => {
+  const processApi = async (IdSelectedProcess: any, label: any, filterBarras?: any) => {
+    if (filterBarras) {
+      const newInfo = await api.estadistica.listPas(filterBarras);
+      setProcess(newInfo?.data);
+      setMemory(newInfo?.data);
+      return;
+    }
+
     const { processes } = await api.listpas.getProcesses(IdSelectedProcess, "all");
 
     const statusImg: any = {
@@ -365,10 +372,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
   useEffect(() => {
     setIsCheckedTodos(true);
-    const labelIndex = router.query;
+    const labelIndex = router?.query;
+    const filters: any = router?.query?.filters;
+    console.log({ router: router.query });
+    const filtersParse = filters ? JSON.parse(filters) : null;
+    console.log({ filters, filtersParse });
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado;
     console.log({ IdSelectedProcess, label });
-    processApi(IdSelectedProcess, label);
+    processApi(IdSelectedProcess, label, filtersParse);
   }, [IdSelectedProcess]);
 
   // useEffect(() => {
@@ -654,6 +665,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     },
   ];
 
+  const clearFilters = async () => {
+    setDate("");
+    setOperationSelectedOption("");
+    setEstado("");
+    setSearch("");
+    setResponsable("all");
+    processApi(IdSelectedProcess, "all");
+  };
   const dataOptionsSelect =
     new Date(localStorage.getItem("IdSelectedYear")!).valueOf() < new Date("2022").valueOf() ? optionsEstado : optionsEstado.slice(0, -1);
 
@@ -707,7 +726,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
         <div className="py-10 border-b border-gray-200 pb-4 flex justify-between w-full items-center">
           <div>
-            <Input value={inputValue} onChange={(e) => onSearch(e.target.value)} placeholder="Buscar" prefix={<SearchOutlined />} />
+            <Input value={search} onChange={(e) => onSearch(e.target.value)} placeholder="Buscar" prefix={<SearchOutlined />} />
           </div>
 
           <div className="flex flex-col mb-5">
@@ -758,7 +777,30 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           </div> */}
           <div className="flex flex-col mb-5">
             Por Fecha de inicio:
-            <RangePicker locale={locale} onChange={onChangeDate} disabledDate={disabledDate} />
+            <RangePicker locale={locale} value={date} onChange={onChangeDate} disabledDate={disabledDate} />
+          </div>
+          <div style={{ display: "flex" }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              {
+                <Button
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "8px 8px",
+                    backgroundColor: "#083474",
+                    border: "none",
+                    color: "white",
+                    marginRight: "10px",
+                    cursor: "pointer",
+                  }}
+                  onClick={clearFilters}
+                >
+                  <span style={{ fontSize: "16px" }}>Limpiar Filtros</span>
+                </Button>
+              }
+              {filesContent.length == 1 && (processFile(plainFiles[0]) as any)}
+            </div>{" "}
           </div>
           <div style={{ display: "flex" }}>
             <div style={{ display: "flex", alignItems: "center" }}>
