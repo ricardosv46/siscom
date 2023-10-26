@@ -593,7 +593,9 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                   <tr className="border-b border-[#BDBDBD] ">
                     <td className="pl-3 py-1.5">1. Iniciado con RG</td>
                     <td className="text-center py-1.5">
-                      <button onClick={() => handleFilterListadoPas("iniciado_rg")}>{dataInfo?.iniciado_rg.total}</button>
+                      <button onClick={() => handleFilterListadoPas("iniciado_rg")} className="hover:underline">
+                        {dataInfo?.iniciado_rg.total}
+                      </button>
                     </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
                       {checkInteraction && valuesChartType === "todos" ? (
@@ -609,7 +611,11 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                         <li>Notificados</li>
                       </ul>
                     </td>
-                    <td className="text-center py-1.5">{dataInfo?.iniciado_rg.notificado.total}</td>
+                    <td className="text-center py-1.5">
+                      <button onClick={() => handleFilterListadoPas("notificado")} className="hover:underline">
+                        {dataInfo?.iniciado_rg.notificado.total}
+                      </button>
+                    </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
                       {checkInteraction && valuesChartType === "iniciados" ? (
                         <div className="w-6 h-6 rounded-full bg-[#0073CF]"></div>
@@ -624,7 +630,11 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                         <li>RJ Emitida </li>
                       </ul>
                     </td>
-                    <td className="text-center py-1.5">{dataInfo?.iniciado_rg.notificado.con_rj.total}</td>
+                    <td className="text-center py-1.5">
+                      <button onClick={() => handleFilterListadoPas("con_rj")} className="hover:underline">
+                        {dataInfo?.iniciado_rg.notificado.con_rj.total}
+                      </button>
+                    </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
                       {checkInteraction && valuesChartType === "notificados" ? (
                         <div className="w-6 h-6 rounded-full bg-[#0073CF]"></div>
@@ -639,7 +649,11 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                         <li>RJ Sancion</li>
                       </ul>
                     </td>
-                    <td className="text-center py-1.5">{dataInfo?.iniciado_rg.notificado.con_rj.sancion}</td>
+                    <td className="text-center py-1.5">
+                      <button onClick={() => handleFilterListadoPas("rj_sancion")} className="hover:underline">
+                        {dataInfo?.iniciado_rg.notificado.con_rj.sancion}
+                      </button>
+                    </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
                       {checkInteraction && valuesChartType === "rj" ? (
                         <div className="w-6 h-6 rounded-full bg-[#0073CF]"></div>
@@ -656,7 +670,11 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                         <li>RJ Archivo</li>
                       </ul>
                     </td>
-                    <td className="text-center py-1.5">{dataInfo?.iniciado_rg.notificado.con_rj.archivo}</td>
+                    <td className="text-center py-1.5">
+                      <button onClick={() => handleFilterListadoPas("rj_archivo")} className="hover:underline">
+                        {dataInfo?.iniciado_rg.notificado.con_rj.archivo}
+                      </button>
+                    </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
                       {checkInteraction && valuesChartType === "rj" ? (
                         <div className="w-6 h-6 rounded-full bg-[#9B51E0]"></div>
@@ -673,7 +691,11 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                         <li>RJ Nulidad</li>
                       </ul>
                     </td>
-                    <td className="text-center py-1.5">{dataInfo?.iniciado_rg.notificado.con_rj.nulidad}</td>
+                    <td className="text-center py-1.5">
+                      <button onClick={() => handleFilterListadoPas("rj_nulidad")} className="hover:underline">
+                        {dataInfo?.iniciado_rg.notificado.con_rj.nulidad}
+                      </button>
+                    </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
                       {checkInteraction && valuesChartType === "rj" ? (
                         <div className="w-6 h-6 rounded-full bg-[#E3002B]"></div>
@@ -690,7 +712,11 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                         <li>En proceso </li>
                       </ul>
                     </td>
-                    <td className="text-center py-1.5">{dataInfo?.iniciado_rg.notificado.en_proceso.total}</td>
+                    <td className="text-center py-1.5">
+                      <button onClick={() => handleFilterListadoPas("en_proceso")} className="hover:underline">
+                        {dataInfo?.iniciado_rg.notificado.en_proceso.total}
+                      </button>
+                    </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
                       {checkInteraction && valuesChartType === "notificados" ? (
                         <div className="w-6 h-6 rounded-full bg-[#9B51E0]"></div>
@@ -705,7 +731,11 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                         <li>Fase Resolutiva</li>
                       </ul>
                     </td>
-                    <td className="text-center py-1.5">{dataInfo?.iniciado_rg.notificado.en_proceso.resolutiva}</td>
+                    <td className="text-center py-1.5">
+                      <button onClick={() => handleFilterListadoPas("fase_resolutiva")} className="hover:underline">
+                        {dataInfo?.iniciado_rg.notificado.en_proceso.resolutiva}
+                      </button>
+                    </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
                       {checkInteraction && valuesChartType === "proceso" ? (
                         <div className="w-6 h-6 rounded-full bg-[#0073CF]"></div>
@@ -722,7 +752,11 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                         <li>Fase Instructiva</li>
                       </ul>
                     </td>
-                    <td className="text-center py-1.5">{dataInfo?.iniciado_rg.notificado.en_proceso.instructiva}</td>
+                    <td className="text-center py-1.5">
+                      <button onClick={() => handleFilterListadoPas("fase_instructiva")} className="hover:underline">
+                        {dataInfo?.iniciado_rg.notificado.en_proceso.instructiva}
+                      </button>
+                    </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
                       {checkInteraction && valuesChartType === "proceso" ? (
                         <div className="w-6 h-6 rounded-full bg-[#9B51E0]"></div>
@@ -739,7 +773,11 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                         <li>Fuera del plazo</li>
                       </ul>
                     </td>
-                    <td className="text-center py-1.5">{dataInfo?.iniciado_rg.notificado.fuera_plazo}</td>
+                    <td className="text-center py-1.5">
+                      <button onClick={() => handleFilterListadoPas("fuera_plazo")} className="hover:underline">
+                        {dataInfo?.iniciado_rg.notificado.fuera_plazo}
+                      </button>
+                    </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
                       {checkInteraction && valuesChartType === "notificados" ? (
                         <div className="w-6 h-6 rounded-full bg-[#E3002B]"></div>
@@ -756,7 +794,11 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                         <li>Pendiente Notificar</li>
                       </ul>
                     </td>
-                    <td className="text-center py-1.5">{dataInfo?.iniciado_rg.no_notificado}</td>
+                    <td className="text-center py-1.5">
+                      <button onClick={() => handleFilterListadoPas("no_notificado")} className="hover:underline">
+                        {dataInfo?.iniciado_rg.no_notificado}
+                      </button>
+                    </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
                       {checkInteraction && valuesChartType === "iniciados" ? (
                         <div className="w-6 h-6 rounded-full bg-[#9B51E0]"></div>
@@ -769,7 +811,11 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                   </tr>
                   <tr className="border-b border-[#BDBDBD] ">
                     <td className="pl-3 py-1.5">2. No iniciado</td>
-                    <td className="text-center py-1.5">{dataInfo?.no_iniciado}</td>
+                    <td className="text-center py-1.5">
+                      <button onClick={() => handleFilterListadoPas("no_iniciado")} className="hover:underline">
+                        {dataInfo?.no_iniciado}
+                      </button>
+                    </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
                       <td className="py-1.5 text-center flex justify-center items-center">
                         {checkInteraction && valuesChartType === "todos" ? (
