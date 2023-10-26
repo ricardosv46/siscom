@@ -91,7 +91,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   const [dateInit, setDateInit] = useState<Moment | null>(null);
   const [dataInfo, setDatainfo] = useState<DataInfo>();
   const [departamentos, setDepartamentos] = useState<{ label: string; value: string }[]>([]);
-  const [departamento, setDepartamento] = useState<string[]>([]);
+  const [departamento, setDepartamento] = useState<string[]>(["100000"]);
   const [provincias, setProvincias] = useState<{ label: string; value: string }[]>([]);
   const [provincia, setProvincia] = useState<string[]>([]);
   const [distritos, setDistritos] = useState<{ label: string; value: string }[]>([]);
@@ -122,7 +122,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   useEffect(() => {
     const getStatsGeneral = async () => {
       const proceso = localStorage.getItem("IdSelectedProcess")!;
-      const { data } = await api.estadistica.statsGeneral(proceso);
+      const { data } = await api.estadistica.statsGeneral(departamento, provincia, distrito, cargo, op, proceso);
       setDatainfo(data);
       setValuesChart([
         { label: "Iniciado con RG", value: data?.iniciado_rg.total ?? 0 },

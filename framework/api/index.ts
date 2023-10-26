@@ -502,12 +502,12 @@ const api = {
     },
   },
   estadistica:{
-    statsGeneral: async (proceso:string) => {
+    statsGeneral: async (departamentos:string[],provincias:string[],distritos:string[],cargos:string[],ops:string[],proceso:string) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
           data: { data },
-        }: any = await apiService.get(`/stats/general/${proceso}/`);
+        }: any = await apiService.post(`/stats/dashboard/`,{departamentos,provincias,distritos,ops,cargos,proceso_electoral:proceso});
         return { data };
       } else {
         return { data: [] };
