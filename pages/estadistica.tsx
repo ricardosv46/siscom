@@ -159,21 +159,6 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
     getStatsGeneral();
   }, []);
 
-  const options = [
-    {
-      value: "todos",
-      label: "Todos",
-    },
-    {
-      value: "valor1",
-      label: "Valor1",
-    },
-    {
-      value: "valor2",
-      label: "Valor2",
-    },
-  ];
-
   const getDashboard = async () => {
     const proceso = localStorage.getItem("IdSelectedProcess")!;
 
@@ -210,6 +195,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
       getProvincias();
     } else {
       setProvincias([]);
+      setDistritos([]);
     }
   }, [departamento]);
 
@@ -226,6 +212,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
     if (provincia.length > 0) {
       getDistritos();
     } else {
+      setDistritos([]);
     }
   }, [provincia]);
 
@@ -238,7 +225,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
     const newData = distrito.filter((ubigeo) => distritos.some((objeto) => objeto.value === ubigeo));
     console.log({ newData, distrito, distritos });
     setDistrito(newData);
-  }, [departamento, provincias, provincia, distritos]);
+  }, [departamento, provincia, distritos]);
 
   useEffect(() => {
     const getOps = async () => {
