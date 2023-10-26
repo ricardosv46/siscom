@@ -502,7 +502,18 @@ const api = {
     },
   },
   estadistica:{
-    statsGeneral: async (departamentos:string[],provincias:string[],distritos:string[],cargos:string[],ops:string[],proceso:string) => {
+    statsGeneral: async (proceso:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.get(`/stats/general/${proceso}/`);
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
+    statsGeneralFiltro: async (departamentos:string[],provincias:string[],distritos:string[],cargos:string[],ops:string[],proceso:string) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
