@@ -579,6 +579,17 @@ const api = {
         return { data: [] };
       }
     },
+    listPas: async ({departamentos,provincias,distritos,ops,cargos,proceso_electoral,filter}:{departamentos:string[],provincias:string[],distritos:string[],cargos:string[],ops:string[],proceso_electoral:string,filter:string}) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.post(`/processes/dashboard/listadopas/`,{departamentos,provincias,distritos,ops,cargos,proceso_electoral,filter});
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
   }
 };
 
