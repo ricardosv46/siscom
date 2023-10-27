@@ -80,13 +80,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [dataTrackingDetail, setDataTrackingDetail] = useState<ITrackingDetail[]>([]);
 
   const processApi = async (IdSelectedProcess: any, label: any, filterBarras?: any) => {
-    if (filterBarras) {
-      const newInfo = await api.estadistica.listPas(filterBarras);
-      setProcess(newInfo?.data);
-      setMemory(newInfo?.data);
-      return;
-    }
-
     const { processes } = await api.listpas.getProcesses(IdSelectedProcess, "all");
 
     const statusImg: any = {
@@ -154,6 +147,30 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     }
     if (label === "undefined") {
       valuefilter = "Indefinido";
+    }
+
+    if (filterBarras) {
+      const newInfo = await api.estadistica.listPas(filterBarras);
+
+      const newInfoList = newInfo?.data.map((item: any) => {
+        const { estado, responsable } = item;
+        if (responsable == profile || user.is_admin) {
+          return {
+            ...item,
+            btnDisabled: false,
+            estado: <img src={`assets/images/${statusImg[estado]}.png`} />,
+          };
+        } else {
+          return {
+            ...item,
+            btnDisabled: true,
+            estado: <img src={`assets/images/${statusImg[estado]}.png`} />,
+          };
+        }
+      });
+      setProcess(newInfoList);
+      setMemory(newInfoList);
+      return;
     }
 
     if (valuefilter) {
