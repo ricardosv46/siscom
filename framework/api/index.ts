@@ -584,7 +584,7 @@ const api = {
       if (tok) {
         const {
           data: { data },
-        }: any = await apiService.post(`/processes/dashboard/listadopas/`,{departamentos,provincias,distritos,ops,cargos,proceso_electoral,filter});
+        }: any = await apiService.post(`/processes/dashboard/listadopas/`,{departamentos,provincias,distritos,ops,cargos,proceso_electoral,filter,all_ubigeos:!(departamentos?.length > 0)});
         return { data };
       } else {
         return { data: [] };
