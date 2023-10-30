@@ -43,6 +43,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [responsable_actual, setTesponsable_actual] = useState("");
   const [resolucion_gerencial, setTesolucion_gerencial] = useState("");
   const [tipo, setTipo] = useState("");
+  const [rj_type, setRj_type] = useState("");
   const [confirm, setConfirm] = useState(false);
 
   const [item, setItem] = useState<IPropsItem>();
@@ -96,7 +97,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [gerenciaSelectedOption, setGerenciaSelectedOption] = useState("");
   const [gerenciaInicialSelectedOption, setGerenciaInicialSelectedOption] = useState("");
   const [comentarioTextareaValue, setComentarioTextareaValue] = useState("");
-
   const maxCaracteres = 250;
 
   const handleSubmit = async () => {
@@ -158,8 +158,13 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       formData.set("start_at", currentDate);
     }
 
+    if (tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && operationSelectedOption === "actualizado") {
+      formData.set("rj_type", rj_type);
+    }
+
     formData.set("type_document", tipoDocumentoSelectedOption);
     formData.set("type", tipo);
+
     formData.set("status", operationSelectedOption);
     //formData.append("fecha_fin", newFormatFechaFin);
     // setFormData(formData);
@@ -219,6 +224,10 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
   const handleGerenciaSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setGerenciaSelectedOption(event.target.value);
+  };
+
+  const handleRjType = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setRj_type(event.target.value);
   };
 
   const handleGerenciaInicialSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -508,7 +517,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               <label htmlFor="nuevo_responsable" className="text-gray-600">
                 Tipo de resolución jefatural:
               </label>
-              <select className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}>
+              <select className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"} value={rj_type} onChange={handleRjType}>
                 <option value="">Seleccione tipo de resolución jefatural</option>
                 <option value="sancion">Sanción</option>
                 <option value="nulidad">Nulidad</option>

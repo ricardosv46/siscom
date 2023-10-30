@@ -82,6 +82,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     getTypeDocumentsApi();
     getOrganizationsApi();
     if (itemprop) {
+      console.log({ itemprop });
       setItem(itemprop);
       id = itemprop?.id;
       resolution_number = itemprop?.resolution_number;
@@ -133,6 +134,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       setTipoDocumentoSelectedOption(related_document);
       setDocumentoRelacionadoinputValue(document);
       setComentarioTextareaValue(comment);
+      setRj_type(itemprop?.rj_type === null ? "" : itemprop?.rj_type);
     } else {
       router.push("/detallepas");
     }
@@ -147,7 +149,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [gerenciaSelectedOption, setGerenciaSelectedOption] = useState("");
   const [gerenciaAsignadaSelectedOption, setGerenciaAsignadaSelectedOption] = useState("");
   const [comentarioTextareaValue, setComentarioTextareaValue] = useState("");
-
+  const [rj_type, setRj_type] = useState("");
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -197,6 +199,11 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       formData.append("new_responsible", gerenciaAsignadaSelectedOption);
       formData.append("type_document", tipoDocumentoSelectedOption);
       formData.append("tracking_action", operationSelectedOption.toLowerCase());
+
+      if (tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && operationSelectedOption === "ACTUALIZACION") {
+        formData.append("rj_type", rj_type);
+      }
+
       try {
         const reqInit = {
           headers: {
@@ -249,6 +256,10 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
     setOperationSelectedOption(event.target.value);
   }
+
+  const handleRjType = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setRj_type(event.target.value);
+  };
 
   function goBack(page: string, props: any): void {
     router.push({ pathname: page });
@@ -500,7 +511,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               <label htmlFor="nuevo_responsable" className="text-gray-600">
                 Tipo de resolución jefatural:
               </label>
-              <select className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}>
+              <select className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"} value={rj_type} onChange={handleRjType}>
                 <option value="">Seleccione tipo de resolución jefatural</option>
                 <option value="sancion">Sanción</option>
                 <option value="nulidad">Nulidad</option>
