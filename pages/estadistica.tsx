@@ -109,7 +109,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   ]);
 
   const [valuesChartAll, setValuesChartAll] = useState<{ label: string; value: number }[]>([
-    { label: "RJ Sancion", value: dataInfo?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
+    { label: "RJ Sanción", value: dataInfo?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
     { label: "RJ Archivo", value: dataInfo?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
     { label: "RJ Nulidad", value: dataInfo?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
     { label: "Fase Resolutiva", value: dataInfo?.iniciado_rg.notificado.en_proceso.resolutiva ?? 0 },
@@ -133,7 +133,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
       ]);
 
       setValuesChartAll([
-        { label: "RJ Sancion", value: data?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
+        { label: "RJ Sanción", value: data?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
         { label: "RJ Archivo", value: data?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
         { label: "RJ Nulidad", value: data?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
         { label: "Fase Resolutiva", value: data?.iniciado_rg.notificado.en_proceso.resolutiva ?? 0 },
@@ -172,7 +172,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
     ]);
 
     setValuesChartAll([
-      { label: "RJ Sancion", value: data?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
+      { label: "RJ Sanción", value: data?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
       { label: "RJ Archivo", value: data?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
       { label: "RJ Nulidad", value: data?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
       { label: "Fase Resolutiva", value: data?.iniciado_rg.notificado.en_proceso.resolutiva ?? 0 },
@@ -284,7 +284,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
 
   const getRJ = () => {
     const newData = [
-      { label: "RJ Sancion", value: dataInfo?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
+      { label: "RJ Sanción", value: dataInfo?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
       { label: "RJ Archivo", value: dataInfo?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
       { label: "RJ Nulidad", value: dataInfo?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
     ];
@@ -646,7 +646,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                   <tr className="border-b border-[#BDBDBD] ">
                     <td className="pl-20 py-1.5">
                       <ul className="list-disc">
-                        <li>RJ Sancion</li>
+                        <li>RJ Sanción</li>
                       </ul>
                     </td>
                     <td className="text-center py-1.5">
@@ -834,7 +834,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
             <div className="flex-1 h-[350px]">
               <div className="my-5 mx-20 flex justify-between items-center">
                 <div className="flex items-center flex-col gap-2">
-                  <p>Interaccion</p>
+                  <p>Interacción</p>
                   <Switch
                     defaultChecked={false}
                     className={`${checkInteraction ? "bg-blue-500" : "bg-gray-300"}`}
@@ -857,7 +857,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                     onClick={handleBack}
                   >
                     <RollbackOutlined />
-                    Atras
+                    Atrás
                   </Button>
                 )}
               </div>
