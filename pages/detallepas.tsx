@@ -42,6 +42,7 @@ export interface IDetailItem {
   start_at: string;
   tracking_action: string;
   register_user: string;
+  rj_type: string;
 }
 
 const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, total }) => {
