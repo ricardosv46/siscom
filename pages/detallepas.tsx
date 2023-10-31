@@ -56,7 +56,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
   const [nombre, setNombre] = useState();
   const [resolucion_gerencial, setRG] = useState();
   const [headerName, setHeaderName] = useState("");
-
+  console.log({ detail });
   const router = useRouter();
 
   useEffect(() => {

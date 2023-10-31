@@ -395,7 +395,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     const filtersParse = filters ? JSON.parse(filters) : null;
     console.log({ filters, filtersParse });
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado;
-    console.log({ IdSelectedProcess, label });
     processApi(IdSelectedProcess, label, filtersParse);
   }, [IdSelectedProcess]);
 
@@ -816,7 +815,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                   <span style={{ fontSize: "16px" }}>Limpiar Filtros</span>
                 </Button>
               }
-              {filesContent.length == 1 && (processFile(plainFiles[0]) as any)}
             </div>{" "}
           </div>
           <div style={{ display: "flex" }}>

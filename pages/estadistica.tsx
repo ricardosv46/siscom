@@ -89,6 +89,22 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = () => {
 };
 
 const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
+  const valuesChartTodos = (valueinfo: any) => [
+    { label: "Iniciado con RG", value: valueinfo?.iniciado_rg.total ?? 0 },
+    { label: "No iniciado", value: valueinfo?.no_iniciado ?? 0 },
+  ];
+
+  const valuesChartAllTodos = (valueinfo: any) => [
+    { label: "RJ Sanción", value: valueinfo?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
+    { label: "RJ Archivo", value: valueinfo?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
+    { label: "RJ Nulidad", value: valueinfo?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
+    { label: "Fase Resolutiva", value: valueinfo?.iniciado_rg.notificado.en_proceso.resolutiva ?? 0 },
+    { label: "Fase Instructiva", value: valueinfo?.iniciado_rg.notificado.en_proceso.instructiva ?? 0 },
+    { label: "Fuera del plazo", value: valueinfo?.iniciado_rg.notificado.fuera_plazo ?? 0 },
+    { label: "Pendiente Notificar", value: valueinfo?.iniciado_rg.no_notificado ?? 0 },
+    { label: "No iniciado", value: valueinfo?.no_iniciado ?? 0 },
+  ];
+
   const router = useRouter();
   const [dateInit, setDateInit] = useState<Moment | null>(null);
   const [dataInfo, setDatainfo] = useState<DataInfo>();
@@ -103,21 +119,8 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   const [ops, setOps] = useState<{ label: string; value: number }[]>([]);
   const [op, setOp] = useState<string[]>([]);
   const [checkInteraction, setCheckInteraction] = useState(false);
-  const [valuesChart, setValuesChart] = useState<{ label: string; value: number }[]>([
-    { label: "Iniciado con RG", value: dataInfo?.iniciado_rg.total ?? 0 },
-    { label: "No iniciado", value: dataInfo?.no_iniciado ?? 0 },
-  ]);
-
-  const [valuesChartAll, setValuesChartAll] = useState<{ label: string; value: number }[]>([
-    { label: "RJ Sanción", value: dataInfo?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
-    { label: "RJ Archivo", value: dataInfo?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
-    { label: "RJ Nulidad", value: dataInfo?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
-    { label: "Fase Resolutiva", value: dataInfo?.iniciado_rg.notificado.en_proceso.resolutiva ?? 0 },
-    { label: "Fase Instructiva", value: dataInfo?.iniciado_rg.notificado.en_proceso.instructiva ?? 0 },
-    { label: "Fuera del plazo", value: dataInfo?.iniciado_rg.notificado.fuera_plazo ?? 0 },
-    { label: "Pendiente Notificar", value: dataInfo?.iniciado_rg.no_notificado ?? 0 },
-    { label: "No iniciado", value: dataInfo?.no_iniciado ?? 0 },
-  ]);
+  const [valuesChart, setValuesChart] = useState<{ label: string; value: number }[]>(valuesChartTodos(dataInfo));
+  const [valuesChartAll, setValuesChartAll] = useState<{ label: string; value: number }[]>(valuesChartAllTodos(dataInfo));
 
   const [valuesChartType, setValuesChartType] = useState<string>("todos");
 
@@ -127,21 +130,9 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
 
       const { data } = await api.estadistica.statsGeneral(proceso);
       setDatainfo(data);
-      setValuesChart([
-        { label: "Iniciado con RG", value: data?.iniciado_rg.total ?? 0 },
-        { label: "No iniciado", value: data?.no_iniciado ?? 0 },
-      ]);
+      setValuesChart(valuesChartTodos(data));
 
-      setValuesChartAll([
-        { label: "RJ Sanción", value: data?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
-        { label: "RJ Archivo", value: data?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
-        { label: "RJ Nulidad", value: data?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
-        { label: "Fase Resolutiva", value: data?.iniciado_rg.notificado.en_proceso.resolutiva ?? 0 },
-        { label: "Fase Instructiva", value: data?.iniciado_rg.notificado.en_proceso.instructiva ?? 0 },
-        { label: "Fuera del plazo", value: data?.iniciado_rg.notificado.fuera_plazo ?? 0 },
-        { label: "Pendiente Notificar", value: data?.iniciado_rg.no_notificado ?? 0 },
-        { label: "No iniciado", value: data?.no_iniciado ?? 0 },
-      ]);
+      setValuesChartAll(valuesChartAllTodos(data));
 
       const datadeps = (await api.estadistica.departamentos(proceso)) as any;
       const deps = datadeps?.data?.map((item: any) => ({
@@ -166,51 +157,52 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
 
     const { data } = await api.estadistica.statsGeneralFiltro(departamento, provincia, distrito, cargo, op, proceso);
     setDatainfo(data);
-    setValuesChart([
-      { label: "Iniciado con RG", value: data?.iniciado_rg.total ?? 0 },
-      { label: "No iniciado", value: data?.no_iniciado ?? 0 },
-    ]);
+    setValuesChart(valuesChartTodos(data));
 
-    setValuesChartAll([
-      { label: "RJ Sanción", value: data?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
-      { label: "RJ Archivo", value: data?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
-      { label: "RJ Nulidad", value: data?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
-      { label: "Fase Resolutiva", value: data?.iniciado_rg.notificado.en_proceso.resolutiva ?? 0 },
-      { label: "Fase Instructiva", value: data?.iniciado_rg.notificado.en_proceso.instructiva ?? 0 },
-      { label: "Fuera del plazo", value: data?.iniciado_rg.notificado.fuera_plazo ?? 0 },
-      { label: "Pendiente Notificar", value: data?.iniciado_rg.no_notificado ?? 0 },
-      { label: "No iniciado", value: data?.no_iniciado ?? 0 },
-    ]);
+    setValuesChartAll(valuesChartAllTodos(data));
+
+    setDateInit(moment());
   };
-
+  const getProvincias = async () => {
+    const proceso = localStorage.getItem("IdSelectedProcess")!;
+    const datadeps = (await api.estadistica.provincias(departamento, proceso)) as any;
+    const deps = datadeps?.data?.map((item: any) => ({
+      value: item.cod_ubigeo,
+      label: item.name_ubigeo,
+    }));
+    setProvincias(deps);
+  };
+  const getDistritos = async () => {
+    const proceso = localStorage.getItem("IdSelectedProcess")!;
+    const datadeps = (await api.estadistica.distritos(provincia, proceso)) as any;
+    const deps = datadeps?.data?.map((item: any) => ({
+      value: item.cod_ubigeo,
+      label: item.name_ubigeo,
+    }));
+    setDistritos(deps);
+  };
+  const getOps = async () => {
+    const proceso = localStorage.getItem("IdSelectedProcess")!;
+    const datadeps = (await api.estadistica.op(departamento, provincia, distrito, proceso)) as any;
+    const dataops = datadeps?.data?.map((item: any) => ({
+      value: item.id_op,
+      label: item.nombre_op,
+    }));
+    setOps(dataops);
+  };
   useEffect(() => {
-    const getProvincias = async () => {
-      const proceso = localStorage.getItem("IdSelectedProcess")!;
-      const datadeps = (await api.estadistica.provincias(departamento, proceso)) as any;
-      const deps = datadeps?.data?.map((item: any) => ({
-        value: item.cod_ubigeo,
-        label: item.name_ubigeo,
-      }));
-      setProvincias(deps);
-    };
     if (departamento.length > 0) {
       getProvincias();
     } else {
       setProvincias([]);
       setDistritos([]);
+      setCargo([]);
+      setOps([]);
+      // setOp([]);
     }
   }, [departamento]);
 
   useEffect(() => {
-    const getDistritos = async () => {
-      const proceso = localStorage.getItem("IdSelectedProcess")!;
-      const datadeps = (await api.estadistica.distritos(provincia, proceso)) as any;
-      const deps = datadeps?.data?.map((item: any) => ({
-        value: item.cod_ubigeo,
-        label: item.name_ubigeo,
-      }));
-      setDistritos(deps);
-    };
     if (provincia.length > 0) {
       getDistritos();
     } else {
@@ -219,30 +211,30 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   }, [provincia]);
 
   useEffect(() => {
-    const newData = provincia.filter((ubigeo) => provincias.some((objeto) => objeto.value === ubigeo));
-    setProvincia(newData);
-  }, [departamento, provincias]);
-
-  useEffect(() => {
-    const newData = distrito.filter((ubigeo) => distritos.some((objeto) => objeto.value === ubigeo));
-    console.log({ newData, distrito, distritos });
-    setDistrito(newData);
-  }, [departamento, provincia, distritos]);
-
-  useEffect(() => {
-    const getOps = async () => {
-      const proceso = localStorage.getItem("IdSelectedProcess")!;
-      const datadeps = (await api.estadistica.op(departamento, provincia, distrito, proceso)) as any;
-      const dataops = datadeps?.data?.map((item: any) => ({
-        value: item.id_op,
-        label: item.nombre_op,
-      }));
-      setOps(dataops);
-    };
-    if (departamento.length > 0) {
+    if (departamento.length > 0 || provincia.length > 0 || distrito.length > 0) {
       getOps();
     }
   }, [departamento, provincia, distrito]);
+
+  // useEffect(() => {
+  //   if (departamento.length > 0) {
+  //     getOps();
+  //   }
+  // }, [departamento, provincia, distrito]);
+  useEffect(() => {
+    const newData = provincia.filter((ubigeo) => provincias.some((objeto) => objeto.value === ubigeo));
+    setProvincia(newData);
+  }, [provincias]);
+
+  useEffect(() => {
+    const newData = distrito.filter((ubigeo) => distritos.some((objeto) => objeto.value === ubigeo));
+    setDistrito(newData);
+  }, [distritos]);
+
+  useEffect(() => {
+    const newData = op.filter((value) => ops.some((objeto) => objeto.value === +value));
+    setOp(newData);
+  }, [ops]);
 
   useEffect(() => {
     setDateInit(moment());
@@ -441,6 +433,25 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
     setValuesChartType("todos");
   }, [checkInteraction]);
 
+  const clear = async () => {
+    const proceso = localStorage.getItem("IdSelectedProcess")!;
+    setDepartamento([]);
+    setProvincia([]);
+    setProvincias([]);
+    setDistrito([]);
+    setDistritos([]);
+    setCargo([]);
+    setCargos([]);
+    setOp([]);
+    setOps([]);
+    const { data } = await api.estadistica.statsGeneral(proceso);
+    setDatainfo(data);
+    setValuesChartType("todos");
+    setValuesChart(valuesChartTodos(data));
+    setValuesChartAll(valuesChartAllTodos(data));
+    setDateInit(moment());
+  };
+
   return (
     <div ref={componentRef} className="flex flex-col gap-3.5">
       <Card title="Listado de personal de ODPE" border={false} className="bg-white p-[2rem] rounded-[15px]">
@@ -449,70 +460,90 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
           <hr style={{ marginTop: "10px", borderTop: "2px solid #A8CFEB" }} />
         </div>
 
-        <div className="pt-8  pb-4 flex gap-[17px] w-full items-center">
-          <div className="flex flex-col ">
-            <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Departamento</p>
-            <Select
-              mode="multiple"
-              value={departamento}
-              onChange={setDepartamento}
-              style={{ minWidth: 200, maxWidth: 350 }}
-              placeholder="Departamento"
-              options={departamentos}
-            />
+        <div className="pt-8  pb-4 flex gap-[17px] flex-col w-full ">
+          <div className="flex gap-[17px]">
+            <div className="flex flex-col ">
+              <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Departamento</p>
+              <Select
+                mode="multiple"
+                showSearch={false}
+                value={departamento}
+                onChange={setDepartamento}
+                style={{ minWidth: 350, maxWidth: 450 }}
+                placeholder="Departamento"
+                options={departamentos}
+              />
+            </div>
+            <div className="flex flex-col ">
+              <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Provincia</p>
+              <Select
+                mode="multiple"
+                showSearch={false}
+                value={provincia}
+                onChange={setProvincia}
+                style={{ minWidth: 350, maxWidth: 450 }}
+                placeholder="Provincia"
+                disabled={departamento?.length === 0}
+                options={provincias?.length > 0 ? provincias : []}
+              />
+            </div>
+            <div className="flex flex-col ">
+              <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Distrito</p>
+              <Select
+                mode="multiple"
+                showSearch={false}
+                value={distrito}
+                onChange={setDistrito}
+                style={{ minWidth: 350, maxWidth: 450 }}
+                placeholder="Distrito"
+                disabled={provincia?.length === 0}
+                options={distritos?.length > 0 ? distritos : []}
+              />
+            </div>
           </div>
-          <div className="flex flex-col ">
-            <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Provincia</p>
-            <Select
-              mode="multiple"
-              value={provincia}
-              onChange={setProvincia}
-              style={{ minWidth: 200, maxWidth: 350 }}
-              placeholder="Provincia"
-              disabled={departamento?.length === 0}
-              options={provincias?.length > 0 ? provincias : []}
-            />
-          </div>
-          <div className="flex flex-col ">
-            <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Distrito</p>
-            <Select
-              mode="multiple"
-              value={distrito}
-              onChange={setDistrito}
-              style={{ minWidth: 200, maxWidth: 350 }}
-              placeholder="Distrito"
-              disabled={provincia?.length === 0}
-              options={distritos?.length > 0 ? distritos : []}
-            />
-          </div>
-          <div className="flex flex-col  font-poppins">
-            <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Cargo</p>
-            <Select
-              mode="multiple"
-              value={cargo}
-              onChange={setCargo}
-              style={{ minWidth: 200, maxWidth: 350 }}
-              placeholder="Cargo"
-              disabled={departamento?.length === 0}
-              options={cargos}
-            />
-          </div>
-          <div className="flex flex-col ">
-            <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Org. Política</p>
-            <Select
-              mode="multiple"
-              value={op}
-              onChange={setOp}
-              style={{ minWidth: 200, maxWidth: 350 }}
-              placeholder="Org. Política"
-              disabled={departamento?.length === 0}
-              options={ops?.length > 0 ? ops : []}
-            />
-          </div>
-          <div className="flex flex-col ">
-            <Button className="flex justify-center items-center w-14 mt-8" onClick={getDashboard}>
-              <SearchOutlined />
-            </Button>
+          <div className="flex gap-[17px]">
+            <div className="flex flex-col  font-poppins">
+              <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Cargo</p>
+              <Select
+                mode="multiple"
+                showSearch={false}
+                value={cargo}
+                onChange={setCargo}
+                style={{ minWidth: 350, maxWidth: 450 }}
+                placeholder="Cargo"
+                disabled={departamento?.length === 0}
+                options={cargos}
+              />
+            </div>
+            <div className="flex flex-col ">
+              <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Org. Política</p>
+              <Select
+                mode="multiple"
+                showSearch={false}
+                value={op}
+                onChange={setOp}
+                style={{ minWidth: 350, maxWidth: 450 }}
+                placeholder="Org. Política"
+                disabled={departamento?.length === 0}
+                options={ops?.length > 0 ? ops : []}
+              />
+            </div>
+            <div className="flex gap-[17px] min-w-[350px] max-w-[450px]">
+              <div className="flex-1">
+                <Button
+                  className="flex justify-center items-center w-full mt-8"
+                  disabled={departamento.length === 0}
+                  onClick={getDashboard}
+                >
+                  <SearchOutlined />
+                </Button>
+              </div>
+              <div className="flex-1">
+                <Button color="#0073CF" className="flex justify-center items-center w-full  mt-8" onClick={clear}>
+                  Limpiar filtros
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </Card>
