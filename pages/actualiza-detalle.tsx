@@ -513,9 +513,9 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               </label>
               <select className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"} value={rj_type} onChange={handleRjType}>
                 <option value="">Seleccione tipo de resolución jefatural</option>
-                <option value="sancion">Sanción</option>
-                <option value="nulidad">Nulidad</option>
-                <option value="archivo">Archivo</option>
+                <option value="SANCION">Sanción</option>
+                <option value="NULIDAD">Nulidad</option>
+                <option value="ARCHIVO">Archivo</option>
               </select>
             </div>
           </div>
