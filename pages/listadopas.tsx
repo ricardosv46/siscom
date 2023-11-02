@@ -81,6 +81,17 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [estadoRj, setEstadoRj] = useState<any>([]);
 
   const processApi = async (IdSelectedProcess: any, label: any, filterBarras?: any) => {
+    const instance = Modal.info({
+      title: "Cargando",
+      content: (
+        <div>
+          <p>Espere mientras termine la descarga...</p>
+        </div>
+      ),
+      onOk() {},
+      okButtonProps: { disabled: true, style: { backgroundColor: "#0874cc", display: "none" } },
+      centered: true,
+    });
     const { processes } = await api.listpas.getProcesses(IdSelectedProcess, "all");
 
     const statusImg: any = {
@@ -151,7 +162,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     }
 
     if (filterBarras) {
-      setEstadoRj([filterBarras?.filter]);
+      setEstadoRj(filterBarras?.filter);
       const newInfo = await api.estadistica.listPas(filterBarras);
 
       const newInfoList = newInfo?.data.map((item: any) => {
@@ -172,6 +183,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       });
       setProcess(newInfoList);
       setMemory(newInfoList);
+      instance.destroy();
       return;
     }
 
@@ -185,7 +197,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       setProcess(newData);
     }
     setMemory(newData);
-
+    instance.destroy();
     return newData;
   };
 
@@ -694,6 +706,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     setEstado("");
     setSearch("");
     setResponsable("all");
+    setEstadoRj("");
     processApi(IdSelectedProcess, "all");
   };
   const dataOptionsSelect =
@@ -745,23 +758,26 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               </div>
             )}
           </div>
-          {estadoRj[0] && (
-            <div>
-              Estado RJ :{" "}
-              <Select
-                mode="multiple"
-                style={{ width: 150 }}
-                value={estadoRj}
-                onChange={(value) => {
-                  setEstadoRj(value);
-                  if (value.length === 0) {
-                    clearFilters();
-                  }
+          {estadoRj.length > 0 && (
+            <div className="flex gap-3 items-center">
+              Estado RG :{" "}
+              <Button
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "8px 8px",
+                  backgroundColor: "#083474",
+                  border: "none",
+                  color: "white",
+                  marginRight: "10px",
+                  cursor: "pointer",
                 }}
-                placeholder="Responsable"
-                defaultValue={estadoRj[0]}
-                options={[{ value: estadoRj, label: estadoRj }]}
-              />
+                onClick={clearFilters}
+              >
+                <span style={{ fontSize: "16px" }}>{estadoRj}</span>
+                <button className="font-bold ml-3">x</button>
+              </Button>
             </div>
           )}
         </div>

@@ -580,7 +580,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
               fill="white"
             />
           </svg>
-          Maykel
+          Imprimir
         </Button>
       </Card>
       <div className="flex gap-[26px]">
