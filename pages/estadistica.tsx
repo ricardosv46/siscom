@@ -441,7 +441,6 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
     setDistrito([]);
     setDistritos([]);
     setCargo([]);
-    setCargos([]);
     setOp([]);
     setOps([]);
     const { data } = await api.estadistica.statsGeneral(proceso);
@@ -469,7 +468,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                 showSearch={false}
                 value={departamento}
                 onChange={setDepartamento}
-                style={{ minWidth: 350, maxWidth: 450 }}
+                style={{ minWidth: 420, maxWidth: 450 }}
                 placeholder="Departamento"
                 options={departamentos}
               />
@@ -481,7 +480,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                 showSearch={false}
                 value={provincia}
                 onChange={setProvincia}
-                style={{ minWidth: 350, maxWidth: 450 }}
+                style={{ minWidth: 420, maxWidth: 450 }}
                 placeholder="Provincia"
                 disabled={departamento?.length === 0}
                 options={provincias?.length > 0 ? provincias : []}
@@ -494,7 +493,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                 showSearch={false}
                 value={distrito}
                 onChange={setDistrito}
-                style={{ minWidth: 350, maxWidth: 450 }}
+                style={{ minWidth: 420, maxWidth: 450 }}
                 placeholder="Distrito"
                 disabled={provincia?.length === 0}
                 options={distritos?.length > 0 ? distritos : []}
@@ -509,7 +508,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                 showSearch={false}
                 value={cargo}
                 onChange={setCargo}
-                style={{ minWidth: 350, maxWidth: 450 }}
+                style={{ minWidth: 420, maxWidth: 450 }}
                 placeholder="Cargo"
                 disabled={departamento?.length === 0}
                 options={cargos}
@@ -522,13 +521,13 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                 showSearch={false}
                 value={op}
                 onChange={setOp}
-                style={{ minWidth: 350, maxWidth: 450 }}
+                style={{ minWidth: 420, maxWidth: 450 }}
                 placeholder="Org. Política"
                 disabled={departamento?.length === 0}
                 options={ops?.length > 0 ? ops : []}
               />
             </div>
-            <div className="flex gap-[17px] min-w-[350px] max-w-[450px]">
+            <div className="flex gap-[17px] min-w-[420px] max-w-[450px]">
               <div className="flex-1">
                 <Button
                   className="flex justify-center items-center w-full mt-8"
@@ -581,7 +580,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
               fill="white"
             />
           </svg>
-          Imprimir
+          Maykel
         </Button>
       </Card>
       <div className="flex gap-[26px]">

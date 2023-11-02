@@ -78,6 +78,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [openTrackingAnexos, setOpenTrackingAnexos] = useState(false);
   const [dataTracking, setDataTracking] = useState<ITracking[]>([]);
   const [dataTrackingDetail, setDataTrackingDetail] = useState<ITrackingDetail[]>([]);
+  const [estadoRj, setEstadoRj] = useState<any>([]);
 
   const processApi = async (IdSelectedProcess: any, label: any, filterBarras?: any) => {
     const { processes } = await api.listpas.getProcesses(IdSelectedProcess, "all");
@@ -150,6 +151,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     }
 
     if (filterBarras) {
+      setEstadoRj([filterBarras?.filter]);
       const newInfo = await api.estadistica.listPas(filterBarras);
 
       const newInfoList = newInfo?.data.map((item: any) => {
@@ -704,37 +706,57 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           <h2 style={{ fontSize: 25, color: "#4F5172" }}>Listado de PAS </h2>
           <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
         </div>
-
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-            <img style={{ marginRight: "10px" }} src="assets/images/to_start.png" />
-            <label className="form-checkbottom">Por iniciar</label>
-          </div>
-          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-            <img style={{ marginRight: "10px" }} src="assets/images/out_of_date.png" />
-            <label className="form-checkbottom">Fuera de fecha</label>
-          </div>
-          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-            <img style={{ marginRight: "10px" }} src="assets/images/finalized.png" />
-            <label className="form-checkbottom">Finalizado</label>
-          </div>
-          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-            <img style={{ marginRight: "10px" }} src="assets/images/more_6_months.png" />
-            <label className="form-checkbottom">Más de 6 meses</label>
-          </div>
-          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-            <img style={{ marginRight: "10px" }} src="assets/images/less_6_months.png" />
-            <label className="form-checkbottom">De 3 a 6 meses</label>
-          </div>
-          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-            <img style={{ marginRight: "10px" }} src="assets/images/less_3_months.png" />
-            <label className="form-checkbottom">Menos de 3 meses</label>
-          </div>
-
-          {new Date(localStorage.getItem("IdSelectedYear")!).valueOf() < new Date("2022").valueOf() && (
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center" }}>
             <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-              <img style={{ marginRight: "10px" }} src="assets/images/undefined.png" />
-              <label className="form-checkbottom">Indefinido</label>
+              <img style={{ marginRight: "10px" }} src="assets/images/to_start.png" />
+              <label className="form-checkbottom">Por iniciar</label>
+            </div>
+            <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+              <img style={{ marginRight: "10px" }} src="assets/images/out_of_date.png" />
+              <label className="form-checkbottom">Fuera de fecha</label>
+            </div>
+            <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+              <img style={{ marginRight: "10px" }} src="assets/images/finalized.png" />
+              <label className="form-checkbottom">Finalizado</label>
+            </div>
+            <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+              <img style={{ marginRight: "10px" }} src="assets/images/more_6_months.png" />
+              <label className="form-checkbottom">Más de 6 meses</label>
+            </div>
+            <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+              <img style={{ marginRight: "10px" }} src="assets/images/less_6_months.png" />
+              <label className="form-checkbottom">De 3 a 6 meses</label>
+            </div>
+            <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+              <img style={{ marginRight: "10px" }} src="assets/images/less_3_months.png" />
+              <label className="form-checkbottom">Menos de 3 meses</label>
+            </div>
+
+            {new Date(localStorage.getItem("IdSelectedYear")!).valueOf() < new Date("2022").valueOf() && (
+              <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+                <img style={{ marginRight: "10px" }} src="assets/images/undefined.png" />
+                <label className="form-checkbottom">Indefinido</label>
+              </div>
+            )}
+          </div>
+          {estadoRj[0] && (
+            <div>
+              Estado RJ :{" "}
+              <Select
+                mode="multiple"
+                style={{ width: 150 }}
+                value={estadoRj}
+                onChange={(value) => {
+                  setEstadoRj(value);
+                  if (value.length === 0) {
+                    clearFilters();
+                  }
+                }}
+                placeholder="Responsable"
+                defaultValue={estadoRj[0]}
+                options={[{ value: estadoRj, label: estadoRj }]}
+              />
             </div>
           )}
         </div>
