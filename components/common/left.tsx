@@ -37,6 +37,7 @@ const LeftCard: FC<IProps> = (props): ReactElement => {
     start_at,
     tracking_action,
     register_user,
+    rj_type,
   } = item;
 
   return (
@@ -60,6 +61,7 @@ const LeftCard: FC<IProps> = (props): ReactElement => {
         {new_responsible && <h3 className="font-bold text-gray-500 text-x">Asignado a: {new_responsible} </h3>}
         {related_document && <h3 className="font-bold text-gray-500 text-x">Tipo documento: {related_document} </h3>}
         {document && <h3 className="font-bold text-gray-500 text-x">Documento: {document} </h3>}
+        {rj_type && <h3 className="font-bold text-gray-500 text-x">Tipo RJ: {rj_type} </h3>}
         {comment && (
           <p className="mt-2 text-sm font-medium leading-snug tracking-wide text-gray-500 text-opacity-100">Comentario: {comment}</p>
         )}
