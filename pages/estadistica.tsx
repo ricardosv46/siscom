@@ -847,12 +847,9 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                       </ul>
                     </td>
                     <td className="text-center py-1.5">
-                      <button onClick={() => handleFilterListadoPas("fuera_plazo")} className="hover:underline">
-                        {dataInfo?.iniciado_rg.notificado.fuera_plazo}
-                      </button>
                       <button
                         onClick={() =>
-                          dataInfo && dataInfo?.iniciado_rg.notificado.fuera_plazo > 0 && handleFilterListadoPas("fase_instructiva")
+                          dataInfo && dataInfo?.iniciado_rg.notificado.fuera_plazo > 0 && handleFilterListadoPas("fuera_plazo")
                         }
                         className={dataInfo && dataInfo?.iniciado_rg.notificado.fuera_plazo > 0 ? "hover:underline" : ""}
                       >
@@ -876,7 +873,10 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                       </ul>
                     </td>
                     <td className="text-center py-1.5">
-                      <button onClick={() => handleFilterListadoPas("no_notificado")} className="hover:underline">
+                      <button
+                        onClick={() => dataInfo && dataInfo?.iniciado_rg.no_notificado > 0 && handleFilterListadoPas("no_notificado")}
+                        className={dataInfo && dataInfo?.iniciado_rg.no_notificado > 0 ? "hover:underline" : ""}
+                      >
                         {dataInfo?.iniciado_rg.no_notificado}
                       </button>
                     </td>
