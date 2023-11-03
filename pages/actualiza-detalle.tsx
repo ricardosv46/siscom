@@ -209,7 +209,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
       formData.append("tracking_action", operationSelectedOption.toLowerCase());
 
-      if (operationSelectedOption === "NOTIFICACION" || operationSelectedOption === "ACTUALIZACION") {
+      if (operationSelectedOption === "OBSERVACION" || operationSelectedOption === "ACTUALIZACION") {
         formData.append("type_document", tipoDocumentoSelectedOption);
         formData.append("document", documentoRelacionadoinputValue);
       }
