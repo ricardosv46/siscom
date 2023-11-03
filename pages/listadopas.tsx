@@ -80,6 +80,12 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [dataTrackingDetail, setDataTrackingDetail] = useState<ITrackingDetail[]>([]);
   const [estadoRj, setEstadoRj] = useState<any>([]);
 
+  useEffect(() => {
+    return () => {
+      Modal.destroyAll();
+    };
+  }, []);
+
   const processApi = async (IdSelectedProcess: any, label: any, filterBarras?: any) => {
     const instance = Modal.info({
       title: "Espere",
