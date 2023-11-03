@@ -45,7 +45,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [tipo, setTipo] = useState("");
   const [rj_type, setRj_type] = useState("");
   const [confirm, setConfirm] = useState(false);
-
   const [item, setItem] = useState<IPropsItem>();
   const [dateEmi, setDateEmi] = useState<any>();
   const router = useRouter();
@@ -123,6 +122,21 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       });
       setConfirm(false);
       return;
+    } else if (
+      tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" &&
+      operationSelectedOption === "actualizado" &&
+      user?.profile === "jn" &&
+      !rj_type
+    ) {
+      const instance = Modal.info({
+        content: "Por favor, ingrese los datos solicitados",
+        centered: true,
+        async onOk() {
+          instance.destroy();
+        },
+      });
+      setConfirm(false);
+      return;
     } /*else if (
       operationSelectedOption == "finalizado" &&
       (!fechaInicioInputValue || !documentoRelacionadoinputValue || !tipoDocumentoSelectedOption)
@@ -158,7 +172,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       formData.set("start_at", currentDate);
     }
 
-    if (tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && operationSelectedOption === "actualizado") {
+    if (tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && operationSelectedOption === "actualizado" && user?.profile === "jn") {
       formData.set("rj_type", rj_type);
     }
 
@@ -326,7 +340,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const onPickerChange = (date: any, dateString: any) => {
     console.log(date, dateString);
   };
-
+  console.log({ user });
   const headrName = `${item?.name} - R.G. ${item?.resolution_number} - Exp. ${item?.num_expediente}`;
   return (
     <form onSubmit={openModal}>
@@ -482,11 +496,20 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 onChange={handleTipoDocumentoSelectChange}
               >
                 <option value="">Seleccione tipo de documento</option>
-                {options.map((item: any, index) => (
-                  <option value={item.name} key={index}>
-                    {item.name}
-                  </option>
-                ))}
+                {user?.profile !== "jn" &&
+                  options
+                    .filter((item: any) => item.name !== "RESOLUCION JEFATURAL-PAS")
+                    .map((item: any, index) => (
+                      <option value={item.name} key={index}>
+                        {item.name}
+                      </option>
+                    ))}
+                {user?.profile === "jn" &&
+                  options.map((item: any, index) => (
+                    <option value={item.name} key={index}>
+                      {item.name}
+                    </option>
+                  ))}
               </select>
             </div>
           </div>
@@ -511,21 +534,23 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
-        {tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && operationSelectedOption === "actualizado" && (
-          <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
-              <label htmlFor="nuevo_responsable" className="text-gray-600">
-                Tipo de resolución jefatural:
-              </label>
-              <select className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"} value={rj_type} onChange={handleRjType}>
-                <option value="">Seleccione tipo de resolución jefatural</option>
-                <option value="SANCION">Sanción</option>
-                <option value="NULIDAD">Nulidad</option>
-                <option value="ARCHIVO">Archivo</option>
-              </select>
+        {tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" &&
+          operationSelectedOption === "actualizado" &&
+          user?.profile === "jn" && (
+            <div className="w-1/2 py-5">
+              <div className="grid grid-cols-2 gap-5 items-center mb-5">
+                <label htmlFor="nuevo_responsable" className="text-gray-600">
+                  Tipo de resolución jefatural:
+                </label>
+                <select className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"} value={rj_type} onChange={handleRjType}>
+                  <option value="">Seleccione tipo de resolución jefatural</option>
+                  <option value="SANCION">Sanción</option>
+                  <option value="NULIDAD">Nulidad</option>
+                  <option value="ARCHIVO">Archivo</option>
+                </select>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {(operationSelectedOption === "notificado" ||
           operationSelectedOption === "actualizado" ||

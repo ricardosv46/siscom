@@ -521,7 +521,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                 showSearch={false}
                 value={op}
                 onChange={setOp}
-                style={{ minWidth: 420, maxWidth: 450 }}
+                style={{ minWidth: 600, maxWidth: 600 }}
                 placeholder="Org. Política"
                 disabled={departamento?.length === 0}
                 options={ops?.length > 0 ? ops : []}

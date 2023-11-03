@@ -82,10 +82,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
   const processApi = async (IdSelectedProcess: any, label: any, filterBarras?: any) => {
     const instance = Modal.info({
-      title: "Cargando",
+      title: "Espere",
       content: (
         <div>
-          <p>Espere mientras termine la descarga...</p>
+          <p>Cargando información....</p>
         </div>
       ),
       onOk() {},
@@ -773,10 +773,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                   marginRight: "10px",
                   cursor: "pointer",
                 }}
-                onClick={clearFilters}
               >
-                <span style={{ fontSize: "16px" }}>{estadoRj}</span>
-                <button className="font-bold ml-3">x</button>
+                <span className="uppercase font-normal">{estadoRj}</span>
+                <button className="font-bold ml-3" onClick={clearFilters}>
+                  x
+                </button>
               </Button>
             </div>
           )}

@@ -17,6 +17,7 @@ import { parse, format } from "date-fns";
 import apiService from "services/axios/configAxios";
 import moment from "moment";
 import locale from "antd/lib/date-picker/locale/es_ES";
+import useAuthStore from "store/auth/auth";
 interface IPropsItem {
   id: string | number | null;
   resolution_number: string | null;
@@ -150,12 +151,24 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [gerenciaAsignadaSelectedOption, setGerenciaAsignadaSelectedOption] = useState("");
   const [comentarioTextareaValue, setComentarioTextareaValue] = useState("");
   const [rj_type, setRj_type] = useState("");
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (fechaInicioInputValue === "") {
       const instance = Modal.info({
         content: "Por favor, ingrese la fecha",
+        centered: true,
+        async onOk() {
+          instance.destroy();
+        },
+      });
+      return;
+    }
+
+    if (tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && operationSelectedOption === "ACTUALIZACION" && !rj_type) {
+      const instance = Modal.info({
+        content: "Por favor, ingrese el tipo de resolución jefatural",
         centered: true,
         async onOk() {
           instance.destroy();
