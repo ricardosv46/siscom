@@ -277,11 +277,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
         okText: "Si",
         cancelText: "No",
         async onOk() {
+          instance.destroy();
           const result = await api.listpas.loadExcelInformation(excelFile);
           const newData = await processApi(IdSelectedProcess, "all");
           const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
           setProcess(dataFilter);
-          instance.destroy();
         },
         async onCancel() {
           instance.destroy();
@@ -309,11 +309,13 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     }
 
     if (res?.data?.message === "3") {
-      const result = await api.listpas.loadExcelInformation(excelFile);
-      const newData = await processApi(IdSelectedProcess, "all");
-      const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
-      setProcess(dataFilter);
       instanceProcesando.destroy();
+      const result = await api.listpas.loadExcelInformation(excelFile);
+      if (result && result?.data?.length > 0) {
+        const newData = await processApi(IdSelectedProcess, "all");
+        const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
+        setProcess(dataFilter);
+      }
     }
   };
 

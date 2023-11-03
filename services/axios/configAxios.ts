@@ -36,17 +36,16 @@ apiService.interceptors.response.use(
     return Promise.reject(response);
   },
   function (error) {
+      // if (error.code === 'ERR_NETWORK') {
+      //   const instance = Modal.info({
+      //     content: error.message,
+      //     centered:true,
+      //     async onOk() {
+      //       instance.destroy();
+      //     }, });
 
-      if (error.code === 'ERR_NETWORK') {
-        const instance = Modal.info({
-          content: error.message,
-          centered:true,
-          async onOk() {
-            instance.destroy();
-          }, });
-
-          return Promise.reject({ data:{message:error.message} })
-      }
+      //     return Promise.reject({ data:{message:error.message} })
+      // }
 
     if (error.response.status === 401) {
       localStorage.removeItem("token");
@@ -68,19 +67,24 @@ apiService.interceptors.response.use(
 
       return Promise.reject(error.response);
     }
-    else {
-      const instance = Modal.info({
-        width:500,
-        
-        bodyStyle:{padding:'35px 30px 35px 30px',},
-        content: error.response.data.message,
-        centered:true,
-        async onOk() {
-          instance.destroy();
-        },
-      });
+    if (error.response.status === 200) {
+     
 
-      return Promise.reject(error.response);
+      // return Promise.reject(error.response);
+    }
+    else {
+      // const instance = Modal.info({
+      //   width:500,
+        
+      //   bodyStyle:{padding:'35px 30px 35px 30px',},
+      //   content: error.response.data.message,
+      //   centered:true,
+      //   async onOk() {
+      //     instance.destroy();
+      //   },
+      // });
+
+      // return Promise.reject(error.response);
     }
   }
 );
