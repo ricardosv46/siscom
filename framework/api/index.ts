@@ -507,7 +507,7 @@ const api = {
       if (tok) {
         const {
           data: { data },
-        }: any = await apiService.get(`/stats/general/${proceso}/`);
+        }: any = await apiService.get(`/stats/general/${proceso}/OP`);
         return { data };
       } else {
         return { data: [] };
@@ -518,7 +518,7 @@ const api = {
       if (tok) {
         const {
           data: { data },
-        }: any = await apiService.post(`/stats/dashboard/`,{departamentos,provincias,distritos,ops,cargos,proceso_electoral:proceso});
+        }: any = await apiService.post(`/stats/dashboard/`,{departamentos,provincias,distritos,ops,cargos,proceso_electoral:proceso,tipo_pas:'OP'});
         return { data };
       } else {
         return { data: [] };
@@ -584,7 +584,7 @@ const api = {
       if (tok) {
         const {
           data: { data },
-        }: any = await apiService.post(`/processes/dashboard/listadopas/`,{departamentos,provincias,distritos,ops,cargos,proceso_electoral,filter,all_ubigeos:!(departamentos?.length > 0)});
+        }: any = await apiService.post(`/processes/dashboard/listadopas/`,{departamentos,provincias,distritos,ops,cargos,proceso_electoral,filter,all_ubigeos:!(departamentos?.length > 0),tipo_pas:'OP'});
         return { data };
       } else {
         return { data: [] };
