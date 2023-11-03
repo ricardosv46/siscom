@@ -176,7 +176,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       formData.set("rj_type", rj_type);
     }
 
-    if (tipoDocumentoSelectedOption === "actualizado" || tipoDocumentoSelectedOption === "observado") {
+    if (operationSelectedOption === "actualizado" || operationSelectedOption === "observado") {
       formData.set("type_document", tipoDocumentoSelectedOption);
       formData.set("document", documentoRelacionadoinputValue);
     }
