@@ -510,7 +510,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                       </option>
                     ))}
                 {(user?.profile === "jn" || user?.is_admin) &&
-                  operationSelectedOption === "actualizado" &&
+                  (operationSelectedOption === "actualizado" || operationSelectedOption === "observado") &&
                   options.map((item: any, index) => (
                     <option value={item.name} key={index}>
                       {item.name}
@@ -541,8 +541,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         )}
 
         {tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" &&
-          operationSelectedOption === "actualizado" &&
-          user?.profile === "jn" && (
+          (operationSelectedOption === "actualizado" || operationSelectedOption === "observado") &&
+          (user?.profile === "jn" || user?.is_admin) && (
             <div className="w-1/2 py-5">
               <div className="grid grid-cols-2 gap-5 items-center mb-5">
                 <label htmlFor="nuevo_responsable" className="text-gray-600">
