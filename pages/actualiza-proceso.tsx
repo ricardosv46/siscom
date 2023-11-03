@@ -156,7 +156,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
     const formData = new FormData();
     formData.set("comment", comentarioTextareaValue);
-    formData.set("document", documentoRelacionadoinputValue);
+
     formData.set("new_responsible", gerenciaSelectedOption);
     if (user.is_admin) {
       formData.set("current_responsible", gerenciaInicialSelectedOption);
@@ -168,7 +168,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     formData.set("resolution_number", resolucion_gerencial);
 
     if (fechaInicioInputValue !== "") {
-      const currentDate = moment(fechaInicioInputValue).format("YYYY-MM-DD HH:mm:ss"); // Formato de fecha: "2023-03-01"
+      const currentDate = moment(fechaInicioInputValue).format("YYYY-MM-DD HH:mm:ss");
       formData.set("start_at", currentDate);
     }
 
@@ -176,7 +176,11 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       formData.set("rj_type", rj_type);
     }
 
-    formData.set("type_document", tipoDocumentoSelectedOption);
+    if (tipoDocumentoSelectedOption === "actualizado" || tipoDocumentoSelectedOption === "observado") {
+      formData.set("type_document", tipoDocumentoSelectedOption);
+      formData.set("document", documentoRelacionadoinputValue);
+    }
+
     formData.set("type", tipo);
 
     formData.set("status", operationSelectedOption);
@@ -497,6 +501,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               >
                 <option value="">Seleccione tipo de documento</option>
                 {user?.profile !== "jn" &&
+                  !user?.is_admin &&
                   options
                     .filter((item: any) => item.name !== "RESOLUCION JEFATURAL-PAS")
                     .map((item: any, index) => (
@@ -504,7 +509,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                         {item.name}
                       </option>
                     ))}
-                {user?.profile === "jn" &&
+                {(user?.profile === "jn" || user?.is_admin) &&
+                  operationSelectedOption === "actualizado" &&
                   options.map((item: any, index) => (
                     <option value={item.name} key={index}>
                       {item.name}

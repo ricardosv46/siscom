@@ -9,15 +9,11 @@ import { GetServerSideProps } from "next";
 import { getCookie } from "cookies-next";
 import { mergeArray } from "@lib/general";
 import { useRouter } from "next/router";
-import axios from "axios";
-import { RightCard } from "../components/common/right";
-import { Button, DatePicker, Modal, message } from "antd";
+import { Button, DatePicker, Modal } from "antd";
 import { GetTokenAuthService } from "services/auth/ServiceAuth";
-import { parse, format } from "date-fns";
 import apiService from "services/axios/configAxios";
 import moment from "moment";
 import locale from "antd/lib/date-picker/locale/es_ES";
-import useAuthStore from "store/auth/auth";
 interface IPropsItem {
   id: string | number | null;
   resolution_number: string | null;
@@ -208,10 +204,15 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     if (tok) {
       formData.append("comment", comentarioTextareaValue);
       formData.append("current_responsible", gerenciaSelectedOption);
-      formData.append("document", documentoRelacionadoinputValue);
+
       formData.append("new_responsible", gerenciaAsignadaSelectedOption);
-      formData.append("type_document", tipoDocumentoSelectedOption);
+
       formData.append("tracking_action", operationSelectedOption.toLowerCase());
+
+      if (operationSelectedOption === "NOTIFICACION" || operationSelectedOption === "ACTUALIZACION") {
+        formData.append("type_document", tipoDocumentoSelectedOption);
+        formData.append("document", documentoRelacionadoinputValue);
+      }
 
       if (tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && operationSelectedOption === "ACTUALIZACION") {
         formData.append("rj_type", rj_type);
@@ -493,11 +494,21 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 onChange={handleTipoDocumentoSelectChange}
               >
                 <option value="">Seleccione tipo de documento</option>
-                {options.map((item: any, index) => (
-                  <option value={item.name} key={index}>
-                    {item.name}
-                  </option>
-                ))}
+
+                {operationSelectedOption !== "ACTUALIZACION" &&
+                  options
+                    .filter((item: any) => item.name !== "RESOLUCION JEFATURAL-PAS")
+                    .map((item: any, index) => (
+                      <option value={item.name} key={index}>
+                        {item.name}
+                      </option>
+                    ))}
+                {operationSelectedOption === "ACTUALIZACION" &&
+                  options.map((item: any, index) => (
+                    <option value={item.name} key={index}>
+                      {item.name}
+                    </option>
+                  ))}
               </select>
             </div>
           </div>

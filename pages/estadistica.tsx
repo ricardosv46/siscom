@@ -623,7 +623,10 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                   <tr className="border-b border-[#BDBDBD] ">
                     <td className="pl-3 py-1.5">1. Iniciado con RG</td>
                     <td className="text-center py-1.5">
-                      <button onClick={() => handleFilterListadoPas("iniciado_rg")} className="hover:underline">
+                      <button
+                        onClick={() => dataInfo && dataInfo?.iniciado_rg?.total > 0 && handleFilterListadoPas("iniciado_rg")}
+                        className={dataInfo && dataInfo?.iniciado_rg?.total > 0 ? "hover:underline" : ""}
+                      >
                         {dataInfo?.iniciado_rg.total}
                       </button>
                     </td>
@@ -642,7 +645,10 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                       </ul>
                     </td>
                     <td className="text-center py-1.5">
-                      <button onClick={() => handleFilterListadoPas("notificado")} className="hover:underline">
+                      <button
+                        onClick={() => dataInfo && dataInfo?.iniciado_rg.notificado.total > 0 && handleFilterListadoPas("notificado")}
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.total > 0 ? "hover:underline" : ""}
+                      >
                         {dataInfo?.iniciado_rg.notificado.total}
                       </button>
                     </td>
@@ -661,7 +667,10 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                       </ul>
                     </td>
                     <td className="text-center py-1.5">
-                      <button onClick={() => handleFilterListadoPas("con_rj")} className="hover:underline">
+                      <button
+                        onClick={() => dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.total > 0 && handleFilterListadoPas("con_rj")}
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.total > 0 ? "hover:underline" : ""}
+                      >
                         {dataInfo?.iniciado_rg.notificado.con_rj.total}
                       </button>
                     </td>
@@ -680,7 +689,12 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                       </ul>
                     </td>
                     <td className="text-center py-1.5">
-                      <button onClick={() => handleFilterListadoPas("rj_sancion")} className="hover:underline">
+                      <button
+                        onClick={() =>
+                          dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.sancion > 0 && handleFilterListadoPas("rj_sancion")
+                        }
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.sancion > 0 ? "hover:underline" : ""}
+                      >
                         {dataInfo?.iniciado_rg.notificado.con_rj.sancion}
                       </button>
                     </td>
@@ -701,7 +715,12 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                       </ul>
                     </td>
                     <td className="text-center py-1.5">
-                      <button onClick={() => handleFilterListadoPas("rj_archivo")} className="hover:underline">
+                      <button
+                        onClick={() =>
+                          dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.archivo > 0 && handleFilterListadoPas("rj_archivo")
+                        }
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.archivo > 0 ? "hover:underline" : ""}
+                      >
                         {dataInfo?.iniciado_rg.notificado.con_rj.archivo}
                       </button>
                     </td>
@@ -722,7 +741,12 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                       </ul>
                     </td>
                     <td className="text-center py-1.5">
-                      <button onClick={() => handleFilterListadoPas("rj_nulidad")} className="hover:underline">
+                      <button
+                        onClick={() =>
+                          dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.nulidad > 0 && handleFilterListadoPas("rj_nulidad")
+                        }
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.nulidad > 0 ? "hover:underline" : ""}
+                      >
                         {dataInfo?.iniciado_rg.notificado.con_rj.nulidad}
                       </button>
                     </td>
@@ -743,7 +767,12 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                       </ul>
                     </td>
                     <td className="text-center py-1.5">
-                      <button onClick={() => handleFilterListadoPas("en_proceso")} className="hover:underline">
+                      <button
+                        onClick={() =>
+                          dataInfo && dataInfo?.iniciado_rg.notificado.en_proceso.total > 0 && handleFilterListadoPas("en_proceso")
+                        }
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.en_proceso.total > 0 ? "hover:underline" : ""}
+                      >
                         {dataInfo?.iniciado_rg.notificado.en_proceso.total}
                       </button>
                     </td>
@@ -762,7 +791,14 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                       </ul>
                     </td>
                     <td className="text-center py-1.5">
-                      <button onClick={() => handleFilterListadoPas("fase_resolutiva")} className="hover:underline">
+                      <button
+                        onClick={() =>
+                          dataInfo &&
+                          dataInfo?.iniciado_rg.notificado.en_proceso.resolutiva > 0 &&
+                          handleFilterListadoPas("fase_resolutiva")
+                        }
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.en_proceso.resolutiva > 0 ? "hover:underline" : ""}
+                      >
                         {dataInfo?.iniciado_rg.notificado.en_proceso.resolutiva}
                       </button>
                     </td>
@@ -783,7 +819,14 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                       </ul>
                     </td>
                     <td className="text-center py-1.5">
-                      <button onClick={() => handleFilterListadoPas("fase_instructiva")} className="hover:underline">
+                      <button
+                        onClick={() =>
+                          dataInfo &&
+                          dataInfo?.iniciado_rg.notificado.en_proceso.instructiva > 0 &&
+                          handleFilterListadoPas("fase_instructiva")
+                        }
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.en_proceso.instructiva > 0 ? "hover:underline" : ""}
+                      >
                         {dataInfo?.iniciado_rg.notificado.en_proceso.instructiva}
                       </button>
                     </td>
@@ -805,6 +848,14 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                     </td>
                     <td className="text-center py-1.5">
                       <button onClick={() => handleFilterListadoPas("fuera_plazo")} className="hover:underline">
+                        {dataInfo?.iniciado_rg.notificado.fuera_plazo}
+                      </button>
+                      <button
+                        onClick={() =>
+                          dataInfo && dataInfo?.iniciado_rg.notificado.fuera_plazo > 0 && handleFilterListadoPas("fase_instructiva")
+                        }
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.fuera_plazo > 0 ? "hover:underline" : ""}
+                      >
                         {dataInfo?.iniciado_rg.notificado.fuera_plazo}
                       </button>
                     </td>
@@ -842,7 +893,10 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                   <tr className="border-b border-[#BDBDBD] ">
                     <td className="pl-3 py-1.5">2. No iniciado</td>
                     <td className="text-center py-1.5">
-                      <button onClick={() => handleFilterListadoPas("no_iniciado")} className="hover:underline">
+                      <button
+                        onClick={() => dataInfo && dataInfo?.no_iniciado > 0 && handleFilterListadoPas("no_iniciado")}
+                        className={dataInfo && dataInfo?.no_iniciado > 0 ? "hover:underline" : ""}
+                      >
                         {dataInfo?.no_iniciado}
                       </button>
                     </td>

@@ -92,80 +92,21 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       okButtonProps: { disabled: true, style: { backgroundColor: "#0874cc", display: "none" } },
       centered: true,
     });
-    const { processes } = await api.listpas.getProcesses(IdSelectedProcess, "all");
 
-    const statusImg: any = {
-      less_3_months: "less_3_months",
-      less_6_months: "less_6_months",
-      more_6_months: "more_6_months",
-      finalized: "finalized",
-      out_of_date: "out_of_date",
-      to_start: "to_start",
-      undefined: "undefined",
-    };
+    try {
+      const { processes } = await api.listpas.getProcesses(IdSelectedProcess, "all");
 
-    const newData = processes.map((item) => {
-      const { estado, responsable } = item;
-      if (responsable == profile || user.is_admin) {
-        return {
-          ...item,
-          btnDisabled: false,
-          estado: <img src={`assets/images/${statusImg[estado]}.png`} />,
-        };
-      } else {
-        return {
-          ...item,
-          btnDisabled: true,
-          estado: <img src={`assets/images/${statusImg[estado]}.png`} />,
-        };
-      }
-    });
+      const statusImg: any = {
+        less_3_months: "less_3_months",
+        less_6_months: "less_6_months",
+        more_6_months: "more_6_months",
+        finalized: "finalized",
+        out_of_date: "out_of_date",
+        to_start: "to_start",
+        undefined: "undefined",
+      };
 
-    const uniqueArr = Array.from(new Set(processes.map((item) => item.responsable)))
-      .map((responsable) => ({
-        value: responsable,
-        label: responsable,
-      }))
-      .filter((item) => item.value !== "");
-
-    const newDataResponsable = [{ value: "all", label: "Todos" }, ...uniqueArr, { value: "", label: "Sin Responsable" }];
-    const newInfoRes =
-      new Date(localStorage.getItem("IdSelectedYear")!).valueOf() < new Date("2022").valueOf()
-        ? newDataResponsable
-        : newDataResponsable.slice(0, -1);
-    setDataResponsable(newInfoRes);
-
-    let valuefilter: any = undefined;
-    if (label === "all") {
-      valuefilter = "";
-    }
-    if (label === "to_start") {
-      valuefilter = "Por Iniciar";
-    }
-    if (label === "out_of_date") {
-      valuefilter = "Fuera de fecha";
-    }
-    if (label === "finalized") {
-      valuefilter = "Finalizado";
-    }
-    if (label === "more_6_months") {
-      valuefilter = "Mas de 6 meses";
-    }
-    if (label === "less_6_months") {
-      valuefilter = "De 3 a 6 meses";
-    }
-    if (label === "less_3_months") {
-      valuefilter = "Menos de 3 meses";
-    }
-    if (label === "undefined") {
-      valuefilter = "Indefinido";
-    }
-
-    if (filterBarras) {
-      setEstadoRj(filterBarras?.filter);
-      const newInfo = await api.estadistica.listPas(filterBarras);
-
-      const newInfoList = newInfo?.data.map((item: any) => {
+      const newData = processes.map((item) => {
         const { estado, responsable } = item;
         if (responsable == profile || user.is_admin) {
           return {
@@ -181,24 +122,88 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           };
         }
       });
-      setProcess(newInfoList);
-      setMemory(newInfoList);
-      instance.destroy();
-      return;
-    }
 
-    if (valuefilter) {
-      const dataFilter = newData?.filter((item: any) => {
-        return item.estado_proceso === valuefilter;
-      });
-      setEstado(valuefilter);
-      setProcess(dataFilter);
-    } else {
-      setProcess(newData);
+      const uniqueArr = Array.from(new Set(processes.map((item) => item.responsable)))
+        .map((responsable) => ({
+          value: responsable,
+          label: responsable,
+        }))
+        .filter((item) => item.value !== "");
+
+      const newDataResponsable = [{ value: "all", label: "Todos" }, ...uniqueArr, { value: "", label: "Sin Responsable" }];
+      const newInfoRes =
+        new Date(localStorage.getItem("IdSelectedYear")!).valueOf() < new Date("2022").valueOf()
+          ? newDataResponsable
+          : newDataResponsable.slice(0, -1);
+      setDataResponsable(newInfoRes);
+
+      let valuefilter: any = undefined;
+      if (label === "all") {
+        valuefilter = "";
+      }
+      if (label === "to_start") {
+        valuefilter = "Por Iniciar";
+      }
+      if (label === "out_of_date") {
+        valuefilter = "Fuera de fecha";
+      }
+      if (label === "finalized") {
+        valuefilter = "Finalizado";
+      }
+      if (label === "more_6_months") {
+        valuefilter = "Mas de 6 meses";
+      }
+      if (label === "less_6_months") {
+        valuefilter = "De 3 a 6 meses";
+      }
+      if (label === "less_3_months") {
+        valuefilter = "Menos de 3 meses";
+      }
+      if (label === "undefined") {
+        valuefilter = "Indefinido";
+      }
+
+      if (filterBarras) {
+        setEstadoRj(filterBarras?.filter);
+        const newInfo = await api.estadistica.listPas(filterBarras);
+
+        const newInfoList = newInfo?.data.map((item: any) => {
+          const { estado, responsable } = item;
+          if (responsable == profile || user.is_admin) {
+            return {
+              ...item,
+              btnDisabled: false,
+              estado: <img src={`assets/images/${statusImg[estado]}.png`} />,
+            };
+          } else {
+            return {
+              ...item,
+              btnDisabled: true,
+              estado: <img src={`assets/images/${statusImg[estado]}.png`} />,
+            };
+          }
+        });
+        setProcess(newInfoList);
+        setMemory(newInfoList);
+        instance.destroy();
+        return;
+      }
+
+      if (valuefilter) {
+        const dataFilter = newData?.filter((item: any) => {
+          return item.estado_proceso === valuefilter;
+        });
+        setEstado(valuefilter);
+        setProcess(dataFilter);
+      } else {
+        setProcess(newData);
+      }
+      setMemory(newData);
+      instance.destroy();
+      return newData;
+    } catch (error) {
+      instance.destroy();
     }
-    setMemory(newData);
-    instance.destroy();
-    return newData;
   };
 
   const processApiByDate = async (globalProcess: any, label: any, start_at: string, end_at: string) => {
