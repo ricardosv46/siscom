@@ -502,6 +502,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 <option value="">Seleccione tipo de documento</option>
                 {user?.profile !== "jn" &&
                   !user?.is_admin &&
+                  (operationSelectedOption === "actualizado" || operationSelectedOption === "observado") &&
                   options
                     .filter((item: any) => item.name !== "RESOLUCION JEFATURAL-PAS")
                     .map((item: any, index) => (
@@ -509,13 +510,24 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                         {item.name}
                       </option>
                     ))}
-                {(user?.profile === "jn" || user?.is_admin) &&
-                  (operationSelectedOption === "actualizado" || operationSelectedOption === "observado") &&
+
+                {(user?.is_admin || user?.profile === "jn") &&
+                  operationSelectedOption === "actualizado" &&
                   options.map((item: any, index) => (
                     <option value={item.name} key={index}>
                       {item.name}
                     </option>
                   ))}
+
+                {(user?.is_admin || user?.profile === "jn") &&
+                  operationSelectedOption === "observado" &&
+                  options
+                    .filter((item: any) => item.name !== "RESOLUCION JEFATURAL-PAS")
+                    .map((item: any, index) => (
+                      <option value={item.name} key={index}>
+                        {item.name}
+                      </option>
+                    ))}
               </select>
             </div>
           </div>
