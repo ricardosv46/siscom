@@ -22,9 +22,16 @@
   },
   {
     "id": 6,
-    "key": "estadistica",
+    "key": "estadistica-op",
     "icon": "BarChartOutlined",
-    "label": "Estadística",
+    "label": "Estadística OP",
+    "role":  "user"
+  },
+  {
+    "id": 7,
+    "key": "estadistica-candidato",
+    "icon": "BarChartOutlined",
+    "label": "Estadística Candidato",
     "role":  "user"
   },
   {

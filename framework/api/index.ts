@@ -502,7 +502,7 @@ const api = {
     },
   },
   estadistica:{
-    statsGeneral: async (proceso:string) => {
+    statsGeneralOP: async (proceso:string) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
@@ -513,12 +513,23 @@ const api = {
         return { data: [] };
       }
     },
-    statsGeneralFiltro: async (departamentos:string[],provincias:string[],distritos:string[],cargos:string[],ops:string[],proceso:string) => {
+    statsGeneralCandidato: async (proceso:string) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
           data: { data },
-        }: any = await apiService.post(`/stats/dashboard/`,{departamentos,provincias,distritos,ops,cargos,proceso_electoral:proceso,tipo_pas:'OP'});
+        }: any = await apiService.get(`/stats/general/${proceso}/CANDIDATO`);
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
+    statsGeneralFiltro: async (departamentos:string[],provincias:string[],distritos:string[],cargos:string[],ops:string[],proceso:string,tipo_pas:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.post(`/stats/dashboard/`,{departamentos,provincias,distritos,ops,cargos,proceso_electoral:proceso,tipo_pas});
         return { data };
       } else {
         return { data: [] };
@@ -579,12 +590,12 @@ const api = {
         return { data: [] };
       }
     },
-    listPas: async ({departamentos,provincias,distritos,ops,cargos,proceso_electoral,filter}:{departamentos:string[],provincias:string[],distritos:string[],cargos:string[],ops:string[],proceso_electoral:string,filter:string}) => {
+    listPas: async ({departamentos,provincias,distritos,ops,cargos,proceso_electoral,filter,tipo_pas}:{departamentos:string[],provincias:string[],distritos:string[],cargos:string[],ops:string[],proceso_electoral:string,filter:string,tipo_pas:string}) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
           data: { data },
-        }: any = await apiService.post(`/processes/dashboard/listadopas/`,{departamentos,provincias,distritos,ops,cargos,proceso_electoral,filter,all_ubigeos:!(departamentos?.length > 0),tipo_pas:'OP'});
+        }: any = await apiService.post(`/processes/dashboard/listadopas/`,{departamentos,provincias,distritos,ops,cargos,proceso_electoral,filter,tipo_pas,all_ubigeos:!(departamentos?.length > 0)});
         return { data };
       } else {
         return { data: [] };

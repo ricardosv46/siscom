@@ -128,7 +128,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
     const getStatsGeneral = async () => {
       const proceso = localStorage.getItem("IdSelectedProcess")!;
 
-      const { data } = await api.estadistica.statsGeneral(proceso);
+      const { data } = await api.estadistica.statsGeneralCandidato(proceso);
       setDatainfo(data);
       setValuesChart(valuesChartTodos(data));
 
@@ -155,7 +155,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   const getDashboard = async () => {
     const proceso = localStorage.getItem("IdSelectedProcess")!;
 
-    const { data } = await api.estadistica.statsGeneralFiltro(departamento, provincia, distrito, cargo, op, proceso);
+    const { data } = await api.estadistica.statsGeneralFiltro(departamento, provincia, distrito, cargo, op, proceso, "CANDIDATO");
     setDatainfo(data);
     setValuesChart(valuesChartTodos(data));
 
@@ -308,6 +308,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
       cargos: cargo,
       proceso_electoral: proceso,
       filter,
+      tipo_pas: "CANDIDATO",
     });
     router.push(`/listadopas?filters=${filters}`);
   };
@@ -443,7 +444,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
     setCargo([]);
     setOp([]);
     setOps([]);
-    const { data } = await api.estadistica.statsGeneral(proceso);
+    const { data } = await api.estadistica.statsGeneralCandidato(proceso);
     setDatainfo(data);
     setValuesChartType("todos");
     setValuesChart(valuesChartTodos(data));
