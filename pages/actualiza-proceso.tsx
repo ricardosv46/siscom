@@ -65,7 +65,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     let itemprop = history?.state?.item;
     if (itemprop) {
       const dataitems = await api.listpas.getProcessesByTracking(itemprop?.numero);
-      const detailEmiUsers = dataitems.processes?.pop() as any;
+      const detailEmiUsers = dataitems.processes?.filter((item) => item.tracking_action === "FINALIZACION").pop() as any;
       const detailEmiAdmin = dataitems.processes?.filter((item) => item.tracking_action === "EMISION")[0] as any;
       if (user?.is_admin) {
         const date = moment(detailEmiAdmin?.created_at_dt);
