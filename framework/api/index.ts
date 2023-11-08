@@ -502,6 +502,28 @@ const api = {
     },
   },
   estadistica:{
+    statsGeneralTotalOP: async (proceso:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.get(`/stats/general/totales/${proceso}/OP`);
+        return { data };
+      } else {
+        return { data: {} };
+      }
+    },
+    statsGeneralTotalCandidato: async (proceso:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.get(`/stats/general/totales/${proceso}/CANDIDATO`);
+        return { data };
+      } else {
+        return { data: {} };
+      }
+    },
     statsGeneralOP: async (proceso:string) => {
       const tok =  GetTokenAuthService();
       if (tok) {

@@ -60,7 +60,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   let filterData: any | undefined;
   const [date, setDate] = useState<any>();
   const { user } = useAuthStore();
-  const profile = user.profile.toUpperCase();
+  const profile = user?.profile?.toUpperCase();
   let label: string | string[] | undefined;
   const [isCheckedTodos, setIsCheckedTodos] = useState(false);
   const [isCheckedCandidato, setIsCheckedCandidato] = useState(false);

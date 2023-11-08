@@ -108,6 +108,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   const router = useRouter();
   const [dateInit, setDateInit] = useState<Moment | null>(null);
   const [dataInfo, setDatainfo] = useState<DataInfo>();
+  const [dataGeneralInfo, setDataGeneraiInfo] = useState<any>();
   const [departamentos, setDepartamentos] = useState<{ label: string; value: string }[]>([]);
   const [departamento, setDepartamento] = useState<string[]>([]);
   const [provincias, setProvincias] = useState<{ label: string; value: string }[]>([]);
@@ -123,15 +124,15 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   const [valuesChartAll, setValuesChartAll] = useState<{ label: string; value: number }[]>(valuesChartAllTodos(dataInfo));
 
   const [valuesChartType, setValuesChartType] = useState<string>("todos");
-
   useEffect(() => {
     const getStatsGeneral = async () => {
       const proceso = localStorage.getItem("IdSelectedProcess")!;
 
       const { data } = await api.estadistica.statsGeneralOP(proceso);
+      const { data: dataGeneral } = await api.estadistica.statsGeneralTotalOP(proceso);
       setDatainfo(data);
       setValuesChart(valuesChartTodos(data));
-
+      setDataGeneraiInfo(dataGeneral);
       setValuesChartAll(valuesChartAllTodos(data));
 
       const datadeps = (await api.estadistica.departamentos(proceso)) as any;
@@ -460,7 +461,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
           <hr style={{ marginTop: "10px", borderTop: "2px solid #A8CFEB" }} />
         </div>
 
-        <div className="pt-8  pb-4 flex gap-[17px] flex-col w-full ">
+        {/* <div className="pt-8  pb-4 flex gap-[17px] flex-col w-full ">
           <div className="flex gap-[17px]">
             <div className="flex flex-col ">
               <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Departamento</p>
@@ -545,7 +546,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </Card>
       <Card title="Listado de personal de ODPE" className="bg-white py-[14px] px-6 rounded-[15px] flex justify-between" border={false}>
         <div className="flex items-center gap-[18px]">
@@ -598,9 +599,9 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                 <p className="mt-[17px]">Total de Candidatos Pasibles Sanción</p>
               </div>
               <div className="w-1/6 font-semibold">
-                <p className="mt-[17px]">78 459</p>
-                <p className="mt-[17px]">62 563</p>
-                <p className="mt-[17px]">15 896</p>
+                <p className="mt-[17px]">{dataGeneralInfo?.total_cumplieron}</p>
+                <p className="mt-[17px]">{dataGeneralInfo?.total_obligados}</p>
+                <p className="mt-[17px]">{dataGeneralInfo?.total_sancion}</p>
               </div>
             </div>
           </Card>

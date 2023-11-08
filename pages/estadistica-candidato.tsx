@@ -121,6 +121,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   const [checkInteraction, setCheckInteraction] = useState(false);
   const [valuesChart, setValuesChart] = useState<{ label: string; value: number }[]>(valuesChartTodos(dataInfo));
   const [valuesChartAll, setValuesChartAll] = useState<{ label: string; value: number }[]>(valuesChartAllTodos(dataInfo));
+  const [dataGeneralInfo, setDataGeneraiInfo] = useState<any>();
 
   const [valuesChartType, setValuesChartType] = useState<string>("todos");
 
@@ -129,8 +130,10 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
       const proceso = localStorage.getItem("IdSelectedProcess")!;
 
       const { data } = await api.estadistica.statsGeneralCandidato(proceso);
+      const { data: dataGeneral } = await api.estadistica.statsGeneralTotalCandidato(proceso);
       setDatainfo(data);
       setValuesChart(valuesChartTodos(data));
+      setDataGeneraiInfo(dataGeneral);
 
       setValuesChartAll(valuesChartAllTodos(data));
 
@@ -598,9 +601,9 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                 <p className="mt-[17px]">Total de Candidatos Pasibles Sanción</p>
               </div>
               <div className="w-1/6 font-semibold">
-                <p className="mt-[17px]">78 459</p>
-                <p className="mt-[17px]">62 563</p>
-                <p className="mt-[17px]">15 896</p>
+                <p className="mt-[17px]">{dataGeneralInfo?.total_cumplieron}</p>
+                <p className="mt-[17px]">{dataGeneralInfo?.total_obligados}</p>
+                <p className="mt-[17px]">{dataGeneralInfo?.total_sancion}</p>
               </div>
             </div>
           </Card>

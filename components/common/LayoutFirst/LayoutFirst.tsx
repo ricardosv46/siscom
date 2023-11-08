@@ -66,7 +66,7 @@ const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
   const { displayNotification, notification: notificationView, closeNotification } = useUI();
   const [api, contextHolder] = notification.useNotification();
   const { storeUser, removeSession, user } = useAuthStore();
-  const profile = user.profile.toUpperCase();
+  const profile = user?.profile?.toUpperCase();
   const { IdSelectedProcess, getStateSelectedProcess, changeStateSelectedProcess } = useMenuStore();
 
   const menuOptions = IdSelectedProcess ? menu : menu_initial;
