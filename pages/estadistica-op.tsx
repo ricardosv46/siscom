@@ -895,12 +895,12 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                   <tr className="border-b border-[#BDBDBD] ">
                     <td className="pl-3 py-1.5">2. No iniciado</td>
                     <td className="text-center py-1.5">
-                      <button
-                        onClick={() => dataInfo && dataInfo?.no_iniciado > 0 && handleFilterListadoPas("no_iniciado")}
-                        className={dataInfo && dataInfo?.no_iniciado > 0 ? "hover:underline" : ""}
+                      <div
+                      // onClick={() => dataInfo && dataInfo?.no_iniciado > 0 && handleFilterListadoPas("no_iniciado")}
+                      // className={dataInfo && dataInfo?.no_iniciado > 0 ? "hover:underline" : ""}
                       >
                         {dataInfo?.no_iniciado}
-                      </button>
+                      </div>
                     </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
                       <td className="py-1.5 text-center flex justify-center items-center">
