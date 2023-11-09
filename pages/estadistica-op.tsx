@@ -599,8 +599,8 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                 <p className="mt-[17px]">Total de Candidatos Pasibles Sanción</p>
               </div>
               <div className="w-1/6 font-semibold">
+              <p className="mt-[17px]">{dataGeneralInfo?.total_obligados}</p>
                 <p className="mt-[17px]">{dataGeneralInfo?.total_cumplieron}</p>
-                <p className="mt-[17px]">{dataGeneralInfo?.total_obligados}</p>
                 <p className="mt-[17px]">{dataGeneralInfo?.total_sancion}</p>
               </div>
             </div>
