@@ -21,6 +21,20 @@
     "role":  "user"
   },
   {
+    "id": 6,
+    "key": "estadistica-op",
+    "icon": "BarChartOutlined",
+    "label": "Estadística OP",
+    "role":  "user"
+  },
+  {
+    "id": 7,
+    "key": "estadistica-candidato",
+    "icon": "BarChartOutlined",
+    "label": "Estadística Candidato",
+    "role":  "user"
+  },
+  {
     "id": 4,
     "key": "nuevoacceso",
     "icon": "UserOutlined",
@@ -34,4 +48,5 @@
     "label": "Listado de accesos",
     "role":  "admin"
   }
+  
 ]

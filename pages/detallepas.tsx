@@ -42,6 +42,7 @@ export interface IDetailItem {
   start_at: string;
   tracking_action: string;
   register_user: string;
+  rj_type: string;
 }
 
 const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, total }) => {
@@ -55,7 +56,8 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
   const [detail, setDetail] = useState<IDetailItem[]>();
   const [nombre, setNombre] = useState();
   const [resolucion_gerencial, setRG] = useState();
-
+  const [headerName, setHeaderName] = useState("");
+  console.log({ detail });
   const router = useRouter();
 
   useEffect(() => {
@@ -66,11 +68,14 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
       getDetailInfo(itempropDetail.numero);
       setNombre(itempropDetail.name);
       setRG(itempropDetail.resolution_number);
+      setHeaderName(itempropDetail.num_expediente);
+      setHeaderName(`${itempropDetail?.name} - R.G. ${itempropDetail?.resolution_number} - Exp. ${itempropDetail?.num_expediente}`);
     } else if (itempropBack && !itempropDetail) {
       setItem(itempropBack);
       getDetailInfo(itempropBack.process.numero);
       setNombre(itempropBack.process.name);
       setRG(itempropBack.resolution_number);
+      setHeaderName(itempropBack?.headerName);
     } else {
       router.push("/listadopas");
     }
@@ -97,9 +102,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
 
       <Card title="Listado de personal de ODPE">
         <div style={{ marginBottom: "0.4rem" }}>
-          <h1 style={{ fontSize: 25, color: "#4F5172" }}>
-            {nombre} - R.G. {resolucion_gerencial}
-          </h1>
+          <h1 style={{ fontSize: 25, color: "#4F5172" }}>{headerName}</h1>
         </div>
         <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
 
@@ -121,9 +124,9 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
             return (
               <>
                 {key % 2 === 0 ? (
-                  <LeftCard item={item} idx={key} detailEmi={detailEmi} arrayNoti={arrayNoti} />
+                  <LeftCard item={{ ...item, headerName }} idx={key} detailEmi={detailEmi} arrayNoti={arrayNoti} />
                 ) : (
-                  <RightCard item={item} idx={key} detailEmi={detailEmi} arrayNoti={arrayNoti} />
+                  <RightCard item={{ ...item, headerName }} idx={key} detailEmi={detailEmi} arrayNoti={arrayNoti} />
                 )}
               </>
             );

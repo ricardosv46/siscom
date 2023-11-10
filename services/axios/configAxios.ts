@@ -36,7 +36,6 @@ apiService.interceptors.response.use(
     return Promise.reject(response);
   },
   function (error) {
-
       if (error.code === 'ERR_NETWORK') {
         const instance = Modal.info({
           content: error.message,
@@ -65,6 +64,11 @@ apiService.interceptors.response.use(
           instance.destroy();
         },
       });
+
+      return Promise.reject(error.response);
+    }
+    if (error.response.status === 200) {
+     
 
       return Promise.reject(error.response);
     }

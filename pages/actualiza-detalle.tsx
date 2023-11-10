@@ -9,14 +9,11 @@ import { GetServerSideProps } from "next";
 import { getCookie } from "cookies-next";
 import { mergeArray } from "@lib/general";
 import { useRouter } from "next/router";
-import axios from "axios";
-import { RightCard } from "../components/common/right";
-import { Button, DatePicker, Modal, message } from "antd";
+import { Button, DatePicker, Modal } from "antd";
 import { GetTokenAuthService } from "services/auth/ServiceAuth";
-import { parse, format } from "date-fns";
 import apiService from "services/axios/configAxios";
 import moment from "moment";
-import locale from "antd/es/date-picker/locale/es_ES";
+import locale from "antd/lib/date-picker/locale/es_ES";
 interface IPropsItem {
   id: string | number | null;
   resolution_number: string | null;
@@ -28,6 +25,7 @@ interface IPropsItem {
   document: string | null;
   comment: string | null;
   created_at: string | null;
+  headerName: string;
 }
 
 let newFormatFechaInicio = "";
@@ -81,6 +79,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     getTypeDocumentsApi();
     getOrganizationsApi();
     if (itemprop) {
+      console.log({ itemprop });
       setItem(itemprop);
       id = itemprop?.id;
       resolution_number = itemprop?.resolution_number;
@@ -132,6 +131,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       setTipoDocumentoSelectedOption(related_document);
       setDocumentoRelacionadoinputValue(document);
       setComentarioTextareaValue(comment);
+      setRj_type(itemprop?.rj_type === null ? "" : itemprop?.rj_type);
     } else {
       router.push("/detallepas");
     }
@@ -146,6 +146,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [gerenciaSelectedOption, setGerenciaSelectedOption] = useState("");
   const [gerenciaAsignadaSelectedOption, setGerenciaAsignadaSelectedOption] = useState("");
   const [comentarioTextareaValue, setComentarioTextareaValue] = useState("");
+  const [rj_type, setRj_type] = useState("");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -153,6 +154,17 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     if (fechaInicioInputValue === "") {
       const instance = Modal.info({
         content: "Por favor, ingrese la fecha",
+        centered: true,
+        async onOk() {
+          instance.destroy();
+        },
+      });
+      return;
+    }
+
+    if (tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && operationSelectedOption === "ACTUALIZACION" && !rj_type) {
+      const instance = Modal.info({
+        content: "Por favor, ingrese el tipo de resolución jefatural",
         centered: true,
         async onOk() {
           instance.destroy();
@@ -192,10 +204,20 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     if (tok) {
       formData.append("comment", comentarioTextareaValue);
       formData.append("current_responsible", gerenciaSelectedOption);
-      formData.append("document", documentoRelacionadoinputValue);
+
       formData.append("new_responsible", gerenciaAsignadaSelectedOption);
-      formData.append("type_document", tipoDocumentoSelectedOption);
+
       formData.append("tracking_action", operationSelectedOption.toLowerCase());
+
+      if (operationSelectedOption === "OBSERVACION" || operationSelectedOption === "ACTUALIZACION") {
+        formData.append("type_document", tipoDocumentoSelectedOption);
+        formData.append("document", documentoRelacionadoinputValue);
+      }
+
+      if (tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && operationSelectedOption === "ACTUALIZACION") {
+        formData.append("rj_type", rj_type);
+      }
+
       try {
         const reqInit = {
           headers: {
@@ -248,6 +270,10 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
     setOperationSelectedOption(event.target.value);
   }
+
+  const handleRjType = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setRj_type(event.target.value);
+  };
 
   function goBack(page: string, props: any): void {
     router.push({ pathname: page });
@@ -305,7 +331,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         if (currentHourActive === currentHourinit) {
           return {
             disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour < currentHourinit),
-            disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit),
+            disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit + 1),
           };
         }
         return {
@@ -350,7 +376,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     <form onSubmit={handleSubmit}>
       <Card title="Crear usuario">
         <div style={{ marginBottom: "0.4rem" }}>
-          <h2 style={{ fontSize: 25, color: "#4F5172" }}>{item?.resolution_number}</h2>
+          <h2 style={{ fontSize: 25, color: "#4F5172" }}>{item?.headerName}</h2>
         </div>
         <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
 
@@ -456,6 +482,69 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
+        {operationSelectedOption !== "FINALIZACION" && operationSelectedOption !== "NOTIFICACION" && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <label htmlFor="tipo_documento" className="text-gray-600">
+                Tipo de documento:
+              </label>
+              <select
+                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                value={tipoDocumentoSelectedOption}
+                onChange={handleTipoDocumentoSelectChange}
+              >
+                <option value="">Seleccione tipo de documento</option>
+
+                {operationSelectedOption !== "ACTUALIZACION" &&
+                  options
+                    .filter((item: any) => item.name !== "RESOLUCION JEFATURAL-PAS")
+                    .map((item: any, index) => (
+                      <option value={item.name} key={index}>
+                        {item.name}
+                      </option>
+                    ))}
+                {operationSelectedOption === "ACTUALIZACION" &&
+                  options.map((item: any, index) => (
+                    <option value={item.name} key={index}>
+                      {item.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+          </div>
+        )}
+
+        {operationSelectedOption !== "FINALIZACION" && operationSelectedOption !== "NOTIFICACION" && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <label className="text-gray-600">Número de documento:</label>
+              <input
+                type="text"
+                placeholder="Ingrese número de documento"
+                value={documentoRelacionadoinputValue}
+                onChange={handleInputChange}
+                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+              />
+            </div>
+          </div>
+        )}
+
+        {tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && operationSelectedOption === "ACTUALIZACION" && (
+          <div className="w-1/2 py-5">
+            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <label htmlFor="nuevo_responsable" className="text-gray-600">
+                Tipo de resolución jefatural:
+              </label>
+              <select className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"} value={rj_type} onChange={handleRjType}>
+                <option value="">Seleccione tipo de resolución jefatural</option>
+                <option value="SANCION">Sanción</option>
+                <option value="NULIDAD">Nulidad</option>
+                <option value="ARCHIVO">Archivo</option>
+              </select>
+            </div>
+          </div>
+        )}
+
         {operationSelectedOption !== "FINALIZACION" && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
@@ -472,42 +561,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                   </option>
                 ))}
               </select>
-            </div>
-          </div>
-        )}
-        {operationSelectedOption !== "FINALIZACION" && operationSelectedOption !== "NOTIFICACION" && (
-          <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
-              <label htmlFor="tipo_documento" className="text-gray-600">
-                Tipo de documento:
-              </label>
-              <select
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-                value={tipoDocumentoSelectedOption}
-                onChange={handleTipoDocumentoSelectChange}
-              >
-                <option value="">Seleccione tipo de documento</option>
-                {options.map((item: any, index) => (
-                  <option value={item.name} key={index}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        )}
-
-        {operationSelectedOption !== "FINALIZACION" && operationSelectedOption !== "NOTIFICACION" && (
-          <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
-              <label className="text-gray-600">Documento relacionado:</label>
-              <input
-                type="text"
-                placeholder="Ingrese número de documento"
-                value={documentoRelacionadoinputValue}
-                onChange={handleInputChange}
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-              />
             </div>
           </div>
         )}

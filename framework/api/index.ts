@@ -501,6 +501,129 @@ const api = {
       }
     },
   },
+  estadistica:{
+    statsGeneralTotalOP: async (proceso:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.get(`/stats/general/totales/${proceso}/OP`);
+        return { data };
+      } else {
+        return { data: {} };
+      }
+    },
+    statsGeneralTotalCandidato: async (proceso:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.get(`/stats/general/totales/${proceso}/CANDIDATO`);
+        return { data };
+      } else {
+        return { data: {} };
+      }
+    },
+    statsGeneralOP: async (proceso:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.get(`/stats/general/${proceso}/OP`);
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
+    statsGeneralCandidato: async (proceso:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.get(`/stats/general/${proceso}/CANDIDATO`);
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
+    statsGeneralFiltro: async (departamentos:string[],provincias:string[],distritos:string[],cargos:string[],ops:string[],proceso:string,tipo_pas:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.post(`/stats/dashboard/`,{departamentos,provincias,distritos,ops,cargos,proceso_electoral:proceso,tipo_pas});
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
+    departamentos: async (proceso:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.get(`/stats/departamentos/${proceso}/`);
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
+    provincias: async (ubigeos:string[],proceso:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.post(`/stats/provincias/`,{departamentos:ubigeos,proceso_electoral:proceso});
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
+    distritos: async (ubigeos:string[],proceso:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.post(`/stats/distritos/`,{provincias:ubigeos,proceso_electoral:proceso});
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
+    cargos: async (proceso:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.get(`/stats/cargos/${proceso}/`);
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
+    op: async (departamentos:string[],provincias:string[],distritos:string[],proceso:string) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.post(`/stats/op/`,{departamentos,provincias,distritos,proceso_electoral:proceso});
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
+    listPas: async ({departamentos,provincias,distritos,ops,cargos,proceso_electoral,filter,tipo_pas}:{departamentos:string[],provincias:string[],distritos:string[],cargos:string[],ops:string[],proceso_electoral:string,filter:string,tipo_pas:string}) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        const {
+          data: { data },
+        }: any = await apiService.post(`/processes/dashboard/listadopas/`,{departamentos,provincias,distritos,ops,cargos,proceso_electoral,filter,tipo_pas,all_ubigeos:!(departamentos?.length > 0)});
+        return { data };
+      } else {
+        return { data: [] };
+      }
+    },
+  }
 };
 
 export default api;

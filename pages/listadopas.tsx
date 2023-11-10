@@ -58,9 +58,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [memory, setMemory] = useState<any>();
   let inputValue: any | undefined;
   let filterData: any | undefined;
-  const [date, setDate] = useState({ from: "", to: "" });
+  const [date, setDate] = useState<any>();
   const { user } = useAuthStore();
-  const profile = user.profile.toUpperCase();
+  const profile = user?.profile?.toUpperCase();
   let label: string | string[] | undefined;
   const [isCheckedTodos, setIsCheckedTodos] = useState(false);
   const [isCheckedCandidato, setIsCheckedCandidato] = useState(false);
@@ -78,89 +78,138 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [openTrackingAnexos, setOpenTrackingAnexos] = useState(false);
   const [dataTracking, setDataTracking] = useState<ITracking[]>([]);
   const [dataTrackingDetail, setDataTrackingDetail] = useState<ITrackingDetail[]>([]);
+  const [estadoRj, setEstadoRj] = useState<any>([]);
 
-  const processApi = async (IdSelectedProcess: any, label: any) => {
-    const { processes } = await api.listpas.getProcesses(IdSelectedProcess, "all");
-
-    const statusImg: any = {
-      less_3_months: "less_3_months",
-      less_6_months: "less_6_months",
-      more_6_months: "more_6_months",
-      finalized: "finalized",
-      out_of_date: "out_of_date",
-      to_start: "to_start",
-      undefined: "undefined",
+  useEffect(() => {
+    return () => {
+      Modal.destroyAll();
     };
+  }, []);
 
-    const newData = processes.map((item) => {
-      const { estado, responsable } = item;
-      if (responsable == profile || user.is_admin) {
-        return {
-          ...item,
-          btnDisabled: false,
-          estado: <img src={`assets/images/${statusImg[estado]}.png`} />,
-        };
-      } else {
-        return {
-          ...item,
-          btnDisabled: true,
-          estado: <img src={`assets/images/${statusImg[estado]}.png`} />,
-        };
-      }
+  const processApi = async (IdSelectedProcess: any, label: any, filterBarras?: any) => {
+    const instance = Modal.info({
+      title: "Espere",
+      content: (
+        <div>
+          <p>Cargando información....</p>
+        </div>
+      ),
+      onOk() {},
+      okButtonProps: { disabled: true, style: { backgroundColor: "#0874cc", display: "none" } },
+      centered: true,
     });
 
-    const uniqueArr = Array.from(new Set(processes.map((item) => item.responsable)))
-      .map((responsable) => ({
-        value: responsable,
-        label: responsable,
-      }))
-      .filter((item) => item.value !== "");
+    try {
+      const { processes } = await api.listpas.getProcesses(IdSelectedProcess, "all");
 
-    const newDataResponsable = [{ value: "all", label: "Todos" }, ...uniqueArr, { value: "", label: "Sin Responsable" }];
-    const newInfoRes =
-      new Date(localStorage.getItem("IdSelectedYear")!).valueOf() < new Date("2022").valueOf()
-        ? newDataResponsable
-        : newDataResponsable.slice(0, -1);
-    setDataResponsable(newInfoRes);
+      const statusImg: any = {
+        less_3_months: "less_3_months",
+        less_6_months: "less_6_months",
+        more_6_months: "more_6_months",
+        finalized: "finalized",
+        out_of_date: "out_of_date",
+        to_start: "to_start",
+        undefined: "undefined",
+      };
 
-    let valuefilter: any = undefined;
-    if (label === "all") {
-      valuefilter = "";
-    }
-    if (label === "to_start") {
-      valuefilter = "Por Iniciar";
-    }
-    if (label === "out_of_date") {
-      valuefilter = "Fuera de fecha";
-    }
-    if (label === "finalized") {
-      valuefilter = "Finalizado";
-    }
-    if (label === "more_6_months") {
-      valuefilter = "Mas de 6 meses";
-    }
-    if (label === "less_6_months") {
-      valuefilter = "De 3 a 6 meses";
-    }
-    if (label === "less_3_months") {
-      valuefilter = "Menos de 3 meses";
-    }
-    if (label === "undefined") {
-      valuefilter = "Indefinido";
-    }
-
-    if (valuefilter) {
-      const dataFilter = newData?.filter((item: any) => {
-        return item.estado_proceso === valuefilter;
+      const newData = processes.map((item) => {
+        const { estado, responsable } = item;
+        if (responsable == profile || user.is_admin) {
+          return {
+            ...item,
+            btnDisabled: false,
+            estado: <img src={`assets/images/${statusImg[estado]}.png`} />,
+          };
+        } else {
+          return {
+            ...item,
+            btnDisabled: true,
+            estado: <img src={`assets/images/${statusImg[estado]}.png`} />,
+          };
+        }
       });
-      setEstado(valuefilter);
-      setProcess(dataFilter);
-    } else {
-      setProcess(newData);
-    }
-    setMemory(newData);
 
-    return newData;
+      const uniqueArr = Array.from(new Set(processes.map((item) => item.responsable)))
+        .map((responsable) => ({
+          value: responsable,
+          label: responsable,
+        }))
+        .filter((item) => item.value !== "");
+
+      const newDataResponsable = [{ value: "all", label: "Todos" }, ...uniqueArr, { value: "", label: "Sin Responsable" }];
+      const newInfoRes =
+        new Date(localStorage.getItem("IdSelectedYear")!).valueOf() < new Date("2022").valueOf()
+          ? newDataResponsable
+          : newDataResponsable.slice(0, -1);
+      setDataResponsable(newInfoRes);
+
+      let valuefilter: any = undefined;
+      if (label === "all") {
+        valuefilter = "";
+      }
+      if (label === "to_start") {
+        valuefilter = "Por Iniciar";
+      }
+      if (label === "out_of_date") {
+        valuefilter = "Fuera de fecha";
+      }
+      if (label === "finalized") {
+        valuefilter = "Finalizado";
+      }
+      if (label === "more_6_months") {
+        valuefilter = "Mas de 6 meses";
+      }
+      if (label === "less_6_months") {
+        valuefilter = "De 3 a 6 meses";
+      }
+      if (label === "less_3_months") {
+        valuefilter = "Menos de 3 meses";
+      }
+      if (label === "undefined") {
+        valuefilter = "Indefinido";
+      }
+
+      if (filterBarras) {
+        setEstadoRj(filterBarras?.filter);
+        const newInfo = await api.estadistica.listPas(filterBarras);
+
+        const newInfoList = newInfo?.data.map((item: any) => {
+          const { estado, responsable } = item;
+          if (responsable == profile || user.is_admin) {
+            return {
+              ...item,
+              btnDisabled: false,
+              estado: <img src={`assets/images/${statusImg[estado]}.png`} />,
+            };
+          } else {
+            return {
+              ...item,
+              btnDisabled: true,
+              estado: <img src={`assets/images/${statusImg[estado]}.png`} />,
+            };
+          }
+        });
+        setProcess(newInfoList);
+        setMemory(newInfoList);
+        instance.destroy();
+        return;
+      }
+
+      if (valuefilter) {
+        const dataFilter = newData?.filter((item: any) => {
+          return item.estado_proceso === valuefilter;
+        });
+        setEstado(valuefilter);
+        setProcess(dataFilter);
+      } else {
+        setProcess(newData);
+      }
+      setMemory(newData);
+      instance.destroy();
+      return newData;
+    } catch (error) {
+      instance.destroy();
+    }
   };
 
   const processApiByDate = async (globalProcess: any, label: any, start_at: string, end_at: string) => {
@@ -234,11 +283,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
         okText: "Si",
         cancelText: "No",
         async onOk() {
+          instance.destroy();
           const result = await api.listpas.loadExcelInformation(excelFile);
           const newData = await processApi(IdSelectedProcess, "all");
           const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
           setProcess(dataFilter);
-          instance.destroy();
         },
         async onCancel() {
           instance.destroy();
@@ -266,11 +315,13 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     }
 
     if (res?.data?.message === "3") {
-      const result = await api.listpas.loadExcelInformation(excelFile);
-      const newData = await processApi(IdSelectedProcess, "all");
-      const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
-      setProcess(dataFilter);
       instanceProcesando.destroy();
+      const result = await api.listpas.loadExcelInformation(excelFile);
+      if (result && result?.data?.length > 0) {
+        const newData = await processApi(IdSelectedProcess, "all");
+        const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
+        setProcess(dataFilter);
+      }
     }
   };
 
@@ -365,10 +416,13 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
   useEffect(() => {
     setIsCheckedTodos(true);
-    const labelIndex = router.query;
+    const labelIndex = router?.query;
+    const filters: any = router?.query?.filters;
+    console.log({ router: router.query });
+    const filtersParse = filters ? JSON.parse(filters) : null;
+    console.log({ filters, filtersParse });
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado;
-    console.log({ IdSelectedProcess, label });
-    processApi(IdSelectedProcess, label);
+    processApi(IdSelectedProcess, label, filtersParse);
   }, [IdSelectedProcess]);
 
   // useEffect(() => {
@@ -426,6 +480,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       title: "Tiempo Restante",
       dataIndex: "days_left",
       key: "days_left",
+    },
+    {
+      title: "Finalizado en",
+      dataIndex: "days_ended",
+      key: "days_ended",
     },
     {
       title: "Actualización",
@@ -654,6 +713,15 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     },
   ];
 
+  const clearFilters = async () => {
+    setDate("");
+    setOperationSelectedOption("");
+    setEstado("");
+    setSearch("");
+    setResponsable("all");
+    setEstadoRj("");
+    processApi(IdSelectedProcess, "all");
+  };
   const dataOptionsSelect =
     new Date(localStorage.getItem("IdSelectedYear")!).valueOf() < new Date("2022").valueOf() ? optionsEstado : optionsEstado.slice(0, -1);
 
@@ -669,37 +737,61 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           <h2 style={{ fontSize: 25, color: "#4F5172" }}>Listado de PAS </h2>
           <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
         </div>
-
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-            <img style={{ marginRight: "10px" }} src="assets/images/to_start.png" />
-            <label className="form-checkbottom">Por iniciar</label>
-          </div>
-          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-            <img style={{ marginRight: "10px" }} src="assets/images/out_of_date.png" />
-            <label className="form-checkbottom">Fuera de fecha</label>
-          </div>
-          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-            <img style={{ marginRight: "10px" }} src="assets/images/finalized.png" />
-            <label className="form-checkbottom">Finalizado</label>
-          </div>
-          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-            <img style={{ marginRight: "10px" }} src="assets/images/more_6_months.png" />
-            <label className="form-checkbottom">Más de 6 meses</label>
-          </div>
-          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-            <img style={{ marginRight: "10px" }} src="assets/images/less_6_months.png" />
-            <label className="form-checkbottom">De 3 a 6 meses</label>
-          </div>
-          <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-            <img style={{ marginRight: "10px" }} src="assets/images/less_3_months.png" />
-            <label className="form-checkbottom">Menos de 3 meses</label>
-          </div>
-
-          {new Date(localStorage.getItem("IdSelectedYear")!).valueOf() < new Date("2022").valueOf() && (
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center" }}>
             <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-              <img style={{ marginRight: "10px" }} src="assets/images/undefined.png" />
-              <label className="form-checkbottom">Indefinido</label>
+              <img style={{ marginRight: "10px" }} src="assets/images/to_start.png" />
+              <label className="form-checkbottom">Por iniciar</label>
+            </div>
+            <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+              <img style={{ marginRight: "10px" }} src="assets/images/out_of_date.png" />
+              <label className="form-checkbottom">Fuera de fecha</label>
+            </div>
+            <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+              <img style={{ marginRight: "10px" }} src="assets/images/finalized.png" />
+              <label className="form-checkbottom">Finalizado</label>
+            </div>
+            <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+              <img style={{ marginRight: "10px" }} src="assets/images/more_6_months.png" />
+              <label className="form-checkbottom">Más de 6 meses</label>
+            </div>
+            <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+              <img style={{ marginRight: "10px" }} src="assets/images/less_6_months.png" />
+              <label className="form-checkbottom">De 3 a 6 meses</label>
+            </div>
+            <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+              <img style={{ marginRight: "10px" }} src="assets/images/less_3_months.png" />
+              <label className="form-checkbottom">Menos de 3 meses</label>
+            </div>
+
+            {new Date(localStorage.getItem("IdSelectedYear")!).valueOf() < new Date("2022").valueOf() && (
+              <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
+                <img style={{ marginRight: "10px" }} src="assets/images/undefined.png" />
+                <label className="form-checkbottom">Indefinido</label>
+              </div>
+            )}
+          </div>
+          {estadoRj.length > 0 && (
+            <div className="flex gap-3 items-center">
+              Estado RG :{" "}
+              <Button
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "8px 8px",
+                  backgroundColor: "#083474",
+                  border: "none",
+                  color: "white",
+                  marginRight: "10px",
+                  cursor: "pointer",
+                }}
+              >
+                <span className="uppercase font-normal">{estadoRj}</span>
+                <button className="font-bold ml-3" onClick={clearFilters}>
+                  x
+                </button>
+              </Button>
             </div>
           )}
         </div>
@@ -707,7 +799,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
         <div className="py-10 border-b border-gray-200 pb-4 flex justify-between w-full items-center">
           <div>
-            <Input value={inputValue} onChange={(e) => onSearch(e.target.value)} placeholder="Buscar" prefix={<SearchOutlined />} />
+            <Input value={search} onChange={(e) => onSearch(e.target.value)} placeholder="Buscar" prefix={<SearchOutlined />} />
           </div>
 
           <div className="flex flex-col mb-5">
@@ -758,7 +850,29 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           </div> */}
           <div className="flex flex-col mb-5">
             Por Fecha de inicio:
-            <RangePicker locale={locale} onChange={onChangeDate} disabledDate={disabledDate} />
+            <RangePicker locale={locale} value={date} onChange={onChangeDate} disabledDate={disabledDate} />
+          </div>
+          <div style={{ display: "flex" }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              {
+                <Button
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "8px 8px",
+                    backgroundColor: "#083474",
+                    border: "none",
+                    color: "white",
+                    marginRight: "10px",
+                    cursor: "pointer",
+                  }}
+                  onClick={clearFilters}
+                >
+                  <span style={{ fontSize: "16px" }}>Limpiar Filtros</span>
+                </Button>
+              }
+            </div>{" "}
           </div>
           <div style={{ display: "flex" }}>
             <div style={{ display: "flex", alignItems: "center" }}>

@@ -27,6 +27,7 @@ import {
   KeyOutlined,
   SafetyCertificateOutlined,
   FileSearchOutlined,
+  BarChartOutlined,
 } from "@ant-design/icons";
 import IconOnpe from "@components/icons/IconOnpe";
 import { ModalDrawer } from "@components/ui";
@@ -43,6 +44,7 @@ const { Header, Content, Footer, Sider } = Layout;
 const icons: { [P in string]: ComponentType<any> | string } = {
   HomeOutlined: HomeOutlined,
   UserOutlined: UserOutlined,
+  BarChartOutlined: BarChartOutlined,
   SafetyCertificateOutlined: SafetyCertificateOutlined,
   DesktopOutlined: DesktopOutlined,
   ContactsOutlined: ContactsOutlined,
@@ -64,7 +66,7 @@ const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
   const { displayNotification, notification: notificationView, closeNotification } = useUI();
   const [api, contextHolder] = notification.useNotification();
   const { storeUser, removeSession, user } = useAuthStore();
-  const profile = user.profile.toUpperCase();
+  const profile = user?.profile?.toUpperCase();
   const { IdSelectedProcess, getStateSelectedProcess, changeStateSelectedProcess } = useMenuStore();
 
   const menuOptions = IdSelectedProcess ? menu : menu_initial;
@@ -87,7 +89,6 @@ const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
       );
     }
   });
-  console.log({ router });
 
   const handleMenu = ({ key }: { key: string }) => {
     router.push(key);
