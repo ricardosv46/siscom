@@ -35,6 +35,7 @@ import axios from "axios";
 import { utils, writeFile } from 'xlsx'
 
 import { GetAuthService } from 'services/auth/ServiceAuth';
+import { Modal } from "antd";
 
 const api = {
   login: async (body: any) => {
@@ -114,12 +115,12 @@ const api = {
         return { processes: [] };
       }
     },
-    getProcessesByDate: async (label: any, start_at: string, end_at: string) => {
+    getProcessesByDate: async (globalProcess: any, label: any, start_at: string, end_at: string) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
           data: { data, message, success },
-        }: IResponseProcesses = await apiService.get(`${label}/processes/${start_at}/${end_at}`);
+        }: IResponseProcesses = await apiService.get(`${label}/processes/${start_at}/${end_at}/?electoral_process=${globalProcess}`);
         if (data === undefined || success === undefined || message === undefined) {
           return { processes: [] };
         } else {
@@ -156,19 +157,26 @@ const api = {
         try {
           const token = localStorage.getItem("token");
           const resultApi = await axios.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/bulk/tracking/create/`, formData, {headers: {'x-access-tokens': token}});
-          //const resultApi = await apiService.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/bulk/tracking/create`, formData);
           const response = resultApi.data;
 
           if (response){
-            alert(response.message);
+            const instance = Modal.info({
+              content: response.message,
+              centered:true,
+              async onOk() {
+                instance.destroy();
+              }, });
+
             if (response.data.length > 0){
               let dataExcel = [];
               let headers: any[];
-              headers = ['DNI_CANDIDATO', 'NRO_RG_PAS','TIPO_DOC_EMITIDO', 'NRO_DOC_EMITIDO', 'NUEVO_RESPONSABLE', 'ERROR']
+              headers = ['FILA', 'EXPEDIENTE', 'NRO_RG_PAS', 'DNI_CANDIDATO', 'TIPO_DOC_EMITIDO', 'NRO_DOC_EMITIDO', 'NUEVO_RESPONSABLE', 'ERROR']
               for (let i = 0; i < response.data.length; i++) {
                 dataExcel.push({
-                  dni_candidato: response.data[i].DNI_CANDIDATO,
+                  fila: response.data[i].FILA,
+                  expediente: response.data[i].expediente,
                   nro_rg_pas: response.data[i].NRO_RG_PAS,
+                  dni_candidato: response.data[i].DNI_CANDIDATO,
                   tipo_doc_emitido: response.data[i].TIPO_DOC_EMITIDO,
                   nro_doc_emitido: response.data[i].NRO_DOC_EMITIDO,
                   nuevo_responsable: response.data[i].NUEVO_RESPONSABLE,
@@ -189,34 +197,135 @@ const api = {
             console.log("ssssss");
           }
         } catch (error) {
-          alert("Ocurrió un error al procesar el archivo!");
+          const instance = Modal.info({
+            content: "Ocurrió un error al procesar el archivo!",
+            centered:true,
+            async onOk() {
+              instance.destroy();
+            }, });
         }
         
         return {data: []}
+      }
+    },
+    createTracking: async (id: any, payload: any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+        try{
+          const response = await apiService.post(`processes/${id}/tracking/create/`, payload, { headers: { "x-access-tokens": tok } });
+          if (response.status === 400 && response.data.success === false){
+            return response.data
+          } else {
+            return {"success": true, "message": "ok"}
+          }
+
+        } catch(error) {
+        }
+        
       }
     },
      
     downloadExcelInformation: async (payload: any) => {
       const tok =  GetTokenAuthService();
       if (tok) {
-        const { headers,  status, data } = await apiService.post(`/tracking/download/`, {
-          processes: payload
-        },{responseType: "blob",});
-        if(status === 200) {
-          const resp = data
-          var blob = new Blob([resp], {
-            type: headers["content-type"],
-          });
-          const link = document.createElement("a");
-          link.href = window.URL.createObjectURL(blob);
-          link.download = `report_${new Date().getTime()}.xlsx`;
-          link.click();          
-        }
+
+        const responseExcel = await apiService.post(`/tracking/download/`,{processes: payload},{responseType: 'arraybuffer',
+        headers: {'Content-Type': 'application/json'}});
+        const outputFilename = `report_${new Date().getTime()}.xlsx`;
+
+        // If you want to download file automatically using link attribute.
+        const url = URL.createObjectURL(new Blob([responseExcel.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', outputFilename);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();      
+        
       }
     },
-    downloadDocuments: async (payload: any) => {
+    downloadFileDetail: async (payload: any) => {
       const tok =  GetTokenAuthService();
-      if (tok) {        
+      if (tok) {
+
+        const formData = new FormData();
+
+        formData.set('idArchivo', payload?.idArchivo);
+        formData.set('nombreArchivo', payload?.nombreArchivo);
+        const responsePDF = await apiService.post(`/processes/sgd/downloadFile/`,
+        formData,{
+          headers: {
+            'x-access-tokens': tok,
+            'Content-Type': 'multipart/form-data', // Cambiar a 'multipart/form-data'
+          },
+          responseType: 'arraybuffer',
+        }) 
+        const outputFilename = payload?.nombreArchivo;
+
+        // If you want to download file automatically using link attribute.
+        const url = URL.createObjectURL(new Blob([responsePDF.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', outputFilename);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+      }
+    },
+    downloadFileDetailPdf: async (payload: any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+
+
+        const formData = new FormData();
+        console.log({payload})
+        formData.set('nu_ann_sgd', payload?.nu_ann);
+        formData.set('nu_emi_sgd', payload?.nu_emi);
+        const responsePDF = await apiService.post(`/processes/sgd/downloadFile2/`,
+        formData,{
+          headers: {
+            'x-access-tokens': tok,
+            'Content-Type': 'multipart/form-data', // Cambiar a 'multipart/form-data'
+          },
+           responseType: 'arraybuffer',
+        }) 
+        const outputFilename = `${payload?.tipo_doc} ${payload?.nro_doc}.pdf`;
+
+        // If you want to download file automatically using link attribute.
+        const url = URL.createObjectURL(new Blob([responsePDF.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', outputFilename);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+      }
+    },
+    validateFile: async (payload: any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) {
+
+
+        const formData = new FormData();
+        formData.set('user_id', payload?.id);
+        formData.set('xlsx_file', payload?.excelFile);
+        const {data} = await apiService.post(`/processes/validateExcel/`,
+        formData,{
+          headers: {
+            'x-access-tokens': tok,
+            'Content-Type': 'multipart/form-data', // Cambiar a 'multipart/form-data'
+          },
+          
+        }) 
+        return { data };
+
+      }
+    },
+    downloadDocuments: async (item:any,payload: any) => {
+      const tok =  GetTokenAuthService();
+      if (tok) { 
         try {
           const response = await apiService.get(`processes/${payload}/documents/download/`,  
           {
@@ -224,12 +333,19 @@ const api = {
           });
           
           if (response.status == 400 || response.data === undefined){
-            alert("No se encontraron documentos para descargar");
+            const instance = Modal.info({
+              content: 'No se encontraron documentos para descargar',
+              centered:true,
+              async onOk() {
+                instance.destroy();
+              }, });
           } else {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const outputFilename = item?.dni_candidato.length > 0 ? `${item?.dni_candidato} ${item?.num_expediente}.zip` :  `${item?.num_expediente}.zip`
+
+            const url = window.URL.createObjectURL(new Blob([response.data],{type: "application/zip"}));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', 'archivo.zip');
+            link.setAttribute('download', outputFilename);
             document.body.appendChild(link);
             link.click();
           }
@@ -279,23 +395,44 @@ const api = {
         if (data === undefined || success === undefined || message === undefined) {
           return { trackingDetail: [] };
         } else {
-          return { trackingDetail: data, message, success };
+          return { trackingDetail: [{...data}], message, success };
         }
         
       } else {
         return { trackingDetail: [] };
       }
     },
+
+    getTrackingDetailAnexos: async (año:any, id:any) => {
+      const tok =  GetTokenAuthService();
+      console.log({año,id});
+      if (tok) {
+        const {
+          data: { data, message, success },
+        }: any = await apiService.get(`processes/sgd/annexes/list/${año}/${id}/`);
+        if (data === undefined || success === undefined || message === undefined) {
+          return { trackingDetailAnexos: [] };
+        } else {
+          return { trackingDetailAnexos: data, message, success };
+        }
+        
+      } else {
+        return { trackingDetailAnexos: [] };
+      }
+    },
+
     getAnexosDetail: async (año:any, id:any) => {
       const tok =  GetTokenAuthService();
       if (tok) {
         const {
           data: { data, message, success },
         }: IResponseAnexosDetail = await apiService.get(`processes/sgd/annex-detail/${año}/${id}/`);
+        const {data:docs}: any = await apiService.get(`processes/sgd/annexes/list/${año}/${id}/`);
+
         if (data === undefined || success === undefined || message === undefined) {
           return { anexosDetail: [] };
         } else {
-          return { anexosDetail: data, message, success };
+          return { anexosDetail:[ {...data[0],docs}], message, success };
         }
         
       } else {

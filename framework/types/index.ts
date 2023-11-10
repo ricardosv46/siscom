@@ -55,27 +55,34 @@ export interface IResponseTracking extends axiosDefaultData{
 }
 
 export interface IAnexos{
+  id?:string
+  document_type?: string
   document?: string
   from?: string
   name?: string
   nu_ann?: string
   nu_emi?: string
+  nu_emi_ref?:string
   references?: IReferences[]
   to?: string
 }
 
  
 export interface ITracking {
+  id?:string
+  document_type?: string
   document: string,
   from: string,
   name: string,
   nu_ann: string,
   nu_emi: string,
+  nu_emi_ref: string,
   references: IReferences[]
   to?: string
 }
  
 export interface  IReferences {
+  
   document: string,
   from: string,
   name: string,
@@ -87,45 +94,73 @@ export interface  IReferences {
 
 
 export interface ITrackingDetail{
-  ASUNTO?: string | undefined
-  DEPENDENCIA?: string | undefined
-  ELABORO?: string | undefined
-  EMISOR?: string | undefined
-  ESTADO?: string | undefined
-  ESTADO_DESTINATARIO?: string | undefined
-  FECHA_ATE?: string | undefined
-  FECHA_EMI?: string | undefined
-  FECHA_REC?: string | undefined
-  INDICACIONES?: string | undefined
-  NRO_DOC?: string | undefined
-  NU_ANN?: string | undefined
-  NU_ANN_EXP?: string | undefined
-  NU_DES?: string | undefined
-  NU_EMI?: string | undefined
-  NU_SEC_EXP?: string | undefined
-  PRIORIDAD?: string | undefined
-  RECEPTOR?: string | undefined
-  TIPO_DOC?: string | undefined
-  TRAMITE?: string | undefined
+  id?:string
+  asunto: string;
+  de_ruta_origen: string;
+  dependencia: string;
+  documento: null | string;
+  elaboro: string;
+  emisor: string;
+  estado: string;
+  estado_destinatario: string;
+  fecha_ate: string;
+  fecha_emi: string;
+  fecha_rec: string;
+  indicaciones: null | string;
+  nro_doc: string;
+  nu_ann: string;
+  nu_ann_exp: string;
+  nu_des: string;
+  nu_emi: string;
+  nu_sec_exp: string;
+  prioridad: string;
+  receptor: string;
+  tipo_doc: string;
+  tramite: string;
 }
 
 export interface IAnexosDetail{
-  ASUNTO?: string | undefined
-  AÑO?: string | undefined
-  DESTINO?: string | undefined
-  EMITE?: string | undefined
-  FECHA_EMI?: string | undefined
-  INDICACIONES?: string | undefined
-  NRO_DOC?: string | undefined
-  NU_ANN?: string | undefined
-  NU_ANN_EXP?: string | undefined
-  NU_DES?: string | undefined
-  NU_EMI?: string | undefined
-  NU_SEC_EXP?: string | undefined
-  PRIORIDAD?: string | undefined
-  TIPO_DOC?: string | undefined
-  TRAMITE?: string | undefined
+  id?:string
+  asunto?: string | undefined
+  año?: string | undefined
+  destino?: string | undefined
+  emite?: string | undefined
+  fecha_emi?: string | undefined
+  indicaciones?: string | undefined
+  nro_doc?: string | undefined
+  nu_ann?: string | undefined
+  nu_ann_exp?: string | undefined
+  nu_des?: string | undefined
+  nu_emi?: string | undefined
+  nu_sec_exp?: string | undefined
+  prioridad?: string | undefined
+  tipo_doc?: string | undefined
+  tramite?: string | undefined
+  docs:IDocs[]
 }
+
+interface IDocs {
+  asunto: string;
+  'año': string;
+  de_det: string;
+  de_rut_ori: string;
+  destino: string;
+  emite: string;
+  fecha_emi: string;
+  id_archivo: number;
+  indicaciones: string;
+  nro_doc: string;
+  nu_ane: number;
+  nu_ann: string;
+  nu_ann_exp: string;
+  nu_des: string;
+  nu_emi: string;
+  nu_sec_exp: string;
+  prioridad: string;
+  tipo_doc: string;
+  tramite: string;
+}
+
 
 export interface UserSave{
   username: string

@@ -1,11 +1,23 @@
-import { ComponentType, createElement, FC, JSXElementConstructor, ReactElement, ReactFragment, ReactNode, startTransition, Suspense, useEffect, useState } from "react";
+import {
+  ComponentType,
+  createElement,
+  FC,
+  JSXElementConstructor,
+  ReactElement,
+  ReactFragment,
+  ReactNode,
+  startTransition,
+  Suspense,
+  useEffect,
+  useState,
+} from "react";
 //import { ComponentType, createElement, FC, ReactNode, useEffect, useState } from "react";
-import { Layout, Menu, notification } from 'antd';
-import menu from '@framework/pas/menu.json' 
-import menu_initial from '@framework/pas/menu_initial.json' 
-import type { MenuProps } from 'antd';
-import { responseLogin } from "@framework/types"
-import {  } from "../../../pages/api/auth/login";
+import { Layout, Menu, notification } from "antd";
+import menu from "@framework/pas/menu.json";
+import menu_initial from "@framework/pas/menu_initial.json";
+import type { MenuItemProps, MenuProps } from "antd";
+import { responseLogin } from "@framework/types";
+import {} from "../../../pages/api/auth/login";
 
 import {
   HomeOutlined,
@@ -14,8 +26,8 @@ import {
   ContactsOutlined,
   KeyOutlined,
   SafetyCertificateOutlined,
-  FileSearchOutlined
-} from '@ant-design/icons';
+  FileSearchOutlined,
+} from "@ant-design/icons";
 import IconOnpe from "@components/icons/IconOnpe";
 import { ModalDrawer } from "@components/ui";
 import { useRouter } from "next/router";
@@ -26,59 +38,60 @@ import useAuthStore from "store/auth/auth";
 import useMenuStore from "store/menu/menu";
 //import { RemoveSessionAuthService } from "services/auth/ServiceAuth";
 
- 
 const { Header, Content, Footer, Sider } = Layout;
 
 const icons: { [P in string]: ComponentType<any> | string } = {
-  HomeOutlined:HomeOutlined,
-  UserOutlined:UserOutlined,
+  HomeOutlined: HomeOutlined,
+  UserOutlined: UserOutlined,
   SafetyCertificateOutlined: SafetyCertificateOutlined,
-  DesktopOutlined:DesktopOutlined,
-  ContactsOutlined:ContactsOutlined,
-  KeyOutlined:KeyOutlined,
-  FileSearchOutlined:FileSearchOutlined
-}
-
+  DesktopOutlined: DesktopOutlined,
+  ContactsOutlined: ContactsOutlined,
+  KeyOutlined: KeyOutlined,
+  FileSearchOutlined: FileSearchOutlined,
+};
 
 interface LayoutFirstProps {
-  children: ReactNode,
+  children: ReactNode;
 }
 
 // const Login: (props: { login: responseLogin }) {
 //   return props.login.profile
 // }
 
-const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
-//function Login(props: { login: responseLogin }) {
-  const router = useRouter()
-  const { displayNotification, notification: notificationView, closeNotification } = useUI()
+const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
+  //function Login(props: { login: responseLogin }) {
+  const router = useRouter();
+  const { displayNotification, notification: notificationView, closeNotification } = useUI();
   const [api, contextHolder] = notification.useNotification();
   const { storeUser, removeSession, user } = useAuthStore();
   const profile = user.profile.toUpperCase();
-  const { IdSelectedProcess, getStateSelectedProcess, changeStateSelectedProcess  } = useMenuStore()
+  const { IdSelectedProcess, getStateSelectedProcess, changeStateSelectedProcess } = useMenuStore();
 
-  const menuOptions = IdSelectedProcess ? menu : menu_initial
-  const items:any  = menuOptions.map((item, _) => {
-   if(profile == 'ADMIN'){
-      return item.role == 'admin' &&   {
-        key: item.key,
-        icon: createElement(icons[item.icon]),
-        label: `${item.label}`,
-      } 
-    }else {
-      return item.role == 'user' && {
-        key: item.key,
-        icon: createElement(icons[item.icon]),
-        label: `${item.label}`,
-      }
-    }  
-  } );
-  
- 
+  const menuOptions = IdSelectedProcess ? menu : menu_initial;
+  const items: any = menuOptions.map((item, _) => {
+    if (profile == "ADMIN") {
+      return (
+        item.role == "admin" && {
+          key: item.key,
+          icon: createElement(icons[item.icon]),
+          label: `${item.label}`,
+        }
+      );
+    } else {
+      return (
+        item.role == "user" && {
+          key: item.key,
+          icon: createElement(icons[item.icon]),
+          label: `${item.label}`,
+        }
+      );
+    }
+  });
+  console.log({ router });
 
-  const handleMenu = ({ key, }:{key:string}) =>{
-    router.push(key)
-  }
+  const handleMenu = ({ key }: { key: string }) => {
+    router.push(key);
+  };
 
   const infoNotification = () => {
     api.info({
@@ -86,33 +99,41 @@ const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
       description: `${notificationView.description}`,
       placement: `bottomRight`,
       onClose: () => {
-        closeNotification()
-      }
+        closeNotification();
+      },
     });
   };
 
-  const handleLogout = async () =>{
+  const handleLogout = async () => {
     try {
-      changeStateSelectedProcess('')
-      removeSession()
+      changeStateSelectedProcess("");
+      removeSession();
       router.push("/auth");
     } catch (error) {
       console.error(error);
     }
- 
-  }
+  };
 
-  useEffect(()=>{
-    getStateSelectedProcess()
-  },[])
+  useEffect(() => {
+    getStateSelectedProcess();
+  }, []);
 
-  useEffect(()=>{
-    if(displayNotification){
-      infoNotification()
+  useEffect(() => {
+    if (displayNotification) {
+      infoNotification();
     }
-  },[displayNotification])
+  }, [displayNotification]);
+  const [loading, setLoading] = useState(false);
 
-  
+  useEffect(() => {
+    if (profile) {
+      setLoading(true);
+    }
+  }, [profile]);
+
+  if (!loading) {
+    return <div></div>;
+  }
 
   return (
     <>
@@ -121,52 +142,74 @@ const LayoutFirst:FC<LayoutFirstProps> = ({ children }) => {
       <Layout hasSider>
         <Sider
           style={{
-            overflow: 'auto',
-            height: '100vh',
-            position: 'fixed',
+            overflow: "auto",
+            height: "100vh",
+            position: "fixed",
             left: 0,
             top: 0,
             bottom: 0,
-            background:"white"
+            background: "white",
           }}
         >
           <div className="logo justify-center mx-10">
-            <IconOnpe width={88}/>
+            <IconOnpe width={88} />
           </div>
-          <Menu mode="inline" defaultSelectedKeys={['4']} items={items} onClick={handleMenu} />
+          <div className="flex flex-col">
+            {items.map((item: any) => (
+              <button
+                key={item.key}
+                onClick={() => handleMenu({ key: item.key })}
+                className={`${router.pathname === item.key ? "text-[#1890ff]" : ""} ${
+                  `/${item.key}` === router.pathname ? "text-[#1890ff]" : ""
+                } p-3 px-5  text-left flex gap-2 items-center`}
+              >
+                {item.icon}
+                {item.label}
+              </button>
+            ))}
+          </div>
+          {/* <Menu
+            mode="inline"
+            activeKey={`${router.pathname}`}
+            selectable={false}
+            defaultSelectedKeys={[`4`]}
+            // selectedKeys={[`${router.pathname}`]}
+            items={items}
+            onClick={handleMenu}
+          /> */}
         </Sider>
         <Layout className="site-layout" style={{ marginLeft: 200 }}>
           <Header className="header-layout">
             <div className="header-content">
               <div>
-                <h1 style={{ fontSize: 15, color: "#2596be"}}>
+                <h1 style={{ fontSize: 15, color: "#2596be" }}>
                   Monitoreo de Procedimientos Administrativos Sancionadores {IdSelectedProcess}
                 </h1>
               </div>
               <div className="user-header">
                 <div className="data-user">
                   <div className="name-user">Bienvenido</div>
-                  <div onClick={handleLogout} style={{cursor:'pointer',fontSize:'1rem',textUnderlineOffset:''}}>Cerrar sesión</div>
+                  <div onClick={handleLogout} style={{ cursor: "pointer", fontSize: "1rem", textUnderlineOffset: "" }}>
+                    Cerrar sesión
+                  </div>
                   {/* className="close-session" */}
                 </div>
-                <div style={{width:'55px', height:'55px'}} className="icon-user">
-                {/* style={{color:'white', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'7px 20px'}} */}
-                {profile}
+                <div style={{ width: "55px", height: "55px" }} className="icon-user">
+                  {/* style={{color:'white', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'7px 20px'}} */}
+                  {profile}
                 </div>
               </div>
-
             </div>
-
           </Header>
-          
-          <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-            { children }
-          </Content>
-          <Footer style={{ textAlign: 'center', background:'inherit' }}>ONPE ©2023 Creado por Sub Gerencia de Gobierno Digital e Innovación</Footer>
+
+          <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>{children}</Content>
+          <Footer style={{ textAlign: "center", background: "inherit" }}>
+            ONPE ©2023 Creado por Sub Gerencia de Gobierno Digital e Innovación
+          </Footer>
         </Layout>
       </Layout>
     </>
-  )
-}
+  );
+};
 
-export default LayoutFirst
+export default LayoutFirst;
