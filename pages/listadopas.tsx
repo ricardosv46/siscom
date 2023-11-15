@@ -317,14 +317,13 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     if (res?.data?.message === "3") {
       
       const result = await api.listpas.loadExcelInformation(excelFile);
-      if (result && result?.data?.length === 0) {
+      if (result) {
         instanceProcesando.destroy();
         const newData = await processApi(IdSelectedProcess, "all");
         const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
         setProcess(dataFilter);
       }
-      else{
-      }
+      
       instanceProcesando.destroy();
     }
   };
