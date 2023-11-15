@@ -320,8 +320,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       if (result && result?.data?.length > 0) {
         instanceProcesando.destroy();
         const newData = await processApi(IdSelectedProcess, "all");
-        const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
-        setProcess(dataFilter);
+        // const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
+        setProcess(newData);
       }
       instanceProcesando.destroy();
     }
