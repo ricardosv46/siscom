@@ -318,6 +318,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       
       const result = await api.listpas.loadExcelInformation(excelFile);
       if (result && result?.data?.length > 0) {
+        instanceProcesando.destroy();
         const newData = await processApi(IdSelectedProcess, "all");
         const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
         setProcess(dataFilter);
