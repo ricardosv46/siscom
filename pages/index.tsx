@@ -137,12 +137,12 @@ const Home: NextPageWithLayout = () => {
       }
     },
   };
-  const columns:ColumnsType<any> = [
+  const columns: ColumnsType<any> = [
     {
       title: "Nombre",
       dataIndex: "name",
       key: "name",
-      width:'350px'
+      width: "350px",
     },
     {
       title: "Etapa",
@@ -271,9 +271,9 @@ const Home: NextPageWithLayout = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div style={{ display: "flex", gap: "50px", marginLeft: "4rem", marginRight: "1rem" }}>
+      <div style={{ display: "flex", gap: "50px", marginLeft: "4rem", marginRight: "1rem", overflow: "scroll" }}>
         <Card>
-          <div style={{ paddingLeft: "3rem", paddingRight: "3rem" }}>
+          <div style={{ paddingLeft: "1rem", paddingRight: "1rem" }}>
             <div style={{ marginBottom: "0.4rem" }}>
               <h2 style={{ fontSize: 25, color: "#4F5172" }}>Resumen</h2>
             </div>
@@ -302,27 +302,25 @@ const Home: NextPageWithLayout = () => {
           </div>
         </Card>
         <Card className="flex-1 flex flex-col">
-          <div style={{ marginBottom: "0.4rem",}} >
+          <div style={{ marginBottom: "0.4rem" }}>
             <h2 style={{ fontSize: 25, color: "#4F5172" }}>Próximos procesos por concluir</h2>
           </div>
           <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
 
-          <Table columns={columns} dataSource={currentData} pagination={false}  />
+          <Table columns={columns} dataSource={currentData} pagination={false} />
           <br></br>
           <div className="flex  flex-col-reverse  justify-between  h-full">
-          <Pagination
-            style={{ textAlign: "center" }}
-            current={currentPage}
-            pageSize={pageSize}
-            total={processGrouped && processGrouped.length}
-            onChange={handlePageChange}
-            showSizeChanger={false}
-          />
+            <Pagination
+              style={{ textAlign: "center" }}
+              current={currentPage}
+              pageSize={pageSize}
+              total={processGrouped && processGrouped.length}
+              onChange={handlePageChange}
+              showSizeChanger={false}
+            />
           </div>
-          
         </Card>
-        </div>
-        
+      </div>
     </>
   );
 };

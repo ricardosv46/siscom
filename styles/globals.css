@@ -128,6 +128,18 @@ body{
   font-size: 20px !important;
 
 }
+.xxxl-flex-row{
+
+
+}
+
+@media (min-width:1600px) {
+  .xxxl-flex-row{
+    flex-direction: row !important;
+
+  }
+}
+
 
 
 /* @media (prefers-color-scheme: dark) {

@@ -19,6 +19,7 @@ import { Resizable } from "react-resizable";
 import { IAnexos, IAnexosDetail, ITracking, ITrackingDetail } from "@framework/types";
 import { ExportExcel } from "@components/ui/ExportExcel/ExportExcel";
 import "react-resizable/css/styles.css"; // Importa los estilos de react-resizable
+import { ModalAnexos } from "@components/ui/Modals";
 
 moment.locale("es");
 const { RangePicker } = DatePicker;
@@ -53,23 +54,17 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   });
   const router = useRouter();
   const [process, setProcess] = useState<any>();
-  const [loadingReportePass, setLooadingReportePass] = useState(false);
-  const [width, setWidth] = useState(1000);
   const [memory, setMemory] = useState<any>();
-  let inputValue: any | undefined;
-  let filterData: any | undefined;
   const [date, setDate] = useState<any>();
   const { user } = useAuthStore();
   const profile = user?.profile?.toUpperCase();
   let label: string | string[] | undefined;
   const [isCheckedTodos, setIsCheckedTodos] = useState(false);
-  const [isCheckedCandidato, setIsCheckedCandidato] = useState(false);
   const [operationSelectedOption, setOperationSelectedOption] = useState("");
   const [dataResponsable, setDataResponsable] = useState<any>();
   const [estado, setEstado] = useState("");
   const [search, setSearch] = useState("");
   const [responsable, setResponsable] = useState("all");
-  const [isCheckedOP, setIsCheckedOP] = useState(false);
   const { IdSelectedProcess } = useMenuStore();
   const [openAnexos, setOpenAnexos] = useState(false);
   const [dataAnexos, setDataAnexos] = useState<IAnexos[]>([]);
@@ -315,7 +310,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     }
 
     if (res?.data?.message === "3") {
-      
       const result = await api.listpas.loadExcelInformation(excelFile);
       if (result) {
         instanceProcesando.destroy();
@@ -323,7 +317,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
         const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData });
         setProcess(dataFilter);
       }
-      
+
       instanceProcesando.destroy();
     }
   };
@@ -427,11 +421,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     label = labelIndex.estado == undefined ? "all" : labelIndex.estado;
     processApi(IdSelectedProcess, label, filtersParse);
   }, [IdSelectedProcess]);
-
-  // useEffect(() => {
-  //   const labelIndex = router.query;
-  //   console.log({ labelIndex });
-  // }, []);
 
   const columns = [
     {
@@ -551,10 +540,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       item?.actualizacion?.toLowerCase()?.includes(search.toLowerCase()) ||
       item?.num_expediente?.toLowerCase()?.includes(search.toLowerCase()) ||
       item?.dni_candidato?.toLowerCase()?.includes(search.toLowerCase())
-      // item?.type?.toLowerCase()?.includes(search.toLowerCase())
-      // item?.fecha_inicio?.toLowerCase()?.includes(search.toLowerCase()) ||
-      // item?.fecha_fin?.toLowerCase()?.includes(search.toLowerCase()) ||
-      // item?.responsable?.toLowerCase()?.includes(search.toLowerCase()) ||
     );
   }
   const filterUpdate = ({ search, estado, responsable, type, memory }: any) => {
@@ -800,65 +785,109 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
         </div>
         <br></br>
 
-        <div className="py-10 border-b border-gray-200 pb-4 flex justify-between w-full items-center">
-          <div>
-            <Input value={search} onChange={(e) => onSearch(e.target.value)} placeholder="Buscar" prefix={<SearchOutlined />} />
-          </div>
+        <div className="py-10 border-b border-gray-200 pb-4 flex justify-between w-full 2xl:items-center flex-col xxxl-flex-row ">
+          <div className="flex items-center gap-3">
+            <div>
+              <Input value={search} onChange={(e) => onSearch(e.target.value)} placeholder="Buscar" prefix={<SearchOutlined />} />
+            </div>
 
-          <div className="flex flex-col mb-5">
-            Por estado:
-            <Select style={{ width: 150 }} placeholder="Estado" value={estado} onChange={handleChangeEstado} options={dataOptionsSelect} />
-          </div>
+            <div className="flex flex-col mb-5">
+              Por estado:
+              <Select
+                style={{ width: 150 }}
+                placeholder="Estado"
+                value={estado}
+                onChange={handleChangeEstado}
+                options={dataOptionsSelect}
+              />
+            </div>
 
-          <div className="flex flex-col mb-5">
-            Por responsable:
-            <Select
-              style={{ width: 150 }}
-              value={responsable}
-              placeholder="Responsable"
-              onChange={handleChangeResponsable}
-              options={dataResponsable}
-            />
+            <div className="flex flex-col mb-5">
+              Por responsable:
+              <Select
+                style={{ width: 150 }}
+                value={responsable}
+                placeholder="Responsable"
+                onChange={handleChangeResponsable}
+                options={dataResponsable}
+              />
+            </div>
+            <div className="flex flex-col mb-5">
+              Por Tipo Proceso:
+              <Select
+                style={{ width: 200 }}
+                value={operationSelectedOption}
+                placeholder="Responsable"
+                onChange={handleCheckboxChange}
+                options={[
+                  {
+                    value: "",
+                    label: "Todos",
+                  },
+                  {
+                    value: "CANDIDATO",
+                    label: "Candidato",
+                  },
+                  {
+                    value: "OP",
+                    label: "Organización Política",
+                  },
+                ]}
+              />
+            </div>
           </div>
-          <div className="flex flex-col mb-5">
-            Por Tipo Proceso:
-            <Select
-              style={{ width: 200 }}
-              value={operationSelectedOption}
-              placeholder="Responsable"
-              onChange={handleCheckboxChange}
-              options={[
+          <div className="flex items-center  gap-3">
+            <div className="flex flex-col mb-5">
+              Por Fecha de inicio:
+              <RangePicker locale={locale} value={date} onChange={onChangeDate} disabledDate={disabledDate} />
+            </div>
+            <div style={{ display: "flex" }}>
+              <div style={{ display: "flex", alignItems: "center" }}>
                 {
-                  value: "",
-                  label: "Todos",
-                },
+                  <Button
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "8px 8px",
+                      backgroundColor: "#083474",
+                      border: "none",
+                      color: "white",
+                      cursor: "pointer",
+                    }}
+                    onClick={clearFilters}
+                  >
+                    <span style={{ fontSize: "16px" }}>Limpiar Filtros</span>
+                  </Button>
+                }
+              </div>{" "}
+            </div>
+            <div style={{ display: "flex" }}>
+              <div style={{ display: "flex", alignItems: "center" }}>
                 {
-                  value: "CANDIDATO",
-                  label: "Candidato",
-                },
-                {
-                  value: "OP",
-                  label: "Organización Política",
-                },
-              ]}
-            />
-          </div>
-
-          {/* <div style={{ display: "flex", alignItems: "center" }}>
-            <Radio.Group onChange={handleCheckboxChange} value={operationSelectedOption}>
-              <Radio value="">Todos</Radio>
-              <Radio value="CANDIDATO">Candidato</Radio>
-              <Radio value="OP">Organización Política</Radio>
-            </Radio.Group>
-          </div> */}
-          <div className="flex flex-col mb-5">
-            Por Fecha de inicio:
-            <RangePicker locale={locale} value={date} onChange={onChangeDate} disabledDate={disabledDate} />
-          </div>
-          <div style={{ display: "flex" }}>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              {
+                  <Button
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "8px 8px",
+                      backgroundColor: "#78bc44",
+                      border: "none",
+                      color: "white",
+                      marginRight: "10px",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => loadFile()}
+                  >
+                    <img src="assets/images/cargar.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
+                    <span style={{ fontSize: "16px" }}>Cargar Información</span>
+                  </Button>
+                }
+                {filesContent.length == 1 && (processFile(plainFiles[0]) as any)}
+              </div>
+              <div style={{ display: "flex", alignItems: "center" }}>
                 <Button
+                  hidden={!process}
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -870,110 +899,67 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                     marginRight: "10px",
                     cursor: "pointer",
                   }}
-                  onClick={clearFilters}
+                  onClick={async () => {
+                    const instance = Modal.info({
+                      title: "Cargando",
+                      content: (
+                        <div>
+                          <p>Espere mientras termine la descarga...</p>
+                        </div>
+                      ),
+                      onOk() {},
+                      okButtonProps: { disabled: true, style: { backgroundColor: "#0874cc", display: "none" } },
+                      centered: true,
+                    });
+
+                    if (process?.length === 0) {
+                      instance.destroy();
+
+                      const excelVacio = Modal.info({
+                        content: (
+                          <div>
+                            <p>No hay registros para descargar</p>
+                          </div>
+                        ),
+                        centered: true,
+                        onOk() {
+                          excelVacio.destroy();
+                        },
+                      });
+
+                      return;
+                    }
+
+                    // ExportExcel(inputValue ? filterData : process);
+                    ExportExcel(process);
+
+                    instance.destroy();
+                  }}
                 >
-                  <span style={{ fontSize: "16px" }}>Limpiar Filtros</span>
+                  <img src="assets/images/reporte_pas.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
+                  <span style={{ fontSize: "16px" }}>Reporte PAS</span>
                 </Button>
-              }
-            </div>{" "}
-          </div>
-          <div style={{ display: "flex" }}>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              {
+              </div>
+              <div style={{ display: "flex", alignItems: "center" }}>
                 <Button
+                  hidden={!process}
                   style={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     padding: "8px 8px",
-                    backgroundColor: "#78bc44",
+                    backgroundColor: "#0874cc",
                     border: "none",
                     color: "white",
                     marginRight: "10px",
                     cursor: "pointer",
                   }}
-                  onClick={() => loadFile()}
+                  onClick={() => DescargarExcel()}
                 >
-                  <img src="assets/images/cargar.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
-                  <span style={{ fontSize: "16px" }}>Cargar Información</span>
+                  <img src="assets/images/icono_detalle.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
+                  <span style={{ fontSize: "16px" }}>Detalle</span>
                 </Button>
-              }
-              {filesContent.length == 1 && (processFile(plainFiles[0]) as any)}
-            </div>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <Button
-                hidden={!process}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "8px 8px",
-                  backgroundColor: "#083474",
-                  border: "none",
-                  color: "white",
-                  marginRight: "10px",
-                  cursor: "pointer",
-                }}
-                onClick={async () => {
-                  const instance = Modal.info({
-                    title: "Cargando",
-                    content: (
-                      <div>
-                        <p>Espere mientras termine la descarga...</p>
-                      </div>
-                    ),
-                    onOk() {},
-                    okButtonProps: { disabled: true, style: { backgroundColor: "#0874cc", display: "none" } },
-                    centered: true,
-                  });
-
-                  if (process?.length === 0) {
-                    instance.destroy();
-
-                    const excelVacio = Modal.info({
-                      content: (
-                        <div>
-                          <p>No hay registros para descargar</p>
-                        </div>
-                      ),
-                      centered: true,
-                      onOk() {
-                        excelVacio.destroy();
-                      },
-                    });
-
-                    return;
-                  }
-
-                  // ExportExcel(inputValue ? filterData : process);
-                  ExportExcel(process);
-
-                  instance.destroy();
-                }}
-              >
-                <img src="assets/images/reporte_pas.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
-                <span style={{ fontSize: "16px" }}>Reporte PAS</span>
-              </Button>
-            </div>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <Button
-                hidden={!process}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "8px 8px",
-                  backgroundColor: "#0874cc",
-                  border: "none",
-                  color: "white",
-                  marginRight: "10px",
-                  cursor: "pointer",
-                }}
-                onClick={() => DescargarExcel()}
-              >
-                <img src="assets/images/icono_detalle.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
-                <span style={{ fontSize: "16px" }}>Detalle</span>
-              </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -1000,173 +986,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             onCancel={() => setOpenAnexos(false)}
             okButtonProps={{ style: { backgroundColor: "#0874cc" }, className: "ant-btn-primary" }}
           >
-            <tr>
-              <div
-                style={{
-                  borderWidth: 4,
-                  padding: 5,
-                  margin: 10,
-                  overflowX: "scroll",
-                  width: 880,
-                  overflowY: "scroll",
-                  height: 200,
-                  whiteSpace: "nowrap",
-                  resize: "both",
-                }}
-              >
-                {dataAnexos?.length > 0 &&
-                  dataAnexos.map((item: IAnexos, index: number) => (
-                    <AnexoItem key={index} item={item} getAnexosDetail={getAnexosDetail} anexoDetail={dataAnexosDetail} />
-                  ))}
-              </div>
-            </tr>
-            <br></br>
-
-            {dataAnexosDetail?.length &&
-              dataAnexosDetail.map((item: IAnexosDetail, index: number) => (
-                <tr key={index}>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                    <div>
-                      <label style={{ color: "#083474", fontSize: "16px" }}>Detalles</label>
-                    </div>
-                    {item.nro_doc}
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <div style={{ marginRight: "55px", display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>Año:</label>
-                      </div>
-                      <div style={{ marginRight: "60px", display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>{item.año}</label>
-                      </div>
-                      <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>Fecha Emisión:</label>
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>{item.fecha_emi}</label>
-                      </div>
-                    </div>
-
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <div style={{ marginRight: "45px", display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>Emite:</label>
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>{item.emite}</label>
-                      </div>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <div style={{ marginRight: "30px", display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>Destino:</label>
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>{item.destino}</label>
-                      </div>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>Tipo Doc.:</label>
-                      </div>
-                      <div style={{ marginRight: "60px", display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>{item.tipo_doc}</label>
-                      </div>
-                      <div style={{ marginRight: "80px", display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>Nro. Doc.: {item.nro_doc}</label>
-                      </div>
-                      <div style={{ marginRight: "5px", display: "flex", alignItems: "center" }}>
-                        <Button
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            padding: "8px 8px",
-                            backgroundColor: "#e6002d",
-                            border: "none",
-                            color: "white",
-                            marginRight: "10px",
-                            cursor: "pointer",
-                          }}
-                          onClick={async () => {
-                            donwloadAnexosDetailPdf(item);
-                          }}
-                        >
-                          <img src="assets/images/icono_pdf.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
-                          <span style={{ fontSize: "16px" }}>Abrir Documento</span>
-                        </Button>
-                      </div>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>Asunto:</label>
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <textarea
-                          style={{
-                            borderWidth: 4,
-                            fontSize: "16px",
-                            width: "700px",
-                            height: "80px",
-                            padding: "0px 8px",
-                            marginBottom: "5px",
-                          }}
-                          disabled
-                        >
-                          {item.asunto}
-                        </textarea>
-                      </div>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>Trámite:</label>
-                      </div>
-                      <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>{item.tramite}</label>
-                      </div>
-                      <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>Prioridad:</label>
-                      </div>
-                      <div style={{ marginRight: "40px", display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>{item.prioridad}</label>
-                      </div>
-                      <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>Indicaciones:</label>
-                      </div>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <label style={{ fontSize: "16px" }}>{item.indicaciones}</label>
-                      </div>
-                    </div>
-                    <div>
-                      <label style={{ color: "#083474", fontSize: "16px" }}>Documentos Anexos</label>
-                    </div>
-                    {item?.docs.length ? (
-                      <table>
-                        <thead>
-                          <tr className="border">
-                            <th className="border border-black flex-1 pl-2 py-1.5 bg-[#5191c1] text-[#083474]">Descripción</th>
-                            <th className="border border-black flex-1 pl-2 py-1.5 bg-[#5191c1] text-[#083474]">Nombre de Anexo</th>
-                            <th className="border border-black w-28 pl-2 py-1.5 bg-[#5191c1] text-[#083474]">Opciones</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {item?.docs?.map((i) => (
-                            <tr key={i.id_archivo} className="border">
-                              <td className="border pl-2 py-1">{i.de_det}</td>
-                              <td className="border pl-2 py-1">{i.de_rut_ori}</td>
-                              <td className="border pl-2 py-1">
-                                <button className="px-1 border rounded" onClick={() => donwloadAnexosDetail(i.id_archivo, i.de_rut_ori)}>
-                                  <img src="assets/images/abrir.svg" alt="Abrir" />
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    ) : (
-                      <div>
-                        <label style={{ fontSize: "16px" }}>No se encuentran registros</label>
-                      </div>
-                    )}
-                  </div>
-                </tr>
-              ))}
+            <ModalAnexos {...{ dataAnexos, getAnexosDetail, dataAnexosDetail, donwloadAnexosDetailPdf, donwloadAnexosDetail }} />
           </Modal>
         )}
         {openTracking && (
@@ -1329,15 +1149,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                       <div>
                         <label style={{ color: "#083474", fontSize: "16px" }}>Destinatario</label>
                       </div>
-
-                      {/* <div style={{ display: "flex", alignItems: "center" }}>
-                        <div style={{ marginRight: "20px", display: "flex", alignItems: "center" }}>
-                          <label style={{ fontSize: "16px" }}>Dependencia:</label>
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <label style={{ fontSize: "16px" }}>{}</label>
-                        </div>
-                      </div> */}
 
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <div style={{ marginRight: "50px", display: "flex", alignItems: "center" }}>

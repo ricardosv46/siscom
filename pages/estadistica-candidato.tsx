@@ -463,91 +463,94 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
           <hr style={{ marginTop: "10px", borderTop: "2px solid #A8CFEB" }} />
         </div>
 
-        <div className="pt-8  pb-4 flex gap-[17px] flex-col w-full ">
-          <div className="flex gap-[17px]">
-            <div className="flex flex-col ">
-              <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Departamento</p>
-              <Select
-                mode="multiple"
-                showSearch={false}
-                value={departamento}
-                onChange={setDepartamento}
-                style={{ minWidth: 420, maxWidth: 450 }}
-                placeholder="Departamento"
-                options={departamentos}
-              />
-            </div>
-            <div className="flex flex-col ">
-              <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Provincia</p>
-              <Select
-                mode="multiple"
-                showSearch={false}
-                value={provincia}
-                onChange={setProvincia}
-                style={{ minWidth: 420, maxWidth: 450 }}
-                placeholder="Provincia"
-                disabled={departamento?.length === 0}
-                options={provincias?.length > 0 ? provincias : []}
-              />
-            </div>
-            <div className="flex flex-col ">
-              <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Distrito</p>
-              <Select
-                mode="multiple"
-                showSearch={false}
-                value={distrito}
-                onChange={setDistrito}
-                style={{ minWidth: 420, maxWidth: 450 }}
-                placeholder="Distrito"
-                disabled={provincia?.length === 0}
-                options={distritos?.length > 0 ? distritos : []}
-              />
-            </div>
+        <div className="pt-8  pb-4 gap-[17px] flex-col w-full grid grid-cols-3">
+          {/* <div className="flex gap-[17px]"> */}
+          <div className="flex flex-col ">
+            <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Departamento</p>
+            <Select
+              mode="multiple"
+              showSearch={false}
+              value={departamento}
+              onChange={setDepartamento}
+              style={{ maxWidth: 600 }}
+              placeholder="Departamento"
+              options={departamentos}
+            />
           </div>
-          <div className="flex gap-[17px]">
-            <div className="flex flex-col  font-poppins">
-              <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Cargo</p>
-              <Select
-                mode="multiple"
-                showSearch={false}
-                value={cargo}
-                onChange={setCargo}
-                style={{ minWidth: 420, maxWidth: 450 }}
-                placeholder="Cargo"
-                disabled={departamento?.length === 0}
-                options={cargos}
-              />
-            </div>
-            <div className="flex flex-col ">
-              <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Org. Política</p>
-              <Select
-                mode="multiple"
-                showSearch={false}
-                value={op}
-                onChange={setOp}
-                style={{ minWidth: 600, maxWidth: 600 }}
-                placeholder="Org. Política"
-                disabled={departamento?.length === 0}
-                options={ops?.length > 0 ? ops : []}
-              />
-            </div>
-            <div className="flex gap-[17px] min-w-[420px] max-w-[450px]">
-              <div className="flex-1">
-                <Button
-                  className="flex justify-center items-center w-full mt-8"
-                  disabled={departamento.length === 0}
-                  onClick={getDashboard}
-                >
-                  <SearchOutlined />
-                </Button>
-              </div>
-              <div className="flex-1">
-                <Button color="#0073CF" className="flex justify-center items-center w-full  mt-8" onClick={clear}>
-                  Limpiar filtros
-                </Button>
-              </div>
-            </div>
+          <div className="flex flex-col ">
+            <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Provincia</p>
+            <Select
+              mode="multiple"
+              showSearch={false}
+              value={provincia}
+              onChange={setProvincia}
+              style={{ maxWidth: 600 }}
+              placeholder="Provincia"
+              disabled={departamento?.length === 0}
+              options={provincias?.length > 0 ? provincias : []}
+            />
           </div>
+          <div className="flex flex-col ">
+            <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Distrito</p>
+            <Select
+              className="w-full"
+              mode="multiple"
+              showSearch={false}
+              value={distrito}
+              onChange={setDistrito}
+              style={{ maxWidth: 600 }}
+              placeholder="Distrito"
+              disabled={provincia?.length === 0}
+              options={distritos?.length > 0 ? distritos : []}
+            />
+          </div>
+          {/* </div> */}
+          {/* <div className="flex gap-[17px]"> */}
+          <div className="flex flex-col  font-poppins flex-1">
+            <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Cargo</p>
+            <Select
+              className="w-full"
+              mode="multiple"
+              showSearch={false}
+              value={cargo}
+              onChange={setCargo}
+              style={{ maxWidth: 600 }}
+              placeholder="Cargo"
+              disabled={departamento?.length === 0}
+              options={cargos}
+            />
+          </div>
+          <div className="flex flex-col  flex-1">
+            <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Org. Política</p>
+            <Select
+              className="w-full"
+              mode="multiple"
+              showSearch={false}
+              value={op}
+              onChange={setOp}
+              style={{ maxWidth: 600 }}
+              placeholder="Org. Política"
+              disabled={departamento?.length === 0}
+              options={ops?.length > 0 ? ops : []}
+            />
+          </div>
+          {/* <div className="flex gap-[17px] min-w-[420px] max-w-[450px]"> */}
+          <div className="flex-1">
+            <Button
+              className="flex justify-center items-center max-w-[600px] w-full  mt-8"
+              disabled={departamento.length === 0}
+              onClick={getDashboard}
+            >
+              <SearchOutlined />
+            </Button>
+          </div>
+          <div className="flex-1">
+            <Button color="#0073CF" className="flex justify-center max-w-[600px] w-full items-center   mt-8" onClick={clear}>
+              Limpiar filtros
+            </Button>
+          </div>
+          {/* </div> */}
+          {/* </div> */}
         </div>
       </Card>
       <Card title="Listado de personal de ODPE" className="bg-white py-[14px] px-6 rounded-[15px] flex justify-between" border={false}>
@@ -608,13 +611,13 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
             </div>
           </Card>
         </div>
-        <Card title="Listado de personal de ODPE" className="bg-white py-6 px-[33px] rounded-[15px] flex-1">
+        <Card title="Listado de personal de ODPE" className="bg-white py-6 px-[33px] rounded-[15px] flex-1 overflow-auto ">
           <div className="flex-1">
             <h2 className="text-[#2B3674] text-lg font-semibold">ETAPA INSTRUCTIVA - RESOLUTIVA - RECURSIVA : 15 896</h2>
             <hr style={{ marginTop: "10px", borderTop: "2px solid #A8CFEB" }} />
           </div>
           <div className=" flex gap-5">
-            <div className="w-[448px]">
+            <div className="min-w-[448px] ">
               <table>
                 <thead>
                   <tr className="">
@@ -919,7 +922,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                 </tbody>
               </table>
             </div>
-            <div className="flex-1 h-[350px]">
+            <div className="flex-1 h-[350px] ">
               <div className="my-5 mx-20 flex justify-between items-center">
                 <div className="flex items-center flex-col gap-2">
                   <p>Interacción</p>
