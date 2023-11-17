@@ -520,7 +520,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
               options={cargos}
             />
           </div>
-          <div className="flex flex-col  flex-1">
+          <div className="flex flex-col  flex-1 col-span-2">
             <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Org. Política</p>
             <Select
               className="w-full"
