@@ -534,22 +534,22 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
               options={ops?.length > 0 ? ops : []}
             />
           </div>
-          {/* <div className="flex gap-[17px] min-w-[420px] max-w-[450px]"> */}
-          <div className="flex-1">
-            <Button
-              className="flex justify-center items-center max-w-[600px] w-full  mt-8"
-              disabled={departamento.length === 0}
-              onClick={getDashboard}
-            >
-              <SearchOutlined />
-            </Button>
+          <div className="flex gap-[17px] max-w-[600px]">
+            <div className="flex-1">
+              <Button
+                className="flex justify-center items-center max-w-[600px] w-full  mt-8"
+                disabled={departamento.length === 0}
+                onClick={getDashboard}
+              >
+                <SearchOutlined />
+              </Button>
+            </div>
+            <div className="flex-1">
+              <Button color="#0073CF" className="flex justify-center max-w-[600px] w-full items-center   mt-8" onClick={clear}>
+                Limpiar filtros
+              </Button>
+            </div>
           </div>
-          <div className="flex-1">
-            <Button color="#0073CF" className="flex justify-center max-w-[600px] w-full items-center   mt-8" onClick={clear}>
-              Limpiar filtros
-            </Button>
-          </div>
-          {/* </div> */}
           {/* </div> */}
         </div>
       </Card>
