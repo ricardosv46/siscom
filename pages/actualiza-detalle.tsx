@@ -372,6 +372,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     return {};
   };
 
+  console.log({ itemprop, arrayNoti });
   return (
     <form onSubmit={handleSubmit}>
       <Card title="Crear usuario">
@@ -416,16 +417,22 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               <span className="checkmark"></span>
               <label className="form-checkbottom"> Actualización</label>
               <div className="text-red-500 text-xs"></div>
-              <input
-                type="checkbox"
-                name="FINALIZACION"
-                value="FINALIZACION"
-                checked={operationSelectedOption === "FINALIZACION"}
-                onChange={handleCheckboxChange}
-              />
-              <span className="checkmark"></span>
-              <label className="form-checkbottom"> Finalización</label>
-              <div className="text-red-500 text-xs"></div>
+              {arrayNoti?.length > 0 && arrayNoti[0]?.id === itemprop?.id && itemprop.tracking_action === "NOTIFICACION" ? (
+                <></>
+              ) : (
+                <>
+                  <input
+                    type="checkbox"
+                    name="FINALIZACION"
+                    value="FINALIZACION"
+                    checked={operationSelectedOption === "FINALIZACION"}
+                    onChange={handleCheckboxChange}
+                  />
+                  <span className="checkmark"></span>
+                  <label className="form-checkbottom"> Finalización</label>
+                  <div className="text-red-500 text-xs"></div>{" "}
+                </>
+              )}
             </div>
           </div>
         </div>

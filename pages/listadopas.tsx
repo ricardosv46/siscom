@@ -785,9 +785,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
         </div>
         <br></br>
 
-        <div className="py-10 border-b border-gray-200 pb-4 flex justify-between w-full 2xl:items-center flex-col xxxl-flex-row ">
-          <div className="flex items-center gap-3">
-            <div>
+        <div className="py-10 border-b border-gray-200 pb-4 flex gap-2.5  w-full 2xl:items-center flex-col xxxl-flex-row ">
+          <div className="flex  2xl:items-center gap-3">
+            <div className="mb-5 flex flex-col">
+              <p className="opacity-0">Buscador:</p>
               <Input value={search} onChange={(e) => onSearch(e.target.value)} placeholder="Buscar" prefix={<SearchOutlined />} />
             </div>
 

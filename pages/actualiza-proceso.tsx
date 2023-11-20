@@ -344,7 +344,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const onPickerChange = (date: any, dateString: any) => {
     console.log(date, dateString);
   };
-  console.log({ user });
   const headrName = `${item?.name} - R.G. ${item?.resolution_number} - Exp. ${item?.num_expediente}`;
   return (
     <form onSubmit={openModal}>

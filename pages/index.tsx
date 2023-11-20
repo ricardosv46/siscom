@@ -271,7 +271,7 @@ const Home: NextPageWithLayout = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div style={{ display: "flex", gap: "50px", marginLeft: "4rem", marginRight: "1rem", overflow: "scroll" }}>
+      <div style={{ display: "flex", gap: "50px", marginLeft: "4rem", marginRight: "1rem", overflow: "auto" }}>
         <Card>
           <div style={{ paddingLeft: "1rem", paddingRight: "1rem" }}>
             <div style={{ marginBottom: "0.4rem" }}>
@@ -301,7 +301,7 @@ const Home: NextPageWithLayout = () => {
             <div style={{ textAlign: "right" }}>Total de registros: {total}</div>
           </div>
         </Card>
-        <Card className="flex-1 flex flex-col">
+        <Card className="flex-1 flex flex-col min-w-[888px]">
           <div style={{ marginBottom: "0.4rem" }}>
             <h2 style={{ fontSize: 25, color: "#4F5172" }}>Próximos procesos por concluir</h2>
           </div>
