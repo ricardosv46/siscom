@@ -246,7 +246,7 @@ const api = {
         const outputFilename = `report_${new Date().getTime()}.xlsx`;
 
         // If you want to download file automatically using link attribute.
-        const url = URL.createObjectURL(new Blob([responseExcel.data]));
+        const url = window.URL.createObjectURL(new Blob([responseExcel.data]));
         const link = document.createElement('a');
         link.href = url;
         link.setAttribute('download', outputFilename);
