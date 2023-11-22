@@ -62,8 +62,9 @@ const RightCard: FC<IProps> = (props): ReactElement => {
         {related_document && <h3 className="font-bold text-gray-500 text-x">Tipo documento: {related_document} </h3>}
         {document && <h3 className="font-bold text-gray-500 text-x">Documento: {document} </h3>}
         {rj_type && <h3 className="font-bold text-gray-500 text-x">Tipo RJ: {rj_type} </h3>}
-        {comment && <p className="mt-2 text-sm font-medium leading-snug tracking-wide text-gray-500 text-opacity-100">{comment}</p>}
-        <br></br>
+        {comment && (
+          <p className="mt-2 text-sm font-medium leading-snug tracking-wide text-gray-500 text-opacity-100">Comentario: {comment}</p>
+        )}
         {created_at && <h3 className="font-bold text-gray-500 text-x">Fecha de Actualización: {created_at} </h3>}
         {register_user && <h3 className="font-bold text-gray-500 text-x">Usuario Registrador: {register_user} </h3>}
 
