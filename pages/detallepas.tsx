@@ -1,96 +1,89 @@
-import Head from "next/head";
-import { ReactElement, useEffect, useState } from "react";
-import { LayoutFirst } from "@components/common";
-import { NextPageWithLayout } from "pages/_app";
-import { Card } from "@components/ui";
-import api from "@framework/api";
-import { useUI } from "@components/ui/context";
-import { GetServerSideProps } from "next";
-import { getCookie } from "cookies-next";
-import { mergeArray } from "@lib/general";
-import { useRouter } from "next/router";
-import axios from "axios";
-import { RightCard } from "../components/common/right";
-import { LeftCard } from "@components/common/left";
+import Head from 'next/head'
+import { ReactElement, useEffect, useState } from 'react'
+import { DetailCard, LayoutFirst } from '@components/common'
+import { NextPageWithLayout } from 'pages/_app'
+import { Card } from '@components/ui'
+import api from '@framework/api'
+import { useUI } from '@components/ui/context'
+import { useRouter } from 'next/router'
 
 interface DetallepasProps {
-  pageNum: number;
-  pageSize: number;
-  total: number;
+  pageNum: number
+  pageSize: number
+  total: number
 }
 
 export interface IPropsItem {
-  actualizacion: string;
-  etapa: string | number | null;
-  fecha_fin: string | null;
-  fecha_inicio: string | null;
-  name: string | null;
-  numero: number;
-  responsable: string;
+  actualizacion: string
+  etapa: string | number | null
+  fecha_fin: string | null
+  fecha_inicio: string | null
+  name: string | null
+  numero: number
+  responsable: string
 }
 
 export interface IDetailItem {
-  key: number;
-  comment: string;
-  created_at: string;
-  current_responsible: string;
-  document: string;
-  id: number;
-  new_responsible: string;
-  related_document: string;
-  resolution_number: string;
-  start_at: string;
-  tracking_action: string;
-  register_user: string;
-  rj_type: string;
+  key: number
+  comment: string
+  created_at: string
+  current_responsible: string
+  document: string
+  id: number
+  new_responsible: string
+  related_document: string
+  resolution_number: string
+  start_at: string
+  tracking_action: string
+  register_user: string
+  rj_type: string
 }
 
 const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, total }) => {
-  const { openModal, setModalView, clients, removeUser, openNotification, setNotification, setEditId, addClients } = useUI();
+  const { openModal, setModalView, clients, removeUser, openNotification, setNotification, setEditId, addClients } = useUI()
   const [pagConfig, setPagConfig] = useState({
     pageNum: pageNum,
     pageSize: pageSize,
-    total: total,
-  });
-  const [item, setItem] = useState<IPropsItem[]>();
-  const [detail, setDetail] = useState<IDetailItem[]>();
-  const [nombre, setNombre] = useState();
-  const [resolucion_gerencial, setRG] = useState();
-  const [headerName, setHeaderName] = useState("");
-  console.log({ detail });
-  const router = useRouter();
+    total: total
+  })
+  const [item, setItem] = useState<IPropsItem[]>()
+  const [detail, setDetail] = useState<IDetailItem[]>()
+  const [nombre, setNombre] = useState()
+  const [resolucion_gerencial, setRG] = useState()
+  const [headerName, setHeaderName] = useState('')
+  const router = useRouter()
 
   useEffect(() => {
-    let itempropDetail = history?.state?.item;
-    let itempropBack = history?.state?.itemprop;
+    let itempropDetail = history?.state?.item
+    let itempropBack = history?.state?.itemprop
     if (itempropDetail && !itempropBack) {
-      setItem(itempropDetail);
-      getDetailInfo(itempropDetail.numero);
-      setNombre(itempropDetail.name);
-      setRG(itempropDetail.resolution_number);
-      setHeaderName(itempropDetail.num_expediente);
-      setHeaderName(`${itempropDetail?.name} - R.G. ${itempropDetail?.resolution_number} - Exp. ${itempropDetail?.num_expediente}`);
+      setItem(itempropDetail)
+      getDetailInfo(itempropDetail.numero)
+      setNombre(itempropDetail.name)
+      setRG(itempropDetail.resolution_number)
+      setHeaderName(itempropDetail.num_expediente)
+      setHeaderName(`${itempropDetail?.name} - R.G. ${itempropDetail?.resolution_number} - Exp. ${itempropDetail?.num_expediente}`)
     } else if (itempropBack && !itempropDetail) {
-      setItem(itempropBack);
-      getDetailInfo(itempropBack.process.numero);
-      setNombre(itempropBack.process.name);
-      setRG(itempropBack.resolution_number);
-      setHeaderName(itempropBack?.headerName);
+      setItem(itempropBack)
+      getDetailInfo(itempropBack.process.numero)
+      setNombre(itempropBack.process.name)
+      setRG(itempropBack.resolution_number)
+      setHeaderName(itempropBack?.headerName)
     } else {
-      router.push("/listadopas");
+      router.push('/listadopas')
     }
-  }, []);
+  }, [])
 
-  const detailEmi = detail?.filter((item) => item.tracking_action === "EMISION")[0];
-  const arrayNoti = detail?.filter((item) => item.tracking_action === "NOTIFICACION");
+  const detailEmi = detail?.filter((item) => item.tracking_action === 'EMISION')[0]
+  const arrayNoti = detail?.filter((item) => item.tracking_action === 'NOTIFICACION')
   const getDetailInfo = async (id: number) => {
-    const { processes } = await api.listpas.getProcessesByTracking(id);
-    setDetail(processes);
-  };
+    const { processes } = await api.listpas.getProcessesByTracking(id)
+    setDetail(processes)
+  }
 
   const onGotoBack = (page: string) => {
-    router.push({ pathname: page });
-  };
+    router.push({ pathname: page })
+  }
 
   return (
     <>
@@ -101,10 +94,10 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
       </Head>
 
       <Card title="Listado de personal de ODPE">
-        <div style={{ marginBottom: "0.4rem" }}>
-          <h1 style={{ fontSize: 25, color: "#4F5172" }}>{headerName}</h1>
+        <div style={{ marginBottom: '0.4rem' }}>
+          <h1 style={{ fontSize: 25, color: '#4F5172' }}>{headerName}</h1>
         </div>
-        <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
+        <hr style={{ marginBottom: '0.9rem', borderTop: '2px solid #A8CFEB' }} />
 
         {/* <div>
           <p style={{ color: "rgb(256,188,28)" }}>
@@ -118,43 +111,43 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
         </div> */}
 
         <div className="relative wrap overflow-hidden p-10 h-full">
-          <div className="border-2 absolute border-opacity-20 border-gray-700 h-full border" style={{ left: "50%" }}></div>
+          <div className="border-2 absolute border-opacity-20 border-gray-700 h-full border" style={{ left: '50%' }}></div>
 
           {detail?.map((item, key) => {
             return (
-              <>
-                {key % 2 === 0 ? (
-                  <LeftCard item={{ ...item, headerName }} idx={key} detailEmi={detailEmi} arrayNoti={arrayNoti} />
-                ) : (
-                  <RightCard item={{ ...item, headerName }} idx={key} detailEmi={detailEmi} arrayNoti={arrayNoti} />
-                )}
-              </>
-            );
+              <DetailCard
+                key={key}
+                impar={key % 2 === 0}
+                item={{ ...item, headerName }}
+                idx={key}
+                detailEmi={detailEmi}
+                arrayNoti={arrayNoti}
+              />
+            )
           })}
         </div>
-        <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
-        <div style={{ display: "flex", gap: "50px" }}>
+        <hr style={{ marginBottom: '0.9rem', borderTop: '2px solid #A8CFEB' }} />
+        <div style={{ display: 'flex', gap: '50px' }}>
           <button
             style={{
-              color: "white",
-              backgroundColor: "#2596be",
-              borderRadius: "10px",
-              cursor: "pointer",
-              fontSize: "1rem",
-              padding: "10px 60px",
+              color: 'white',
+              backgroundColor: '#2596be',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              padding: '10px 60px'
             }}
-            onClick={() => onGotoBack("/listadopas")}
-          >
+            onClick={() => onGotoBack('/listadopas')}>
             Regresar
           </button>
         </div>
       </Card>
     </>
-  );
-};
+  )
+}
 
 Detallepas.getLayout = function getLayout(page: ReactElement) {
-  return <LayoutFirst>{page}</LayoutFirst>;
-};
+  return <LayoutFirst>{page}</LayoutFirst>
+}
 
-export default Detallepas;
+export default Detallepas

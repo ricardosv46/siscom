@@ -1,74 +1,74 @@
-import useSWR from "swr";
-import IconOnpe from "@components/icons/IconOnpe";
-import Head from "next/head";
-import { Button, Form, Input, Modal } from "antd";
-import { useRouter } from "next/router";
-import { auth } from "@framework/types";
-import { useState, useEffect } from "react";
-import { serialize } from "cookie";
-import { NextApiResponse, NextApiHandler } from "next";
-import useAuthStore from "store/auth/auth";
-import api from "@framework/api";
-import { GetAuthService, GetTokenAuthService } from "services/auth/ServiceAuth";
-import { RemoveProcessElectoralStorageService } from "services/process-electoral/ProcessElectoral";
-import useMenuStore from "store/menu/menu";
+import useSWR from 'swr'
+import IconOnpe from '@components/icons/IconOnpe'
+import Head from 'next/head'
+import { Button, Form, Input, Modal } from 'antd'
+import { useRouter } from 'next/router'
+import { auth } from '@framework/types'
+import { useState, useEffect } from 'react'
+import { serialize } from 'cookie'
+import { NextApiResponse, NextApiHandler } from 'next'
+import useAuthStore from 'store/auth/auth'
+import api from '@framework/api'
+import { GetAuthService, GetTokenAuthService } from 'services/auth/ServiceAuth'
+import { RemoveProcessElectoralStorageService } from 'services/process-electoral/ProcessElectoral'
+import useMenuStore from 'store/menu/menu'
 
 interface resAuth {
-  success: boolean;
-  message: string;
+  success: boolean
+  message: string
 }
 const Home = () => {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const { storeUser } = useAuthStore();
-  const [form] = Form.useForm();
-  const { changeStateSelectedProcess } = useMenuStore();
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const { storeUser } = useAuthStore()
+  const [form] = Form.useForm()
+  const { changeStateSelectedProcess } = useMenuStore()
   const onFinish = async (body: auth) => {
-    setLoading(true);
+    setLoading(true)
 
     try {
-      const { username, password } = body;
+      const { username, password } = body
 
-      const formData = new FormData();
-      formData.append("username", username);
-      formData.append("password", password);
-      const { data, message, success } = await api.login(formData);
+      const formData = new FormData()
+      formData.append('username', username)
+      formData.append('password', password)
+      const { data, message, success } = await api.login(formData)
 
       if (success) {
-        storeUser(data?.user, data.token);
-        changeStateSelectedProcess("");
-        RemoveProcessElectoralStorageService();
-        router.push("procesos");
+        storeUser(data?.user, data.token)
+        changeStateSelectedProcess('')
+        RemoveProcessElectoralStorageService()
+        router.push('procesos')
         //router.push("/");
-        `Bienvenido ${username}`;
+        ;`Bienvenido ${username}`
       }
     } catch (error) {
-      setLoading(false);
+      setLoading(false)
       const instance = Modal.info({
-        content: "Usuario y/o contraseña inválido !!!",
+        content: 'Usuario y/o contraseña inválido !!!',
         centered: true,
         async onOk() {
-          instance.destroy();
-        },
-      });
+          instance.destroy()
+        }
+      })
     } finally {
       setTimeout(() => {
-        setLoading(false);
-      }, 1200);
+        setLoading(false)
+      }, 1200)
     }
-  };
+  }
 
   const onFinishFailed = async (errorInfo: any) => {
-    console.log("Failed:", errorInfo);
-  };
+    console.log('Failed:', errorInfo)
+  }
 
   useEffect(() => {
-    const { user } = GetAuthService();
+    const { user } = GetAuthService()
     if (user?.id) {
       //router.push("/");
-      router.push("procesos");
+      router.push('procesos')
     }
-  }, []);
+  }, [])
 
   return (
     <>
@@ -86,15 +86,15 @@ const Home = () => {
             <h1>Monitoreo de PAS</h1>
           </div>
           <Form name="basic" layout="vertical" onFinish={onFinish} onFinishFailed={onFinishFailed} autoComplete="off" form={form}>
-            <Form.Item name="username" rules={[{ required: true, message: "¡Por favor ingrese un usuario!" }]}>
+            <Form.Item name="username" rules={[{ required: true, message: '¡Por favor ingrese un usuario!' }]}>
               <Input
                 size="large"
                 placeholder="Usuario"
-                value={form.getFieldValue("username")}
+                value={form.getFieldValue('username')}
                 onChange={(e) => {
-                  const newValue = e.target.value.replace(/[^a-zA-Z]/g, "");
-                  e.target.value = newValue;
-                  form.setFieldValue("username", newValue);
+                  const newValue = e.target.value.replace(/[^a-zA-Z]/g, '')
+                  e.target.value = newValue
+                  form.setFieldValue('username', newValue)
                 }}
               />
             </Form.Item>
@@ -104,16 +104,15 @@ const Home = () => {
               rules={[
                 {
                   required: true,
-                  message: "¡Por favor ingrese una contraseña!",
-                },
-              ]}
-            >
+                  message: '¡Por favor ingrese una contraseña!'
+                }
+              ]}>
               <Input.Password size="large" placeholder="Contraseña" />
             </Form.Item>
 
             <Form.Item>
               <Button className="bg-blue-500" type="primary" htmlType="submit" block size="large" loading={loading}>
-                {!loading ? "Continuar" : "Cargando..."}
+                {!loading ? 'Continuar' : 'Cargando...'}
               </Button>
               {/* <a href="/recoverpassword">¿Olvidaste tu contraseña?</a> */}
             </Form.Item>
@@ -121,7 +120,7 @@ const Home = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

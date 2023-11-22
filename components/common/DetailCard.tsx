@@ -1,4 +1,4 @@
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import router from "next/router";
 import { IDetailItem } from "pages/detallepas";
@@ -13,6 +13,7 @@ interface IProps {
   idx: number;
   detailEmi: any;
   arrayNoti: any;
+  impar: boolean;
 }
 
 const onGoDetail = (page: string, props: any) => {
@@ -22,9 +23,9 @@ const onGoDetail = (page: string, props: any) => {
   history.pushState({ arrayNoti: props.arrayNoti, detailEmi: props.detailEmi, ...newDatos }, "", page);
 };
 
-const LeftCard: FC<IProps> = (props): ReactElement => {
+const DetailCard: FC<IProps> = (props): ReactElement => {
   const { user } = GetAuthService();
-  const { item, idx } = props;
+  const { item, idx, impar } = props;
   const {
     id,
     comment,
@@ -41,17 +42,17 @@ const LeftCard: FC<IProps> = (props): ReactElement => {
   } = item;
 
   return (
-    <div className="mb-8 flex  justify-between flex-row-reverse items-center w-full left-timeline">
+    <div className={`${impar ? "flex-row-reverse" : ""} mb-8 flex  justify-between items-center w-full right-timeline`}>
       <div className="order-1 w-5/12"></div>
       <div className="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
-        <img src={`assets/images/${idx <= 1 ? "new" : "flag"}.png`} />
+        <img src={`assets/images/${idx <= 1 ? "add" : "flag"}.png`} />
       </div>
 
-      <div className="relative order-1 border-t-4 border-[#A8CFEB]  bg-white rounded-lg shadow-xl w-5/12 px-6 py-4">
-        <div className="w-full flex justify-end mx-11">
+      <div className="relative order-1 border-t-4 border-[#A8CFEB] bg-white rounded-lg shadow-xl w-5/12 px-6 py-4">
+        <div className="w-full flex justify-start">
           <div className="relative">
-            <div className="shadow-xl rounded-full align-middle border-none absolute -m-5  lg:-ml-78 max-w-[150px]">
-              <span className=" text-xl text-gray-400">►</span>
+            <div className="shadow-xl rounded-full align-middle border-none absolute -m-5  lg:-ml-10 max-w-[150px]">
+              <span className=" text-xl text-gray-400">◄</span>
             </div>
           </div>
         </div>
@@ -65,21 +66,24 @@ const LeftCard: FC<IProps> = (props): ReactElement => {
         {comment && (
           <p className="mt-2 text-sm font-medium leading-snug tracking-wide text-gray-500 text-opacity-100">Comentario: {comment}</p>
         )}
-        <br></br>
         {created_at && <h3 className="font-bold text-gray-500 text-x">Fecha de Actualización: {created_at} </h3>}
         {register_user && <h3 className="font-bold text-gray-500 text-x">Usuario Registrador: {register_user} </h3>}
+
         <br></br>
-        <Button
-          type="dashed"
-          hidden={idx === 0 || !user?.is_admin}
-          icon={<EditOutlined />}
-          onClick={() => onGoDetail("/actualiza-detalle", { item, detailEmi: props.detailEmi, arrayNoti: props.arrayNoti })}
-        >
-          Editar
-        </Button>
+        <div className="flex gap-5">
+          <Button
+            type="dashed"
+            hidden={idx === 0 || !user?.is_admin}
+            icon={<EditOutlined />}
+            onClick={() => onGoDetail("/actualiza-detalle", { item, detailEmi: props.detailEmi, arrayNoti: props.arrayNoti })}
+          >
+            Editar
+          </Button>
+          <Button type="dashed" icon={<EyeOutlined />} onClick={() => {}}></Button>
+        </div>
       </div>
     </div>
   );
 };
 
-export { LeftCard };
+export { DetailCard };

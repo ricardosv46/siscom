@@ -1,24 +1,4 @@
-import { ConsoleSqlOutlined } from "@ant-design/icons";
-import {
-  Access,
-  AccessSave,
-  AccessStatus,
-  AccessUpdate,
-  auth,
-  Certificate,
-  Clients,
-  ClientsSave,
-  Process,
-  ProcessSave,
-  ProcessStatus,
-  ProcessUpdate,
-  response,
-  responseLogin,
-  User,
-  UserSave,
-  UserUpdate,
-  IListadoPas,
-} from "@framework/types";
+import { responseLogin } from '@framework/types'
 import {
   IResponseAnexos,
   IResponseAnexosDetail,
@@ -26,155 +6,176 @@ import {
   IResponseProcessesDetail,
   IResponseProcessesResumen,
   IResponseTracking,
-  IResponseTrackingDetail,
-} from "@framework/types/processes.interface";
-import { GetTokenAuthService } from "services/auth/ServiceAuth";
-import { authService } from "services/axios/authConfigAxios";
-import { apiService } from "services/axios/configAxios";
-import axios from "axios";
+  IResponseTrackingDetail
+} from '@framework/types/processes.interface'
+import { GetTokenAuthService } from 'services/auth/ServiceAuth'
+import { authService } from 'services/axios/authConfigAxios'
+import { apiService } from 'services/axios/configAxios'
+import axios from 'axios'
 import { utils, writeFile } from 'xlsx'
 
-import { GetAuthService } from 'services/auth/ServiceAuth';
-import { Modal } from "antd";
+import { GetAuthService } from 'services/auth/ServiceAuth'
+import { Modal } from 'antd'
 
 const api = {
   login: async (body: any) => {
     const {
-      data: { data, message, success },
-    }: responseLogin = await authService.post(`login/`, body);
-    return { data, message, success };
+      data: { data, message, success }
+    }: responseLogin = await authService.post(`login/`, body)
+    return { data, message, success }
   },
   home: {
     getProcessesGrouped: async (savedProcess: any) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data },
-        }: IResponseProcesses = await apiService.get(`processes/grouped/?electoral_process=` + savedProcess);
+          data: { data }
+        }: IResponseProcesses = await apiService.get(`processes/grouped/?electoral_process=` + savedProcess)
         if (data === undefined) {
-          return { data: [] };
+          return { data: [] }
         } else {
-          return { data };
+          return { data }
         }
       } else {
-        return { data: [] };
+        return { data: [] }
       }
     },
     getProcessesSummary: async (savedProcess: any) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data, message, success },
-        }: IResponseProcessesResumen = await apiService.get(
-          `processes/resumen/?electoral_process=` + savedProcess
-        );
+          data: { data, message, success }
+        }: IResponseProcessesResumen = await apiService.get(`processes/resumen/?electoral_process=` + savedProcess)
         if (data === undefined || success === undefined || message === undefined) {
-          return { data: {} };
+          return { data: {} }
         } else {
-          return { data, message, success };
+          return { data, message, success }
         }
       } else {
-        return { data: {} };
+        return { data: {} }
       }
-    },
+    }
   },
   listpas: {
+    trackingHide: async (id: number, hide: boolean) => {
+      const {
+        data: { data, message, success }
+      }: IResponseProcessesDetail = await apiService.post(`/tracking/hide/`, { tracking_id: id, hide })
+      if (data === undefined || success === undefined || message === undefined) {
+        return { data: [] }
+      } else {
+        return { processes: data, message, success }
+      }
+    },
+
     getProcessesByTracking: async (id: number) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data, message, success },
-        }: IResponseProcessesDetail = await apiService.get(
-          `processes/${id}/tracking/`
-        );
+          data: { data, message, success }
+        }: IResponseProcessesDetail = await apiService.get(`processes/${id}/tracking/`)
         if (data === undefined || success === undefined || message === undefined) {
-          return { data: [] };
+          return { data: [] }
         } else {
-          return { processes: data, message, success };
+          return { processes: data, message, success }
         }
       } else {
-        return { data: [] };
+        return { data: [] }
       }
     },
 
     //getProcesses: async (label: any) => {
     getProcesses: async (globalProcess: any, label: any) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data, message, success },
-          //}: IResponseProcesses = await apiService.get(`${label}/processes/`);
-        }: IResponseProcesses = await apiService.get(`${label}/processes/?electoral_process=${globalProcess}`);
+          data: { data, message, success }
+        }: //}: IResponseProcesses = await apiService.get(`${label}/processes/`);
+        IResponseProcesses = await apiService.get(`${label}/processes/?electoral_process=${globalProcess}`)
         if (data === undefined || success === undefined || message === undefined) {
-          return { processes: [] };
+          return { processes: [] }
         } else {
-          return { processes: data, message, success };
+          return { processes: data, message, success }
         }
-
       } else {
-        return { processes: [] };
+        return { processes: [] }
       }
     },
     getProcessesByDate: async (globalProcess: any, label: any, start_at: string, end_at: string) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data, message, success },
-        }: IResponseProcesses = await apiService.get(`${label}/processes/${start_at}/${end_at}/?electoral_process=${globalProcess}`);
+          data: { data, message, success }
+        }: IResponseProcesses = await apiService.get(`${label}/processes/${start_at}/${end_at}/?electoral_process=${globalProcess}`)
         if (data === undefined || success === undefined || message === undefined) {
-          return { processes: [] };
+          return { processes: [] }
         } else {
-          return { processes: data, message, success };
+          return { processes: data, message, success }
         }
       } else {
-        return { processes: [] };
+        return { processes: [] }
       }
     },
     getReporteExcelProcesses: async () => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
-        const responseExcel = await apiService.post(`download/`, {}, {
-          responseType: 'arraybuffer',
-          headers: { 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
-        });
-        const outputFilename = `reporte_pas_${Date.now()}.xlsx`;
+        const responseExcel = await apiService.post(
+          `download/`,
+          {},
+          {
+            responseType: 'arraybuffer',
+            headers: { 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+          }
+        )
+        const outputFilename = `reporte_pas_${Date.now()}.xlsx`
 
         // If you want to download file automatically using link attribute.
-        const url = URL.createObjectURL(new Blob([responseExcel.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', outputFilename);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
+        const url = URL.createObjectURL(new Blob([responseExcel.data]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', outputFilename)
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
       }
     },
-    loadExcelInformation: async (excelFile: any) => {
-      const tok = GetTokenAuthService();
+    loadExcelInformation: async (excelFile: any, refetch: () => void) => {
+      const tok = GetTokenAuthService()
       if (tok) {
-        const { user } = GetAuthService();
-        const formData = new FormData();
-        formData.append('xlsx_file', excelFile);
-        formData.append('user_id', user.id);
+        const { user } = GetAuthService()
+        const formData = new FormData()
+        formData.append('xlsx_file', excelFile)
+        formData.append('user_id', user.id)
         try {
-          const token = localStorage.getItem("token");
-          const resultApi = await axios.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/bulk/tracking/create/`, formData, { headers: { 'x-access-tokens': token } });
-          const response = resultApi.data;
-
+          const token = localStorage.getItem('token')
+          const resultApi = await axios.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/bulk/tracking/create/`, formData, {
+            headers: { 'x-access-tokens': token }
+          })
+          const response = resultApi.data
 
           if (response) {
             const instance = Modal.info({
               content: response.message,
               centered: true,
               async onOk() {
-                instance.destroy();
-              },
-            });
+                instance.destroy()
+                refetch()
+              }
+            })
 
             if (response.data.length > 0) {
-              let dataExcel = [];
-              let headers: any[];
-              headers = ['FILA', 'EXPEDIENTE', 'NRO_RG_PAS', 'DNI_CANDIDATO', 'TIPO_DOC_EMITIDO', 'NRO_DOC_EMITIDO', 'NUEVO_RESPONSABLE', 'ERROR']
+              let dataExcel = []
+              let headers: any[]
+              headers = [
+                'FILA',
+                'EXPEDIENTE',
+                'NRO_RG_PAS',
+                'DNI_CANDIDATO',
+                'TIPO_DOC_EMITIDO',
+                'NRO_DOC_EMITIDO',
+                'NUEVO_RESPONSABLE',
+                'ERROR'
+              ]
               for (let i = 0; i < response.data.length; i++) {
                 dataExcel.push({
                   fila: response.data[i].FILA,
@@ -196,447 +197,470 @@ const api = {
               utils.book_append_sheet(wb, dataExcel)
               writeFile(wb, `${filename}`)
             }
-
-
           } else {
-            console.log("ssssss");
+            console.log('ssssss')
           }
           if (response?.data) {
             return { data: response?.data }
           }
         } catch (error) {
           const instance = Modal.info({
-            content: "Ocurrió un error al procesar el archivo!",
+            content: 'Ocurrió un error al procesar el archivo!',
             centered: true,
             async onOk() {
-              instance.destroy();
-            },
-          });
+              instance.destroy()
+            }
+          })
           return { data: [] }
         }
-
-
       }
     },
     createTracking: async (id: any, payload: any) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         try {
-          const response = await apiService.post(`processes/${id}/tracking/create/`, payload, { headers: { "x-access-tokens": tok } });
+          const response = await apiService.post(`processes/${id}/tracking/create/`, payload, { headers: { 'x-access-tokens': tok } })
           if (response.status === 400 && response.data.success === false) {
             return response.data
           } else {
-            return { "success": true, "message": "ok" }
+            return { success: true, message: 'ok' }
           }
-
-        } catch (error) {
-        }
-
+        } catch (error) {}
       }
     },
 
     downloadExcelInformation: async (payload: any) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
-
-        const responseExcel = await apiService.post(`/tracking/download/`, { processes: payload }, {
-          responseType: 'arraybuffer',
-          headers: { 'Content-Type': 'application/json' }
-        });
-        const outputFilename = `report_${new Date().getTime()}.xlsx`;
+        const responseExcel = await apiService.post(
+          `/tracking/download/`,
+          { processes: payload },
+          {
+            responseType: 'arraybuffer',
+            headers: { 'Content-Type': 'application/json' }
+          }
+        )
+        const outputFilename = `report_${new Date().getTime()}.xlsx`
 
         // If you want to download file automatically using link attribute.
-        const url = window.URL.createObjectURL(new Blob([responseExcel.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', outputFilename);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-
+        const url = window.URL.createObjectURL(new Blob([responseExcel.data]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', outputFilename)
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
       }
     },
     downloadFileDetail: async (payload: any) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
+        const formData = new FormData()
 
-        const formData = new FormData();
-
-        formData.set('idArchivo', payload?.idArchivo);
-        formData.set('nombreArchivo', payload?.nombreArchivo);
-        const responsePDF = await apiService.post(`/processes/sgd/downloadFile/`,
-          formData, {
+        formData.set('idArchivo', payload?.idArchivo)
+        formData.set('nombreArchivo', payload?.nombreArchivo)
+        const responsePDF = await apiService.post(`/processes/sgd/downloadFile/`, formData, {
           headers: {
             'x-access-tokens': tok,
-            'Content-Type': 'multipart/form-data', // Cambiar a 'multipart/form-data'
+            'Content-Type': 'multipart/form-data' // Cambiar a 'multipart/form-data'
           },
-          responseType: 'arraybuffer',
+          responseType: 'arraybuffer'
         })
-        const outputFilename = payload?.nombreArchivo;
+        const outputFilename = payload?.nombreArchivo
 
         // If you want to download file automatically using link attribute.
-        const url = URL.createObjectURL(new Blob([responsePDF.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', outputFilename);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-
+        const url = URL.createObjectURL(new Blob([responsePDF.data]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', outputFilename)
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
       }
     },
     downloadFileDetailPdf: async (payload: any) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
-
-
-        const formData = new FormData();
+        const formData = new FormData()
         console.log({ payload })
-        formData.set('nu_ann_sgd', payload?.nu_ann);
-        formData.set('nu_emi_sgd', payload?.nu_emi);
-        const responsePDF = await apiService.post(`/processes/sgd/downloadFile2/`,
-          formData, {
+        formData.set('nu_ann_sgd', payload?.nu_ann)
+        formData.set('nu_emi_sgd', payload?.nu_emi)
+        const responsePDF = await apiService.post(`/processes/sgd/downloadFile2/`, formData, {
           headers: {
             'x-access-tokens': tok,
-            'Content-Type': 'multipart/form-data', // Cambiar a 'multipart/form-data'
+            'Content-Type': 'multipart/form-data' // Cambiar a 'multipart/form-data'
           },
-          responseType: 'arraybuffer',
+          responseType: 'arraybuffer'
         })
-        const outputFilename = `${payload?.tipo_doc} ${payload?.nro_doc}.pdf`;
+        const outputFilename = `${payload?.tipo_doc} ${payload?.nro_doc}.pdf`
 
         // If you want to download file automatically using link attribute.
-        const url = URL.createObjectURL(new Blob([responsePDF.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', outputFilename);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-
+        const url = URL.createObjectURL(new Blob([responsePDF.data]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', outputFilename)
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
       }
     },
     validateFile: async (payload: any) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
-
-
-        const formData = new FormData();
-        formData.set('user_id', payload?.id);
-        formData.set('xlsx_file', payload?.excelFile);
-        const { data } = await apiService.post(`/processes/validateExcel/`,
-          formData, {
+        const formData = new FormData()
+        formData.set('user_id', payload?.id)
+        formData.set('xlsx_file', payload?.excelFile)
+        const { data } = await apiService.post(`/processes/validateExcel/`, formData, {
           headers: {
             'x-access-tokens': tok,
-            'Content-Type': 'multipart/form-data', // Cambiar a 'multipart/form-data'
-          },
-
+            'Content-Type': 'multipart/form-data' // Cambiar a 'multipart/form-data'
+          }
         })
-        return { data };
-
+        return { data }
       }
     },
     downloadDocuments: async (item: any, payload: any) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         try {
-          const response = await apiService.get(`processes/${payload}/documents/download/`,
-            {
-              responseType: 'blob',
-            });
+          const response = await apiService.get(`processes/${payload}/documents/download/`, {
+            responseType: 'blob'
+          })
 
           if (response.status == 400 || response.data === undefined) {
             const instance = Modal.info({
               content: 'No se encontraron documentos para descargar',
               centered: true,
               async onOk() {
-                instance.destroy();
-              },
-            });
+                instance.destroy()
+              }
+            })
           } else {
-            const outputFilename = item?.dni_candidato.length > 0 ? `${item?.dni_candidato} ${item?.num_expediente}.zip` : `${item?.num_expediente}.zip`
+            const outputFilename =
+              item?.dni_candidato.length > 0 ? `${item?.dni_candidato} ${item?.num_expediente}.zip` : `${item?.num_expediente}.zip`
 
-            const url = window.URL.createObjectURL(new Blob([response.data], { type: "application/zip" }));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', outputFilename);
-            document.body.appendChild(link);
-            link.click();
+            const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/zip' }))
+            const link = document.createElement('a')
+            link.href = url
+            link.setAttribute('download', outputFilename)
+            document.body.appendChild(link)
+            link.click()
           }
         } catch (error) {
-          console.error('Error al descargar el archivo ZIP', error);
+          console.error('Error al descargar el archivo ZIP', error)
         }
       }
     },
     getTracking: async (id: any) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          status, data: { data, message, success },
-        }: IResponseTracking = await apiService.get(`processes/${id}/sgd-tracking/`);
+          status,
+          data: { data, message, success }
+        }: IResponseTracking = await apiService.get(`processes/${id}/sgd-tracking/`)
         if (status !== 200) {
-          return { tracking: [] };
+          return { tracking: [] }
         } else {
-          return { tracking: data, message, success };
+          return { tracking: data, message, success }
         }
-
       } else {
-        return { tracking: [], success: false };
+        return { tracking: [], success: false }
       }
     },
     getAnexos: async (id: any) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data, message, success },
-        }: IResponseAnexos = await apiService.get(`processes/${id}/sgd-annexes/`);
+          data: { data, message, success }
+        }: IResponseAnexos = await apiService.get(`processes/${id}/sgd-annexes/`)
         if (data === undefined || success === undefined || message === undefined) {
-          return { anexos: [] };
+          return { anexos: [] }
         } else {
-          return { anexos: data, message, success };
+          return { anexos: data, message, success }
         }
-
       } else {
-        return { anexos: [] };
+        return { anexos: [] }
       }
     },
     getTrackingDetail: async (año: any, id: any) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data, message, success },
-        }: IResponseTrackingDetail = await apiService.get(`processes/sgd/destination-detail/${año}/${id}/`);
+          data: { data, message, success }
+        }: IResponseTrackingDetail = await apiService.get(`processes/sgd/destination-detail/${año}/${id}/`)
         if (data === undefined || success === undefined || message === undefined) {
-          return { trackingDetail: [] };
+          return { trackingDetail: [] }
         } else {
-          return { trackingDetail: [{ ...data }], message, success };
+          return { trackingDetail: [{ ...data }], message, success }
         }
-
       } else {
-        return { trackingDetail: [] };
+        return { trackingDetail: [] }
       }
     },
 
     getTrackingDetailAnexos: async (año: any, id: any) => {
-      const tok = GetTokenAuthService();
-      console.log({ año, id });
+      const tok = GetTokenAuthService()
+      console.log({ año, id })
       if (tok) {
         const {
-          data: { data, message, success },
-        }: any = await apiService.get(`processes/sgd/annexes/list/${año}/${id}/`);
+          data: { data, message, success }
+        }: any = await apiService.get(`processes/sgd/annexes/list/${año}/${id}/`)
         if (data === undefined || success === undefined || message === undefined) {
-          return { trackingDetailAnexos: [] };
+          return { trackingDetailAnexos: [] }
         } else {
-          return { trackingDetailAnexos: data, message, success };
+          return { trackingDetailAnexos: data, message, success }
         }
-
       } else {
-        return { trackingDetailAnexos: [] };
+        return { trackingDetailAnexos: [] }
       }
     },
 
     getAnexosDetail: async (año: any, id: any) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data, message, success },
-        }: IResponseAnexosDetail = await apiService.get(`processes/sgd/annex-detail/${año}/${id}/`);
-        const { data: docs }: any = await apiService.get(`processes/sgd/annexes/list/${año}/${id}/`);
+          data: { data, message, success }
+        }: IResponseAnexosDetail = await apiService.get(`processes/sgd/annex-detail/${año}/${id}/`)
+        const { data: docs }: any = await apiService.get(`processes/sgd/annexes/list/${año}/${id}/`)
 
         if (data === undefined || success === undefined || message === undefined) {
-          return { anexosDetail: [] };
+          return { anexosDetail: [] }
         } else {
-          return { anexosDetail: [{ ...data[0], docs }], message, success };
+          return { anexosDetail: [{ ...data[0], docs }], message, success }
         }
-
       } else {
-        return { anexosDetail: [] };
+        return { anexosDetail: [] }
       }
-    },
+    }
   },
   access: {
     getAcesses: async () => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { message },
-        }: any = await apiService.get(`users/`);
-        return { data: message };
+          data: { message }
+        }: any = await apiService.get(`users/`)
+        return { data: message }
       } else {
-        return { data: [] };
+        return { data: [] }
       }
-    },
+    }
   },
   update_process: {
     getTypeDocuments: async () => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { message },
-        }: any = await apiService.get(`type_documents/`);
-        return { data: message };
+          data: { message }
+        }: any = await apiService.get(`type_documents/`)
+        return { data: message }
       } else {
-        return { data: [] };
+        return { data: [] }
       }
     },
     getOrganizations: async () => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { message },
-        }: any = await apiService.get(`organizations/`);
-        return { data: message };
+          data: { message }
+        }: any = await apiService.get(`organizations/`)
+        return { data: message }
       } else {
-        return { data: [] };
+        return { data: [] }
       }
-    },
+    }
   },
   processes: {
     getProcesses: async (year: any) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { message },
-        }: any = await apiService.get(`electoral-process/?year=${year}`);
-        return { data: message };
+          data: { message }
+        }: any = await apiService.get(`electoral-process/?year=${year}`)
+        return { data: message }
       } else {
-        return { data: [] };
+        return { data: [] }
       }
     },
     getYear: async () => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { message },
-        }: any = await apiService.get(`years/`);
-        return { data: message };
+          data: { message }
+        }: any = await apiService.get(`years/`)
+        return { data: message }
       } else {
-        return { data: [] };
+        return { data: [] }
       }
-    },
+    }
   },
   estadistica: {
     statsGeneralTotalOP: async (proceso: string) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data },
-        }: any = await apiService.get(`/stats/general/totales/${proceso}/OP`);
-        return { data };
+          data: { data }
+        }: any = await apiService.get(`/stats/general/totales/${proceso}/OP`)
+        return { data }
       } else {
-        return { data: {} };
+        return { data: {} }
       }
     },
     statsGeneralTotalCandidato: async (proceso: string) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data },
-        }: any = await apiService.get(`/stats/general/totales/${proceso}/CANDIDATO`);
-        return { data };
+          data: { data }
+        }: any = await apiService.get(`/stats/general/totales/${proceso}/CANDIDATO`)
+        return { data }
       } else {
-        return { data: {} };
+        return { data: {} }
       }
     },
     statsGeneralOP: async (proceso: string) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data },
-        }: any = await apiService.get(`/stats/general/${proceso}/OP`);
-        return { data };
+          data: { data }
+        }: any = await apiService.get(`/stats/general/${proceso}/OP`)
+        return { data }
       } else {
-        return { data: [] };
+        return { data: [] }
       }
     },
     statsGeneralCandidato: async (proceso: string) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data },
-        }: any = await apiService.get(`/stats/general/${proceso}/CANDIDATO`);
-        return { data };
+          data: { data }
+        }: any = await apiService.get(`/stats/general/${proceso}/CANDIDATO`)
+        return { data }
       } else {
-        return { data: [] };
+        return { data: [] }
       }
     },
-    statsGeneralFiltro: async (departamentos: string[], provincias: string[], distritos: string[], cargos: string[], ops: string[], proceso: string, tipo_pas: string) => {
-      const tok = GetTokenAuthService();
+    statsGeneralFiltro: async (
+      departamentos: string[],
+      provincias: string[],
+      distritos: string[],
+      cargos: string[],
+      ops: string[],
+      proceso: string,
+      tipo_pas: string
+    ) => {
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data },
-        }: any = await apiService.post(`/stats/dashboard/`, { departamentos, provincias, distritos, ops, cargos, proceso_electoral: proceso, tipo_pas });
-        return { data };
+          data: { data }
+        }: any = await apiService.post(`/stats/dashboard/`, {
+          departamentos,
+          provincias,
+          distritos,
+          ops,
+          cargos,
+          proceso_electoral: proceso,
+          tipo_pas
+        })
+        return { data }
       } else {
-        return { data: [] };
+        return { data: [] }
       }
     },
     departamentos: async (proceso: string) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data },
-        }: any = await apiService.get(`/stats/departamentos/${proceso}/`);
-        return { data };
+          data: { data }
+        }: any = await apiService.get(`/stats/departamentos/${proceso}/`)
+        return { data }
       } else {
-        return { data: [] };
+        return { data: [] }
       }
     },
     provincias: async (ubigeos: string[], proceso: string) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data },
-        }: any = await apiService.post(`/stats/provincias/`, { departamentos: ubigeos, proceso_electoral: proceso });
-        return { data };
+          data: { data }
+        }: any = await apiService.post(`/stats/provincias/`, { departamentos: ubigeos, proceso_electoral: proceso })
+        return { data }
       } else {
-        return { data: [] };
+        return { data: [] }
       }
     },
     distritos: async (ubigeos: string[], proceso: string) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data },
-        }: any = await apiService.post(`/stats/distritos/`, { provincias: ubigeos, proceso_electoral: proceso });
-        return { data };
+          data: { data }
+        }: any = await apiService.post(`/stats/distritos/`, { provincias: ubigeos, proceso_electoral: proceso })
+        return { data }
       } else {
-        return { data: [] };
+        return { data: [] }
       }
     },
     cargos: async (proceso: string) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data },
-        }: any = await apiService.get(`/stats/cargos/${proceso}/`);
-        return { data };
+          data: { data }
+        }: any = await apiService.get(`/stats/cargos/${proceso}/`)
+        return { data }
       } else {
-        return { data: [] };
+        return { data: [] }
       }
     },
     op: async (departamentos: string[], provincias: string[], distritos: string[], proceso: string) => {
-      const tok = GetTokenAuthService();
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data },
-        }: any = await apiService.post(`/stats/op/`, { departamentos, provincias, distritos, proceso_electoral: proceso });
-        return { data };
+          data: { data }
+        }: any = await apiService.post(`/stats/op/`, { departamentos, provincias, distritos, proceso_electoral: proceso })
+        return { data }
       } else {
-        return { data: [] };
+        return { data: [] }
       }
     },
-    listPas: async ({ departamentos, provincias, distritos, ops, cargos, proceso_electoral, filter, tipo_pas }: { departamentos: string[], provincias: string[], distritos: string[], cargos: string[], ops: string[], proceso_electoral: string, filter: string, tipo_pas: string }) => {
-      const tok = GetTokenAuthService();
+    listPas: async ({
+      departamentos,
+      provincias,
+      distritos,
+      ops,
+      cargos,
+      proceso_electoral,
+      filter,
+      tipo_pas
+    }: {
+      departamentos: string[]
+      provincias: string[]
+      distritos: string[]
+      cargos: string[]
+      ops: string[]
+      proceso_electoral: string
+      filter: string
+      tipo_pas: string
+    }) => {
+      const tok = GetTokenAuthService()
       if (tok) {
         const {
-          data: { data },
-        }: any = await apiService.post(`/processes/dashboard/listadopas/`, { departamentos, provincias, distritos, ops, cargos, proceso_electoral, filter, tipo_pas, all_ubigeos: !(departamentos?.length > 0) });
-        return { data };
+          data: { data }
+        }: any = await apiService.post(`/processes/dashboard/listadopas/`, {
+          departamentos,
+          provincias,
+          distritos,
+          ops,
+          cargos,
+          proceso_electoral,
+          filter,
+          tipo_pas,
+          all_ubigeos: !(departamentos?.length > 0)
+        })
+        return { data }
       } else {
-        return { data: [] };
+        return { data: [] }
       }
-    },
+    }
   }
-};
+}
 
-export default api;
+export default api
