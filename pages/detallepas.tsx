@@ -117,7 +117,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
             return (
               <DetailCard
                 key={key}
-                impar={key % 2 === 0}
+                par={(key + 1) % 2 === 0}
                 item={{ ...item, headerName }}
                 idx={key}
                 detailEmi={detailEmi}

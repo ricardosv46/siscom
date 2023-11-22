@@ -1,31 +1,33 @@
-import { EditOutlined, EyeOutlined } from "@ant-design/icons";
-import { Button } from "antd";
-import router from "next/router";
-import { IDetailItem } from "pages/detallepas";
-import React, { ReactElement, FC } from "react";
-import { GetAuthService } from "services/auth/ServiceAuth";
+import { EditOutlined, EyeOutlined } from '@ant-design/icons'
+import api from '@framework/api'
+import { Button } from 'antd'
+import router from 'next/router'
+import { IDetailItem } from 'pages/detallepas'
+import React, { ReactElement, FC } from 'react'
+import { GetAuthService } from 'services/auth/ServiceAuth'
 
 interface IDetailItemName extends IDetailItem {
-  headerName: string;
+  headerName: string
 }
 interface IProps {
-  item: IDetailItemName;
-  idx: number;
-  detailEmi: any;
-  arrayNoti: any;
-  impar: boolean;
+  item: IDetailItemName
+  idx: number
+  detailEmi: any
+  arrayNoti: any
+  par: boolean
 }
 
 const onGoDetail = (page: string, props: any) => {
-  router.push({ pathname: page });
-  const { estado, ...res } = props.item;
-  const newDatos = { item: { ...res } };
-  history.pushState({ arrayNoti: props.arrayNoti, detailEmi: props.detailEmi, ...newDatos }, "", page);
-};
+  router.push({ pathname: page })
+  const { estado, ...res } = props.item
+  const newDatos = { item: { ...res } }
+  history.pushState({ arrayNoti: props.arrayNoti, detailEmi: props.detailEmi, ...newDatos }, '', page)
+}
 
 const DetailCard: FC<IProps> = (props): ReactElement => {
-  const { user } = GetAuthService();
-  const { item, idx, impar } = props;
+  const { user } = GetAuthService()
+  const { item, idx, par } = props
+  console.log({ props })
   const {
     id,
     comment,
@@ -38,24 +40,41 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
     start_at,
     tracking_action,
     register_user,
-    rj_type,
-  } = item;
+    rj_type
+  } = item
+
+  const showCard = async () => {
+    await api.listpas.trackingHide(id, false)
+  }
 
   return (
-    <div className={`${impar ? "flex-row-reverse" : ""} mb-8 flex  justify-between items-center w-full right-timeline`}>
+    <div className={`${par ? '' : 'flex-row-reverse'} mb-8 flex  justify-between items-center w-full right-timeline`}>
       <div className="order-1 w-5/12"></div>
       <div className="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
-        <img src={`assets/images/${idx <= 1 ? "add" : "flag"}.png`} />
+        {par && <img src={`assets/images/${idx <= 1 ? 'add' : 'flag'}.png`} />}
+        {!par && <img src={`assets/images/${idx <= 1 ? 'new' : 'flag'}.png`} />}
       </div>
 
       <div className="relative order-1 border-t-4 border-[#A8CFEB] bg-white rounded-lg shadow-xl w-5/12 px-6 py-4">
-        <div className="w-full flex justify-start">
-          <div className="relative">
-            <div className="shadow-xl rounded-full align-middle border-none absolute -m-5  lg:-ml-10 max-w-[150px]">
-              <span className=" text-xl text-gray-400">◄</span>
+        {par && (
+          <div className="w-full flex justify-start">
+            <div className="relative">
+              <div className="shadow-xl rounded-full align-middle border-none absolute -m-5  lg:-ml-10 max-w-[150px]">
+                <span className=" text-xl text-gray-400">◄</span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {!par && (
+          <div className="w-full flex justify-end mx-11">
+            <div className="relative">
+              <div className="shadow-xl rounded-full align-middle border-none absolute -m-5  lg:-ml-78 max-w-[150px]">
+                <span className=" text-xl text-gray-400">►</span>
+              </div>
+            </div>
+          </div>
+        )}
         <h3 className="font-bold text-gray-500 text-x">Tipo Registro: {tracking_action}</h3>
         <h3 className="font-bold text-gray-500 text-x">Fecha: {start_at}</h3>
         <h3 className="font-bold text-gray-500 text-x">Creado por: {current_responsible} </h3>
@@ -75,15 +94,14 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
             type="dashed"
             hidden={idx === 0 || !user?.is_admin}
             icon={<EditOutlined />}
-            onClick={() => onGoDetail("/actualiza-detalle", { item, detailEmi: props.detailEmi, arrayNoti: props.arrayNoti })}
-          >
+            onClick={() => onGoDetail('/actualiza-detalle', { item, detailEmi: props.detailEmi, arrayNoti: props.arrayNoti })}>
             Editar
           </Button>
-          <Button type="dashed" icon={<EyeOutlined />} onClick={() => {}}></Button>
+          <Button type="dashed" icon={<EyeOutlined />} onClick={showCard}></Button>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export { DetailCard };
+export { DetailCard }

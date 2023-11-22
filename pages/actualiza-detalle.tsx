@@ -1,176 +1,176 @@
-import Head from "next/head";
-import { ChangeEvent, ReactElement, SetStateAction, useEffect, useState } from "react";
-import { LayoutFirst } from "@components/common";
-import { NextPageWithLayout } from "pages/_app";
-import { Card } from "@components/ui";
-import api from "@framework/api";
-import { useUI } from "@components/ui/context";
-import { GetServerSideProps } from "next";
-import { getCookie } from "cookies-next";
-import { mergeArray } from "@lib/general";
-import { useRouter } from "next/router";
-import { Button, DatePicker, Modal } from "antd";
-import { GetTokenAuthService } from "services/auth/ServiceAuth";
-import apiService from "services/axios/configAxios";
-import moment from "moment";
-import locale from "antd/lib/date-picker/locale/es_ES";
+import Head from 'next/head'
+import { ChangeEvent, ReactElement, SetStateAction, useEffect, useState } from 'react'
+import { LayoutFirst } from '@components/common'
+import { NextPageWithLayout } from 'pages/_app'
+import { Card } from '@components/ui'
+import api from '@framework/api'
+import { useUI } from '@components/ui/context'
+import { GetServerSideProps } from 'next'
+import { getCookie } from 'cookies-next'
+import { mergeArray } from '@lib/general'
+import { useRouter } from 'next/router'
+import { Button, DatePicker, Modal } from 'antd'
+import { GetTokenAuthService } from 'services/auth/ServiceAuth'
+import apiService from 'services/axios/configAxios'
+import moment from 'moment'
+import locale from 'antd/lib/date-picker/locale/es_ES'
 interface IPropsItem {
-  id: string | number | null;
-  resolution_number: string | null;
-  tracking_action: string | null;
-  start_at: string | null;
-  current_responsible: string | null;
-  new_responsible: string | null;
-  related_document: string | null;
-  document: string | null;
-  comment: string | null;
-  created_at: string | null;
-  headerName: string;
+  id: string | number | null
+  resolution_number: string | null
+  tracking_action: string | null
+  start_at: string | null
+  current_responsible: string | null
+  new_responsible: string | null
+  related_document: string | null
+  document: string | null
+  comment: string | null
+  created_at: string | null
+  headerName: string
 }
 
-let newFormatFechaInicio = "";
+let newFormatFechaInicio = ''
 
-let id = "";
-let resolution_number = "";
-let tracking_action = "";
-let start_at = "";
-let start_atTMP = "";
-let current_responsible = "";
-let new_responsible = "";
-let related_document = "";
-let document = "";
-let comment = "";
-let created_at = "";
+let id = ''
+let resolution_number = ''
+let tracking_action = ''
+let start_at = ''
+let start_atTMP = ''
+let current_responsible = ''
+let new_responsible = ''
+let related_document = ''
+let document = ''
+let comment = ''
+let created_at = ''
 
-let año = "";
-let mes = "";
-let dia = "";
+let año = ''
+let mes = ''
+let dia = ''
 
 const Actualizaproceso: NextPageWithLayout = ({}) => {
-  const [item, setItem] = useState<IPropsItem>();
-  const router = useRouter();
+  const [item, setItem] = useState<IPropsItem>()
+  const router = useRouter()
 
   const getTypeDocumentsApi = async () => {
-    const { data } = await api.update_process.getTypeDocuments();
-    setOptions(data);
-  };
+    const { data } = await api.update_process.getTypeDocuments()
+    setOptions(data)
+  }
 
   const getOrganizationsApi = async () => {
-    const { data } = await api.update_process.getOrganizations();
-    setGerenciaOtions(data);
-  };
-  let itemprop: any;
-  let detailEmi: any;
-  let arrayNoti: any;
+    const { data } = await api.update_process.getOrganizations()
+    setGerenciaOtions(data)
+  }
+  let itemprop: any
+  let detailEmi: any
+  let arrayNoti: any
 
-  if (typeof window !== "undefined") {
-    itemprop = history?.state?.item;
-    detailEmi = history?.state?.detailEmi;
-    arrayNoti = history?.state?.arrayNoti;
+  if (typeof window !== 'undefined') {
+    itemprop = history?.state?.item
+    detailEmi = history?.state?.detailEmi
+    arrayNoti = history?.state?.arrayNoti
   }
 
   function toDate(dateString: any) {
-    const [day, month, year] = dateString.split(" ");
+    const [day, month, year] = dateString.split(' ')
 
-    return new Date(year, month - 1, day);
+    return new Date(year, month - 1, day)
   }
 
   useEffect(() => {
-    getTypeDocumentsApi();
-    getOrganizationsApi();
+    getTypeDocumentsApi()
+    getOrganizationsApi()
     if (itemprop) {
-      console.log({ itemprop });
-      setItem(itemprop);
-      id = itemprop?.id;
-      resolution_number = itemprop?.resolution_number;
-      tracking_action = itemprop?.tracking_action;
-      start_at = itemprop?.start_at;
-      current_responsible = itemprop?.current_responsible;
-      new_responsible = itemprop?.new_responsible;
-      related_document = itemprop?.related_document;
-      document = itemprop?.document === null ? "" : itemprop?.document;
-      comment = itemprop?.comment === null ? "" : itemprop?.comment;
-      created_at = itemprop?.created_at;
+      console.log({ itemprop })
+      setItem(itemprop)
+      id = itemprop?.id
+      resolution_number = itemprop?.resolution_number
+      tracking_action = itemprop?.tracking_action
+      start_at = itemprop?.start_at
+      current_responsible = itemprop?.current_responsible
+      new_responsible = itemprop?.new_responsible
+      related_document = itemprop?.related_document
+      document = itemprop?.document === null ? '' : itemprop?.document
+      comment = itemprop?.comment === null ? '' : itemprop?.comment
+      created_at = itemprop?.created_at
 
-      let año = start_at.substring(13, 8);
-      let mes = start_at.substring(4, 7);
-      let dia = start_at.substring(1, 3);
+      let año = start_at.substring(13, 8)
+      let mes = start_at.substring(4, 7)
+      let dia = start_at.substring(1, 3)
 
-      if (mes === "Ene") {
-        mes = "01";
-      } else if (mes === "Feb") {
-        mes = "02";
-      } else if (mes === "Mar") {
-        mes = "03";
-      } else if (mes === "Abr") {
-        mes = "04";
-      } else if (mes === "May") {
-        mes = "05";
-      } else if (mes === "Jun") {
-        mes = "06";
-      } else if (mes === "Jul") {
-        mes = "07";
-      } else if (mes === "Ago") {
-        mes = "08";
-      } else if (mes === "Set" || mes === "Sep") {
-        mes = "09";
-      } else if (mes === "Oct") {
-        mes = "10";
-      } else if (mes === "Nov") {
-        mes = "11";
-      } else if (mes === "Dic") {
-        mes = "12";
+      if (mes === 'Ene') {
+        mes = '01'
+      } else if (mes === 'Feb') {
+        mes = '02'
+      } else if (mes === 'Mar') {
+        mes = '03'
+      } else if (mes === 'Abr') {
+        mes = '04'
+      } else if (mes === 'May') {
+        mes = '05'
+      } else if (mes === 'Jun') {
+        mes = '06'
+      } else if (mes === 'Jul') {
+        mes = '07'
+      } else if (mes === 'Ago') {
+        mes = '08'
+      } else if (mes === 'Set' || mes === 'Sep') {
+        mes = '09'
+      } else if (mes === 'Oct') {
+        mes = '10'
+      } else if (mes === 'Nov') {
+        mes = '11'
+      } else if (mes === 'Dic') {
+        mes = '12'
       }
 
-      setOperationSelectedOption(tracking_action);
+      setOperationSelectedOption(tracking_action)
       //const date = moment(itemprop?.created_at_dt);
-      const date = moment(itemprop?.start_at_dt);
-      setFechaInicioInputValue(date);
-      setGerenciaSelectedOption(current_responsible);
-      setGerenciaAsignadaSelectedOption(new_responsible);
-      setTipoDocumentoSelectedOption(related_document);
-      setDocumentoRelacionadoinputValue(document);
-      setComentarioTextareaValue(comment);
-      setRj_type(itemprop?.rj_type === null ? "" : itemprop?.rj_type);
+      const date = moment(itemprop?.start_at_dt)
+      setFechaInicioInputValue(date)
+      setGerenciaSelectedOption(current_responsible)
+      setGerenciaAsignadaSelectedOption(new_responsible)
+      setTipoDocumentoSelectedOption(related_document)
+      setDocumentoRelacionadoinputValue(document)
+      setComentarioTextareaValue(comment)
+      setRj_type(itemprop?.rj_type === null ? '' : itemprop?.rj_type)
     } else {
-      router.push("/detallepas");
+      router.push('/detallepas')
     }
-  }, []);
+  }, [])
 
-  const [documentoRelacionadoinputValue, setDocumentoRelacionadoinputValue] = useState("");
-  const [fechaInicioInputValue, setFechaInicioInputValue] = useState<any>("");
-  const [operationSelectedOption, setOperationSelectedOption] = useState("");
-  const [options, setOptions] = useState([]);
-  const [gerenciaOtions, setGerenciaOtions] = useState([]);
-  const [tipoDocumentoSelectedOption, setTipoDocumentoSelectedOption] = useState("");
-  const [gerenciaSelectedOption, setGerenciaSelectedOption] = useState("");
-  const [gerenciaAsignadaSelectedOption, setGerenciaAsignadaSelectedOption] = useState("");
-  const [comentarioTextareaValue, setComentarioTextareaValue] = useState("");
-  const [rj_type, setRj_type] = useState("");
+  const [documentoRelacionadoinputValue, setDocumentoRelacionadoinputValue] = useState('')
+  const [fechaInicioInputValue, setFechaInicioInputValue] = useState<any>('')
+  const [operationSelectedOption, setOperationSelectedOption] = useState('')
+  const [options, setOptions] = useState([])
+  const [gerenciaOtions, setGerenciaOtions] = useState([])
+  const [tipoDocumentoSelectedOption, setTipoDocumentoSelectedOption] = useState('')
+  const [gerenciaSelectedOption, setGerenciaSelectedOption] = useState('')
+  const [gerenciaAsignadaSelectedOption, setGerenciaAsignadaSelectedOption] = useState('')
+  const [comentarioTextareaValue, setComentarioTextareaValue] = useState('')
+  const [rj_type, setRj_type] = useState('')
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    if (fechaInicioInputValue === "") {
+    if (fechaInicioInputValue === '') {
       const instance = Modal.info({
-        content: "Por favor, ingrese la fecha",
+        content: 'Por favor, ingrese la fecha',
         centered: true,
         async onOk() {
-          instance.destroy();
-        },
-      });
-      return;
+          instance.destroy()
+        }
+      })
+      return
     }
 
-    if (tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && operationSelectedOption === "ACTUALIZACION" && !rj_type) {
+    if (tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' && operationSelectedOption === 'ACTUALIZACION' && !rj_type) {
       const instance = Modal.info({
-        content: "Por favor, ingrese el tipo de resolución jefatural",
+        content: 'Por favor, ingrese el tipo de resolución jefatural',
         centered: true,
         async onOk() {
-          instance.destroy();
-        },
-      });
-      return;
+          instance.destroy()
+        }
+      })
+      return
     }
 
     if (
@@ -183,203 +183,203 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       comentarioTextareaValue === comment
     ) {
       const instance = Modal.info({
-        content: "No se ha modificado la información",
+        content: 'No se ha modificado la información',
         centered: true,
         async onOk() {
-          instance.destroy();
-        },
-      });
+          instance.destroy()
+        }
+      })
 
-      return;
+      return
     }
-    const formData = new FormData();
+    const formData = new FormData()
 
-    if (fechaInicioInputValue !== "") {
-      const currentDate = moment(fechaInicioInputValue).format("YYYY-MM-DD HH:mm:ss"); // Formato de fecha: "2023-03-01"
+    if (fechaInicioInputValue !== '') {
+      const currentDate = moment(fechaInicioInputValue).format('YYYY-MM-DD HH:mm:ss') // Formato de fecha: "2023-03-01"
 
-      formData.append("start_at", currentDate);
+      formData.append('start_at', currentDate)
     }
 
-    const tok = GetTokenAuthService();
+    const tok = GetTokenAuthService()
     if (tok) {
-      formData.append("comment", comentarioTextareaValue);
-      formData.append("current_responsible", gerenciaSelectedOption);
+      formData.append('comment', comentarioTextareaValue)
+      formData.append('current_responsible', gerenciaSelectedOption)
 
-      formData.append("new_responsible", gerenciaAsignadaSelectedOption);
+      formData.append('new_responsible', gerenciaAsignadaSelectedOption)
 
-      formData.append("tracking_action", operationSelectedOption.toLowerCase());
+      formData.append('tracking_action', operationSelectedOption.toLowerCase())
 
-      if (operationSelectedOption === "OBSERVACION" || operationSelectedOption === "ACTUALIZACION") {
-        formData.append("type_document", tipoDocumentoSelectedOption);
-        formData.append("document", documentoRelacionadoinputValue);
+      if (operationSelectedOption === 'OBSERVACION' || operationSelectedOption === 'ACTUALIZACION') {
+        formData.append('type_document', tipoDocumentoSelectedOption)
+        formData.append('document', documentoRelacionadoinputValue)
       }
 
-      if (tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && operationSelectedOption === "ACTUALIZACION") {
-        formData.append("rj_type", rj_type);
+      if (tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' && operationSelectedOption === 'ACTUALIZACION') {
+        formData.append('rj_type', rj_type)
       }
 
       try {
         const reqInit = {
           headers: {
-            "Content-Type": "application/json",
-            "x-access-tokens": `${tok}`,
-          },
-        };
-        const response = await apiService.put(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/tracking/${id}/edit/`, formData, reqInit);
+            'Content-Type': 'application/json',
+            'x-access-tokens': `${tok}`
+          }
+        }
+        const response = await apiService.put(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/tracking/${id}/edit/`, formData, reqInit)
         if (response.status === 400 && response.data.success === false) {
         } else {
           const instance = Modal.info({
-            content: "El detalle se actualizó correctamente.",
+            content: 'El detalle se actualizó correctamente.',
             centered: true,
             async onOk() {
-              goBack("/detallepas", { itemprop });
-              instance.destroy();
-            },
-          });
+              goBack('/detallepas', { itemprop })
+              instance.destroy()
+            }
+          })
         }
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     }
-  };
+  }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDocumentoRelacionadoinputValue(event.target.value);
-  };
+    setDocumentoRelacionadoinputValue(event.target.value.toLocaleUpperCase())
+  }
 
   const handleFechaInicioDateTimeChange = (value: any, dateString: any) => {
-    setFechaInicioInputValue(value);
-  };
+    setFechaInicioInputValue(value)
+  }
 
   const handleGerenciaSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setGerenciaSelectedOption(event.target.value);
-  };
+    setGerenciaSelectedOption(event.target.value)
+  }
 
   const handleGerenciaAsignadaSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setGerenciaAsignadaSelectedOption(event.target.value);
-  };
+    setGerenciaAsignadaSelectedOption(event.target.value)
+  }
 
   const handleTipoDocumentoSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setTipoDocumentoSelectedOption(event.target.value);
-  };
+    setTipoDocumentoSelectedOption(event.target.value)
+  }
 
   const handleTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setComentarioTextareaValue(event.target.value);
-  };
+    setComentarioTextareaValue(event.target.value)
+  }
 
   function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
-    setOperationSelectedOption(event.target.value);
+    setOperationSelectedOption(event.target.value)
   }
 
   const handleRjType = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setRj_type(event.target.value);
-  };
+    setRj_type(event.target.value)
+  }
 
   function goBack(page: string, props: any): void {
-    router.push({ pathname: page });
-    const { estado, ...res } = props;
-    const newDatos = { ...res };
-    history.pushState(newDatos, "", page);
+    router.push({ pathname: page })
+    const { estado, ...res } = props
+    const newDatos = { ...res }
+    history.pushState(newDatos, '', page)
   }
 
   const disabledDate = (current: any) => {
-    if (arrayNoti?.length > 0 && arrayNoti[0]?.id === itemprop?.id && itemprop.tracking_action === "NOTIFICACION") {
-      const date = moment(detailEmi?.start_at_dt).startOf("day");
-      const datefinish = moment(arrayNoti[1]?.start_at_dt);
-      const isOutOfRange = !moment(current).isBetween(date, datefinish);
-      return isOutOfRange;
+    if (arrayNoti?.length > 0 && arrayNoti[0]?.id === itemprop?.id && itemprop.tracking_action === 'NOTIFICACION') {
+      const date = moment(detailEmi?.start_at_dt).startOf('day')
+      const datefinish = moment(arrayNoti[1]?.start_at_dt)
+      const isOutOfRange = !moment(current).isBetween(date, datefinish)
+      return isOutOfRange
     }
 
-    if (arrayNoti?.length > 1 && itemprop.tracking_action === "NOTIFICACION") {
-      const date = moment(arrayNoti[0]?.start_at_dt).startOf("day");
-      const isOutOfRange = !moment(current).isBetween(date, moment());
-      return isOutOfRange;
+    if (arrayNoti?.length > 1 && itemprop.tracking_action === 'NOTIFICACION') {
+      const date = moment(arrayNoti[0]?.start_at_dt).startOf('day')
+      const isOutOfRange = !moment(current).isBetween(date, moment())
+      return isOutOfRange
     }
 
-    const date = moment(detailEmi?.start_at_dt).startOf("day");
-    const isOutOfRange = !moment(current).isBetween(date, moment());
-    return isOutOfRange;
-  };
+    const date = moment(detailEmi?.start_at_dt).startOf('day')
+    const isOutOfRange = !moment(current).isBetween(date, moment())
+    return isOutOfRange
+  }
 
   const disabledTime = (current: any) => {
-    if (arrayNoti?.length > 0 && arrayNoti[0]?.id === itemprop?.id && itemprop.tracking_action === "NOTIFICACION") {
-      const nowFinish = moment(arrayNoti[1]?.start_at_dt);
-      const currentHourActive = moment(current).hour();
-      const currentHourinit = nowFinish.hour();
-      const currentMinuteinit = nowFinish.minute();
+    if (arrayNoti?.length > 0 && arrayNoti[0]?.id === itemprop?.id && itemprop.tracking_action === 'NOTIFICACION') {
+      const nowFinish = moment(arrayNoti[1]?.start_at_dt)
+      const currentHourActive = moment(current).hour()
+      const currentHourinit = nowFinish.hour()
+      const currentMinuteinit = nowFinish.minute()
 
-      if (current && current.isSame(nowFinish, "day")) {
+      if (current && current.isSame(nowFinish, 'day')) {
         if (currentHourActive === currentHourinit) {
           return {
             disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHourinit),
-            disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinuteinit),
-          };
+            disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinuteinit)
+          }
         }
         return {
-          disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHourinit),
-        };
+          disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHourinit)
+        }
       }
     }
 
-    if (arrayNoti?.length > 1 && itemprop.tracking_action === "NOTIFICACION") {
-      const nowInit = moment(arrayNoti[0]?.start_at_dt);
-      const currentHourActive = moment(current).hour();
-      const currentHourinit = nowInit.hour();
-      const currentMinuteinit = nowInit.minute();
+    if (arrayNoti?.length > 1 && itemprop.tracking_action === 'NOTIFICACION') {
+      const nowInit = moment(arrayNoti[0]?.start_at_dt)
+      const currentHourActive = moment(current).hour()
+      const currentHourinit = nowInit.hour()
+      const currentMinuteinit = nowInit.minute()
 
-      if (current && current.isSame(nowInit, "day")) {
+      if (current && current.isSame(nowInit, 'day')) {
         if (currentHourActive === currentHourinit) {
           return {
             disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour < currentHourinit),
-            disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit + 1),
-          };
+            disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit + 1)
+          }
         }
         return {
-          disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour < currentHourinit),
-        };
+          disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour < currentHourinit)
+        }
       }
     }
 
-    const now = moment();
-    const currentHour = now.hour();
-    const currentHourActive = moment(current).hour();
-    const currentMinute = now.minute();
+    const now = moment()
+    const currentHour = now.hour()
+    const currentHourActive = moment(current).hour()
+    const currentMinute = now.minute()
 
     // Si la fecha es hoy, deshabilita horas y minutos futuros
-    if (current && current.isSame(now, "day")) {
+    if (current && current.isSame(now, 'day')) {
       if (currentHourActive === currentHour) {
         return {
           disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
-          disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute),
-        };
+          disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute)
+        }
       }
 
       return {
-        disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
-      };
+        disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour)
+      }
     }
 
-    const nowinit = moment(detailEmi?.start_at_dt);
-    const currentHourinit = nowinit.hour();
-    const currentMinuteinit = nowinit.minute();
+    const nowinit = moment(detailEmi?.start_at_dt)
+    const currentHourinit = nowinit.hour()
+    const currentMinuteinit = nowinit.minute()
 
-    if (current && current.isSame(nowinit, "day")) {
+    if (current && current.isSame(nowinit, 'day')) {
       return {
         disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHourinit),
-        disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinuteinit),
-      };
+        disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinuteinit)
+      }
     }
-    return {};
-  };
+    return {}
+  }
 
-  console.log({ itemprop, arrayNoti });
+  console.log({ itemprop, arrayNoti })
   return (
     <form onSubmit={handleSubmit}>
       <Card title="Crear usuario">
-        <div style={{ marginBottom: "0.4rem" }}>
-          <h2 style={{ fontSize: 25, color: "#4F5172" }}>{item?.headerName}</h2>
+        <div style={{ marginBottom: '0.4rem' }}>
+          <h2 style={{ fontSize: 25, color: '#4F5172' }}>{item?.headerName}</h2>
         </div>
-        <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
+        <hr style={{ marginBottom: '0.9rem', borderTop: '2px solid #A8CFEB' }} />
 
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
@@ -391,7 +391,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 type="checkbox"
                 name="NOTIFICACION"
                 value="NOTIFICACION"
-                checked={operationSelectedOption === "NOTIFICACION"}
+                checked={operationSelectedOption === 'NOTIFICACION'}
                 onChange={handleCheckboxChange}
               />
               <span className="checkmark"></span>
@@ -401,7 +401,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 type="checkbox"
                 name="OBSERVACION"
                 value="OBSERVACION"
-                checked={operationSelectedOption === "OBSERVACION"}
+                checked={operationSelectedOption === 'OBSERVACION'}
                 onChange={handleCheckboxChange}
               />
               <span className="checkmark"></span>
@@ -411,13 +411,13 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 type="checkbox"
                 name="ACTUALIZACION"
                 value="ACTUALIZACION"
-                checked={operationSelectedOption === "ACTUALIZACION"}
+                checked={operationSelectedOption === 'ACTUALIZACION'}
                 onChange={handleCheckboxChange}
               />
               <span className="checkmark"></span>
               <label className="form-checkbottom"> Actualización</label>
               <div className="text-red-500 text-xs"></div>
-              {arrayNoti?.length > 0 && arrayNoti[0]?.id === itemprop?.id && itemprop.tracking_action === "NOTIFICACION" ? (
+              {arrayNoti?.length > 0 && arrayNoti[0]?.id === itemprop?.id && itemprop.tracking_action === 'NOTIFICACION' ? (
                 <></>
               ) : (
                 <>
@@ -425,12 +425,12 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                     type="checkbox"
                     name="FINALIZACION"
                     value="FINALIZACION"
-                    checked={operationSelectedOption === "FINALIZACION"}
+                    checked={operationSelectedOption === 'FINALIZACION'}
                     onChange={handleCheckboxChange}
                   />
                   <span className="checkmark"></span>
                   <label className="form-checkbottom"> Finalización</label>
-                  <div className="text-red-500 text-xs"></div>{" "}
+                  <div className="text-red-500 text-xs"></div>{' '}
                 </>
               )}
             </div>
@@ -456,28 +456,27 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
             <DatePicker
               locale={locale}
-              showTime={{ format: "HH:mm" }}
+              showTime={{ format: 'HH:mm' }}
               value={fechaInicioInputValue}
               showNow={false}
               onChange={handleFechaInicioDateTimeChange}
               disabledDate={disabledDate}
               disabledTime={disabledTime}
-              popupStyle={{ color: "black" }}
-              style={{ color: "black" }}
+              popupStyle={{ color: 'black' }}
+              style={{ color: 'black' }}
             />
 
             {/*</div>{fechaInicioInputValue}*/}
           </div>
         </div>
-        {operationSelectedOption !== "FINALIZACION" && (
+        {operationSelectedOption !== 'FINALIZACION' && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label className="text-gray-600">Creado por:</label>
               <select
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}
                 value={gerenciaSelectedOption}
-                onChange={handleGerenciaSelectChange}
-              >
+                onChange={handleGerenciaSelectChange}>
                 <option value="">Seleccione Gerencia</option>
                 {gerenciaOtions.map((item: any, index) => (
                   <option value={item.code} key={index}>
@@ -489,28 +488,27 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
-        {operationSelectedOption !== "FINALIZACION" && operationSelectedOption !== "NOTIFICACION" && (
+        {operationSelectedOption !== 'FINALIZACION' && operationSelectedOption !== 'NOTIFICACION' && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label htmlFor="tipo_documento" className="text-gray-600">
                 Tipo de documento:
               </label>
               <select
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}
                 value={tipoDocumentoSelectedOption}
-                onChange={handleTipoDocumentoSelectChange}
-              >
+                onChange={handleTipoDocumentoSelectChange}>
                 <option value="">Seleccione tipo de documento</option>
 
-                {operationSelectedOption !== "ACTUALIZACION" &&
+                {operationSelectedOption !== 'ACTUALIZACION' &&
                   options
-                    .filter((item: any) => item.name !== "RESOLUCION JEFATURAL-PAS")
+                    .filter((item: any) => item.name !== 'RESOLUCION JEFATURAL-PAS')
                     .map((item: any, index) => (
                       <option value={item.name} key={index}>
                         {item.name}
                       </option>
                     ))}
-                {operationSelectedOption === "ACTUALIZACION" &&
+                {operationSelectedOption === 'ACTUALIZACION' &&
                   options.map((item: any, index) => (
                     <option value={item.name} key={index}>
                       {item.name}
@@ -521,7 +519,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
-        {operationSelectedOption !== "FINALIZACION" && operationSelectedOption !== "NOTIFICACION" && (
+        {operationSelectedOption !== 'FINALIZACION' && operationSelectedOption !== 'NOTIFICACION' && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label className="text-gray-600">Número de documento:</label>
@@ -530,19 +528,19 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 placeholder="Ingrese número de documento"
                 value={documentoRelacionadoinputValue}
                 onChange={handleInputChange}
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}
               />
             </div>
           </div>
         )}
 
-        {tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && operationSelectedOption === "ACTUALIZACION" && (
+        {tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' && operationSelectedOption === 'ACTUALIZACION' && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label htmlFor="nuevo_responsable" className="text-gray-600">
                 Tipo de resolución jefatural:
               </label>
-              <select className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"} value={rj_type} onChange={handleRjType}>
+              <select className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} value={rj_type} onChange={handleRjType}>
                 <option value="">Seleccione tipo de resolución jefatural</option>
                 <option value="SANCION">Sanción</option>
                 <option value="NULIDAD">Nulidad</option>
@@ -552,15 +550,14 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
-        {operationSelectedOption !== "FINALIZACION" && (
+        {operationSelectedOption !== 'FINALIZACION' && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label className="text-gray-600">Asignado a:</label>
               <select
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}
                 value={gerenciaAsignadaSelectedOption}
-                onChange={handleGerenciaAsignadaSelectChange}
-              >
+                onChange={handleGerenciaAsignadaSelectChange}>
                 <option value="">Seleccione Gerencia</option>
                 {gerenciaOtions.map((item: any, index) => (
                   <option value={item.code} key={index}>
@@ -583,50 +580,48 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               onChange={handleTextareaChange}
               id="comentario"
               maxLength={250}
-              className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+              className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}
             />
           </div>
         </div>
 
-        <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
-        <div style={{ display: "flex", gap: "50px" }}>
+        <hr style={{ marginBottom: '0.9rem', borderTop: '2px solid #A8CFEB' }} />
+        <div style={{ display: 'flex', gap: '50px' }}>
           <button
             style={{
-              color: "white",
-              backgroundColor: "#2596be",
-              borderRadius: "10px",
-              cursor: "pointer",
-              fontSize: "1rem",
-              padding: "10px 50px",
+              color: 'white',
+              backgroundColor: '#2596be',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              padding: '10px 50px'
             }}
             id="submit"
-            type="submit"
-          >
+            type="submit">
             Actualizar
           </button>
           <Button
             style={{
-              height: "50px",
-              color: "white",
-              backgroundColor: "#2596be",
-              borderRadius: "10px",
-              cursor: "pointer",
-              padding: "10px 50px",
-              fontSize: "1rem",
-              marginRight: "5px",
+              height: '50px',
+              color: 'white',
+              backgroundColor: '#2596be',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              padding: '10px 50px',
+              fontSize: '1rem',
+              marginRight: '5px'
             }}
-            onClick={() => goBack("/detallepas", { itemprop })}
-          >
+            onClick={() => goBack('/detallepas', { itemprop })}>
             Regresar
           </Button>
         </div>
       </Card>
     </form>
-  );
-};
+  )
+}
 
 Actualizaproceso.getLayout = function getLayout(page: ReactElement) {
-  return <LayoutFirst>{page}</LayoutFirst>;
-};
+  return <LayoutFirst>{page}</LayoutFirst>
+}
 
-export default Actualizaproceso;
+export default Actualizaproceso

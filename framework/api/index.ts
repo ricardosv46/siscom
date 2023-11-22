@@ -60,11 +60,11 @@ const api = {
     trackingHide: async (id: number, hide: boolean) => {
       const {
         data: { data, message, success }
-      }: IResponseProcessesDetail = await apiService.post(`/tracking/hide/`, { tracking_id: id, hide })
+      }: IResponseProcessesDetail = await apiService.post(`/tracking/hide/`, { tracking_id: id, hide: false })
       if (data === undefined || success === undefined || message === undefined) {
         return { data: [] }
       } else {
-        return { processes: data, message, success }
+        return { data, message, success }
       }
     },
 
@@ -74,6 +74,7 @@ const api = {
         const {
           data: { data, message, success }
         }: IResponseProcessesDetail = await apiService.get(`processes/${id}/tracking/`)
+
         if (data === undefined || success === undefined || message === undefined) {
           return { data: [] }
         } else {

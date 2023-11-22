@@ -232,7 +232,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDocumentoRelacionadoinputValue(event.target.value)
+    setDocumentoRelacionadoinputValue(event.target.value.toLocaleUpperCase())
   }
 
   const handleFechaInicioDateTimeChange = (value: any, dateString: any) => {
