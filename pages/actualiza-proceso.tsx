@@ -1,142 +1,141 @@
-import Head from "next/head";
-import { ChangeEvent, ReactElement, useEffect, useState } from "react";
-import { LayoutFirst } from "@components/common";
-import { NextPageWithLayout } from "pages/_app";
-import { Card } from "@components/ui";
-import api from "@framework/api";
-import { useUI } from "@components/ui/context";
-import { GetServerSideProps } from "next";
-import { getCookie } from "cookies-next";
-import { mergeArray } from "@lib/general";
-import { useRouter } from "next/router";
-import axios from "axios";
-import { RightCard } from "../components/common/right";
-import { Button, DatePicker, Modal, message } from "antd";
-import { format } from "date-fns";
-import useAuthStore from "store/auth/auth";
-import apiService from "services/axios/configAxios";
-import moment from "moment";
-import locale from "antd/lib/date-picker/locale/es_ES";
+import Head from 'next/head'
+import { ChangeEvent, ReactElement, useEffect, useState } from 'react'
+import { LayoutFirst } from '@components/common'
+import { NextPageWithLayout } from 'pages/_app'
+import { Card } from '@components/ui'
+import api from '@framework/api'
+import { useUI } from '@components/ui/context'
+import { GetServerSideProps } from 'next'
+import { getCookie } from 'cookies-next'
+import { mergeArray } from '@lib/general'
+import { useRouter } from 'next/router'
+import axios from 'axios'
+import { Button, DatePicker, Modal, message } from 'antd'
+import { format } from 'date-fns'
+import useAuthStore from 'store/auth/auth'
+import apiService from 'services/axios/configAxios'
+import moment from 'moment'
+import locale from 'antd/lib/date-picker/locale/es_ES'
 // import locale from "antd/es/date-picker/locale/es_ES";
 // import "moment/locale/es";
 // moment.locale("es");
 
 interface IPropsItem {
-  actualizacion: string;
-  etapa: string | number | null;
-  fecha_fin: string | null;
-  fecha_inicio: string | null;
-  name: string;
-  numero: number;
-  resolution_number: string | null;
-  responsable: string | null;
-  type: string | null;
-  estado_proceso: any;
-  fecha_inicio_dt: any;
-  num_expediente: string;
+  actualizacion: string
+  etapa: string | number | null
+  fecha_fin: string | null
+  fecha_inicio: string | null
+  name: string
+  numero: number
+  resolution_number: string | null
+  responsable: string | null
+  type: string | null
+  estado_proceso: any
+  fecha_inicio_dt: any
+  num_expediente: string
 }
 
 //let newFormatFechaFin = "";
 
 const Actualizaproceso: NextPageWithLayout = ({}) => {
-  const [id, setId] = useState("");
-  const [responsable_actual, setTesponsable_actual] = useState("");
-  const [resolucion_gerencial, setTesolucion_gerencial] = useState("");
-  const [tipo, setTipo] = useState("");
-  const [rj_type, setRj_type] = useState("");
-  const [confirm, setConfirm] = useState(false);
-  const [item, setItem] = useState<IPropsItem>();
-  const [dateEmi, setDateEmi] = useState<any>();
-  const router = useRouter();
+  const [id, setId] = useState('')
+  const [responsable_actual, setTesponsable_actual] = useState('')
+  const [resolucion_gerencial, setTesolucion_gerencial] = useState('')
+  const [tipo, setTipo] = useState('')
+  const [rj_type, setRj_type] = useState('')
+  const [confirm, setConfirm] = useState(false)
+  const [item, setItem] = useState<IPropsItem>()
+  const [dateEmi, setDateEmi] = useState<any>()
+  const router = useRouter()
 
-  const { user } = useAuthStore();
+  const { user } = useAuthStore()
 
   const getTypeDocumentsApi = async () => {
-    const { data } = await api.update_process.getTypeDocuments();
-    setOptions(data);
-  };
+    const { data } = await api.update_process.getTypeDocuments()
+    setOptions(data)
+  }
 
   useEffect(() => {
-    getData();
-  }, []);
+    getData()
+  }, [])
 
   const getData = async () => {
-    getTypeDocumentsApi();
-    let itemprop = history?.state?.item;
+    getTypeDocumentsApi()
+    let itemprop = history?.state?.item
     if (itemprop) {
-      const dataitems = await api.listpas.getProcessesByTracking(itemprop?.numero);
-      const detailEmiUsers = dataitems.processes?.pop() as any;
-      const detailEmiAdmin = dataitems.processes?.filter((item) => item.tracking_action === "EMISION")[0] as any;
+      const dataitems = await api.listpas.getProcessesByTracking(itemprop?.numero)
+      const detailEmiUsers = dataitems.processes?.pop() as any
+      const detailEmiAdmin = dataitems.processes?.filter((item) => item.tracking_action === 'EMISION')[0] as any
       if (user?.is_admin) {
-        const date = moment(detailEmiAdmin?.created_at_dt);
-        setDateEmi(date);
-        setFechaInicioInputValue(date);
+        const date = moment(detailEmiAdmin?.created_at_dt)
+        setDateEmi(date)
+        setFechaInicioInputValue(date)
       } else {
-        const date = moment(detailEmiUsers?.start_at_dt);
-        setDateEmi(date);
-        setFechaInicioInputValue(date);
+        const date = moment(detailEmiUsers?.start_at_dt)
+        setDateEmi(date)
+        setFechaInicioInputValue(date)
       }
 
-      setItem(itemprop);
-      setId(itemprop?.numero);
-      setTesponsable_actual(itemprop?.responsable);
-      setTesolucion_gerencial(itemprop?.resolution_number);
-      setTipo(itemprop?.type);
+      setItem(itemprop)
+      setId(itemprop?.numero)
+      setTesponsable_actual(itemprop?.responsable)
+      setTesolucion_gerencial(itemprop?.resolution_number)
+      setTipo(itemprop?.type)
     } else {
-      router.push("/listadopas");
+      router.push('/listadopas')
     }
-  };
+  }
 
-  const [documentoRelacionadoinputValue, setDocumentoRelacionadoinputValue] = useState("");
-  const [fechaInicioInputValue, setFechaInicioInputValue] = useState<any>();
+  const [documentoRelacionadoinputValue, setDocumentoRelacionadoinputValue] = useState('')
+  const [fechaInicioInputValue, setFechaInicioInputValue] = useState<any>()
   //const [fechaFinInputValue, setFechaFinInputValue] = useState("");
-  const [operationSelectedOption, setOperationSelectedOption] = useState("");
-  const [options, setOptions] = useState([]);
-  const [tipoDocumentoSelectedOption, setTipoDocumentoSelectedOption] = useState("");
-  const [gerenciaSelectedOption, setGerenciaSelectedOption] = useState("");
-  const [gerenciaInicialSelectedOption, setGerenciaInicialSelectedOption] = useState("");
-  const [comentarioTextareaValue, setComentarioTextareaValue] = useState("");
-  const maxCaracteres = 250;
+  const [operationSelectedOption, setOperationSelectedOption] = useState('')
+  const [options, setOptions] = useState([])
+  const [tipoDocumentoSelectedOption, setTipoDocumentoSelectedOption] = useState('')
+  const [gerenciaSelectedOption, setGerenciaSelectedOption] = useState('')
+  const [gerenciaInicialSelectedOption, setGerenciaInicialSelectedOption] = useState('')
+  const [comentarioTextareaValue, setComentarioTextareaValue] = useState('')
+  const maxCaracteres = 250
 
   const handleSubmit = async () => {
-    if (operationSelectedOption == "notificado" && (!gerenciaSelectedOption || !fechaInicioInputValue)) {
+    if (operationSelectedOption == 'notificado' && (!gerenciaSelectedOption || !fechaInicioInputValue)) {
       const instance = Modal.info({
-        content: "Por favor, ingrese los datos solicitados",
+        content: 'Por favor, ingrese los datos solicitados',
         centered: true,
         async onOk() {
-          instance.destroy();
-        },
-      });
-      setConfirm(false);
-      return;
+          instance.destroy()
+        }
+      })
+      setConfirm(false)
+      return
     } else if (
-      operationSelectedOption == "actualizado" &&
+      operationSelectedOption == 'actualizado' &&
       (!gerenciaSelectedOption || !documentoRelacionadoinputValue || !tipoDocumentoSelectedOption || !fechaInicioInputValue)
     ) {
       const instance = Modal.info({
-        content: "Por favor, ingrese los datos solicitados",
+        content: 'Por favor, ingrese los datos solicitados',
         centered: true,
         async onOk() {
-          instance.destroy();
-        },
-      });
-      setConfirm(false);
-      return;
+          instance.destroy()
+        }
+      })
+      setConfirm(false)
+      return
     } else if (
-      tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" &&
-      operationSelectedOption === "actualizado" &&
-      user?.profile === "jn" &&
+      tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' &&
+      operationSelectedOption === 'actualizado' &&
+      user?.profile === 'jn' &&
       !rj_type
     ) {
       const instance = Modal.info({
-        content: "Por favor, ingrese los datos solicitados",
+        content: 'Por favor, ingrese los datos solicitados',
         centered: true,
         async onOk() {
-          instance.destroy();
-        },
-      });
-      setConfirm(false);
-      return;
+          instance.destroy()
+        }
+      })
+      setConfirm(false)
+      return
     } /*else if (
       operationSelectedOption == "finalizado" &&
       (!fechaInicioInputValue || !documentoRelacionadoinputValue || !tipoDocumentoSelectedOption)
@@ -144,143 +143,143 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       return;
     } */ else if (!operationSelectedOption) {
       const instance = Modal.info({
-        content: "Por favor, marque una operación",
+        content: 'Por favor, marque una operación',
         centered: true,
         async onOk() {
-          instance.destroy();
-        },
-      });
-      setConfirm(false);
-      return;
+          instance.destroy()
+        }
+      })
+      setConfirm(false)
+      return
     }
 
-    const formData = new FormData();
-    formData.set("comment", comentarioTextareaValue);
+    const formData = new FormData()
+    formData.set('comment', comentarioTextareaValue)
 
-    formData.set("new_responsible", gerenciaSelectedOption);
+    formData.set('new_responsible', gerenciaSelectedOption)
     if (user.is_admin) {
-      formData.set("current_responsible", gerenciaInicialSelectedOption);
-      formData.set("is_admin", "true");
+      formData.set('current_responsible', gerenciaInicialSelectedOption)
+      formData.set('is_admin', 'true')
     } else {
-      formData.set("current_responsible", responsable_actual);
-      formData.set("is_admin", "false");
+      formData.set('current_responsible', responsable_actual)
+      formData.set('is_admin', 'false')
     }
-    formData.set("resolution_number", resolucion_gerencial);
+    formData.set('resolution_number', resolucion_gerencial)
 
-    if (fechaInicioInputValue !== "") {
-      const currentDate = moment(fechaInicioInputValue).format("YYYY-MM-DD HH:mm:ss");
-      formData.set("start_at", currentDate);
-    }
-
-    if (tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && operationSelectedOption === "actualizado" && user?.profile === "jn") {
-      formData.set("rj_type", rj_type);
+    if (fechaInicioInputValue !== '') {
+      const currentDate = moment(fechaInicioInputValue).format('YYYY-MM-DD HH:mm:ss')
+      formData.set('start_at', currentDate)
     }
 
-    if (operationSelectedOption === "actualizado" || operationSelectedOption === "observado") {
-      formData.set("type_document", tipoDocumentoSelectedOption);
-      formData.set("document", documentoRelacionadoinputValue);
+    if (tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' && operationSelectedOption === 'actualizado' && user?.profile === 'jn') {
+      formData.set('rj_type', rj_type)
     }
 
-    formData.set("type", tipo);
+    if (operationSelectedOption === 'actualizado' || operationSelectedOption === 'observado') {
+      formData.set('type_document', tipoDocumentoSelectedOption)
+      formData.set('document', documentoRelacionadoinputValue)
+    }
 
-    formData.set("status", operationSelectedOption);
+    formData.set('type', tipo)
+
+    formData.set('status', operationSelectedOption)
     //formData.append("fecha_fin", newFormatFechaFin);
     // setFormData(formData);
 
     // Actualiza el estado formData
 
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token')
       if (token) {
-        const response = await api.listpas.createTracking(id, formData);
+        const response = await api.listpas.createTracking(id, formData)
 
         //TODO: optimizar esto para que lo haga en el config del axios por default.
         if (!response.success) {
-          setConfirm(false);
+          setConfirm(false)
         } else {
-          limpiarDatos();
+          limpiarDatos()
           const instance = Modal.info({
-            content: "El registro se procesó correctamente!!!",
+            content: 'El registro se procesó correctamente!!!',
             centered: true,
             async onOk() {
-              instance.destroy();
-            },
-          });
-          setConfirm(false);
-          formData.append("comment", "");
-          formData.append("document", "");
-          formData.append("new_responsible", "");
-          formData.append("current_responsible", "");
-          formData.append("is_admin", "false");
-          formData.append("resolution_number", "");
-          formData.append("start_at", "");
-          formData.append("type_document", "");
-          formData.append("type", "");
-          formData.append("status", "");
-          router.push("./listadopas");
+              instance.destroy()
+            }
+          })
+          setConfirm(false)
+          formData.append('comment', '')
+          formData.append('document', '')
+          formData.append('new_responsible', '')
+          formData.append('current_responsible', '')
+          formData.append('is_admin', 'false')
+          formData.append('resolution_number', '')
+          formData.append('start_at', '')
+          formData.append('type_document', '')
+          formData.append('type', '')
+          formData.append('status', '')
+          router.push('./listadopas')
         }
       } else {
-        router.push("/auth");
+        router.push('/auth')
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-    setConfirm(false);
-  };
+    setConfirm(false)
+  }
 
   const onGotoBack = (page: string) => {
-    router.push({ pathname: page });
-  };
+    router.push({ pathname: page })
+  }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDocumentoRelacionadoinputValue(event.target.value);
-  };
+    setDocumentoRelacionadoinputValue(event.target.value)
+  }
 
   const handleFechaInicioDateTimeChange = (value: any, dateString: any) => {
-    setFechaInicioInputValue(value);
-  };
+    setFechaInicioInputValue(value)
+  }
 
   const handleGerenciaSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setGerenciaSelectedOption(event.target.value);
-  };
+    setGerenciaSelectedOption(event.target.value)
+  }
 
   const handleRjType = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setRj_type(event.target.value);
-  };
+    setRj_type(event.target.value)
+  }
 
   const handleGerenciaInicialSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setGerenciaInicialSelectedOption(event.target.value);
-  };
+    setGerenciaInicialSelectedOption(event.target.value)
+  }
 
   const handleTipoDocumentoSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setTipoDocumentoSelectedOption(event.target.value);
-  };
+    setTipoDocumentoSelectedOption(event.target.value)
+  }
 
   const handleTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const inputValue = event.target.value;
+    const inputValue = event.target.value
     if (inputValue.length <= maxCaracteres) {
-      setComentarioTextareaValue(inputValue);
+      setComentarioTextareaValue(inputValue)
     }
-  };
+  }
 
   function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
-    setOperationSelectedOption(event.target.value);
-    limpiarDatos();
-    if (event.target.value === "finalizado") {
-      setGerenciaInicialSelectedOption("JN");
+    setOperationSelectedOption(event.target.value)
+    limpiarDatos()
+    if (event.target.value === 'finalizado') {
+      setGerenciaInicialSelectedOption('JN')
     } else {
-      setGerenciaInicialSelectedOption("");
+      setGerenciaInicialSelectedOption('')
     }
   }
 
   function limpiarDatos() {
-    setDocumentoRelacionadoinputValue("");
-    setFechaInicioInputValue("");
+    setDocumentoRelacionadoinputValue('')
+    setFechaInicioInputValue('')
     //setFechaFinInputValue("");
-    setTipoDocumentoSelectedOption("");
-    setGerenciaSelectedOption("");
+    setTipoDocumentoSelectedOption('')
+    setGerenciaSelectedOption('')
     //setGerenciaInicialSelectedOption('');
-    setComentarioTextareaValue("");
+    setComentarioTextareaValue('')
   }
 
   const disabledDate = (current: any) => {
@@ -291,67 +290,67 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     // const fechaFinValido = fecha.isSame(fechaFin) || fecha.isBefore(fechaFin);
     // const isValid = fechaInicioValido && fechaFinValido;
     // return !isValid;
-    const date = moment(dateEmi).startOf("day");
-    const isOutOfRange = !moment(current).isBetween(date, moment());
-    return isOutOfRange;
-  };
+    const date = moment(dateEmi).startOf('day')
+    const isOutOfRange = !moment(current).isBetween(date, moment())
+    return isOutOfRange
+  }
 
   const disabledTime = (current: any) => {
-    let now = moment();
+    let now = moment()
 
-    const currentHour = now.hour();
-    const currentHourActive = moment(current).hour();
-    const currentMinute = now.minute();
+    const currentHour = now.hour()
+    const currentHourActive = moment(current).hour()
+    const currentMinute = now.minute()
 
     // Si la fecha es hoy, deshabilita horas y minutos futuros
-    if (current && current.isSame(now, "day")) {
+    if (current && current.isSame(now, 'day')) {
       if (currentHourActive === currentHour) {
         return {
           disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
-          disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute),
-        };
+          disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute)
+        }
       }
 
       return {
-        disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
+        disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour)
         // disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute),
-      };
+      }
     }
 
-    let nowinit = moment(dateEmi);
+    let nowinit = moment(dateEmi)
 
-    const currentHourinit = nowinit.hour();
-    const currentMinuteinit = nowinit.minute();
+    const currentHourinit = nowinit.hour()
+    const currentMinuteinit = nowinit.minute()
 
-    if (current && current.isSame(nowinit, "day")) {
+    if (current && current.isSame(nowinit, 'day')) {
       return {
         disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour < currentHourinit),
-        disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit),
-      };
+        disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit)
+      }
     }
-    return {};
-  };
+    return {}
+  }
 
   const openModal = (e: any) => {
-    e.preventDefault();
-    if (operationSelectedOption === "finalizado") {
-      setConfirm(true);
+    e.preventDefault()
+    if (operationSelectedOption === 'finalizado') {
+      setConfirm(true)
     } else {
-      handleSubmit();
+      handleSubmit()
     }
-  };
+  }
 
   const onPickerChange = (date: any, dateString: any) => {
-    console.log(date, dateString);
-  };
-  const headrName = `${item?.name} - R.G. ${item?.resolution_number} - Exp. ${item?.num_expediente}`;
+    console.log(date, dateString)
+  }
+  const headrName = `${item?.name} - R.G. ${item?.resolution_number} - Exp. ${item?.num_expediente}`
   return (
     <form onSubmit={openModal}>
       <Card title="Crear usuario">
-        <div style={{ marginBottom: "0.4rem" }}>
-          <h2 style={{ fontSize: 25, color: "#4F5172" }}>{headrName}</h2>
+        <div style={{ marginBottom: '0.4rem' }}>
+          <h2 style={{ fontSize: 25, color: '#4F5172' }}>{headrName}</h2>
         </div>
-        <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
+        <hr style={{ marginBottom: '0.9rem', borderTop: '2px solid #A8CFEB' }} />
         <div className="w-1/2 py-5">
           <div className="grid grid-cols-2 gap-5 items-center mb-5">
             <label htmlFor="resolucion_gerencial" className="text-gray-600">
@@ -372,7 +371,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </label>
           </div>
         </div>
-        {operationSelectedOption !== "finalizado" && (
+        {operationSelectedOption !== 'finalizado' && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label htmlFor="responsable_actual" className="text-gray-600">
@@ -385,10 +384,9 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               )}
               {user.is_admin && (
                 <select
-                  className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                  className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}
                   value={gerenciaInicialSelectedOption}
-                  onChange={handleGerenciaInicialSelectChange}
-                >
+                  onChange={handleGerenciaInicialSelectChange}>
                   <option value="">Seleccione Gerencia</option>
                   <option value="GAJ">Gerencia de Asesoría Jurídica</option>
                   <option value="SG">Secretaría General</option>
@@ -405,13 +403,13 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               Operación:
             </label>
             <div>
-              {(user.is_admin || responsable_actual === "SG") && (
+              {(user.is_admin || responsable_actual === 'SG') && (
                 <>
                   <input
                     type="checkbox"
                     name="notificado"
                     value="notificado"
-                    checked={operationSelectedOption === "notificado"}
+                    checked={operationSelectedOption === 'notificado'}
                     onChange={handleCheckboxChange}
                   />
                   <span className="checkmark"></span>
@@ -419,13 +417,13 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                   <div className="text-red-500 text-xs"></div>
                 </>
               )}
-              {(user.is_admin || responsable_actual === "SG") && (
+              {(user.is_admin || responsable_actual === 'SG') && (
                 <>
                   <input
                     type="checkbox"
                     name="observado"
                     value="observado"
-                    checked={operationSelectedOption === "observado"}
+                    checked={operationSelectedOption === 'observado'}
                     onChange={handleCheckboxChange}
                   />
                   <span className="checkmark"></span>
@@ -433,13 +431,13 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                   <div className="text-red-500 text-xs"></div>
                 </>
               )}
-              {(user.is_admin || responsable_actual !== "SG") && (
+              {(user.is_admin || responsable_actual !== 'SG') && (
                 <>
                   <input
                     type="checkbox"
                     name="actualizado"
                     value="actualizado"
-                    checked={operationSelectedOption === "actualizado"}
+                    checked={operationSelectedOption === 'actualizado'}
                     onChange={handleCheckboxChange}
                   />
                   <span className="checkmark"></span>
@@ -448,15 +446,15 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 </>
               )}
 
-              {item?.estado_proceso !== "Finalizado" && (
+              {item?.estado_proceso !== 'Finalizado' && (
                 <>
-                  {(user.is_admin || responsable_actual === "JN") && (
+                  {(user.is_admin || responsable_actual === 'JN') && (
                     <>
                       <input
                         type="checkbox"
                         name="finalizado"
                         value="finalizado"
-                        checked={operationSelectedOption === "finalizado"}
+                        checked={operationSelectedOption === 'finalizado'}
                         onChange={handleCheckboxChange}
                       />
                       <span className="checkmark"></span>
@@ -487,41 +485,40 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )*/}
 
-        {(operationSelectedOption === "actualizado" || operationSelectedOption === "observado") && (
+        {(operationSelectedOption === 'actualizado' || operationSelectedOption === 'observado') && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label htmlFor="tipo_documento" className="text-gray-600">
                 Tipo de documento:
               </label>
               <select
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}
                 value={tipoDocumentoSelectedOption}
-                onChange={handleTipoDocumentoSelectChange}
-              >
+                onChange={handleTipoDocumentoSelectChange}>
                 <option value="">Seleccione tipo de documento</option>
-                {user?.profile !== "jn" &&
+                {user?.profile !== 'jn' &&
                   !user?.is_admin &&
-                  (operationSelectedOption === "actualizado" || operationSelectedOption === "observado") &&
+                  (operationSelectedOption === 'actualizado' || operationSelectedOption === 'observado') &&
                   options
-                    .filter((item: any) => item.name !== "RESOLUCION JEFATURAL-PAS")
+                    .filter((item: any) => item.name !== 'RESOLUCION JEFATURAL-PAS')
                     .map((item: any, index) => (
                       <option value={item.name} key={index}>
                         {item.name}
                       </option>
                     ))}
 
-                {(user?.is_admin || user?.profile === "jn") &&
-                  operationSelectedOption === "actualizado" &&
+                {(user?.is_admin || user?.profile === 'jn') &&
+                  operationSelectedOption === 'actualizado' &&
                   options.map((item: any, index) => (
                     <option value={item.name} key={index}>
                       {item.name}
                     </option>
                   ))}
 
-                {(user?.is_admin || user?.profile === "jn") &&
-                  operationSelectedOption === "observado" &&
+                {(user?.is_admin || user?.profile === 'jn') &&
+                  operationSelectedOption === 'observado' &&
                   options
-                    .filter((item: any) => item.name !== "RESOLUCION JEFATURAL-PAS")
+                    .filter((item: any) => item.name !== 'RESOLUCION JEFATURAL-PAS')
                     .map((item: any, index) => (
                       <option value={item.name} key={index}>
                         {item.name}
@@ -532,7 +529,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
-        {(operationSelectedOption === "actualizado" || operationSelectedOption === "observado") && (
+        {(operationSelectedOption === 'actualizado' || operationSelectedOption === 'observado') && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label htmlFor="documento_relacionado" className="text-gray-600">
@@ -545,21 +542,21 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 onChange={handleInputChange}
                 maxLength={50}
                 id="documento_relacionado"
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}
               />
             </div>
           </div>
         )}
 
-        {tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" &&
-          (operationSelectedOption === "actualizado" || operationSelectedOption === "observado") &&
-          (user?.profile === "jn" || user?.is_admin) && (
+        {tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' &&
+          (operationSelectedOption === 'actualizado' || operationSelectedOption === 'observado') &&
+          (user?.profile === 'jn' || user?.is_admin) && (
             <div className="w-1/2 py-5">
               <div className="grid grid-cols-2 gap-5 items-center mb-5">
                 <label htmlFor="nuevo_responsable" className="text-gray-600">
                   Tipo de resolución jefatural:
                 </label>
-                <select className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"} value={rj_type} onChange={handleRjType}>
+                <select className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} value={rj_type} onChange={handleRjType}>
                   <option value="">Seleccione tipo de resolución jefatural</option>
                   <option value="SANCION">Sanción</option>
                   <option value="NULIDAD">Nulidad</option>
@@ -569,27 +566,26 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </div>
           )}
 
-        {(operationSelectedOption === "notificado" ||
-          operationSelectedOption === "actualizado" ||
-          operationSelectedOption === "observado") && (
+        {(operationSelectedOption === 'notificado' ||
+          operationSelectedOption === 'actualizado' ||
+          operationSelectedOption === 'observado') && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label htmlFor="nuevo_responsable" className="text-gray-600">
                 Designar nuevo responsable:
               </label>
               <select
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}
                 value={gerenciaSelectedOption}
-                onChange={handleGerenciaSelectChange}
-              >
+                onChange={handleGerenciaSelectChange}>
                 <option value="">Seleccione Gerencia</option>
                 {!user.is_admin && (
                   <>
-                    {responsable_actual !== "GAJ" && <option value="GAJ">Gerencia de Asesoría Jurídica</option>}
-                    {responsable_actual !== "SG" && <option value="SG">Secretaría General</option>}
-                    {responsable_actual !== "GSFP" && <option value="GSFP">Gerencia de Supervisión y Fondos Partidarios</option>}
-                    {(responsable_actual !== "JN" ||
-                      (tipoDocumentoSelectedOption === "RESOLUCION JEFATURAL-PAS" && responsable_actual === "JN")) && (
+                    {responsable_actual !== 'GAJ' && <option value="GAJ">Gerencia de Asesoría Jurídica</option>}
+                    {responsable_actual !== 'SG' && <option value="SG">Secretaría General</option>}
+                    {responsable_actual !== 'GSFP' && <option value="GSFP">Gerencia de Supervisión y Fondos Partidarios</option>}
+                    {(responsable_actual !== 'JN' ||
+                      (tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' && responsable_actual === 'JN')) && (
                       <option value="JN">Jefatura Nacional</option>
                     )}
                   </>
@@ -607,7 +603,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
-        {operationSelectedOption && operationSelectedOption !== "finalizado" && (
+        {operationSelectedOption && operationSelectedOption !== 'finalizado' && (
           <div className="w-1/2 py-5">
             <div className="grid grid-cols-2 gap-5 items-center mb-5">
               <label htmlFor="fecha_inicio" className="text-gray-600">
@@ -615,13 +611,13 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               </label>
               <DatePicker
                 locale={locale}
-                showTime={{ format: "HH:mm" }}
+                showTime={{ format: 'HH:mm' }}
                 value={fechaInicioInputValue}
                 onChange={handleFechaInicioDateTimeChange}
                 disabledDate={disabledDate}
                 disabledTime={disabledTime}
-                popupStyle={{ color: "black" }}
-                style={{ color: "black" }}
+                popupStyle={{ color: 'black' }}
+                style={{ color: 'black' }}
               />
             </div>
           </div>
@@ -638,40 +634,38 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 onChange={handleTextareaChange}
                 id="comentario"
                 maxLength={maxCaracteres}
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
+                className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}
               />
             </div>
           </div>
         )}
-        <hr style={{ marginBottom: "0.9rem", borderTop: "2px solid #A8CFEB" }} />
-        <div style={{ display: "flex", gap: "50px" }}>
+        <hr style={{ marginBottom: '0.9rem', borderTop: '2px solid #A8CFEB' }} />
+        <div style={{ display: 'flex', gap: '50px' }}>
           <button
             style={{
-              color: "white",
-              backgroundColor: "#2596be",
-              borderRadius: "10px",
-              cursor: "pointer",
-              fontSize: "1rem",
-              padding: "10px 60px",
+              color: 'white',
+              backgroundColor: '#2596be',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              padding: '10px 60px'
             }}
             id="submit"
-            type="submit"
-          >
+            type="submit">
             Actualizar
           </button>
           <button
             style={{
-              color: "white",
-              backgroundColor: "#2596be",
-              borderRadius: "10px",
-              cursor: "pointer",
-              fontSize: "1rem",
-              padding: "10px 60px",
+              color: 'white',
+              backgroundColor: '#2596be',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              padding: '10px 60px'
             }}
             id="goToBack"
             type="button"
-            onClick={() => onGotoBack("./listadopas")}
-          >
+            onClick={() => onGotoBack('./listadopas')}>
             Regresar
           </button>
         </div>
@@ -680,23 +674,22 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         bodyStyle={{
           margin: 10,
           height: 300,
-          whiteSpace: "nowrap",
-          width: 700,
+          whiteSpace: 'nowrap',
+          width: 700
         }}
-        width={"auto"}
+        width={'auto'}
         // title={<p style={{ textAlign: "center", fontWeight: "bold" }}>Confirmar</p>}
         centered
-        open={confirm && operationSelectedOption === "finalizado"}
+        open={confirm && operationSelectedOption === 'finalizado'}
         onOk={handleSubmit}
         onCancel={() => setConfirm(false)}
         okText="Confirmar"
         cancelText="Cancelar"
         okButtonProps={{
-          style: { backgroundColor: "#0874cc", fontSize: "20px", height: "40px", width: "335px" },
-          className: "ant-btn-primary",
+          style: { backgroundColor: '#0874cc', fontSize: '20px', height: '40px', width: '335px' },
+          className: 'ant-btn-primary'
         }}
-        cancelButtonProps={{ style: { fontSize: "20px", width: "335px", height: "40px", marginRight: "18px" } }}
-      >
+        cancelButtonProps={{ style: { fontSize: '20px', width: '335px', height: '40px', marginRight: '18px' } }}>
         <div className="flex flex-col justify-center items-center gap-10 mt-5">
           <svg width="100" height="91" viewBox="0 0 60 51" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -712,11 +705,11 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         </div>
       </Modal>
     </form>
-  );
-};
+  )
+}
 
 Actualizaproceso.getLayout = function getLayout(page: ReactElement) {
-  return <LayoutFirst>{page}</LayoutFirst>;
-};
+  return <LayoutFirst>{page}</LayoutFirst>
+}
 
-export default Actualizaproceso;
+export default Actualizaproceso
