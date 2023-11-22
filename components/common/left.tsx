@@ -78,7 +78,6 @@ const LeftCard: FC<IProps> = (props): ReactElement => {
           Editar
         </Button>
       </div>
-      <div></div>
     </div>
   );
 };
