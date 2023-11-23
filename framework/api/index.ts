@@ -58,9 +58,12 @@ const api = {
   },
   listpas: {
     trackingHide: async (id: number, hide: boolean) => {
+      const formData = new FormData()
+      formData.append('tracking_id', String(id))
+      formData.append('hide', String(hide ? 1 : 2))
       const {
         data: { data, message, success }
-      }: IResponseProcessesDetail = await apiService.post(`/tracking/hide/`, { tracking_id: id, hide: false })
+      }: IResponseProcessesDetail = await apiService.post(`/tracking/hide/`, formData)
       if (data === undefined || success === undefined || message === undefined) {
         return { data: [] }
       } else {

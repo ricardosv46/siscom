@@ -37,6 +37,7 @@ export interface IDetailItem {
   tracking_action: string
   register_user: string
   rj_type: string
+  is_hidden: boolean
 }
 
 const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, total }) => {
@@ -46,9 +47,10 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
     pageSize: pageSize,
     total: total
   })
-  const [item, setItem] = useState<IPropsItem[]>()
+  const [itemprop, setItem] = useState<IPropsItem[]>()
   const [detail, setDetail] = useState<IDetailItem[]>()
   const [nombre, setNombre] = useState()
+  const [numero, setNumero] = useState()
   const [resolucion_gerencial, setRG] = useState()
   const [headerName, setHeaderName] = useState('')
   const router = useRouter()
@@ -59,6 +61,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
     if (itempropDetail && !itempropBack) {
       setItem(itempropDetail)
       getDetailInfo(itempropDetail.numero)
+      setNumero(itempropDetail.numero)
       setNombre(itempropDetail.name)
       setRG(itempropDetail.resolution_number)
       setHeaderName(itempropDetail.num_expediente)
@@ -66,6 +69,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
     } else if (itempropBack && !itempropDetail) {
       setItem(itempropBack)
       getDetailInfo(itempropBack.process.numero)
+      setNumero(itempropBack.process.numero)
       setNombre(itempropBack.process.name)
       setRG(itempropBack.resolution_number)
       setHeaderName(itempropBack?.headerName)
@@ -112,19 +116,22 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
 
         <div className="relative wrap overflow-hidden p-10 h-full">
           <div className="border-2 absolute border-opacity-20 border-gray-700 h-full border" style={{ left: '50%' }}></div>
-
-          {detail?.map((item, key) => {
-            return (
-              <DetailCard
-                key={key}
-                par={(key + 1) % 2 === 0}
-                item={{ ...item, headerName }}
-                idx={key}
-                detailEmi={detailEmi}
-                arrayNoti={arrayNoti}
-              />
-            )
-          })}
+          {numero &&
+            detail?.map((item, key) => {
+              return (
+                <DetailCard
+                  key={key}
+                  par={(key + 1) % 2 === 0}
+                  item={{ ...item, headerName }}
+                  idx={key}
+                  detailEmi={detailEmi}
+                  arrayNoti={arrayNoti}
+                  onHidden={() => {
+                    getDetailInfo(numero!)
+                  }}
+                />
+              )
+            })}
         </div>
         <hr style={{ marginBottom: '0.9rem', borderTop: '2px solid #A8CFEB' }} />
         <div style={{ display: 'flex', gap: '50px' }}>

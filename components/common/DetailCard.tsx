@@ -1,4 +1,4 @@
-import { EditOutlined, EyeOutlined } from '@ant-design/icons'
+import { EditOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import api from '@framework/api'
 import { Button } from 'antd'
 import router from 'next/router'
@@ -15,6 +15,7 @@ interface IProps {
   detailEmi: any
   arrayNoti: any
   par: boolean
+  onHidden: () => void
 }
 
 const onGoDetail = (page: string, props: any) => {
@@ -26,8 +27,7 @@ const onGoDetail = (page: string, props: any) => {
 
 const DetailCard: FC<IProps> = (props): ReactElement => {
   const { user } = GetAuthService()
-  const { item, idx, par } = props
-  console.log({ props })
+  const { item, idx, par, onHidden } = props
   const {
     id,
     comment,
@@ -40,11 +40,13 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
     start_at,
     tracking_action,
     register_user,
-    rj_type
+    rj_type,
+    is_hidden
   } = item
 
   const showCard = async () => {
-    await api.listpas.trackingHide(id, false)
+    await api.listpas.trackingHide(id, !is_hidden)
+    onHidden()
   }
 
   return (
@@ -97,7 +99,11 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
             onClick={() => onGoDetail('/actualiza-detalle', { item, detailEmi: props.detailEmi, arrayNoti: props.arrayNoti })}>
             Editar
           </Button>
-          <Button type="dashed" icon={<EyeOutlined />} onClick={showCard}></Button>
+          <Button
+            hidden={idx === 0 || !user?.is_admin}
+            type="dashed"
+            icon={is_hidden ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+            onClick={showCard}></Button>
         </div>
       </div>
     </div>
