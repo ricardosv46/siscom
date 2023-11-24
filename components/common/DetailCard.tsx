@@ -1,6 +1,6 @@
-import { EditOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
+import { CheckOutlined, CloseOutlined, EditOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import api from '@framework/api'
-import { Button, Modal } from 'antd'
+import { Button, Modal, Switch } from 'antd'
 import router from 'next/router'
 import { IDetailItem } from 'pages/detallepas'
 import React, { ReactElement, FC, useState } from 'react'
@@ -72,7 +72,10 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
         {!par && <img src={`assets/images/${idx <= 1 ? 'new' : 'flag'}.png`} />}
       </div>
 
-      <div className="relative order-1 border-t-4 border-[#A8CFEB] bg-white rounded-lg shadow-xl w-5/12 px-6 py-4">
+      <div
+        className={`${
+          !is_hidden ? 'bg-white' : 'bg-gray-200'
+        } relative order-1 border-t-4 border-[#A8CFEB]  rounded-lg shadow-xl w-5/12 px-6 py-4`}>
         {par && (
           <div className="w-full flex justify-start">
             <div className="relative">
@@ -119,14 +122,28 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
               {idx === 0 || !user?.is_admin ? (
                 <></>
               ) : (
-                <button
-                  disabled={loading}
-                  className={`${
-                    is_hidden ? 'text-red-400 border-red-400' : 'text-blue-400 border-blue-400'
-                  } border-dashed border flex justify-center items-center w-8 h-8`}
-                  onClick={showCard}>
-                  {is_hidden ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-                </button>
+                <div className="flex items-center text-black">
+                  <Switch
+                    // checkedChildren={<EyeInvisibleOutlined className="mb-2 text-black" />}
+                    // unCheckedChildren={<EyeOutlined className="mb-2 text-black" />}
+                    checkedChildren={<EyeOutlined className="mb-2 text-white" />}
+                    unCheckedChildren={<EyeInvisibleOutlined className="mb-2 text-gray-700" />}
+                    className={`${!is_hidden ? 'bg-blue-500' : 'bg-gray-300'} text-black flex items-center`}
+                    loading={loading}
+                    checked={!is_hidden}
+                    defaultChecked={!is_hidden}
+                    onChange={showCard}
+                  />
+                </div>
+
+                // <button
+                //   disabled={loading}
+                //   className={`${
+                //     is_hidden ? 'text-red-400 border-red-400' : 'text-blue-400 border-blue-400'
+                //   } border-dashed border flex justify-center items-center w-8 h-8`}
+                //   onClick={showCard}>
+                //   {is_hidden ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                // </button>
               )}
             </>
           )}

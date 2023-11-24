@@ -82,6 +82,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
   const arrayNoti = detail?.filter((item) => item.tracking_action === 'NOTIFICACION')
   const getDetailInfo = async (id: number) => {
     const { processes } = await api.listpas.getProcessesByTracking(id)
+
     setDetail(processes)
   }
 
