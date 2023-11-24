@@ -1,9 +1,9 @@
 import { EditOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import api from '@framework/api'
-import { Button } from 'antd'
+import { Button, Modal } from 'antd'
 import router from 'next/router'
 import { IDetailItem } from 'pages/detallepas'
-import React, { ReactElement, FC } from 'react'
+import React, { ReactElement, FC, useState } from 'react'
 import { GetAuthService } from 'services/auth/ServiceAuth'
 
 interface IDetailItemName extends IDetailItem {
@@ -27,6 +27,7 @@ const onGoDetail = (page: string, props: any) => {
 
 const DetailCard: FC<IProps> = (props): ReactElement => {
   const { user } = GetAuthService()
+  const [loading, setLoading] = useState(false)
   const { item, idx, par, onHidden } = props
   const {
     id,
@@ -45,10 +46,24 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
   } = item
 
   const showCard = async () => {
+    setLoading(true)
     await api.listpas.trackingHide(id, !is_hidden)
+    setLoading(false)
+
+    Modal.info({
+      content: (
+        <div>
+          <p>{!is_hidden ? 'El registro ahora esta oculto' : 'El registro ahora es visible'}</p>
+        </div>
+      ),
+      // okButtonProps: { hidden: true },
+      centered: true
+    })
+
     onHidden()
   }
 
+  const disabledShow = props?.arrayNoti[0].id === item.id
   return (
     <div className={`${par ? '' : 'flex-row-reverse'} mb-8 flex  justify-between items-center w-full right-timeline`}>
       <div className="order-1 w-5/12"></div>
@@ -99,11 +114,22 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
             onClick={() => onGoDetail('/actualiza-detalle', { item, detailEmi: props.detailEmi, arrayNoti: props.arrayNoti })}>
             Editar
           </Button>
-          <Button
-            hidden={idx === 0 || !user?.is_admin}
-            type="dashed"
-            icon={is_hidden ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-            onClick={showCard}></Button>
+          {!disabledShow && (
+            <>
+              {idx === 0 || !user?.is_admin ? (
+                <></>
+              ) : (
+                <button
+                  disabled={loading}
+                  className={`${
+                    is_hidden ? 'text-red-400 border-red-400' : 'text-blue-400 border-blue-400'
+                  } border-dashed border flex justify-center items-center w-8 h-8`}
+                  onClick={showCard}>
+                  {is_hidden ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                </button>
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>
