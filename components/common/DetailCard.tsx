@@ -46,21 +46,25 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
   } = item
 
   const showCard = async () => {
-    setLoading(true)
-    await api.listpas.trackingHide(id, !is_hidden)
-    setLoading(false)
+    try {
+      setLoading(true)
+      await api.listpas.trackingHide(id, !is_hidden)
 
-    Modal.info({
-      content: (
-        <div>
-          <p>{!is_hidden ? 'El registro ahora esta oculto' : 'El registro ahora es visible'}</p>
-        </div>
-      ),
-      // okButtonProps: { hidden: true },
-      centered: true
-    })
-
-    onHidden()
+      Modal.info({
+        content: (
+          <div>
+            <p>{!is_hidden ? 'El registro ahora esta oculto' : 'El registro ahora es visible'}</p>
+          </div>
+        ),
+        // okButtonProps: { hidden: true },
+        centered: true
+      })
+    } catch (error) {
+      console.log({ error })
+    } finally {
+      onHidden()
+      setLoading(false)
+    }
   }
 
   const disabledShow = props?.arrayNoti[0].id === item.id
