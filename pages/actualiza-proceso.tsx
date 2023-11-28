@@ -565,6 +565,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                   <option value="SANCION">Sanción</option>
                   <option value="NULIDAD">Nulidad</option>
                   <option value="ARCHIVO">Archivo</option>
+                  <option value="CONCEDE RECURSO">Concede Recurso</option>
+                  <option value="DENIEGA RECURSO">Deniega Recurso</option>
                 </select>
               </div>
             </div>
