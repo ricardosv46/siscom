@@ -171,7 +171,11 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       formData.set('start_at', currentDate)
     }
 
-    if (tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' && operationSelectedOption === 'actualizado' && user?.profile === 'jn') {
+    if (
+      tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' &&
+      operationSelectedOption === 'actualizado' &&
+      (user?.profile === 'jn' || user?.is_admin)
+    ) {
       formData.set('rj_type', rj_type)
     }
 
