@@ -67,7 +67,7 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
     }
   }
 
-  const disabledShow = props?.arrayNoti[0].id === item.id
+  const disabledShow = props?.arrayNoti[0]?.id === item.id
   return (
     <div className={`${par ? '' : 'flex-row-reverse'} mb-8 flex  justify-between items-center w-full right-timeline`}>
       <div className="order-1 w-5/12"></div>
