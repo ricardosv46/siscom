@@ -71,7 +71,7 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
   return (
     <div className={`${par ? '' : 'flex-row-reverse'} mb-8 flex  justify-between items-center w-full right-timeline`}>
       <div className="order-1 w-5/12"></div>
-      <div className="z-20 flex items-center order-1 bg-gray-800 shadow-xl w-8 h-8 rounded-full">
+      <div className="z-20 flex items-center order-1 w-8 h-8 bg-gray-800 rounded-full shadow-xl">
         {par && <img src={`assets/images/${idx <= 1 ? 'add' : 'flag'}.png`} />}
         {!par && <img src={`assets/images/${idx <= 1 ? 'new' : 'flag'}.png`} />}
       </div>
@@ -81,20 +81,20 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
           !is_hidden ? 'bg-white' : 'bg-gray-200'
         } relative order-1 border-t-4 border-[#A8CFEB]  rounded-lg shadow-xl w-5/12 px-6 py-4`}>
         {par && (
-          <div className="w-full flex justify-start">
+          <div className="flex justify-start w-full">
             <div className="relative">
               <div className="shadow-xl rounded-full align-middle border-none absolute -m-5  lg:-ml-10 max-w-[150px]">
-                <span className=" text-xl text-gray-400">◄</span>
+                <span className="text-xl text-gray-400 ">◄</span>
               </div>
             </div>
           </div>
         )}
 
         {!par && (
-          <div className="w-full flex justify-end mx-11">
+          <div className="flex justify-end w-full mx-11">
             <div className="relative">
               <div className="shadow-xl rounded-full align-middle border-none absolute -m-5  lg:-ml-78 max-w-[150px]">
-                <span className=" text-xl text-gray-400">►</span>
+                <span className="text-xl text-gray-400 ">►</span>
               </div>
             </div>
           </div>
@@ -117,6 +117,7 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
           <Button
             type="dashed"
             hidden={idx === 0 || !user?.is_admin}
+            disabled={is_hidden}
             icon={<EditOutlined />}
             onClick={() => onGoDetail('/actualiza-detalle', { item, detailEmi: props.detailEmi, arrayNoti: props.arrayNoti })}>
             Editar
