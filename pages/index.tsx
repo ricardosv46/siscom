@@ -11,6 +11,7 @@ import React, { useRef, useEffect } from "react";
 import api from "@framework/api";
 import { ChartProps, Doughnut } from "react-chartjs-2";
 import { useRouter } from "next/router";
+import { ColumnsType } from "antd/lib/table";
 
 interface DoughnutChartOptions {
   onClick?: (event: MouseEvent, activeElements: any[]) => void;
@@ -74,17 +75,6 @@ const Home: NextPageWithLayout = () => {
       dataStats[k] = ((data[k] / total) * 100).toFixed(2);
     }
 
-    // Redondeamos el valor de la propiedad `undefined` al número entero más cercano.
-    // dataStats.undefined = (
-    //   100 -
-    //   (Number(dataStats.to_start) +
-    //     Number(dataStats.finalized) +
-    //     Number(dataStats.more_6_months) +
-    //     Number(dataStats.less_6_months) +
-    //     Number(dataStats.out_of_date) +
-    //     Number(dataStats.less_3_months))
-    // ).toFixed(2);
-
     setProcessSummary(data);
     setProcessSummaryStats(dataStats);
   };
@@ -147,11 +137,12 @@ const Home: NextPageWithLayout = () => {
       }
     },
   };
-  const columns = [
+  const columns: ColumnsType<any> = [
     {
       title: "Nombre",
       dataIndex: "name",
       key: "name",
+      width: "350px",
     },
     {
       title: "Etapa",
@@ -266,17 +257,6 @@ const Home: NextPageWithLayout = () => {
     }
   }
 
-  // useEffect(() => {
-  //   //Commented to work on docker
-  //   /*if (processGrouped.length <= pageSize) {
-  //     return;
-  //   }*/
-  //   setTimeout(() => {
-  //     const nextPage = currentPage === Math.ceil(processGrouped.length / pageSize) ? 1 : currentPage + 1;
-  //     setCurrentPage(nextPage);
-  //   }, 20000);
-  // }, [currentPage]);
-
   if (!loading) {
     return <div></div>;
   }
@@ -291,9 +271,9 @@ const Home: NextPageWithLayout = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div style={{ display: "flex", gap: "50px", marginLeft: "4rem", marginRight: "1rem" }}>
+      <div style={{ display: "flex", gap: "50px", marginLeft: "4rem", marginRight: "1rem", overflow: "auto" }}>
         <Card>
-          <div style={{ paddingLeft: "3rem", paddingRight: "3rem" }}>
+          <div style={{ paddingLeft: "1rem", paddingRight: "1rem" }}>
             <div style={{ marginBottom: "0.4rem" }}>
               <h2 style={{ fontSize: 25, color: "#4F5172" }}>Resumen</h2>
             </div>
@@ -321,8 +301,7 @@ const Home: NextPageWithLayout = () => {
             <div style={{ textAlign: "right" }}>Total de registros: {total}</div>
           </div>
         </Card>
-
-        <Card>
+        <Card className="flex-1 flex flex-col min-w-[888px]">
           <div style={{ marginBottom: "0.4rem" }}>
             <h2 style={{ fontSize: 25, color: "#4F5172" }}>Próximos procesos por concluir</h2>
           </div>
@@ -330,14 +309,16 @@ const Home: NextPageWithLayout = () => {
 
           <Table columns={columns} dataSource={currentData} pagination={false} />
           <br></br>
-          <Pagination
-            style={{ textAlign: "center" }}
-            current={currentPage}
-            pageSize={pageSize}
-            total={processGrouped && processGrouped.length}
-            onChange={handlePageChange}
-            showSizeChanger={false}
-          />
+          <div className="flex  flex-col-reverse  justify-between  h-full">
+            <Pagination
+              style={{ textAlign: "center" }}
+              current={currentPage}
+              pageSize={pageSize}
+              total={processGrouped && processGrouped.length}
+              onChange={handlePageChange}
+              showSizeChanger={false}
+            />
+          </div>
         </Card>
       </div>
     </>
