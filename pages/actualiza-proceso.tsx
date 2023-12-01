@@ -351,7 +351,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     console.log(date, dateString)
   }
   const headrName = `${item?.name} - R.G. ${item?.resolution_number} - Exp. ${item?.num_expediente}`
-  console.log({ gerenciaInicialSelectedOption, responsable_actual })
+
   return (
     <form onSubmit={openModal}>
       <Card title="Crear usuario">
@@ -586,14 +586,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                       {item.name}
                     </option>
                   ))}
-
-                {/* {(user?.is_admin || user?.profile === 'gsfp') &&
-                  gerenciaInicialSelectedOption === 'GSFP' &&
-                  options.map((item: any, index) => (
-                    <option value={item.name} key={index}>
-                      {item.name}
-                    </option>
-                  ))} */}
               </select>
             </div>
           </div>

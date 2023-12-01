@@ -372,7 +372,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     return {}
   }
 
-  console.log({ itemprop, arrayNoti })
   return (
     <form onSubmit={handleSubmit}>
       <Card title="Crear usuario">
@@ -382,7 +381,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         <hr style={{ marginBottom: '0.9rem', borderTop: '2px solid #A8CFEB' }} />
 
         <div className="w-1/2 py-5">
-          <div className="grid grid-cols-2 gap-5 items-center mb-5">
+          <div className="grid items-center grid-cols-2 gap-5 mb-5">
             <label htmlFor="operacion" className="text-gray-40">
               Tipo de registro:
             </label>
@@ -396,7 +395,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               />
               <span className="checkmark"></span>
               <label className="form-checkbottom"> Notificación</label>
-              <div className="text-red-500 text-xs"></div>
+              <div className="text-xs text-red-500"></div>
               <input
                 type="checkbox"
                 name="OBSERVACION"
@@ -406,7 +405,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               />
               <span className="checkmark"></span>
               <label className="form-checkbottom"> Observación</label>
-              <div className="text-red-500 text-xs"></div>
+              <div className="text-xs text-red-500"></div>
               <input
                 type="checkbox"
                 name="ACTUALIZACION"
@@ -416,7 +415,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               />
               <span className="checkmark"></span>
               <label className="form-checkbottom"> Actualización</label>
-              <div className="text-red-500 text-xs"></div>
+              <div className="text-xs text-red-500"></div>
               {arrayNoti?.length > 0 && arrayNoti[0]?.id === itemprop?.id && itemprop.tracking_action === 'NOTIFICACION' ? (
                 <></>
               ) : (
@@ -430,7 +429,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                   />
                   <span className="checkmark"></span>
                   <label className="form-checkbottom"> Finalización</label>
-                  <div className="text-red-500 text-xs"></div>{' '}
+                  <div className="text-xs text-red-500"></div>{' '}
                 </>
               )}
             </div>
@@ -438,7 +437,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         </div>
 
         <div className="w-1/2 py-5">
-          <div className="grid grid-cols-2 gap-5 items-center mb-5">
+          <div className="grid items-center grid-cols-2 gap-5 mb-5">
             <label htmlFor="fecha_inicio" className="text-gray-600">
               Fecha:
             </label>
@@ -471,7 +470,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         </div>
         {operationSelectedOption !== 'FINALIZACION' && (
           <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+            <div className="grid items-center grid-cols-2 gap-5 mb-5">
               <label className="text-gray-600">Creado por:</label>
               <select
                 className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}
@@ -490,7 +489,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
         {operationSelectedOption !== 'FINALIZACION' && operationSelectedOption !== 'NOTIFICACION' && (
           <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+            <div className="grid items-center grid-cols-2 gap-5 mb-5">
               <label htmlFor="tipo_documento" className="text-gray-600">
                 Tipo de documento:
               </label>
@@ -501,6 +500,17 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 <option value="">Seleccione tipo de documento</option>
 
                 {operationSelectedOption !== 'ACTUALIZACION' &&
+                  gerenciaSelectedOption !== 'GSFP' &&
+                  options
+                    .filter((item: any) => item.name !== 'RESOLUCION JEFATURAL-PAS' && item.name !== 'INFORME FINAL DE INSTRUCCION-PAS')
+                    .map((item: any, index) => (
+                      <option value={item.name} key={index}>
+                        {item.name}
+                      </option>
+                    ))}
+
+                {operationSelectedOption !== 'ACTUALIZACION' &&
+                  gerenciaSelectedOption === 'GSFP' &&
                   options
                     .filter((item: any) => item.name !== 'RESOLUCION JEFATURAL-PAS')
                     .map((item: any, index) => (
@@ -508,7 +518,19 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                         {item.name}
                       </option>
                     ))}
+
                 {operationSelectedOption === 'ACTUALIZACION' &&
+                  gerenciaSelectedOption !== 'GSFP' &&
+                  options
+                    .filter((item: any) => item.name !== 'INFORME FINAL DE INSTRUCCION-PAS')
+                    .map((item: any, index) => (
+                      <option value={item.name} key={index}>
+                        {item.name}
+                      </option>
+                    ))}
+
+                {operationSelectedOption === 'ACTUALIZACION' &&
+                  gerenciaSelectedOption === 'GSFP' &&
                   options.map((item: any, index) => (
                     <option value={item.name} key={index}>
                       {item.name}
@@ -521,7 +543,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
         {operationSelectedOption !== 'FINALIZACION' && operationSelectedOption !== 'NOTIFICACION' && (
           <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+            <div className="grid items-center grid-cols-2 gap-5 mb-5">
               <label className="text-gray-600">Número de documento:</label>
               <input
                 type="text"
@@ -536,7 +558,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
         {tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' && operationSelectedOption === 'ACTUALIZACION' && (
           <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+            <div className="grid items-center grid-cols-2 gap-5 mb-5">
               <label htmlFor="nuevo_responsable" className="text-gray-600">
                 Tipo de resolución jefatural:
               </label>
@@ -554,7 +576,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
         {operationSelectedOption !== 'FINALIZACION' && (
           <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+            <div className="grid items-center grid-cols-2 gap-5 mb-5">
               <label className="text-gray-600">Asignado a:</label>
               <select
                 className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}
@@ -572,7 +594,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         )}
 
         <div className="w-1/2 py-50">
-          <div className="grid grid-cols-2 gap-5 items-center mb-5">
+          <div className="grid items-center grid-cols-2 gap-5 mb-5">
             <label htmlFor="comentario" className="text-gray-600">
               Comentarios (0/250 caracteres):
             </label>
