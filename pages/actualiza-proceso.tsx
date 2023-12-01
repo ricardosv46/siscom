@@ -136,12 +136,17 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       })
       setConfirm(false)
       return
-    } /*else if (
-      operationSelectedOption == "finalizado" &&
-      (!fechaInicioInputValue || !documentoRelacionadoinputValue || !tipoDocumentoSelectedOption)
-    ) {
-      return;
-    } */ else if (!operationSelectedOption) {
+    } else if (user?.is_admin && operationSelectedOption === 'finalizado' && !fechaInicioInputValue) {
+      const instance = Modal.info({
+        content: 'Por favor, ingrese los datos solicitados',
+        centered: true,
+        async onOk() {
+          instance.destroy()
+        }
+      })
+      setConfirm(false)
+      return
+    } else if (!operationSelectedOption) {
       const instance = Modal.info({
         content: 'Por favor, marque una operación',
         centered: true,
@@ -271,8 +276,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     limpiarDatos()
     if (event.target.value === 'finalizado') {
       setGerenciaInicialSelectedOption('JN')
-    } else {
-      setGerenciaInicialSelectedOption('')
     }
   }
 
@@ -348,6 +351,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     console.log(date, dateString)
   }
   const headrName = `${item?.name} - R.G. ${item?.resolution_number} - Exp. ${item?.num_expediente}`
+  console.log({ gerenciaInicialSelectedOption, responsable_actual })
   return (
     <form onSubmit={openModal}>
       <Card title="Crear usuario">
@@ -356,7 +360,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         </div>
         <hr style={{ marginBottom: '0.9rem', borderTop: '2px solid #A8CFEB' }} />
         <div className="w-1/2 py-5">
-          <div className="grid grid-cols-2 gap-5 items-center mb-5">
+          <div className="grid items-center grid-cols-2 gap-5 mb-5">
             <label htmlFor="resolucion_gerencial" className="text-gray-600">
               Número de Resolución Gerencial (RG)
             </label>
@@ -366,7 +370,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         </div>
         <div className="w-1/2 py-5">
-          <div className="grid grid-cols-2 gap-5 items-center mb-5">
+          <div className="grid items-center grid-cols-2 gap-5 mb-5">
             <label htmlFor="tipo" className="text-gray-600">
               Tipo
             </label>
@@ -377,7 +381,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         </div>
         {operationSelectedOption !== 'finalizado' && (
           <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+            <div className="grid items-center grid-cols-2 gap-5 mb-5">
               <label htmlFor="responsable_actual" className="text-gray-600">
                 Responsable actual
               </label>
@@ -402,7 +406,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
         <div className="w-1/2 py-5">
-          <div className="grid grid-cols-2 gap-5 items-center mb-5">
+          <div className="grid items-center grid-cols-2 gap-5 mb-5">
             <label htmlFor="operacion" className="text-gray-40">
               Operación:
             </label>
@@ -418,7 +422,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                   />
                   <span className="checkmark"></span>
                   <label className="form-checkbottom"> Notificación</label>
-                  <div className="text-red-500 text-xs"></div>
+                  <div className="text-xs text-red-500"></div>
                 </>
               )}
               {(user.is_admin || responsable_actual === 'SG') && (
@@ -432,7 +436,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                   />
                   <span className="checkmark"></span>
                   <label className="form-checkbottom"> Observación</label>
-                  <div className="text-red-500 text-xs"></div>
+                  <div className="text-xs text-red-500"></div>
                 </>
               )}
               {(user.is_admin || responsable_actual !== 'SG') && (
@@ -446,7 +450,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                   />
                   <span className="checkmark"></span>
                   <label className="form-checkbottom"> Actualización</label>
-                  <div className="text-red-500 text-xs"></div>
+                  <div className="text-xs text-red-500"></div>
                 </>
               )}
 
@@ -463,7 +467,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                       />
                       <span className="checkmark"></span>
                       <label className="form-checkbottom"> Finalización</label>
-                      <div className="text-red-500 text-xs"></div>
+                      <div className="text-xs text-red-500"></div>
                     </>
                   )}
                 </>
@@ -473,7 +477,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         </div>
         {/*operationSelectedOption === "finalizado" && (
           <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+            <div className="grid items-center grid-cols-2 gap-5 mb-5">
               <label htmlFor="fecha_fin" className="text-gray-600">
                 Fecha y hora de finalización:
               </label>
@@ -491,7 +495,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
         {(operationSelectedOption === 'actualizado' || operationSelectedOption === 'observado') && (
           <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+            <div className="grid items-center grid-cols-2 gap-5 mb-5">
               <label htmlFor="tipo_documento" className="text-gray-600">
                 Tipo de documento:
               </label>
@@ -503,15 +507,37 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 {user?.profile !== 'jn' &&
                   !user?.is_admin &&
                   (operationSelectedOption === 'actualizado' || operationSelectedOption === 'observado') &&
+                  responsable_actual !== 'GSFP' &&
                   options
-                    .filter((item: any) => item.name !== 'RESOLUCION JEFATURAL-PAS')
+                    .filter((item: any) => item.name !== 'RESOLUCION JEFATURAL-PAS' && item.name !== 'INFORME FINAL DE INSTRUCCION-PAS')
                     .map((item: any, index) => (
                       <option value={item.name} key={index}>
                         {item.name}
                       </option>
                     ))}
 
-                {(user?.is_admin || user?.profile === 'jn') &&
+                {user?.profile === 'jn' &&
+                  operationSelectedOption === 'actualizado' &&
+                  options
+                    .filter((item: any) => item.name !== 'INFORME FINAL DE INSTRUCCION-PAS')
+                    .map((item: any, index) => (
+                      <option value={item.name} key={index}>
+                        {item.name}
+                      </option>
+                    ))}
+
+                {user?.profile === 'jn' &&
+                  operationSelectedOption === 'observado' &&
+                  options
+                    .filter((item: any) => item.name !== 'RESOLUCION JEFATURAL-PAS' && item.name !== 'INFORME FINAL DE INSTRUCCION-PAS')
+                    .map((item: any, index) => (
+                      <option value={item.name} key={index}>
+                        {item.name}
+                      </option>
+                    ))}
+
+                {user?.is_admin &&
+                  gerenciaInicialSelectedOption === 'GSFP' &&
                   operationSelectedOption === 'actualizado' &&
                   options.map((item: any, index) => (
                     <option value={item.name} key={index}>
@@ -519,7 +545,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                     </option>
                   ))}
 
-                {(user?.is_admin || user?.profile === 'jn') &&
+                {user?.is_admin &&
+                  gerenciaInicialSelectedOption === 'GSFP' &&
                   operationSelectedOption === 'observado' &&
                   options
                     .filter((item: any) => item.name !== 'RESOLUCION JEFATURAL-PAS')
@@ -528,6 +555,45 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                         {item.name}
                       </option>
                     ))}
+
+                {user?.is_admin &&
+                  gerenciaInicialSelectedOption !== 'GSFP' &&
+                  operationSelectedOption === 'actualizado' &&
+                  options
+                    .filter((item: any) => item.name !== 'INFORME FINAL DE INSTRUCCION-PAS')
+                    .map((item: any, index) => (
+                      <option value={item.name} key={index}>
+                        {item.name}
+                      </option>
+                    ))}
+
+                {user?.is_admin &&
+                  gerenciaInicialSelectedOption !== 'GSFP' &&
+                  operationSelectedOption === 'observado' &&
+                  options
+                    .filter((item: any) => item.name !== 'RESOLUCION JEFATURAL-PAS' && item.name !== 'INFORME FINAL DE INSTRUCCION-PAS')
+                    .map((item: any, index) => (
+                      <option value={item.name} key={index}>
+                        {item.name}
+                      </option>
+                    ))}
+
+                {!user?.is_admin &&
+                  responsable_actual === 'GSFP' &&
+                  (operationSelectedOption === 'actualizado' || operationSelectedOption === 'observado') &&
+                  options.map((item: any, index) => (
+                    <option value={item.name} key={index}>
+                      {item.name}
+                    </option>
+                  ))}
+
+                {/* {(user?.is_admin || user?.profile === 'gsfp') &&
+                  gerenciaInicialSelectedOption === 'GSFP' &&
+                  options.map((item: any, index) => (
+                    <option value={item.name} key={index}>
+                      {item.name}
+                    </option>
+                  ))} */}
               </select>
             </div>
           </div>
@@ -535,7 +601,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
         {(operationSelectedOption === 'actualizado' || operationSelectedOption === 'observado') && (
           <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+            <div className="grid items-center grid-cols-2 gap-5 mb-5">
               <label htmlFor="documento_relacionado" className="text-gray-600">
                 Número de documento:
               </label>
@@ -556,7 +622,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           (operationSelectedOption === 'actualizado' || operationSelectedOption === 'observado') &&
           (user?.profile === 'jn' || user?.is_admin) && (
             <div className="w-1/2 py-5">
-              <div className="grid grid-cols-2 gap-5 items-center mb-5">
+              <div className="grid items-center grid-cols-2 gap-5 mb-5">
                 <label htmlFor="nuevo_responsable" className="text-gray-600">
                   Tipo de resolución jefatural:
                 </label>
@@ -576,7 +642,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           operationSelectedOption === 'actualizado' ||
           operationSelectedOption === 'observado') && (
           <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+            <div className="grid items-center grid-cols-2 gap-5 mb-5">
               <label htmlFor="nuevo_responsable" className="text-gray-600">
                 Designar nuevo responsable:
               </label>
@@ -609,9 +675,9 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
-        {operationSelectedOption && operationSelectedOption !== 'finalizado' && (
+        {operationSelectedOption && (user.is_admin || operationSelectedOption !== 'finalizado') && (
           <div className="w-1/2 py-5">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+            <div className="grid items-center grid-cols-2 gap-5 mb-5">
               <label htmlFor="fecha_inicio" className="text-gray-600">
                 Fecha y hora:
               </label>
@@ -630,7 +696,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         )}
         {operationSelectedOption && (
           <div className="w-1/2 py-50">
-            <div className="grid grid-cols-2 gap-5 items-center mb-5">
+            <div className="grid items-center grid-cols-2 gap-5 mb-5">
               <label htmlFor="comentario" className="text-gray-600">
                 Comentarios ({comentarioTextareaValue.length}/250 caracteres):
               </label>
@@ -696,7 +762,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           className: 'ant-btn-primary'
         }}
         cancelButtonProps={{ style: { fontSize: '20px', width: '335px', height: '40px', marginRight: '18px' } }}>
-        <div className="flex flex-col justify-center items-center gap-10 mt-5">
+        <div className="flex flex-col items-center justify-center gap-10 mt-5">
           <svg width="100" height="91" viewBox="0 0 60 51" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M0.666504 51L29.9998 0.333313L59.3332 51H0.666504ZM9.8665 45.6666H50.1332L29.9998 11L9.8665 45.6666ZM29.9998 43C30.7554 43 31.3892 42.744 31.9012 42.232C32.4132 41.72 32.6683 41.0871 32.6665 40.3333C32.6665 39.5778 32.4105 38.944 31.8985 38.432C31.3865 37.92 30.7536 37.6649 29.9998 37.6666C29.2443 37.6666 28.6105 37.9226 28.0985 38.4346C27.5865 38.9466 27.3314 39.5795 27.3332 40.3333C27.3332 41.0889 27.5892 41.7226 28.1012 42.2346C28.6132 42.7466 29.2461 43.0018 29.9998 43ZM27.3332 35H32.6665V21.6666H27.3332V35Z"

@@ -9,15 +9,15 @@ import {
   startTransition,
   Suspense,
   useEffect,
-  useState,
-} from "react";
+  useState
+} from 'react'
 //import { ComponentType, createElement, FC, ReactNode, useEffect, useState } from "react";
-import { Layout, Menu, notification } from "antd";
-import menu from "@framework/pas/menu.json";
-import menu_initial from "@framework/pas/menu_initial.json";
-import type { MenuItemProps, MenuProps } from "antd";
-import { responseLogin } from "@framework/types";
-import {} from "../../../pages/api/auth/login";
+import { Layout, Menu, notification } from 'antd'
+import menu from '@framework/pas/menu.json'
+import menu_initial from '@framework/pas/menu_initial.json'
+import type { MenuItemProps, MenuProps } from 'antd'
+import { responseLogin } from '@framework/types'
+import {} from '../../../pages/api/auth/login'
 
 import {
   HomeOutlined,
@@ -27,19 +27,19 @@ import {
   KeyOutlined,
   SafetyCertificateOutlined,
   FileSearchOutlined,
-  BarChartOutlined,
-} from "@ant-design/icons";
-import IconOnpe from "@components/icons/IconOnpe";
-import { ModalDrawer } from "@components/ui";
-import { useRouter } from "next/router";
-import { useUI } from "@components/ui/context";
-import { NextApiRequest } from "next";
-import { apiService } from "services/axios/configAxios";
-import useAuthStore from "store/auth/auth";
-import useMenuStore from "store/menu/menu";
+  BarChartOutlined
+} from '@ant-design/icons'
+import IconOnpe from '@components/icons/IconOnpe'
+import { ModalDrawer } from '@components/ui'
+import { useRouter } from 'next/router'
+import { useUI } from '@components/ui/context'
+import { NextApiRequest } from 'next'
+import { apiService } from 'services/axios/configAxios'
+import useAuthStore from 'store/auth/auth'
+import useMenuStore from 'store/menu/menu'
 //import { RemoveSessionAuthService } from "services/auth/ServiceAuth";
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Header, Content, Footer, Sider } = Layout
 
 const icons: { [P in string]: ComponentType<any> | string } = {
   HomeOutlined: HomeOutlined,
@@ -49,11 +49,11 @@ const icons: { [P in string]: ComponentType<any> | string } = {
   DesktopOutlined: DesktopOutlined,
   ContactsOutlined: ContactsOutlined,
   KeyOutlined: KeyOutlined,
-  FileSearchOutlined: FileSearchOutlined,
-};
+  FileSearchOutlined: FileSearchOutlined
+}
 
 interface LayoutFirstProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 // const Login: (props: { login: responseLogin }) {
@@ -62,37 +62,37 @@ interface LayoutFirstProps {
 
 const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
   //function Login(props: { login: responseLogin }) {
-  const router = useRouter();
-  const { displayNotification, notification: notificationView, closeNotification } = useUI();
-  const [api, contextHolder] = notification.useNotification();
-  const { storeUser, removeSession, user } = useAuthStore();
-  const profile = user?.profile?.toUpperCase();
-  const { IdSelectedProcess, getStateSelectedProcess, changeStateSelectedProcess } = useMenuStore();
+  const router = useRouter()
+  const { displayNotification, notification: notificationView, closeNotification } = useUI()
+  const [api, contextHolder] = notification.useNotification()
+  const { storeUser, removeSession, user } = useAuthStore()
+  const profile = user?.profile?.toUpperCase()
+  const { IdSelectedProcess, getStateSelectedProcess, changeStateSelectedProcess } = useMenuStore()
 
-  const menuOptions = IdSelectedProcess ? menu : menu_initial;
+  const menuOptions = IdSelectedProcess ? menu : menu_initial
   const items: any = menuOptions.map((item, _) => {
-    if (profile == "ADMIN") {
+    if (profile == 'ADMIN') {
       return (
-        item.role == "admin" && {
+        item.role == 'admin' && {
           key: item.key,
           icon: createElement(icons[item.icon]),
-          label: `${item.label}`,
+          label: `${item.label}`
         }
-      );
+      )
     } else {
       return (
-        item.role == "user" && {
+        item.role == 'user' && {
           key: item.key,
           icon: createElement(icons[item.icon]),
-          label: `${item.label}`,
+          label: `${item.label}`
         }
-      );
+      )
     }
-  });
+  })
 
   const handleMenu = ({ key }: { key: string }) => {
-    router.push(key);
-  };
+    router.push(key)
+  }
 
   const infoNotification = () => {
     api.info({
@@ -100,42 +100,43 @@ const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
       description: `${notificationView.description}`,
       placement: `bottomRight`,
       onClose: () => {
-        closeNotification();
-      },
-    });
-  };
+        closeNotification()
+      }
+    })
+  }
 
   const handleLogout = async () => {
     try {
-      changeStateSelectedProcess("");
-      removeSession();
-      router.push("/auth");
+      changeStateSelectedProcess('')
+      removeSession()
+      router.push('/auth')
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
-  };
+  }
 
   useEffect(() => {
-    getStateSelectedProcess();
-  }, []);
+    getStateSelectedProcess()
+  }, [])
 
   useEffect(() => {
     if (displayNotification) {
-      infoNotification();
+      infoNotification()
     }
-  }, [displayNotification]);
-  const [loading, setLoading] = useState(false);
+  }, [displayNotification])
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (profile) {
-      setLoading(true);
+      setLoading(true)
     }
-  }, [profile]);
+  }, [profile])
 
   if (!loading) {
-    return <div></div>;
+    return <div></div>
   }
 
+  console.log({ items })
   return (
     <>
       {contextHolder}
@@ -143,31 +144,31 @@ const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
       <Layout hasSider>
         <Sider
           style={{
-            overflow: "auto",
-            height: "100vh",
-            position: "fixed",
+            overflow: 'auto',
+            height: '100vh',
+            position: 'fixed',
             left: 0,
             top: 0,
             bottom: 0,
-            background: "white",
-          }}
-        >
-          <div className="logo justify-center mx-10">
+            background: 'white'
+          }}>
+          <div className="justify-center mx-10 logo">
             <IconOnpe width={88} />
           </div>
           <div className="flex flex-col">
-            {items.map((item: any) => (
-              <button
-                key={item.key}
-                onClick={() => handleMenu({ key: item.key })}
-                className={`${router.pathname === item.key ? "text-[#1890ff]" : ""} ${
-                  `/${item.key}` === router.pathname ? "text-[#1890ff]" : ""
-                } p-3 px-5  text-left flex gap-2 items-center`}
-              >
-                {item.icon}
-                {item.label}
-              </button>
-            ))}
+            {items
+              .filter((item: any) => item !== false)
+              .map((item: any) => (
+                <button
+                  key={item.key}
+                  onClick={() => handleMenu({ key: item.key })}
+                  className={`${router.pathname === item.key ? 'text-[#1890ff]' : ''} ${
+                    `/${item.key}` === router.pathname ? 'text-[#1890ff]' : ''
+                  } p-3 px-5  text-left flex gap-2 items-center`}>
+                  {item.icon}
+                  {item.label}
+                </button>
+              ))}
           </div>
           {/* <Menu
             mode="inline"
@@ -183,19 +184,19 @@ const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
           <Header className="header-layout">
             <div className="header-content">
               <div>
-                <h1 style={{ fontSize: 15, color: "#2596be" }}>
+                <h1 style={{ fontSize: 15, color: '#2596be' }}>
                   Monitoreo de Procedimientos Administrativos Sancionadores {IdSelectedProcess}
                 </h1>
               </div>
               <div className="user-header">
                 <div className="data-user">
                   <div className="name-user">Bienvenido</div>
-                  <div onClick={handleLogout} style={{ cursor: "pointer", fontSize: "1rem", textUnderlineOffset: "" }}>
+                  <div onClick={handleLogout} style={{ cursor: 'pointer', fontSize: '1rem', textUnderlineOffset: '' }}>
                     Cerrar sesión
                   </div>
                   {/* className="close-session" */}
                 </div>
-                <div style={{ width: "55px", height: "55px" }} className="icon-user">
+                <div style={{ width: '55px', height: '55px' }} className="icon-user">
                   {/* style={{color:'white', borderRadius:'10px',cursor:'pointer',fontSize:'1rem', padding:'7px 20px'}} */}
                   {profile}
                 </div>
@@ -203,14 +204,14 @@ const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
             </div>
           </Header>
 
-          <Content style={{ margin: "24px 16px 0", overflow: "initial" }}>{children}</Content>
-          <Footer style={{ textAlign: "center", background: "inherit" }}>
+          <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>{children}</Content>
+          <Footer style={{ textAlign: 'center', background: 'inherit' }}>
             ONPE ©2023 Creado por Sub Gerencia de Gobierno Digital e Innovación
           </Footer>
         </Layout>
       </Layout>
     </>
-  );
-};
+  )
+}
 
-export default LayoutFirst;
+export default LayoutFirst
