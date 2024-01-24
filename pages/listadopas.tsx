@@ -80,6 +80,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [showModalHabilitar, setShowModalHabilitar] = useState(false)
   const [motive, setMotive] = useState('')
   const [related_document, setRelated_document] = useState('')
+  const [document, setDocument] = useState('')
   const [file, setFile] = useState<any | null>()
 
   const [dataProccess, setDataProccess] = useState<any | null>()
@@ -120,7 +121,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
         cancelText: 'No',
         async onOk() {
           instance.destroy()
-          const res = await api.listpas.status({ motive, related_document, action: 'HABILITAR', file, id: dataProccess?.numero })
+          const res = await api.listpas.status({ motive, related_document, document, action: 'HABILITAR', file, id: dataProccess?.numero })
           if (res.success) {
             console.log('habilitado')
             cleanHabilitar()
@@ -148,7 +149,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
         cancelText: 'No',
         async onOk() {
           instance.destroy()
-          const res = await api.listpas.status({ motive, related_document, action: 'INHABILITAR', file, id: dataProccess?.numero })
+          const res = await api.listpas.status({
+            motive,
+            related_document,
+            document,
+            action: 'INHABILITAR',
+            file,
+            id: dataProccess?.numero
+          })
           if (res.success) {
             console.log('inhabilitado')
             cleanHabilitar()
@@ -516,7 +524,12 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       title: 'Estado',
       dataIndex: 'estado',
       key: 'estado',
-      render: (_: any, item: any) => <img src={`assets/images/${statusImg[item?.estado]}.png`} />
+      render: (_: any, item: any) =>
+        item?.estado === 'inactive' ? (
+          <div className="w-[24px] h-[24px] rounded-full bg-blue-600 "></div>
+        ) : (
+          <img src={`assets/images/${statusImg[item?.estado]}.png`} />
+        )
     },
     {
       title: 'N° DOC',
@@ -806,6 +819,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       value: 'Menos de 3 meses',
       label: 'Menos de 3 meses'
     },
+
+    {
+      value: 'Inactivo',
+      label: 'Inhabilitado'
+    },
     {
       value: 'Indefinido',
       label: 'Indefinido'
@@ -861,6 +879,11 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             <div style={{ marginRight: '40px', display: 'flex', alignItems: 'center' }}>
               <img style={{ marginRight: '10px' }} src="assets/images/less_3_months.png" />
               <label className="form-checkbottom">Menos de 3 meses</label>
+            </div>
+
+            <div style={{ marginRight: '40px', display: 'flex', alignItems: 'center' }}>
+              <div className="w-[24px] h-[24px] rounded-full bg-blue-600 mr-2"></div>
+              <label className="form-checkbottom">Inhabilitado</label>
             </div>
 
             {new Date(localStorage.getItem('IdSelectedYear')!).valueOf() < new Date('2022').valueOf() && (
@@ -1357,7 +1380,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           bodyStyle={{
             margin: 10,
             // overflow: 'scroll',
-            height: 300,
+            height: 350,
             // whiteSpace: 'nowrap',
             // resize: 'both',
             width: 600
@@ -1373,7 +1396,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           open={showModalHabilitar}
           okText="Cerrar"
           cancelButtonProps={{ hidden: true }}
-          onOk={() => setShowModalHabilitar(false)}
+          onOk={() => {
+            cleanHabilitar()
+            setShowModalHabilitar(false)
+          }}
           onCancel={() => {
             cleanHabilitar()
             setShowModalHabilitar(false)
@@ -1381,11 +1407,16 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           okButtonProps={{ style: { backgroundColor: '#0874cc' }, className: 'ant-btn-primary' }}>
           <form onSubmit={handleInhabilitar} className="flex flex-col gap-5">
             <div className="flex items-center gap-5">
-              <p className="w-[130px]">Motivo :</p> <Input className="flex-1" value={motive} onChange={(e) => setMotive(e.target.value)} />
+              <p className="w-[130px]">Motivo* :</p>{' '}
+              <Input className="flex-1" value={motive} onChange={(e) => setMotive(e.target.value)} maxLength={250} />
             </div>
             <div className="flex items-center gap-5">
-              <p className="w-[130px]">Sustento ​ SGD :</p>{' '}
-              <Input className="flex-1" value={related_document} onChange={(e) => setRelated_document(e.target.value)} />
+              <p className="w-[130px]">Tipo Documento:</p>
+              <Input className="flex-1" value={related_document} onChange={(e) => setRelated_document(e.target.value)} maxLength={100} />
+            </div>
+            <div className="flex items-center gap-5">
+              <p className="w-[130px]">Nro. Documento :</p>
+              <Input className="flex-1" value={document} onChange={(e) => setDocument(e.target.value)} />
             </div>
             <div className="flex items-center gap-5">
               <p className="w-[130px]">Adjuntar archivo :</p>{' '}
@@ -1396,15 +1427,18 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                 </Upload>
               )}
               {file && (
-                <>
-                  <p> {file?.name}</p>
+                <div className="flex flex-1 max-h-[80px] overflow-auto">
+                  <p className=""> {file?.name}</p>
                   <Button type="primary" className="p-0 px-2 " onClick={() => setFile(null)}>
                     <CloseOutlined className="w-5 h-5 " />
                   </Button>
-                </>
+                </div>
               )}
             </div>
-            <button disabled={!motive} type="submit" className="mx-auto text-white disabled:bg-gray-300 bg-blue-500 w-[200px] py-2 mt-10">
+            <button
+              disabled={!motive.trim()}
+              type="submit"
+              className="mx-auto text-white disabled:bg-gray-300 bg-blue-500 w-[200px] py-2 mt-5">
               {dataProccess?.estado === 'inactive' ? 'Habilitar' : 'Inhabilitar'}
             </button>
           </form>

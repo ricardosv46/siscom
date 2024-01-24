@@ -269,4 +269,5 @@ export interface Status {
   action: string
   file: File
   id: number
+  document: string
 }

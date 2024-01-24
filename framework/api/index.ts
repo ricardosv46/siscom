@@ -57,19 +57,22 @@ const api = {
     }
   },
   listpas: {
-    status: async ({ motive, related_document, action, file, id }: Status) => {
+    status: async ({ motive, related_document, action, file, id, document }: Status) => {
       const formData = new FormData()
       if (motive) {
         formData.append('motive', motive)
       }
       if (related_document) {
-        formData.append('related_document', String(related_document))
+        formData.append('related_document', related_document)
       }
       if (action) {
         formData.append('action', action)
       }
       if (file) {
         formData.append('file', file)
+      }
+      if (document) {
+        formData.append('document', document)
       }
       const {
         data: { data, message, success }

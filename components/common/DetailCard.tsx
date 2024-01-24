@@ -138,6 +138,7 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
                     loading={loading}
                     checked={!is_hidden}
                     defaultChecked={!is_hidden}
+                    disabled={estado === 'inactive'}
                     onChange={showCard}
                   />
                 </div>
