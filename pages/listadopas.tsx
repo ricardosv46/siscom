@@ -1,11 +1,11 @@
 import Head from 'next/head'
-import { Button, Space, Table, DatePicker, Modal, Radio, RadioChangeEvent, Select, Tooltip } from 'antd'
-import React, { ChangeEvent, ReactElement, useEffect, useState } from 'react'
+import { Button, Space, Table, DatePicker, Modal, Radio, RadioChangeEvent, Select, Tooltip, Upload, UploadFile } from 'antd'
+import React, { ChangeEvent, FormEvent, ReactElement, useEffect, useState } from 'react'
 import { LayoutFirst } from '@components/common'
 import { NextPageWithLayout } from 'pages/_app'
 import { Card, AnexoItem, TrackingItem } from '@components/ui'
 import api from '@framework/api'
-import { SearchOutlined } from '@ant-design/icons'
+import { CloseOutlined, PoweroffOutlined, SearchOutlined, UploadOutlined } from '@ant-design/icons'
 import { useUI } from '@components/ui/context'
 import Input from 'antd/lib/input/Input'
 import { useRouter } from 'next/router'
@@ -20,11 +20,20 @@ import { IAnexos, IAnexosDetail, ITracking, ITrackingDetail } from '@framework/t
 import { ExportExcel } from '@components/ui/ExportExcel/ExportExcel'
 import 'react-resizable/css/styles.css' // Importa los estilos de react-resizable
 import { ModalAnexos } from '@components/ui/Modals'
+import { list } from 'postcss'
 
 moment.locale('es')
 const { RangePicker } = DatePicker
 type IOptionFilter = 1 | 2 | 3
 
+const statusImg: any = {
+  less_3_months: 'less_3_months',
+  less_6_months: 'less_6_months',
+  more_6_months: 'more_6_months',
+  finalized: 'finalized',
+  out_of_date: 'out_of_date',
+  to_start: 'to_start'
+}
 interface ListadopasProps {
   pageNum: number
   pageSize: number
@@ -68,6 +77,95 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [dataTracking, setDataTracking] = useState<ITracking[]>([])
   const [dataTrackingDetail, setDataTrackingDetail] = useState<ITrackingDetail[]>([])
   const [estadoRj, setEstadoRj] = useState<any>([])
+  const [showModalHabilitar, setShowModalHabilitar] = useState(false)
+  const [motive, setMotive] = useState('')
+  const [related_document, setRelated_document] = useState('')
+  const [file, setFile] = useState<any | null>()
+
+  const [dataProccess, setDataProccess] = useState<any | null>()
+
+  const handleFileChange = (info: { file: UploadFile }) => {
+    if (info.file.status === 'done') {
+      // Puedes realizar acciones adicionales después de cargar el archivo, si es necesario
+      console.log('Archivo cargado correctamente:', info.file)
+    } else if (info.file.status === 'error') {
+      console.error('Error al cargar el archivo:', info.file.error)
+    }
+  }
+
+  const beforeUpload = (file: UploadFile) => {
+    // Puedes realizar validaciones o ajustes antes de cargar el archivo
+    setFile(file)
+    return false // Retornar false para evitar la carga automática
+  }
+
+  const cleanHabilitar = () => {
+    setMotive('')
+    setFile(null)
+    setRelated_document('')
+    setDataProccess(null)
+  }
+
+  const handleInhabilitar = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (dataProccess?.estado === 'inactive') {
+      const instance = Modal.confirm({
+        icon: '',
+        content: (
+          <div>
+            <p>¿Estás seguro de habilitar el Expediente?​</p>
+          </div>
+        ),
+        okText: 'Si',
+        cancelText: 'No',
+        async onOk() {
+          instance.destroy()
+          const res = await api.listpas.status({ motive, related_document, action: 'HABILITAR', file, id: dataProccess?.numero })
+          if (res.success) {
+            console.log('habilitado')
+            cleanHabilitar()
+            setShowModalHabilitar(false)
+            const newData = await processApi(IdSelectedProcess, 'all')
+            const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData })
+            setProcess(dataFilter)
+          }
+        },
+        async onCancel() {
+          instance.destroy()
+        },
+        okButtonProps: { style: { backgroundColor: '#0874cc' } },
+        centered: true
+      })
+    } else {
+      const instance = Modal.confirm({
+        icon: '',
+        content: (
+          <div>
+            <p>¿Estás seguro de inhabilitar el Expediente?​</p>
+          </div>
+        ),
+        okText: 'Si',
+        cancelText: 'No',
+        async onOk() {
+          instance.destroy()
+          const res = await api.listpas.status({ motive, related_document, action: 'INHABILITAR', file, id: dataProccess?.numero })
+          if (res.success) {
+            console.log('inhabilitado')
+            cleanHabilitar()
+            setShowModalHabilitar(false)
+            const newData = await processApi(IdSelectedProcess, 'all')
+            const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData })
+            setProcess(dataFilter)
+          }
+        },
+        async onCancel() {
+          instance.destroy()
+        },
+        okButtonProps: { style: { backgroundColor: '#0874cc' } },
+        centered: true
+      })
+    }
+  }
 
   useEffect(() => {
     return () => {
@@ -106,14 +204,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
         if (responsable == profile || user.is_admin) {
           return {
             ...item,
-            btnDisabled: false,
-            estado: <img src={`assets/images/${statusImg[estado]}.png`} />
+            btnDisabled: false
+            // iconEstado: <img src={`assets/images/${statusImg[estado]}.png`} />c
           }
         } else {
           return {
             ...item,
-            btnDisabled: true,
-            estado: <img src={`assets/images/${statusImg[estado]}.png`} />
+            btnDisabled: true
+            // iconEstado: <img src={`assets/images/${statusImg[estado]}.png`} />
           }
         }
       })
@@ -167,14 +265,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           if (responsable == profile || user.is_admin) {
             return {
               ...item,
-              btnDisabled: false,
-              estado: <img src={`assets/images/${statusImg[estado]}.png`} />
+              btnDisabled: false
+              // iconEstado: <img src={`assets/images/${statusImg[estado]}.png`} />
             }
           } else {
             return {
               ...item,
-              btnDisabled: true,
-              estado: <img src={`assets/images/${statusImg[estado]}.png`} />
+              btnDisabled: true
+              // iconEstado: <img src={`assets/images/${statusImg[estado]}.png`} />
             }
           }
         })
@@ -204,28 +302,19 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const processApiByDate = async (globalProcess: any, label: any, start_at: string, end_at: string) => {
     const { processes } = await api.listpas.getProcessesByDate(globalProcess, 'all', start_at, end_at)
 
-    const statusImg: any = {
-      less_3_months: 'less_3_months',
-      less_6_months: 'less_6_months',
-      more_6_months: 'more_6_months',
-      finalized: 'finalized',
-      out_of_date: 'out_of_date',
-      to_start: 'to_start'
-    }
-
     const newData = processes.map((item) => {
       const { estado, responsable } = item
       if (responsable == profile || user.is_admin) {
         return {
           ...item,
-          btnDisabled: false,
-          estado: <img src={`assets/images/${statusImg[estado]}.png`} />
+          btnDisabled: false
+          // iconEstado: <img src={`assets/images/${statusImg[estado]}.png`} />
         }
       } else {
         return {
           ...item,
-          btnDisabled: true,
-          estado: <img src={`assets/images/${statusImg[estado]}.png`} />
+          btnDisabled: true
+          // iconEstado: <img src={`assets/images/${statusImg[estado]}.png`} />
         }
       }
     })
@@ -426,7 +515,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     {
       title: 'Estado',
       dataIndex: 'estado',
-      key: 'estado'
+      key: 'estado',
+      render: (_: any, item: any) => <img src={`assets/images/${statusImg[item?.estado]}.png`} />
     },
     {
       title: 'N° DOC',
@@ -483,37 +573,48 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       dataIndex: 'acciones',
       key: 'acciones',
       render: (_: any, item: any) => (
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
+          {console.log({ item })}
           {item.btnDisabled && <div className="w-[40px] h-[20px]"></div>}
 
           {!item.btnDisabled && (
             <Tooltip title="Agregar Registro">
-              <button className="cursor-pointer hover:opacity-50 w-10 h-8" onClick={() => onGoDetail('/actualiza-proceso', { item })}>
+              <button className="w-10 h-8 cursor-pointer hover:opacity-50" onClick={() => onGoDetail('/actualiza-proceso', { item })}>
                 <img src="assets/images/btn_agregar_registros.png" />
               </button>
             </Tooltip>
           )}
           <Tooltip title="Historial de Registros">
-            <button className="cursor-pointer hover:opacity-50 w-10 h-8" onClick={() => onGoDetail('/detallepas', { item })}>
+            <button className="w-10 h-8 cursor-pointer hover:opacity-50" onClick={() => onGoDetail('/detallepas', { item })}>
               <img src="assets/images/btn_historial.png" />
             </button>
           </Tooltip>
           {item.sgd && (
             <Tooltip title="Descargar documentos">
-              <button className="cursor-pointer hover:opacity-50 w-10 h-8" onClick={() => DescargarDocumentos({ item })}>
+              <button className="w-10 h-8 cursor-pointer hover:opacity-50" onClick={() => DescargarDocumentos({ item })}>
                 <img src="assets/images/btn_descargas.png" />
               </button>
             </Tooltip>
           )}
           {!item.sgd && <div className="w-[40px] h-[20px]"></div>}
           <Tooltip title="Documentos anexos">
-            <button className="cursor-pointer hover:opacity-50 w-10 h-8" onClick={() => getAnexos({ item })}>
+            <button className="w-10 h-8 cursor-pointer hover:opacity-50" onClick={() => getAnexos({ item })}>
               <img src="assets/images/btn_anexos.png" />
             </button>
           </Tooltip>
           <Tooltip title="Seguimiento de documento">
-            <button className="cursor-pointer hover:opacity-50 w-10 h-8" onClick={() => getTracking({ item })}>
+            <button className="w-10 h-8 cursor-pointer hover:opacity-50" onClick={() => getTracking({ item })}>
               <img src="assets/images/btn_seguimiento.png" />
+            </button>
+          </Tooltip>
+          <Tooltip title="Inhabilitar / Habilitar">
+            <button
+              className="flex items-center justify-center w-10 h-8 border border-gray-300 rounded cursor-pointer hover:opacity-50"
+              onClick={() => {
+                setDataProccess(item)
+                setShowModalHabilitar(true)
+              }}>
+              <PoweroffOutlined className={`${item?.estado === 'inactive' ? 'text-green-500' : 'text-red-500'} w-4.5 h-4.5`} />
             </button>
           </Tooltip>
         </div>
@@ -766,7 +867,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             )}
           </div>
           {estadoRj.length > 0 && (
-            <div className="flex gap-3 items-center">
+            <div className="flex items-center gap-3">
               Estado RG :{' '}
               <Button
                 style={{
@@ -780,8 +881,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                   marginRight: '10px',
                   cursor: 'pointer'
                 }}>
-                <span className="uppercase font-normal">{estadoRj}</span>
-                <button className="font-bold ml-3" onClick={clearFilters}>
+                <span className="font-normal uppercase">{estadoRj}</span>
+                <button className="ml-3 font-bold" onClick={clearFilters}>
                   x
                 </button>
               </Button>
@@ -791,8 +892,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
         <br></br>
 
         <div className="py-10 border-b border-gray-200 pb-4 flex gap-2.5  w-full 2xl:items-center flex-col xxxl-flex-row ">
-          <div className="flex  2xl:items-center gap-3">
-            <div className="mb-5 flex flex-col">
+          <div className="flex gap-3 2xl:items-center">
+            <div className="flex flex-col mb-5">
               <p className="opacity-0">Buscador:</p>
               <Input value={search} onChange={(e) => onSearch(e.target.value)} placeholder="Buscar" prefix={<SearchOutlined />} />
             </div>
@@ -842,7 +943,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               />
             </div>
           </div>
-          <div className="flex items-center  gap-3">
+          <div className="flex items-center gap-3">
             <div className="flex flex-col mb-5">
               Por Fecha de inicio:
               <RangePicker locale={locale} value={date} onChange={onChangeDate} disabledDate={disabledDate} />
@@ -1069,7 +1170,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                           <label style={{ fontSize: '16px' }}>Estado:</label>
                         </div>
                         <div style={{ marginRight: '50px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>{item.estado}</label>
+                          <label style={{ fontSize: '16px' }}>{item?.estado}</label>
                         </div>
                         <div style={{ marginRight: '30px', display: 'flex', alignItems: 'center' }}>
                           <label style={{ fontSize: '16px' }}>Folios:</label>
@@ -1234,9 +1335,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               <tbody>
                 {/* {item?.docs?.map((i) => (
                   <tr key={i.id_archivo} className="border">
-                    <td className="border pl-2 py-1">{i.de_det}</td>
-                    <td className="border pl-2 py-1">{i.de_rut_ori}</td>
-                    <td className="border pl-2 py-1">
+                    <td className="py-1 pl-2 border">{i.de_det}</td>
+                    <td className="py-1 pl-2 border">{i.de_rut_ori}</td>
+                    <td className="py-1 pl-2 border">
                       <button className="px-1 border rounded" onClick={() => donwloadAnexosDetail(i.id_archivo, i.de_rut_ori)}>
                         <img src="assets/images/abrir.svg" alt="Abrir" />
                       </button>
@@ -1247,6 +1348,63 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             </table>
           </Modal>
         )}
+
+        <Modal
+          bodyStyle={{
+            margin: 10,
+            // overflow: 'scroll',
+            height: 300,
+            // whiteSpace: 'nowrap',
+            // resize: 'both',
+            width: 600
+          }}
+          width={'auto'}
+          title={
+            <p style={{ textAlign: 'center', fontWeight: 'bold' }}>
+              {' '}
+              {dataProccess?.estado === 'inactive' ? 'Habilitar' : 'Inhabilitar'} Expediente
+            </p>
+          }
+          centered
+          open={showModalHabilitar}
+          okText="Cerrar"
+          cancelButtonProps={{ hidden: true }}
+          onOk={() => setShowModalHabilitar(false)}
+          onCancel={() => {
+            cleanHabilitar()
+            setShowModalHabilitar(false)
+          }}
+          okButtonProps={{ style: { backgroundColor: '#0874cc' }, className: 'ant-btn-primary' }}>
+          <form onSubmit={handleInhabilitar} className="flex flex-col gap-5">
+            <div className="flex items-center gap-5">
+              <p className="w-[130px]">Motivo :</p> <Input className="flex-1" value={motive} onChange={(e) => setMotive(e.target.value)} />
+            </div>
+            <div className="flex items-center gap-5">
+              <p className="w-[130px]">Sustento ​ SGD :</p>{' '}
+              <Input className="flex-1" value={related_document} onChange={(e) => setRelated_document(e.target.value)} />
+            </div>
+            <div className="flex items-center gap-5">
+              <p className="w-[130px]">Adjuntar archivo :</p>{' '}
+              {/* <Input className="flex-1" value={motive} onChange={(e) => setMotive(e.target.value)} /> */}
+              {!file && (
+                <Upload beforeUpload={beforeUpload} onChange={handleFileChange} showUploadList={false} accept=".xls,.xlsx,.doc,.docx">
+                  <Button icon={<UploadOutlined />}>Seleccionar Archivo…</Button>
+                </Upload>
+              )}
+              {file && (
+                <>
+                  <p> {file?.name}</p>
+                  <Button type="primary" className="p-0 px-2 " onClick={() => setFile(null)}>
+                    <CloseOutlined className="w-5 h-5 " />
+                  </Button>
+                </>
+              )}
+            </div>
+            <button disabled={!motive} type="submit" className="mx-auto text-white disabled:bg-gray-300 bg-blue-500 w-[200px] py-2 mt-10">
+              {dataProccess?.estado === 'inactive' ? 'Habilitar' : 'Inhabilitar'}
+            </button>
+          </form>
+        </Modal>
       </Card>
     </>
   )

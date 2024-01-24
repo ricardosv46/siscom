@@ -1,4 +1,4 @@
-import { responseLogin } from '@framework/types'
+import { Status, responseLogin } from '@framework/types'
 import {
   IResponseAnexos,
   IResponseAnexosDetail,
@@ -57,6 +57,30 @@ const api = {
     }
   },
   listpas: {
+    status: async ({ motive, related_document, action, file, id }: Status) => {
+      const formData = new FormData()
+      if (motive) {
+        formData.append('motive', motive)
+      }
+      if (related_document) {
+        formData.append('related_document', String(related_document))
+      }
+      if (action) {
+        formData.append('action', action)
+      }
+      if (file) {
+        formData.append('file', file)
+      }
+      const {
+        data: { data, message, success }
+      }: IResponseProcessesDetail = await apiService.post(`/processes/${id}/status/`, formData)
+      console.log({ data })
+      if (data === undefined || success === undefined || message === undefined) {
+        return { data: [] }
+      } else {
+        return { data, message, success }
+      }
+    },
     trackingHide: async (id: number, hide: boolean) => {
       const formData = new FormData()
       formData.append('tracking_id', String(id))
