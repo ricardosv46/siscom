@@ -607,16 +607,18 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               <img src="assets/images/btn_seguimiento.png" />
             </button>
           </Tooltip>
-          <Tooltip title="Inhabilitar / Habilitar">
-            <button
-              className="flex items-center justify-center w-10 h-8 border border-gray-300 rounded cursor-pointer hover:opacity-50"
-              onClick={() => {
-                setDataProccess(item)
-                setShowModalHabilitar(true)
-              }}>
-              <PoweroffOutlined className={`${item?.estado === 'inactive' ? 'text-green-500' : 'text-red-500'} w-4.5 h-4.5`} />
-            </button>
-          </Tooltip>
+          {user?.is_admin && (
+            <Tooltip title="Inhabilitar / Habilitar">
+              <button
+                className="flex items-center justify-center w-10 h-8 border border-gray-300 rounded cursor-pointer hover:opacity-50"
+                onClick={() => {
+                  setDataProccess(item)
+                  setShowModalHabilitar(true)
+                }}>
+                <PoweroffOutlined className={`${item?.estado === 'inactive' ? 'text-green-500' : 'text-red-500'} w-4.5 h-4.5`} />
+              </button>
+            </Tooltip>
+          )}
         </div>
       )
     }
