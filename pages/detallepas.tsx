@@ -21,6 +21,7 @@ export interface IPropsItem {
   name: string | null
   numero: number
   responsable: string
+  estado: string
 }
 
 export interface IDetailItem {
@@ -47,7 +48,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
     pageSize: pageSize,
     total: total
   })
-  const [itemprop, setItem] = useState<IPropsItem[]>()
+  const [itemprop, setItem] = useState<IPropsItem>()
   const [detail, setDetail] = useState<IDetailItem[]>()
   const [nombre, setNombre] = useState()
   const [numero, setNumero] = useState()
@@ -58,6 +59,8 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
   useEffect(() => {
     let itempropDetail = history?.state?.item
     let itempropBack = history?.state?.itemprop
+
+    console.log({ itempropDetail, itempropBack })
     if (itempropDetail && !itempropBack) {
       setItem(itempropDetail)
       getDetailInfo(itempropDetail.numero)
@@ -115,8 +118,8 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
           </p>
         </div> */}
 
-        <div className="relative wrap overflow-hidden p-10 h-full">
-          <div className="border-2 absolute border-opacity-20 border-gray-700 h-full border" style={{ left: '50%' }}></div>
+        <div className="relative h-full p-10 overflow-hidden wrap">
+          <div className="absolute h-full border border-2 border-gray-700 border-opacity-20" style={{ left: '50%' }}></div>
           {numero &&
             detail?.map((item, key) => {
               return (
@@ -125,6 +128,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
                   par={(key + 1) % 2 === 0}
                   item={{ ...item, headerName }}
                   idx={key}
+                  estado={itemprop?.estado!}
                   detailEmi={detailEmi}
                   arrayNoti={arrayNoti}
                   onHidden={() => {

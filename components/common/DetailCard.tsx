@@ -16,6 +16,7 @@ interface IProps {
   arrayNoti: any
   par: boolean
   onHidden: () => void
+  estado: string
 }
 
 const onGoDetail = (page: string, props: any) => {
@@ -28,7 +29,7 @@ const onGoDetail = (page: string, props: any) => {
 const DetailCard: FC<IProps> = (props): ReactElement => {
   const { user } = GetAuthService()
   const [loading, setLoading] = useState(false)
-  const { item, idx, par, onHidden } = props
+  const { item, idx, par, onHidden, estado } = props
   const {
     id,
     comment,
@@ -66,7 +67,7 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
       setLoading(false)
     }
   }
-
+  console.log({ props })
   const disabledShow = props?.arrayNoti[0]?.id === item.id
   return (
     <div className={`${par ? '' : 'flex-row-reverse'} mb-8 flex  justify-between items-center w-full right-timeline`}>
@@ -117,7 +118,7 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
           <Button
             type="dashed"
             hidden={idx === 0 || !user?.is_admin}
-            disabled={is_hidden}
+            disabled={is_hidden || estado === 'inactive'}
             icon={<EditOutlined />}
             onClick={() => onGoDetail('/actualiza-detalle', { item, detailEmi: props.detailEmi, arrayNoti: props.arrayNoti })}>
             Editar

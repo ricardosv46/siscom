@@ -405,7 +405,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
   const onGoDetail = (page: string, props: any) => {
     router.push({ pathname: page })
-    const { estado, ...res } = props.item
+    const { ...res } = props.item
     const newDatos = { item: { ...res } }
     history.pushState(newDatos, '', page)
   }
@@ -574,12 +574,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       key: 'acciones',
       render: (_: any, item: any) => (
         <div className="flex items-center gap-2">
-          {console.log({ item })}
           {item.btnDisabled && <div className="w-[40px] h-[20px]"></div>}
 
           {!item.btnDisabled && (
             <Tooltip title="Agregar Registro">
-              <button className="w-10 h-8 cursor-pointer hover:opacity-50" onClick={() => onGoDetail('/actualiza-proceso', { item })}>
+              <button
+                disabled={item?.estado === 'inactive'}
+                className="w-10 h-8 cursor-pointer hover:opacity-50"
+                onClick={() => onGoDetail('/actualiza-proceso', { item })}>
                 <img src="assets/images/btn_agregar_registros.png" />
               </button>
             </Tooltip>
