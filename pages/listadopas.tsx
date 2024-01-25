@@ -82,8 +82,19 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const [related_document, setRelated_document] = useState('')
   const [document, setDocument] = useState('')
   const [file, setFile] = useState<any | null>()
+  const [optionsDocument, setOptionsDocument] = useState<any[]>([])
 
   const [dataProccess, setDataProccess] = useState<any | null>()
+
+  const getTypeDocumentsApi = async () => {
+    const { data } = await api.update_process.getTypeDocuments()
+
+    const newData = data.map((typedoc: { id: number; name: string }) => ({
+      value: typedoc?.name,
+      label: typedoc?.name
+    }))
+    setOptionsDocument(newData)
+  }
 
   const handleFileChange = (info: { file: UploadFile }) => {
     if (info.file.status === 'done') {
@@ -104,6 +115,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     setMotive('')
     setFile(null)
     setRelated_document('')
+    setDocument('')
     setDataProccess(null)
   }
 
@@ -176,6 +188,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   }
 
   useEffect(() => {
+    getTypeDocumentsApi()
     return () => {
       Modal.destroyAll()
     }
@@ -683,6 +696,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     setProcess(dataFilter)
   }
 
+  const handleChangeTypeDocument = (valueResponsabLe: string) => {
+    setRelated_document(valueResponsabLe)
+  }
   async function onChangeDate(date: any, dateStrings: [string, string]) {
     const start_at = dateStrings[0].split('-').reverse().join('')
     const end_at = dateStrings[1].split('-').reverse().join('')
@@ -1412,7 +1428,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             </div>
             <div className="flex items-center gap-5">
               <p className="w-[130px]">Tipo Documento:</p>
-              <Input className="flex-1" value={related_document} onChange={(e) => setRelated_document(e.target.value)} maxLength={100} />
+              {/* <Input className="flex-1" value={related_document} onChange={(e) => setRelated_document(e.target.value)} maxLength={100} /> */}
+              <Select
+                className="flex-1"
+                value={related_document}
+                placeholder="Responsable"
+                onChange={handleChangeTypeDocument}
+                options={optionsDocument}
+              />
             </div>
             <div className="flex items-center gap-5">
               <p className="w-[130px]">Nro. Documento :</p>
@@ -1427,8 +1450,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                 </Upload>
               )}
               {file && (
-                <div className="flex flex-1 max-h-[80px] overflow-auto">
-                  <p className=""> {file?.name}</p>
+                <div className="flex items-center gap-5">
+                  <div className="flex w-[350px] max-h-[80px] overflow-auto">
+                    <p className=""> {file?.name}</p>
+                  </div>
                   <Button type="primary" className="p-0 px-2 " onClick={() => setFile(null)}>
                     <CloseOutlined className="w-5 h-5 " />
                   </Button>
@@ -1436,7 +1461,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               )}
             </div>
             <button
-              disabled={!motive.trim()}
+              disabled={!motive?.trim() || (!!related_document && !document?.trim())}
               type="submit"
               className="mx-auto text-white disabled:bg-gray-300 bg-blue-500 w-[200px] py-2 mt-5">
               {dataProccess?.estado === 'inactive' ? 'Habilitar' : 'Inhabilitar'}
