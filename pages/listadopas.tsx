@@ -1410,17 +1410,16 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           }
           centered
           open={showModalHabilitar}
-          okText="Cerrar"
           cancelButtonProps={{ hidden: true }}
-          onOk={() => {
-            cleanHabilitar()
-            setShowModalHabilitar(false)
-          }}
+          okButtonProps={{ hidden: true }}
+          // onOk={() => {
+          //   cleanHabilitar()
+          //   setShowModalHabilitar(false)
+          // }}
           onCancel={() => {
             cleanHabilitar()
             setShowModalHabilitar(false)
-          }}
-          okButtonProps={{ style: { backgroundColor: '#0874cc' }, className: 'ant-btn-primary' }}>
+          }}>
           <form onSubmit={handleInhabilitar} className="flex flex-col gap-5">
             <div className="flex items-center gap-5">
               <p className="w-[130px]">Motivo* :</p>{' '}
