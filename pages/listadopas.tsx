@@ -1422,7 +1422,13 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           <form onSubmit={handleInhabilitar} className="flex flex-col gap-5">
             <div className="flex items-center gap-5">
               <p className="w-[130px]">Motivo* :</p>{' '}
-              <Input className="flex-1" value={motive} onChange={(e) => setMotive(e.target.value)} maxLength={250} />
+              <Input
+                className="flex-1"
+                value={motive}
+                onChange={(e) => setMotive(e.target.value)}
+                maxLength={250}
+                placeholder="Ingrese motivo"
+              />
             </div>
             <div className="flex items-center gap-5">
               <p className="w-[130px]">Tipo Documento:</p>
@@ -1430,7 +1436,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               <Select
                 className="flex-1"
                 value={related_document}
-                placeholder="Responsable"
+                placeholder="Seleccione tipo de documento"
                 onChange={handleChangeTypeDocument}
                 options={optionsDocument}
                 allowClear
@@ -1438,7 +1444,12 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
             </div>
             <div className="flex items-center gap-5">
               <p className="w-[130px]">Nro. Documento :</p>
-              <Input className="flex-1" value={document} onChange={(e) => setDocument(e.target.value)} />
+              <Input
+                className="flex-1"
+                value={document}
+                onChange={(e) => setDocument(e.target.value)}
+                placeholder="Ingrese número de documento"
+              />
             </div>
             <div className="flex items-center gap-5">
               <p className="w-[130px]">Adjuntar archivo :</p>{' '}
