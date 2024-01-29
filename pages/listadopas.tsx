@@ -1437,9 +1437,10 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                 className="flex-1"
                 value={related_document}
                 placeholder="Seleccione tipo de documento"
-                onChange={handleChangeTypeDocument}
-                options={optionsDocument}
                 allowClear
+                onChange={handleChangeTypeDocument}
+                options={[{ label: 'Seleccione tipo de documento', value: '' }, ...optionsDocument]}
+                defaultValue=""
               />
             </div>
             <div className="flex items-center gap-5">
