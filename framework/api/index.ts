@@ -77,7 +77,6 @@ const api = {
       const {
         data: { data, message, success }
       }: IResponseProcessesDetail = await apiService.post(`/processes/${id}/status/`, formData)
-      console.log({ data })
       if (data === undefined || success === undefined || message === undefined) {
         return { data: [] }
       } else {

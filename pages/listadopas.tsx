@@ -135,7 +135,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
           instance.destroy()
           const res = await api.listpas.status({ motive, related_document, document, action: 'HABILITAR', file, id: dataProccess?.numero })
           if (res.success) {
-            console.log('habilitado')
             cleanHabilitar()
             setShowModalHabilitar(false)
             const newData = await processApi(IdSelectedProcess, 'all')
@@ -1434,6 +1433,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                 placeholder="Responsable"
                 onChange={handleChangeTypeDocument}
                 options={optionsDocument}
+                allowClear
               />
             </div>
             <div className="flex items-center gap-5">
@@ -1460,7 +1460,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               )}
             </div>
             <button
-              disabled={!motive?.trim() || (!!related_document && !document?.trim())}
+              disabled={!motive?.trim() || (!!related_document && !document?.trim()) || (!!document && !related_document?.trim())}
               type="submit"
               className="mx-auto text-white disabled:bg-gray-300 bg-blue-500 w-[200px] py-2 mt-5">
               {dataProccess?.estado === 'inactive' ? 'Habilitar' : 'Inhabilitar'}
