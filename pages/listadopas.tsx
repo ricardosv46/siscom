@@ -896,10 +896,12 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               <label className="form-checkbottom">Menos de 3 meses</label>
             </div>
 
-            <div style={{ marginRight: '40px', display: 'flex', alignItems: 'center' }}>
-              <div className="w-[24px] h-[24px] rounded-full bg-blue-600 mr-2"></div>
-              <label className="form-checkbottom">Inhabilitado</label>
-            </div>
+            {user.is_admin && (
+              <div style={{ marginRight: '40px', display: 'flex', alignItems: 'center' }}>
+                <div className="w-[24px] h-[24px] rounded-full bg-blue-600 mr-2"></div>
+                <label className="form-checkbottom">Inhabilitado</label>
+              </div>
+            )}
 
             {new Date(localStorage.getItem('IdSelectedYear')!).valueOf() < new Date('2022').valueOf() && (
               <div style={{ marginRight: '40px', display: 'flex', alignItems: 'center' }}>
