@@ -504,7 +504,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 value={tipoDocumentoSelectedOption}
                 onChange={handleTipoDocumentoSelectChange}>
                 <option value="">Seleccione tipo de documento</option>
-                {!user?.is_admin &&
+                {user?.profile !== 'jn' &&
+                  !user?.is_admin &&
                   (operationSelectedOption === 'actualizado' || operationSelectedOption === 'observado') &&
                   responsable_actual !== 'GSFP' &&
                   options
@@ -515,7 +516,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                       </option>
                     ))}
 
-                {/* {user?.profile === 'jn' &&
+                {user?.profile === 'jn' &&
+                  !user?.is_admin &&
                   operationSelectedOption === 'actualizado' &&
                   options
                     .filter((item: any) => item.name !== 'INFORME FINAL DE INSTRUCCION-PAS')
@@ -523,9 +525,10 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                       <option value={item.name} key={index}>
                         {item.name}
                       </option>
-                    ))} */}
+                    ))}
 
-                {/* {user?.profile === 'jn' &&
+                {user?.profile === 'jn' &&
+                  !user?.is_admin &&
                   operationSelectedOption === 'observado' &&
                   options
                     .filter((item: any) => item.name !== 'RESOLUCION JEFATURAL-PAS' && item.name !== 'INFORME FINAL DE INSTRUCCION-PAS')
@@ -533,7 +536,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                       <option value={item.name} key={index}>
                         {item.name}
                       </option>
-                    ))} */}
+                    ))}
 
                 {user?.is_admin &&
                   gerenciaInicialSelectedOption === 'GSFP' &&

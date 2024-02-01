@@ -499,8 +499,10 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 onChange={handleTipoDocumentoSelectChange}>
                 <option value="">Seleccione tipo de documento</option>
 
-                {operationSelectedOption !== 'ACTUALIZACION' &&
-                  gerenciaSelectedOption !== 'GSFP' &&
+                {user?.profile !== 'jn' &&
+                  !user?.is_admin &&
+                  (operationSelectedOption === 'actualizado' || operationSelectedOption === 'observado') &&
+                  responsable_actual !== 'GSFP' &&
                   options
                     .filter((item: any) => item.name !== 'RESOLUCION JEFATURAL-PAS' && item.name !== 'INFORME FINAL DE INSTRUCCION-PAS')
                     .map((item: any, index) => (
@@ -509,18 +511,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                       </option>
                     ))}
 
-                {operationSelectedOption !== 'ACTUALIZACION' &&
-                  gerenciaSelectedOption === 'GSFP' &&
-                  options
-                    .filter((item: any) => item.name !== 'RESOLUCION JEFATURAL-PAS')
-                    .map((item: any, index) => (
-                      <option value={item.name} key={index}>
-                        {item.name}
-                      </option>
-                    ))}
-
-                {operationSelectedOption === 'ACTUALIZACION' &&
-                  gerenciaSelectedOption !== 'GSFP' &&
+                {user?.profile === 'jn' &&
+                  operationSelectedOption === 'actualizado' &&
                   options
                     .filter((item: any) => item.name !== 'INFORME FINAL DE INSTRUCCION-PAS')
                     .map((item: any, index) => (
@@ -529,8 +521,61 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                       </option>
                     ))}
 
-                {operationSelectedOption === 'ACTUALIZACION' &&
-                  gerenciaSelectedOption === 'GSFP' &&
+                {user?.profile === 'jn' &&
+                  operationSelectedOption === 'observado' &&
+                  options
+                    .filter((item: any) => item.name !== 'RESOLUCION JEFATURAL-PAS' && item.name !== 'INFORME FINAL DE INSTRUCCION-PAS')
+                    .map((item: any, index) => (
+                      <option value={item.name} key={index}>
+                        {item.name}
+                      </option>
+                    ))}
+
+                {user?.is_admin &&
+                  gerenciaInicialSelectedOption === 'GSFP' &&
+                  operationSelectedOption === 'actualizado' &&
+                  options.map((item: any, index) => (
+                    <option value={item.name} key={index}>
+                      {item.name}
+                    </option>
+                  ))}
+
+                {user?.is_admin &&
+                  gerenciaInicialSelectedOption === 'GSFP' &&
+                  operationSelectedOption === 'observado' &&
+                  options
+                    .filter((item: any) => item.name !== 'RESOLUCION JEFATURAL-PAS')
+                    .map((item: any, index) => (
+                      <option value={item.name} key={index}>
+                        {item.name}
+                      </option>
+                    ))}
+
+                {user?.is_admin &&
+                  gerenciaInicialSelectedOption !== 'GSFP' &&
+                  operationSelectedOption === 'actualizado' &&
+                  options
+                    .filter((item: any) => item.name !== 'INFORME FINAL DE INSTRUCCION-PAS')
+                    .map((item: any, index) => (
+                      <option value={item.name} key={index}>
+                        {item.name}
+                      </option>
+                    ))}
+
+                {user?.is_admin &&
+                  gerenciaInicialSelectedOption !== 'GSFP' &&
+                  operationSelectedOption === 'observado' &&
+                  options
+                    .filter((item: any) => item.name !== 'RESOLUCION JEFATURAL-PAS' && item.name !== 'INFORME FINAL DE INSTRUCCION-PAS')
+                    .map((item: any, index) => (
+                      <option value={item.name} key={index}>
+                        {item.name}
+                      </option>
+                    ))}
+
+                {!user?.is_admin &&
+                  responsable_actual === 'GSFP' &&
+                  (operationSelectedOption === 'actualizado' || operationSelectedOption === 'observado') &&
                   options.map((item: any, index) => (
                     <option value={item.name} key={index}>
                       {item.name}
