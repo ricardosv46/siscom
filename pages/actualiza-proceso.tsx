@@ -158,17 +158,18 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       })
       setConfirm(false)
       return
-    } else if ((rj_type === 'AMPLIACION' && months === 0) || (rj_type === 'AMPLIACION' && days === 0)) {
-      const instance = Modal.info({
-        content: 'Por favor, ingrese los meses y dias',
-        centered: true,
-        async onOk() {
-          instance.destroy()
-        }
-      })
-      setConfirm(false)
-      return
     }
+    // else if ((rj_type === 'AMPLIACION' && months === 0) || (rj_type === 'AMPLIACION' && days === 0)) {
+    //   const instance = Modal.info({
+    //     content: 'Por favor, ingrese los meses y dias',
+    //     centered: true,
+    //     async onOk() {
+    //       instance.destroy()
+    //     }
+    //   })
+    //   setConfirm(false)
+    //   return
+    // }
 
     const formData = new FormData()
     formData.set('comment', comentarioTextareaValue)
@@ -659,12 +660,12 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               <div className="flex gap-5">
                 <div className="flex flex-col">
                   <p>Meses:</p>
-                  <InputNumber min={1} max={12} value={months} onChange={(value) => setMonths(value ?? 1)} />
+                  <InputNumber min={0} max={3} value={months} onChange={(value) => setMonths(value ?? 0)} />
                 </div>
 
                 <div className="flex flex-col">
                   <p>Dias:</p>
-                  <InputNumber min={1} max={29} defaultValue={1} value={days} onChange={(value) => setDays(value ?? 1)} />
+                  <InputNumber min={0} max={29} defaultValue={1} value={days} onChange={(value) => setDays(value ?? 0)} />
                 </div>
               </div>
             </div>

@@ -9,7 +9,7 @@ import { GetServerSideProps } from 'next'
 import { getCookie } from 'cookies-next'
 import { mergeArray } from '@lib/general'
 import { useRouter } from 'next/router'
-import { Button, DatePicker, Modal } from 'antd'
+import { Button, DatePicker, InputNumber, Modal } from 'antd'
 import { GetTokenAuthService } from 'services/auth/ServiceAuth'
 import apiService from 'services/axios/configAxios'
 import moment from 'moment'
@@ -147,6 +147,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [gerenciaAsignadaSelectedOption, setGerenciaAsignadaSelectedOption] = useState('')
   const [comentarioTextareaValue, setComentarioTextareaValue] = useState('')
   const [rj_type, setRj_type] = useState('')
+  const [months, setMonths] = useState(0)
+  const [days, setDays] = useState(0)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -172,6 +174,16 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       })
       return
     }
+
+    // if ((rj_type === 'AMPLIACION' && months === 0) || (rj_type === 'AMPLIACION' && days === 0)) {
+    //   const instance = Modal.info({
+    //     content: 'Por favor, ingrese los meses y dias',
+    //     centered: true,
+    //     async onOk() {
+    //       instance.destroy()
+    //     }
+    //   })
+    // }
 
     if (
       operationSelectedOption === tracking_action &&
@@ -216,6 +228,11 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
       if (tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' && operationSelectedOption === 'ACTUALIZACION') {
         formData.append('rj_type', rj_type)
+      }
+
+      if (rj_type === 'AMPLIACION') {
+        formData.set('months', String(months))
+        formData.set('days', String(days))
       }
 
       try {
@@ -569,7 +586,29 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 <option value="ARCHIVO">Archivo</option>
                 <option value="CONCEDE RECURSO">Concede Recurso</option>
                 <option value="DENIEGA RECURSO">Deniega Recurso</option>
+                <option value="AMPLIACION">Ampliación de plazo</option>
               </select>
+            </div>
+          </div>
+        )}
+
+        {rj_type === 'AMPLIACION' && (
+          <div className="w-1/2 py-5">
+            <div className="grid items-center grid-cols-2 gap-5 mb-5">
+              <label htmlFor="nuevo_responsable" className="text-gray-600">
+                Plazo de apliación:
+              </label>
+              <div className="flex gap-5">
+                <div className="flex flex-col">
+                  <p>Meses:</p>
+                  <InputNumber min={0} max={3} value={months} onChange={(value) => setMonths(value ?? 1)} />
+                </div>
+
+                <div className="flex flex-col">
+                  <p>Dias:</p>
+                  <InputNumber min={0} max={29} defaultValue={1} value={days} onChange={(value) => setDays(value ?? 1)} />
+                </div>
+              </div>
             </div>
           </div>
         )}
