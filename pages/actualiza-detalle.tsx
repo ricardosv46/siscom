@@ -596,7 +596,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           <div className="w-1/2 py-5">
             <div className="grid items-center grid-cols-2 gap-5 mb-5">
               <label htmlFor="nuevo_responsable" className="text-gray-600">
-                Plazo de apliación:
+                Plazo de ampliación:
               </label>
               <div className="flex gap-5">
                 <div className="flex flex-col">
