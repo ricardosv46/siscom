@@ -601,12 +601,29 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               <div className="flex gap-5">
                 <div className="flex flex-col">
                   <p>Meses:</p>
-                  <InputNumber min={0} max={3} value={months} onChange={(value) => setMonths(value ?? 1)} />
+                  <InputNumber
+                    min={0}
+                    max={3}
+                    value={months}
+                    onChange={(value) => {
+                      if (value === 3) {
+                        setDays(0)
+                      }
+                      setMonths(value ?? 1)
+                    }}
+                  />
                 </div>
 
                 <div className="flex flex-col">
                   <p>Dias:</p>
-                  <InputNumber min={0} max={29} defaultValue={1} value={days} onChange={(value) => setDays(value ?? 1)} />
+                  <InputNumber
+                    min={0}
+                    max={29}
+                    defaultValue={1}
+                    disabled={months === 3}
+                    value={days}
+                    onChange={(value) => setDays(value ?? 1)}
+                  />
                 </div>
               </div>
             </div>
