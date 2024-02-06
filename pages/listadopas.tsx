@@ -699,6 +699,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     setRelated_document(valueResponsabLe)
   }
   async function onChangeDate(date: any, dateStrings: [string, string]) {
+    setDate(date)
     const start_at = dateStrings[0].split('-').reverse().join('')
     const end_at = dateStrings[1].split('-').reverse().join('')
     const labelIndex = router.query
