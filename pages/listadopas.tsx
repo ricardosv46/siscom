@@ -1080,8 +1080,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                     }
 
                     // ExportExcel(inputValue ? filterData : process);
-                    // ExportExcel(process)
-                    console.log({ process })
+                    ExportExcel(process)
 
                     instance.destroy()
                   }}>

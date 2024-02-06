@@ -2,7 +2,6 @@ import { Modal } from 'antd'
 import { utils, writeFile } from 'xlsx'
 
 export const ExportExcel = (body: any) => {
-  console.log({ body })
   const headers = [
     'Número de Expediente',
     'Resolución Gerencial',
@@ -24,7 +23,6 @@ export const ExportExcel = (body: any) => {
 
   if (body.length > 0) {
     dataExport = body.map((item: any) => {
-      console.log({ item })
       return {
         num_expediente: item.num_expediente,
         resolucion_gerencial: item.resolution_number,
@@ -36,7 +34,10 @@ export const ExportExcel = (body: any) => {
         fecha_inicio: item.fecha_inicio,
         fecha_fin: item.fecha_fin,
         actualizacion: item.actualizacion,
-        tipo_proceso: item.type
+        tipo_proceso: item.type,
+        cargo: item.cargo,
+        type_op: item.type_op,
+        op: item.op
       }
     })
   }
