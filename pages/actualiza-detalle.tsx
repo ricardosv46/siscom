@@ -175,15 +175,15 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       return
     }
 
-    // if ((rj_type === 'AMPLIACION' && months === 0) || (rj_type === 'AMPLIACION' && days === 0)) {
-    //   const instance = Modal.info({
-    //     content: 'Por favor, ingrese los meses y dias',
-    //     centered: true,
-    //     async onOk() {
-    //       instance.destroy()
-    //     }
-    //   })
-    // }
+    if (rj_type === 'AMPLIACION' && months === 0 && days === 0) {
+      const instance = Modal.info({
+        content: 'Por favor, ingrese un mes o dia',
+        centered: true,
+        async onOk() {
+          instance.destroy()
+        }
+      })
+    }
 
     if (
       operationSelectedOption === tracking_action &&

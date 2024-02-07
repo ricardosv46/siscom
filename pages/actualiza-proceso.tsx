@@ -158,18 +158,17 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       })
       setConfirm(false)
       return
+    } else if (rj_type === 'AMPLIACION' && months === 0 && days === 0) {
+      const instance = Modal.info({
+        content: 'Por favor, ingrese un mes o dia',
+        centered: true,
+        async onOk() {
+          instance.destroy()
+        }
+      })
+      setConfirm(false)
+      return
     }
-    // else if ((rj_type === 'AMPLIACION' && months === 0) || (rj_type === 'AMPLIACION' && days === 0)) {
-    //   const instance = Modal.info({
-    //     content: 'Por favor, ingrese los meses y dias',
-    //     centered: true,
-    //     async onOk() {
-    //       instance.destroy()
-    //     }
-    //   })
-    //   setConfirm(false)
-    //   return
-    // }
 
     const formData = new FormData()
     formData.set('comment', comentarioTextareaValue)
