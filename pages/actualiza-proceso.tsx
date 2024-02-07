@@ -644,13 +644,13 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                   <option value="ARCHIVO">Archivo</option>
                   <option value="CONCEDE RECURSO">Concede Recurso</option>
                   <option value="DENIEGA RECURSO">Deniega Recurso</option>
-                  <option value="AMPLIACION">Ampliación de plazo</option>
+                  {user.is_admin && <option value="AMPLIACION">Ampliación de plazo</option>}
                 </select>
               </div>
             </div>
           )}
 
-        {rj_type === 'AMPLIACION' && (
+        {user.is_admin && rj_type === 'AMPLIACION' && (
           <div className="w-1/2 py-5">
             <div className="grid items-center grid-cols-2 gap-5 mb-5">
               <label htmlFor="nuevo_responsable" className="text-gray-600">
