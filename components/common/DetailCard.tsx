@@ -29,7 +29,7 @@ const onGoDetail = (page: string, props: any) => {
 const DetailCard: FC<IProps> = (props): ReactElement => {
   const { user } = GetAuthService()
   const [loading, setLoading] = useState(false)
-  const { item, idx, par, onHidden, estado } = props
+  const { item, idx, par, onHidden, estado, ...prev } = props
   const {
     id,
     comment,
@@ -43,8 +43,12 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
     tracking_action,
     register_user,
     rj_type,
-    is_hidden
+    is_hidden,
+    months,
+    days
   } = item
+
+  console.log({ rj_type })
 
   const showCard = async () => {
     try {
@@ -107,6 +111,12 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
         {related_document && <h3 className="font-bold text-gray-500 text-x">Tipo documento: {related_document} </h3>}
         {document && <h3 className="font-bold text-gray-500 text-x">Documento: {document} </h3>}
         {rj_type && <h3 className="font-bold text-gray-500 text-x">Tipo RJ: {rj_type} </h3>}
+        {rj_type === 'AMPLIACION' && (
+          <h3 className="font-bold text-gray-500 text-x">
+            Plazo de ampliación: {months} Meses - {days} Dias
+          </h3>
+        )}
+
         {comment && (
           <p className="mt-2 text-sm font-medium leading-snug tracking-wide text-gray-500 text-opacity-100">Comentario: {comment}</p>
         )}

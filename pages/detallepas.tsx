@@ -39,6 +39,8 @@ export interface IDetailItem {
   register_user: string
   rj_type: string
   is_hidden: boolean
+  months: number
+  days: number
 }
 
 const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, total }) => {

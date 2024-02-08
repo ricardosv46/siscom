@@ -79,7 +79,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     getTypeDocumentsApi()
     getOrganizationsApi()
     if (itemprop) {
-      console.log({ itemprop })
       setItem(itemprop)
       id = itemprop?.id
       resolution_number = itemprop?.resolution_number
@@ -132,6 +131,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       setDocumentoRelacionadoinputValue(document)
       setComentarioTextareaValue(comment)
       setRj_type(itemprop?.rj_type === null ? '' : itemprop?.rj_type)
+      setMonths(itemprop?.months)
+      setDays(itemprop?.days)
     } else {
       router.push('/detallepas')
     }
