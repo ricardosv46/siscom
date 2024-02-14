@@ -47,6 +47,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [months, setMonths] = useState(0)
   const [days, setDays] = useState(0)
   const [item, setItem] = useState<IPropsItem>()
+  const [rj_amount, setRj_amount] = useState(0)
+
   const [dateEmi, setDateEmi] = useState<any>()
   const router = useRouter()
 
@@ -204,6 +206,10 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     if (rj_type === 'AMPLIACION') {
       formData.set('months', String(months))
       formData.set('days', String(days))
+    }
+
+    if (rj_type === 'SANCION') {
+      formData.set('rj_amount', String(rj_amount))
     }
 
     formData.set('type', tipo)
@@ -634,10 +640,14 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           (user?.profile === 'jn' || user?.is_admin) && (
             <div className="w-1/2 py-5">
               <div className="grid items-center grid-cols-2 gap-5 mb-5">
-                <label htmlFor="nuevo_responsable" className="text-gray-600">
+                <label htmlFor="rj_type" className="text-gray-600">
                   Tipo de resolución jefatural:
                 </label>
-                <select className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} value={rj_type} onChange={handleRjType}>
+                <select
+                  className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}
+                  value={rj_type}
+                  onChange={handleRjType}
+                  id="rj_type">
                   <option value="">Seleccione tipo de resolución jefatural</option>
                   <option value="SANCION">Sanción</option>
                   <option value="NULIDAD">Nulidad</option>
@@ -645,6 +655,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                   <option value="CONCEDE RECURSO">Concede Recurso</option>
                   <option value="DENIEGA RECURSO">Deniega Recurso</option>
                   {user.is_admin && <option value="AMPLIACION">Ampliación de plazo</option>}
+
+                  {(user.is_admin || responsable_actual === 'JN') && <option value="REHACER">Rehacer</option>}
                 </select>
               </div>
             </div>
@@ -653,13 +665,14 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         {user.is_admin && rj_type === 'AMPLIACION' && (
           <div className="w-1/2 py-5">
             <div className="grid items-center grid-cols-2 gap-5 mb-5">
-              <label htmlFor="nuevo_responsable" className="text-gray-600">
+              <label htmlFor="plazo" className="text-gray-600">
                 Plazo de ampliación:
               </label>
               <div className="flex gap-5">
                 <div className="flex flex-col">
                   <p>Meses:</p>
                   <InputNumber
+                    id="plazo"
                     min={0}
                     max={3}
                     value={months}
@@ -688,6 +701,20 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
+        {user.is_admin && rj_type === 'SANCION' && (
+          <div className="w-1/2 py-5">
+            <div className="grid items-center grid-cols-2 gap-5 mb-5">
+              <label htmlFor="monto" className="text-gray-600">
+                Monto:
+              </label>
+              <div className="flex flex-col">
+                <p>Monto:</p>
+                <InputNumber id="monto" value={rj_amount} onChange={(value) => setRj_amount(value ?? 0)} />
+              </div>
+            </div>
+          </div>
+        )}
+
         {(operationSelectedOption === 'notificado' ||
           operationSelectedOption === 'actualizado' ||
           operationSelectedOption === 'observado') && (
@@ -698,6 +725,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               </label>
               <select
                 className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}
+                id="nuevo_responsable"
                 value={gerenciaSelectedOption}
                 onChange={handleGerenciaSelectChange}>
                 <option value="">Seleccione Gerencia</option>
