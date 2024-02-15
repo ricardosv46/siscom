@@ -94,7 +94,6 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
   const onGotoBack = (page: string) => {
     router.push({ pathname: page })
   }
-  console.log({ detail })
 
   return (
     <>

@@ -209,7 +209,7 @@ const api = {
               for (let i = 0; i < response.data.length; i++) {
                 dataExcel.push({
                   fila: response.data[i].FILA,
-                  expediente: response.data[i].expediente,
+                  expediente: response.data[i].EXPEDIENTE,
                   nro_rg_pas: response.data[i].NRO_RG_PAS,
                   dni_candidato: response.data[i].DNI_CANDIDATO,
                   tipo_doc_emitido: response.data[i].TIPO_DOC_EMITIDO,
@@ -228,7 +228,6 @@ const api = {
               writeFile(wb, `${filename}`)
             }
           } else {
-            console.log('ssssss')
           }
           if (response?.data) {
             return { data: response?.data }
