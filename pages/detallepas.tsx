@@ -41,6 +41,8 @@ export interface IDetailItem {
   is_hidden: boolean
   months: number
   days: number
+  rj_remake: string
+  rj_amount: string
 }
 
 const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, total }) => {

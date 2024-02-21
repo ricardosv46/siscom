@@ -44,6 +44,7 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
     register_user,
     rj_type,
     is_hidden,
+    rj_remake,
     months,
     days
   } = item
@@ -83,8 +84,8 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
 
       <div
         className={`${
-          !is_hidden ? 'bg-white' : 'bg-gray-200'
-        } relative order-1 border-t-4 border-[#A8CFEB]  rounded-lg shadow-xl w-5/12 px-6 py-4`}>
+          !is_hidden ? 'bg-white' ? rj_remake  ? 'bg-gray-200' : 'bg-gray-400'
+        }     relative order-1 border-t-4 border-[#A8CFEB]  rounded-lg shadow-xl w-5/12 px-6 py-4`}>
         {par && (
           <div className="flex justify-start w-full">
             <div className="relative">

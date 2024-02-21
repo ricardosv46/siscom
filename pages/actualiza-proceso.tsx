@@ -170,7 +170,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       })
       setConfirm(false)
       return
-    } else if (Number(rj_amount.replaceAll(',', '')) <= 0.0) {
+    } else if (rj_type === 'SANCION' && Number(rj_amount.replaceAll(',', '')) <= 0.0) {
       const instance = Modal.info({
         content: 'Por favor, ingrese un monto mayor a 0.00',
         centered: true,
