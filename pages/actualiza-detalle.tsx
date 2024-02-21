@@ -9,7 +9,7 @@ import { GetServerSideProps } from 'next'
 import { getCookie } from 'cookies-next'
 import { mergeArray } from '@lib/general'
 import { useRouter } from 'next/router'
-import { Button, DatePicker, InputNumber, Modal } from 'antd'
+import { Button, DatePicker, Input, InputNumber, Modal } from 'antd'
 import { GetTokenAuthService } from 'services/auth/ServiceAuth'
 import apiService from 'services/axios/configAxios'
 import moment from 'moment'
@@ -79,6 +79,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     getTypeDocumentsApi()
     getOrganizationsApi()
     if (itemprop) {
+      console.log({ itemprop })
       setItem(itemprop)
       id = itemprop?.id
       resolution_number = itemprop?.resolution_number
@@ -149,6 +150,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [comentarioTextareaValue, setComentarioTextareaValue] = useState('')
   const [rj_type, setRj_type] = useState('')
   const [months, setMonths] = useState(0)
+  const [rj_amount, setRj_amount] = useState('')
   const [days, setDays] = useState(0)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -234,6 +236,9 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       if (rj_type === 'AMPLIACION') {
         formData.set('months', String(months))
         formData.set('days', String(days))
+      }
+      if (rj_type === 'SANCION') {
+        formData.set('rj_amount', String(rj_amount))
       }
 
       try {
@@ -624,6 +629,37 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                     disabled={months === 3}
                     value={days}
                     onChange={(value) => setDays(value ?? 1)}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {rj_type === 'SANCION' && (
+          <div className="w-1/2 py-5">
+            <div className="grid items-center grid-cols-2 gap-5 mb-5">
+              <label htmlFor="monto" className="text-gray-600">
+                Monto:
+              </label>
+              <div className="flex mt-1">
+                <div className="flex items-center gap-1">
+                  S/.
+                  <Input
+                    className="w-[120px]"
+                    id="monto"
+                    value={rj_amount}
+                    onChange={(e) => {
+                      let inputValue = e.target.value
+                      inputValue = inputValue.replace(/[^\d.]/g, '')
+                      const parts = inputValue.split('.')
+                      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      if (parts.length > 1) {
+                        parts[1] = parts[1].slice(0, 2)
+                      }
+                      const formattedValue = parts.length > 1 ? `${parts[0]}.${parts[1]}` : parts[0]
+                      setRj_amount(formattedValue)
+                    }}
                   />
                 </div>
               </div>

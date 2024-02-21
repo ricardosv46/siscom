@@ -10,7 +10,7 @@ import { getCookie } from 'cookies-next'
 import { mergeArray } from '@lib/general'
 import { useRouter } from 'next/router'
 import axios from 'axios'
-import { Button, DatePicker, InputNumber, Modal, message } from 'antd'
+import { Button, DatePicker, Input, InputNumber, Modal, message } from 'antd'
 import { format } from 'date-fns'
 import useAuthStore from 'store/auth/auth'
 import apiService from 'services/axios/configAxios'
@@ -47,7 +47,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [months, setMonths] = useState(0)
   const [days, setDays] = useState(0)
   const [item, setItem] = useState<IPropsItem>()
-  const [rj_amount, setRj_amount] = useState(0)
+  const [rj_amount, setRj_amount] = useState('')
 
   const [dateEmi, setDateEmi] = useState<any>()
   const router = useRouter()
@@ -163,6 +163,16 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     } else if (rj_type === 'AMPLIACION' && months === 0 && days === 0) {
       const instance = Modal.info({
         content: 'Por favor, ingrese un mes o dia',
+        centered: true,
+        async onOk() {
+          instance.destroy()
+        }
+      })
+      setConfirm(false)
+      return
+    } else if (Number(rj_amount.replaceAll(',', '')) <= 0.0) {
+      const instance = Modal.info({
+        content: 'Por favor, ingrese un monto mayor a 0.00',
         centered: true,
         async onOk() {
           instance.destroy()
@@ -707,9 +717,26 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               <label htmlFor="monto" className="text-gray-600">
                 Monto:
               </label>
-              <div className="flex flex-col">
-                <p>Monto:</p>
-                <InputNumber id="monto" value={rj_amount} onChange={(value) => setRj_amount(value ?? 0)} />
+              <div className="flex mt-1">
+                <div className="flex items-center gap-1">
+                  S/.
+                  <Input
+                    className="w-[120px]"
+                    id="monto"
+                    value={rj_amount}
+                    onChange={(e) => {
+                      let inputValue = e.target.value
+                      inputValue = inputValue.replace(/[^\d.]/g, '')
+                      const parts = inputValue.split('.')
+                      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                      if (parts.length > 1) {
+                        parts[1] = parts[1].slice(0, 2)
+                      }
+                      const formattedValue = parts.length > 1 ? `${parts[0]}.${parts[1]}` : parts[0]
+                      setRj_amount(formattedValue)
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
