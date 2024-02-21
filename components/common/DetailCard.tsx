@@ -84,7 +84,7 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
 
       <div
         className={`${
-          !is_hidden ? 'bg-white' ? rj_remake  ? 'bg-gray-200' : 'bg-gray-400'
+          !is_hidden ? 'bg-white' : rj_remake ? 'bg-gray-200' : 'bg-gray-400'
         }     relative order-1 border-t-4 border-[#A8CFEB]  rounded-lg shadow-xl w-5/12 px-6 py-4`}>
         {par && (
           <div className="flex justify-start w-full">
