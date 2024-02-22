@@ -719,7 +719,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               </label>
               <div className="flex mt-1">
                 <div className="flex items-center gap-1">
-                  S/.
                   <Input
                     className="w-[120px]"
                     id="monto"
