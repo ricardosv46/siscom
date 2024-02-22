@@ -239,7 +239,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         formData.set('days', String(days))
       }
       if (rj_type === 'SANCION') {
-        formData.set('rj_amount', String(rj_amount))
+        formData.set('amount', String(rj_amount.replaceAll(',', '')))
       }
 
       try {
