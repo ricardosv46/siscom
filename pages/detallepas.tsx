@@ -97,6 +97,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
     router.push({ pathname: page })
   }
   console.log({ detail })
+  const rj_remakeDatail = (numero && detail?.filter((item) => item.rj_type === 'REHACER' && item.rj_remake)[0]) ?? ({} as IDetailItem)
 
   return (
     <>
@@ -110,7 +111,12 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
         <div style={{ marginBottom: '0.4rem' }}>
           <h1 style={{ fontSize: 25, color: '#4F5172' }}>{headerName}</h1>
         </div>
+
         <hr style={{ marginBottom: '0.9rem', borderTop: '2px solid #A8CFEB' }} />
+
+        {rj_remakeDatail && (
+          <p className="text-xl">Los registros con (*) quedan sin efecto por Resolución Jefatural {rj_remakeDatail?.document}.</p>
+        )}
 
         {/* <div>
           <p style={{ color: "rgb(256,188,28)" }}>

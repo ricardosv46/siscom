@@ -72,7 +72,6 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
       setLoading(false)
     }
   }
-  console.log({ props })
   const disabledShow = props?.arrayNoti[0]?.id === item.id
   return (
     <div className={`${par ? '' : 'flex-row-reverse'} mb-8 flex  justify-between items-center w-full right-timeline`}>
@@ -83,9 +82,8 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
       </div>
 
       <div
-        className={`${
-          !is_hidden ? 'bg-white' : rj_remake ? 'bg-gray-200' : 'bg-gray-400'
-        }     relative order-1 border-t-4 border-[#A8CFEB]  rounded-lg shadow-xl w-5/12 px-6 py-4`}>
+        className={`${!is_hidden ? 'bg-white' : 'bg-gray-200'}
+            relative order-1 border-t-4 border-[#A8CFEB]  rounded-lg shadow-xl w-5/12 px-6 py-4 `}>
         {par && (
           <div className="flex justify-start w-full">
             <div className="relative">
@@ -105,6 +103,7 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
             </div>
           </div>
         )}
+        {rj_remake && <p className="absolute text-6xl font-bold text-right top-1 right-5">*</p>}
         <h3 className="font-bold text-gray-500 text-x">Tipo Registro: {tracking_action}</h3>
         <h3 className="font-bold text-gray-500 text-x">Fecha: {start_at}</h3>
         <h3 className="font-bold text-gray-500 text-x">Creado por: {current_responsible} </h3>
