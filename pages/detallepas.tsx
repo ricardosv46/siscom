@@ -96,9 +96,8 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
   const onGotoBack = (page: string) => {
     router.push({ pathname: page })
   }
-  console.log({ detail })
   const rj_remakeDatail = (numero && detail?.filter((item) => item.rj_type === 'REHACER' && item.rj_remake)[0]) ?? ({} as IDetailItem)
-
+  console.log({ rj_remakeDatail })
   return (
     <>
       <Head>
@@ -114,7 +113,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
 
         <hr style={{ marginBottom: '0.9rem', borderTop: '2px solid #A8CFEB' }} />
 
-        {rj_remakeDatail && (
+        {rj_remakeDatail?.document && (
           <p className="text-xl">Los registros con (*) quedan sin efecto por Resolución Jefatural {rj_remakeDatail?.document}.</p>
         )}
 

@@ -715,7 +715,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           <div className="w-1/2 py-5">
             <div className="grid items-center grid-cols-2 gap-5 mb-5">
               <label htmlFor="monto" className="text-gray-600">
-                Monto:
+                Monto en UIT:
               </label>
               <div className="flex mt-1">
                 <div className="flex items-center gap-1">

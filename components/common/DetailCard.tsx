@@ -45,6 +45,7 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
     rj_type,
     is_hidden,
     rj_remake,
+    rj_amount,
     months,
     days
   } = item
@@ -111,6 +112,7 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
         {related_document && <h3 className="font-bold text-gray-500 text-x">Tipo documento: {related_document} </h3>}
         {document && <h3 className="font-bold text-gray-500 text-x">Documento: {document} </h3>}
         {rj_type && <h3 className="font-bold text-gray-500 text-x">Tipo RJ: {rj_type} </h3>}
+        {rj_type === 'SANCION' && <h3 className="font-bold text-gray-500 text-x">Monto en UIT: {rj_amount} </h3>}
         {rj_type === 'AMPLIACION' && (
           <h3 className="font-bold text-gray-500 text-x">
             Plazo de ampliación: {months} Meses - {days} Dias
