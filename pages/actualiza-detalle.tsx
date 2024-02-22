@@ -134,7 +134,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       setRj_type(itemprop?.rj_type === null ? '' : itemprop?.rj_type)
       setMonths(itemprop?.months)
       setDays(itemprop?.days)
-      setRj_amount(itemprop?.rj_amount)
+      setRj_amount(String(itemprop?.rj_amount))
     } else {
       router.push('/detallepas')
     }
@@ -239,7 +239,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         formData.set('days', String(days))
       }
       if (rj_type === 'SANCION') {
-        formData.set('amount', String(rj_amount.replaceAll(',', '')))
+        formData.set('amount', String(rj_amount?.replaceAll(',', '')))
       }
 
       try {
