@@ -73,7 +73,8 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
       setLoading(false)
     }
   }
-  const disabledShow = props?.arrayNoti[0]?.id === item.id
+  const disabledShow = props?.arrayNoti[0]?.id === item.id || rj_type === 'REHACER'
+
   return (
     <div className={`${par ? '' : 'flex-row-reverse'} mb-8 flex  justify-between items-center w-full right-timeline`}>
       <div className="order-1 w-5/12"></div>
@@ -127,14 +128,16 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
 
         <br></br>
         <div className="flex gap-5">
-          <Button
-            type="dashed"
-            hidden={idx === 0 || !user?.is_admin}
-            disabled={is_hidden || estado === 'inactive'}
-            icon={<EditOutlined />}
-            onClick={() => onGoDetail('/actualiza-detalle', { item, detailEmi: props.detailEmi, arrayNoti: props.arrayNoti })}>
-            Editar
-          </Button>
+          {rj_type !== 'REHACER' && (
+            <Button
+              type="dashed"
+              hidden={idx === 0 || !user?.is_admin}
+              disabled={is_hidden || estado === 'inactive'}
+              icon={<EditOutlined />}
+              onClick={() => onGoDetail('/actualiza-detalle', { item, detailEmi: props.detailEmi, arrayNoti: props.arrayNoti })}>
+              Editar
+            </Button>
+          )}
           {!disabledShow && (
             <>
               {idx === 0 || !user?.is_admin ? (

@@ -711,7 +711,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
-        {user.is_admin && rj_type === 'SANCION' && (
+        {(user.is_admin || responsable_actual === 'JN') && rj_type === 'SANCION' && (
           <div className="w-1/2 py-5">
             <div className="grid items-center grid-cols-2 gap-5 mb-5">
               <label htmlFor="monto" className="text-gray-600">
