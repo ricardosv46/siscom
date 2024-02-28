@@ -1459,7 +1459,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               <p className="w-[130px]">Adjuntar archivo :</p>{' '}
               {/* <Input className="flex-1" value={motive} onChange={(e) => setMotive(e.target.value)} /> */}
               {!file && (
-                <Upload beforeUpload={beforeUpload} onChange={handleFileChange} showUploadList={false} accept=".xls,.xlsx,.doc,.docx">
+                <Upload beforeUpload={beforeUpload} onChange={handleFileChange} showUploadList={false}>
+                  {/* accept=".xls,.xlsx,.doc,.docx" */}
                   <Button icon={<UploadOutlined />}>Seleccionar Archivo…</Button>
                 </Upload>
               )}
