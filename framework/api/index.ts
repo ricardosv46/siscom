@@ -203,9 +203,11 @@ const api = {
                 'DNI_CANDIDATO',
                 'TIPO_DOC_EMITIDO',
                 'NRO_DOC_EMITIDO',
+                'ACTUAL_RESPONSABLE',
                 'NUEVO_RESPONSABLE',
                 'ERROR'
               ]
+              console.log({ response })
               for (let i = 0; i < response.data.length; i++) {
                 dataExcel.push({
                   fila: response.data[i].FILA,
@@ -214,6 +216,7 @@ const api = {
                   dni_candidato: response.data[i].DNI_CANDIDATO,
                   tipo_doc_emitido: response.data[i].TIPO_DOC_EMITIDO,
                   nro_doc_emitido: response.data[i].NRO_DOC_EMITIDO,
+                  actual_responsable: response.data[i].ACTUAL_RESPONSABLE,
                   nuevo_responsable: response.data[i].NUEVO_RESPONSABLE,
                   error: response.data[i].ERROR
                 })

@@ -44,6 +44,8 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
     register_user,
     rj_type,
     is_hidden,
+    rj_remake,
+    rj_amount,
     months,
     days
   } = item
@@ -71,8 +73,8 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
       setLoading(false)
     }
   }
-  console.log({ props })
-  const disabledShow = props?.arrayNoti[0]?.id === item.id
+  const disabledShow = props?.arrayNoti[0]?.id === item.id || rj_type === 'REHACER'
+
   return (
     <div className={`${par ? '' : 'flex-row-reverse'} mb-8 flex  justify-between items-center w-full right-timeline`}>
       <div className="order-1 w-5/12"></div>
@@ -82,9 +84,8 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
       </div>
 
       <div
-        className={`${
-          !is_hidden ? 'bg-white' : 'bg-gray-200'
-        } relative order-1 border-t-4 border-[#A8CFEB]  rounded-lg shadow-xl w-5/12 px-6 py-4`}>
+        className={`${!is_hidden ? 'bg-white' : 'bg-gray-200'}
+            relative order-1 border-t-4 border-[#A8CFEB]  rounded-lg shadow-xl w-5/12 px-6 py-4 `}>
         {par && (
           <div className="flex justify-start w-full">
             <div className="relative">
@@ -104,6 +105,7 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
             </div>
           </div>
         )}
+        {rj_remake && <p className="absolute text-6xl font-bold text-right top-1 right-5">*</p>}
         <h3 className="font-bold text-gray-500 text-x">Tipo Registro: {tracking_action}</h3>
         <h3 className="font-bold text-gray-500 text-x">Fecha: {start_at}</h3>
         <h3 className="font-bold text-gray-500 text-x">Creado por: {current_responsible} </h3>
@@ -111,6 +113,7 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
         {related_document && <h3 className="font-bold text-gray-500 text-x">Tipo documento: {related_document} </h3>}
         {document && <h3 className="font-bold text-gray-500 text-x">Documento: {document} </h3>}
         {rj_type && <h3 className="font-bold text-gray-500 text-x">Tipo RJ: {rj_type} </h3>}
+        {rj_type === 'SANCION' && <h3 className="font-bold text-gray-500 text-x">Monto en UIT: {rj_amount} </h3>}
         {rj_type === 'AMPLIACION' && (
           <h3 className="font-bold text-gray-500 text-x">
             Plazo de ampliación: {months} Meses - {days} Dias
@@ -125,14 +128,16 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
 
         <br></br>
         <div className="flex gap-5">
-          <Button
-            type="dashed"
-            hidden={idx === 0 || !user?.is_admin}
-            disabled={is_hidden || estado === 'inactive'}
-            icon={<EditOutlined />}
-            onClick={() => onGoDetail('/actualiza-detalle', { item, detailEmi: props.detailEmi, arrayNoti: props.arrayNoti })}>
-            Editar
-          </Button>
+          {rj_type !== 'REHACER' && (
+            <Button
+              type="dashed"
+              hidden={idx === 0 || !user?.is_admin}
+              disabled={is_hidden || estado === 'inactive'}
+              icon={<EditOutlined />}
+              onClick={() => onGoDetail('/actualiza-detalle', { item, detailEmi: props.detailEmi, arrayNoti: props.arrayNoti })}>
+              Editar
+            </Button>
+          )}
           {!disabledShow && (
             <>
               {idx === 0 || !user?.is_admin ? (
