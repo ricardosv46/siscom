@@ -169,6 +169,16 @@ const api = {
         link.remove()
       }
     },
+    downloadReportePass: async (electoral_process: string, estado: string, ) => {
+        const {
+          data: { data, message, success }
+        }: IResponseProcesses = await apiService.get(`/processes/download/?electoral_process=${electoral_process}&estado=${estado}`)
+        if (data === undefined || success === undefined || message === undefined) {
+          return { processes: [] }
+        } else {
+          return {  data, message, success }
+        }
+    },
     loadExcelInformation: async (excelFile: any, refetch: () => void) => {
       const tok = GetTokenAuthService()
       if (tok) {

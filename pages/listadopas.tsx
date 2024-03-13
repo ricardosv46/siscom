@@ -846,6 +846,56 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     }
   ]
 
+  const reportePAS = async()=>{
+    console.log({process,dataProccess});
+    
+      const instance = Modal.info({
+        title: 'Cargando',
+        content: (
+          <div>
+            <p>Espere mientras termine la descarga...</p>
+          </div>
+        ),
+        onOk() {},
+        okButtonProps: { disabled: true, style: { backgroundColor: '#0874cc', display: 'none' } },
+        centered: true
+      })
+
+      if (process?.length === 0) {
+        instance.destroy()
+
+        const excelVacio = Modal.info({
+          content: (
+            <div>
+              <p>No hay registros para descargar</p>
+            </div>
+          ),
+          centered: true,
+          onOk() {
+            excelVacio.destroy()
+          }
+        })
+
+        return
+      }
+
+      // ExportExcel(inputValue ? filterData : process);
+      // console.log({process,dataProccess});
+      try {
+      const res = await api.listpas.downloadReportePass(IdSelectedProcess,'all' )
+      const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory:res?.data })
+
+      ExportExcel(dataFilter)
+      instance.destroy()
+
+      } catch (error) {
+      instance.destroy()
+        
+      }
+      
+  }
+
+
   const clearFilters = async () => {
     setDate('')
     setOperationSelectedOption('')
@@ -855,6 +905,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     setEstadoRj('')
     processApi(IdSelectedProcess, 'all')
   }
+  
   const dataOptionsSelect =
     new Date(localStorage.getItem('IdSelectedYear')!).valueOf() < new Date('2022').valueOf() ? optionsEstado : optionsEstado.slice(0, -1)
 
@@ -1049,42 +1100,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                     marginRight: '10px',
                     cursor: 'pointer'
                   }}
-                  onClick={async () => {
-                    const instance = Modal.info({
-                      title: 'Cargando',
-                      content: (
-                        <div>
-                          <p>Espere mientras termine la descarga...</p>
-                        </div>
-                      ),
-                      onOk() {},
-                      okButtonProps: { disabled: true, style: { backgroundColor: '#0874cc', display: 'none' } },
-                      centered: true
-                    })
-
-                    if (process?.length === 0) {
-                      instance.destroy()
-
-                      const excelVacio = Modal.info({
-                        content: (
-                          <div>
-                            <p>No hay registros para descargar</p>
-                          </div>
-                        ),
-                        centered: true,
-                        onOk() {
-                          excelVacio.destroy()
-                        }
-                      })
-
-                      return
-                    }
-
-                    // ExportExcel(inputValue ? filterData : process);
-                    ExportExcel(process)
-
-                    instance.destroy()
-                  }}>
+                  onClick={reportePAS}>
                   <img src="assets/images/reporte_pas.svg" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
                   <span style={{ fontSize: '16px' }}>Reporte PAS</span>
                 </Button>
