@@ -1,12 +1,5 @@
-const IconOnpe = ({...props}) => (
-  <svg
-    width={146}
-    height={88}
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 146 88"
-    {...props}
-  >
+const IconOnpe = ({ ...props }) => (
+  <svg width={146} height={88} fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146 88" {...props}>
     <path
       d="M93.537 15.634a29.947 29.947 0 0 1-1.248 2.533.475.475 0 0 1-.882-.227s-.079-.481-.18-1.076l6.097 37.77-26.16 3.786.382 2.36 28.612-4.122-6.621-41.024Z"
       fill="#8C8B8B"
@@ -26,4 +19,4 @@ const IconOnpe = ({...props}) => (
   </svg>
 )
 
-export default IconOnpe
+export { IconOnpe }

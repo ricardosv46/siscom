@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-import IconOnpe from '@components/icons/IconOnpe'
+import { IconOnpe } from '@components/icons'
 import Head from 'next/head'
 import { Button, Form, Input, Modal } from 'antd'
 import { useRouter } from 'next/router'

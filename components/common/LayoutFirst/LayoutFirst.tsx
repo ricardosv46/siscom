@@ -29,7 +29,6 @@ import {
   FileSearchOutlined,
   BarChartOutlined
 } from '@ant-design/icons'
-import IconOnpe from '@components/icons/IconOnpe'
 import { ModalDrawer } from '@components/ui'
 import { useRouter } from 'next/router'
 import { useUI } from '@components/ui/context'
@@ -37,6 +36,7 @@ import { NextApiRequest } from 'next'
 import { apiService } from 'services/axios/configAxios'
 import useAuthStore from 'store/auth/auth'
 import useMenuStore from 'store/menu/menu'
+import { IconOnpe } from '@components/icons'
 //import { RemoveSessionAuthService } from "services/auth/ServiceAuth";
 
 const { Header, Content, Footer, Sider } = Layout
@@ -68,12 +68,19 @@ const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
   const { storeUser, removeSession, user } = useAuthStore()
   const profile = user?.profile?.toUpperCase()
   const { IdSelectedProcess, getStateSelectedProcess, changeStateSelectedProcess } = useMenuStore()
-
   const menuOptions = IdSelectedProcess ? menu : menu_initial
   const items: any = menuOptions.map((item, _) => {
     if (profile == 'ADMIN') {
       return (
         item.role == 'admin' && {
+          key: item.key,
+          icon: createElement(icons[item.icon]),
+          label: `${item.label}`
+        }
+      )
+    } else if (profile == 'GAD') {
+      return (
+        item.role == 'gad' && {
           key: item.key,
           icon: createElement(icons[item.icon]),
           label: `${item.label}`
@@ -158,9 +165,9 @@ const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
           <div className="flex flex-col">
             {items
               .filter((item: any) => item !== false)
-              .map((item: any) => (
+              .map((item: any, i: number) => (
                 <button
-                  key={item.key}
+                  key={i}
                   onClick={() => handleMenu({ key: item.key })}
                   className={`${router.pathname === item.key ? 'text-[#1890ff]' : ''} ${
                     `/${item.key}` === router.pathname ? 'text-[#1890ff]' : ''

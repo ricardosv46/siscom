@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 import 'moment/locale/es'
 import { Button, Modal } from 'antd'
 import useMenuStore from 'store/menu/menu'
+import useAuthStore from 'store/auth/auth'
 
 interface ProcesosProps {
   pageNum: number
@@ -28,7 +29,8 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
   const [procesoSelectedOption, setProcesoSelectedOption] = useState('')
   const [options, setOptions] = useState([])
   const [optionsYear, setOptionsYear] = useState([])
-  const [processGlobal, setProcessGlobal] = useState('')
+  const { user } = useAuthStore()
+  const profile = user?.profile?.toUpperCase()
   const { changeStateSelectedProcess } = useMenuStore()
   const listProcessApi = async (año: any) => {
     const { data } = await api.processes.getProcesses(año)
@@ -61,7 +63,11 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
     }
     localStorage.setItem('IdSelectedYear', añoSelectedOption)
     changeStateSelectedProcess(procesoSelectedOption)
-    router.push('/')
+    if (profile === 'GAD') {
+      router.push('/listadopasgad')
+    } else {
+      router.push('/')
+    }
   }
 
   const handleChange = async (event: { target: { value: any } }) => {
