@@ -91,12 +91,12 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
       </Head>
 
       <Card title="Listado de personal de ODPE">
-        <div style={{ marginBottom: '0.4rem' }}>
-          <h2 style={{ fontSize: 25, color: '#4F5172' }}>Seleccionar proceso a revisar:</h2>
-          <hr style={{ marginBottom: '0.9rem', borderTop: '2px solid #A8CFEB' }} />
+        <div className="mb-[0.4rem]">
+          <h2 className="text-2xl text-[#4F5172]">Seleccionar proceso a revisar:</h2>
+          <hr className="mb-[0.9rem] border-2 border-[#A8CFEB]" />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div style={{ display: 'flex', marginRight: '40px' }}>
+        <div className="flex items-center">
+          <div className="flex mr-10">
             <select
               name="nieve"
               className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}

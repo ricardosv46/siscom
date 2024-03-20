@@ -821,8 +821,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   ]
 
   const reportePAS = async () => {
-    console.log({ process, dataProccess })
-
     const instance = Modal.info({
       title: 'Cargando',
       content: (

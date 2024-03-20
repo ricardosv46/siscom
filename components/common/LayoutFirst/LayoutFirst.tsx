@@ -143,7 +143,6 @@ const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
     return <div></div>
   }
 
-  console.log({ items })
   return (
     <>
       {contextHolder}

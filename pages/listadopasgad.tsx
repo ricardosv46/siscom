@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { Table, DatePicker, Input, Select } from 'antd'
+import { Table, DatePicker, Input, Select, Upload, UploadFile, Modal } from 'antd'
 import React, { ReactElement, useEffect, useMemo, useState } from 'react'
 import { LayoutFirst } from '@components/common'
 import { NextPageWithLayout } from 'pages/_app'
@@ -15,6 +15,8 @@ import locale from 'antd/lib/date-picker/locale/es_ES'
 import { IconCalculator, IconEye, IconPen } from '@components/icons'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
+import { ExportExcel } from '@components/ui/ExportExcel/ExportExcel'
+import useAuthStore from 'store/auth/auth'
 moment.locale('es')
 const { RangePicker } = DatePicker
 
@@ -166,6 +168,7 @@ const optionsTypeProcess = [
 
 const Listadopas: NextPageWithLayout = () => {
   const { IdSelectedProcess } = useMenuStore()
+  const { user } = useAuthStore()
   const [search, setSearch] = useState('')
   const [date, setDate] = useState<any>('')
   const [dateStrings, setDateStrings] = useState<string[]>([])
@@ -173,11 +176,13 @@ const Listadopas: NextPageWithLayout = () => {
   const [responsable, setResponsable] = useState('all')
   const [processesFilter, setProcessesFilter] = useState([])
   const [type, setType] = useState('')
+  const [file, setFile] = useState<UploadFile | null>()
   const router = useRouter()
   const {
     data: processes,
     isLoading,
-    isError
+    isError,
+    refetch
   } = useQuery({
     queryKey: ['processes'],
     queryFn: () => getApi(),
@@ -255,8 +260,206 @@ const Listadopas: NextPageWithLayout = () => {
     setResponsable(valueResponsabLe)
   }
 
-  function handleCheckboxChange(valueType: string) {
+  const handleCheckboxChange = (valueType: string) => {
     setType(valueType)
+  }
+
+  const reportePAS = async () => {
+    const instance = Modal.info({
+      title: 'Cargando',
+      content: (
+        <div>
+          <p>Espere mientras termine la descarga...</p>
+        </div>
+      ),
+      onOk() {},
+      okButtonProps: { disabled: true, style: { backgroundColor: '#0874cc', display: 'none' } },
+      centered: true
+    })
+
+    if (processes?.length === 0) {
+      instance.destroy()
+
+      const excelVacio = Modal.info({
+        content: (
+          <div>
+            <p>No hay registros para descargar</p>
+          </div>
+        ),
+        centered: true,
+        onOk() {
+          excelVacio.destroy()
+        }
+      })
+
+      return
+    }
+
+    try {
+      const res = await api.listpas.downloadReportePass(IdSelectedProcess, 'all')
+      const dataFilter = filterUpdate({ search, estado, responsable, type, memory: res?.data })
+
+      ExportExcel(dataFilter)
+      instance.destroy()
+    } catch (error) {
+      instance.destroy()
+    }
+  }
+
+  const descargarExcel = async () => {
+    const instance = Modal.info({
+      title: 'Cargando',
+      content: (
+        <div>
+          <p>Espere mientras termine la descarga...</p>
+        </div>
+      ),
+      onOk() {},
+      okButtonProps: { disabled: true, style: { backgroundColor: '#0874cc', display: 'none' } },
+      centered: true
+    })
+
+    let dataExcel: any[] = []
+    processes?.map((item: any) => {
+      dataExcel.push(item.numero)
+    })
+
+    if (dataExcel?.length === 0) {
+      instance.destroy()
+
+      const excelVacio = Modal.info({
+        content: (
+          <div>
+            <p>No hay registros para descargar</p>
+          </div>
+        ),
+        centered: true,
+        onOk() {
+          excelVacio.destroy()
+        }
+      })
+
+      return
+    }
+
+    await api.listpas.downloadExcelInformation(dataExcel)
+
+    instance.destroy()
+  }
+
+  const handleFileChange = async (info: { file: UploadFile }) => {
+    try {
+      if (info.file) {
+        processFile(info.file)
+        // Puedes realizar acciones adicionales después de cargar el archivo, si es necesario
+        console.log('Archivo cargado correctamente:', info.file)
+      }
+    } catch (error) {
+      console.log({ error })
+    }
+  }
+
+  const beforeUpload = (file: UploadFile) => {
+    const isExcel =
+      file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.type === 'application/vnd.ms-excel'
+    if (!isExcel) {
+      console.log({ isExcel })
+      // message.error(`${file.name} no es un archivo Excel`);
+    }
+    setFile(file)
+    return false // Retornar false para evitar la carga automática
+  }
+  const loadExcelApi = async (excelFile: any) => {
+    const instanceProcesando = Modal.info({
+      title: 'Procesando',
+      content: (
+        <div>
+          <p>Espere mientras termine la carga...</p>
+        </div>
+      ),
+      okButtonProps: { hidden: true },
+      centered: true
+    })
+
+    const res = await api.listpas.validateFile({ excelFile, id: user.id })
+
+    if (res?.data?.message === '1') {
+      instanceProcesando.destroy()
+      const instance = Modal.confirm({
+        icon: '',
+        content: (
+          <div>
+            <p>El excel contiene registros de finalizaciones de procedimientos PAS. ¿Desea continuar?</p>
+          </div>
+        ),
+        okText: 'Si',
+        cancelText: 'No',
+        async onOk() {
+          instance.destroy()
+          await api.listpas.loadExcelInformation(excelFile, async () => {
+            refetch()
+          })
+        },
+        async onCancel() {
+          instance.destroy()
+        },
+        okButtonProps: { style: { backgroundColor: '#0874cc' } },
+        centered: true
+      })
+    }
+
+    if (res?.data?.message === '2') {
+      instanceProcesando.destroy()
+      const instance = Modal.info({
+        icon: '',
+        content: (
+          <div>
+            <p>Su usuario no tiene permitido realizar registro de finalizaciones de procedimientos PAS</p>
+          </div>
+        ),
+        onOk() {
+          instance.destroy()
+        },
+        okButtonProps: { style: { backgroundColor: '#0874cc' } },
+        centered: true
+      })
+    }
+
+    if (res?.data?.message === '3') {
+      instanceProcesando.destroy()
+      await api.listpas.loadExcelInformation(excelFile, async () => {
+        refetch()
+      })
+    }
+  }
+
+  function processFile(plainFile: any) {
+    if (plainFile.type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+      const instance = Modal.info({
+        title: 'Error',
+        content: (
+          <div>
+            <p>Solo se permite cargar archivos Excel</p>
+          </div>
+        ),
+        onOk() {
+          instance.destroy()
+        },
+        centered: true
+      })
+
+      return
+    }
+    loadExcelApi(plainFile)
+    // clear()
+  }
+
+  const clearFilters = async () => {
+    setSearch('')
+    setEstado('')
+    setResponsable('all')
+    setType('')
+    setDateStrings([])
   }
 
   const dataResponsable = useMemo(() => {
@@ -355,18 +558,20 @@ const Listadopas: NextPageWithLayout = () => {
               <RangePicker locale={locale} value={date} onChange={onChangeDate} disabledDate={disabledDate} />
             </div>
             <div className="flex gap-3">
-              <button className="flex items-center justify-center p-2 bg-[#083474]  text-white " onClick={() => {}}>
+              <button className="flex items-center justify-center p-2 bg-[#083474]  text-white " onClick={clearFilters}>
                 <span className="text-base">Limpiar Filtros</span>
               </button>
-              <button className="flex items-center justify-center p-2 bg-[#78bc44] text-white" onClick={() => {}}>
-                <img src="assets/images/cargar.svg" className="w-6 h-6" />
-                <span className="text-base">Cargar Información</span>
-              </button>
-              <button className="flex items-center justify-center p-2 bg-[#083474]  text-white cursor-pointer" onClick={() => {}}>
+              <Upload beforeUpload={beforeUpload} onChange={handleFileChange} multiple={false} showUploadList={false} accept=".xls,.xlsx">
+                <button className="flex items-center justify-center p-2 bg-[#78bc44] text-white">
+                  <img src="assets/images/cargar.svg" className="w-6 h-6" />
+                  <span className="text-base">Cargar Información</span>
+                </button>
+              </Upload>
+              <button className="flex items-center justify-center p-2 bg-[#083474]  text-white cursor-pointer" onClick={reportePAS}>
                 <img src="assets/images/reporte_pas.svg" className="w-6 h-6" />
                 <span className="text-base">Reporte PAS</span>
               </button>
-              <button className="flex items-center justify-center p-2 bg-[#0874cc] text-white" onClick={() => {}}>
+              <button className="flex items-center justify-center p-2 bg-[#0874cc] text-white" onClick={descargarExcel}>
                 <img src="assets/images/icono_detalle.svg" className="w-6 h-6" />
                 <span className="text-base">Detalle</span>
               </button>
