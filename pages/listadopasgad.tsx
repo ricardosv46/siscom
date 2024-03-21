@@ -17,6 +17,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { ExportExcel } from '@components/ui/ExportExcel/ExportExcel'
 import useAuthStore from 'store/auth/auth'
+import Link from 'next/link'
 moment.locale('es')
 const { RangePicker } = DatePicker
 
@@ -138,9 +139,11 @@ const columns = [
     key: 'acciones',
     render: (_: any, item: any) => (
       <div className="flex items-center justify-center gap-2">
-        <button className="text-[#76BD43] w-[110px] flex items-center gap-1">
-          <IconPen /> Tipo de pagoF
-        </button>
+        <Link href={`/typepay?id=${item?.numero}`}>
+          <button className="text-[#76BD43] w-[110px] flex items-center gap-1">
+            <IconPen /> Tipo de pago
+          </button>
+        </Link>
         <button className="text-[#828282] w-[130px] flex items-center gap-1">
           <IconCalculator /> Registro de pago
         </button>
@@ -191,8 +194,32 @@ const Listadopas: NextPageWithLayout = () => {
   })
 
   const getApi = async () => {
-    const { processes } = await api.listpas.getProcesses(IdSelectedProcess, 'all')
-    return processes
+    const filters1 = {
+      departamentos: [],
+      provincias: [],
+      distritos: [],
+      ops: [],
+      cargos: [],
+      proceso_electoral: IdSelectedProcess,
+      filter: 'rj_sancion',
+      tipo_pas: 'CANDIDATO'
+    }
+
+    const filters2 = {
+      departamentos: [],
+      provincias: [],
+      distritos: [],
+      ops: [],
+      cargos: [],
+      proceso_electoral: IdSelectedProcess,
+      filter: 'rj_sancion',
+      tipo_pas: 'OP'
+    }
+
+    const { data: cadidates } = await api.estadistica.listPas(filters1)
+    const { data: ops } = await api.estadistica.listPas(filters2)
+
+    return [...cadidates, ...ops]
   }
 
   const getApiProcessesByDate = async (start_at: string, end_at: string) => {
@@ -466,7 +493,7 @@ const Listadopas: NextPageWithLayout = () => {
     if (!processes) {
       return []
     }
-    const uniqueArr = Array.from(new Set(processes.map((item) => item.responsable)))
+    const uniqueArr = Array.from(new Set(processes.map((item: any) => item.responsable)))
       .map((responsable) => ({
         value: responsable,
         label: responsable

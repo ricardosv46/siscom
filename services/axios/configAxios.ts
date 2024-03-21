@@ -10,6 +10,7 @@ export const apiService = axios.create({
 apiService.interceptors.request.use(
   function (config) {
     const token = localStorage.getItem('token')
+    console.log({ token })
     if (token) {
       config.headers['x-access-tokens'] = token
     }

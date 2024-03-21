@@ -1,5 +1,6 @@
 import { Status, responseLogin } from '@framework/types'
 import {
+  IPayment,
   IResponseAnexos,
   IResponseAnexosDetail,
   IResponseProcesses,
@@ -23,6 +24,19 @@ const api = {
       data: { data, message, success }
     }: responseLogin = await authService.post(`login/`, body)
     return { data, message, success }
+  },
+  payments: {
+    getAmount: async (id: string) => {
+      const tok = GetTokenAuthService()
+      if (tok) {
+        const {
+          data: { data, message, success }
+        }: IPayment = await apiService.get(`payments/type-payment/process/${id}/amount/`)
+        return { data, message, success }
+      } else {
+        return { data: { rj_amount: 0 } }
+      }
+    }
   },
   home: {
     getProcessesGrouped: async (savedProcess: any) => {
