@@ -9,6 +9,14 @@ import { useQuery } from '@tanstack/react-query'
 import api from '@framework/api'
 import { convertNumber } from 'utils/helpers'
 
+export interface FormDataTypePay {
+  amount: string
+  typePay: string
+  discount: string
+  cuotes: string
+  initialCuote: string
+  showModal: boolean
+}
 const optionsTypePay = [
   {
     value: 'Pronto pago',
@@ -32,21 +40,16 @@ const TypePay: NextPageWithLayout = ({}) => {
   const router = useRouter()
   const id: string = String(router?.query?.id ?? '')
 
-  // const [currentAmount, setCurrentAmount] = useState('5')
-  // const [typePay, setTypePay] = useState('Pronto pago')
-  // const [initialCuote, setInitialCuote] = useState('')
-
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormDataTypePay>({
     amount: '',
     typePay: 'Pronto pago',
     discount: '25%',
-    cuotes: 1,
+    cuotes: '1',
     initialCuote: '',
-    showModal: false,
-    showModalError: false
+    showModal: false
   })
 
-  const { amount, typePay, discount, cuotes, initialCuote, showModal, showModalError } = formData
+  const { amount, typePay, discount, cuotes, initialCuote, showModal } = formData
 
   const {
     data: initialAmount,
@@ -86,8 +89,6 @@ const TypePay: NextPageWithLayout = ({}) => {
     }
   }, [initialAmount, isLoading])
 
-  console.log({ initialAmount, amount, typePay, discount, cuotes, initialCuote, showModal })
-
   useEffect(() => {
     if (!initialAmount?.data?.rj_amount) {
       return
@@ -110,7 +111,7 @@ const TypePay: NextPageWithLayout = ({}) => {
 
   useEffect(() => {
     if (typePay === 'Fraccionamiento') {
-      setFormData((prev) => ({ ...prev, cuotes: 1, initialCuote: '' }))
+      setFormData((prev) => ({ ...prev, cuotes: '1', initialCuote: '' }))
     }
 
     if (typePay === 'Pago a cuenta') {
@@ -120,10 +121,6 @@ const TypePay: NextPageWithLayout = ({}) => {
       setFormData((prev) => ({ ...prev, amount: '' }))
     }
   }, [typePay])
-
-  // const reloadForm = () => {
-  //   setFormData((prev) => ({ ...prev, amount: '' }))
-  // }
 
   const disableButton = () => {
     if (typePay === 'Pronto pago' || typePay === 'Pago total') {
@@ -139,9 +136,19 @@ const TypePay: NextPageWithLayout = ({}) => {
     }
   }
 
-  const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault()
     setFormData((prev) => ({ ...prev, showModal: true }))
+  }
+
+  const handleOk = async () => {
+    try {
+      await api.payments.create(formData, id)
+      router.push('/listadopasgad')
+      setFormData((prev) => ({ ...prev, showModal: false }))
+    } catch (error) {
+      console.log({ error })
+    }
   }
 
   return (
@@ -205,11 +212,12 @@ const TypePay: NextPageWithLayout = ({}) => {
                 <label htmlFor="tipo" className="text-gray-600">
                   Cuotas
                 </label>
-                <InputNumber
-                  min={1}
+                <Input
                   className="w-[200px] border-[#69B2E8]text-center"
                   value={cuotes}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, cuotes: Number(e) }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, cuotes: convertNumber(e.target.value, 0).replaceAll(',', '').replaceAll('.', '') }))
+                  }
                 />
               </div>
             </div>
@@ -332,7 +340,7 @@ const TypePay: NextPageWithLayout = ({}) => {
         // title={<p style={{ textAlign: "center", fontWeight: "bold" }}>Confirmar</p>}
         centered
         onCancel={() => setFormData((prev) => ({ ...prev, showModal: false }))}
-        onOk={() => setFormData((prev) => ({ ...prev, showModal: false }))}
+        onOk={handleOk}
         okText="Confirmar"
         cancelText="Cancelar"
         okButtonProps={{

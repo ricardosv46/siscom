@@ -34,7 +34,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
   const [formData, setFormData] = useState({
     formPay: '',
     amountPaid: '',
-    cuotes: 1,
+    cuotes: '1',
     ticket: '',
     bank: '',
     date: ''
@@ -89,11 +89,12 @@ const RegisterPay: NextPageWithLayout = ({}) => {
               Número de cuota
             </label>
 
-            <InputNumber
-              min={1}
+            <Input
               className="w-[200px] border-[#69B2E8]text-center"
               value={cuotes}
-              onChange={(e) => setFormData((prev) => ({ ...prev, cuotes: Number(e) }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, cuotes: convertNumber(e.target.value, 0).replaceAll(',', '').replaceAll('.', '') }))
+              }
             />
           </div>
         </div>

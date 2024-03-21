@@ -17,6 +17,7 @@ import { utils, writeFile } from 'xlsx'
 
 import { GetAuthService } from 'services/auth/ServiceAuth'
 import { Modal } from 'antd'
+import { FormDataTypePay } from 'pages/typepay'
 
 const api = {
   login: async (body: any) => {
@@ -35,6 +36,41 @@ const api = {
         return { data, message, success }
       } else {
         return { data: { rj_amount: 0 } }
+      }
+    },
+    create: async (form: FormDataTypePay, process: string) => {
+      const tok = GetTokenAuthService()
+      if (tok) {
+        const formData = new FormData()
+
+        if (form?.typePay === 'Pronto pago' || form?.typePay === 'Pago total') {
+          formData.append('amount', form?.amount.replaceAll(',', ''))
+          formData.append('process_id', String(process))
+          formData.append('payment_type', form?.typePay)
+        }
+        if (form?.typePay === 'Fraccionamiento') {
+          formData.append('amount', form?.amount.replaceAll(',', ''))
+          formData.append('process_id', process)
+          formData.append('payment_type', form?.typePay)
+
+          formData.append('fee', form?.cuotes.replaceAll(',', ''))
+          formData.append('fee_initial', form?.initialCuote.replaceAll(',', ''))
+        }
+
+        if (form?.typePay === 'Pago a cuenta') {
+          formData.append('amount', form?.amount)
+          formData.append('process_id', String(process))
+          formData.append('payment_type', form?.typePay)
+
+          formData.append('amount_paid', form?.initialCuote.replaceAll(',', ''))
+        }
+
+        const {
+          data: { data, message, success }
+        }: IPayment = await apiService.post(`payments/type-payment/create/`, formData)
+        return { data, message, success }
+      } else {
+        return { data: {} }
       }
     }
   },

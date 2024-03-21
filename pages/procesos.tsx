@@ -39,7 +39,13 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
 
   const listYearApi = async () => {
     const { data } = await api.processes.getYear()
-    setOptionsYear(data)
+    if (profile === 'GAD') {
+      const newData = [...data]
+      newData.shift()
+      setOptionsYear(newData as any)
+    } else {
+      setOptionsYear(data)
+    }
   }
 
   useEffect(() => {
