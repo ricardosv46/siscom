@@ -58,7 +58,7 @@ const api = {
         }
 
         if (form?.typePay === 'Pago a cuenta') {
-          formData.append('amount', form?.amount)
+          formData.append('amount', form?.amount.replaceAll(',', ''))
           formData.append('process_id', String(process))
           formData.append('payment_type', form?.typePay)
 
