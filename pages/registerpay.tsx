@@ -3,28 +3,17 @@ import { LayoutFirst } from '@components/common'
 import { NextPageWithLayout } from 'pages/_app'
 import { Card } from '@components/ui'
 
-import { Input, InputNumber, Modal, Select } from 'antd'
+import { DatePicker, Input, InputNumber, Modal, Select, TimePicker } from 'antd'
 import { useRouter } from 'next/router'
 import { useQuery } from '@tanstack/react-query'
 import api from '@framework/api'
 import { convertNumber } from 'utils/helpers'
+import dayjs from 'dayjs'
 
 const optionsFormPay = [
   {
-    value: 'Pronto pago',
-    label: 'Pronto pago'
-  },
-  {
-    value: 'Fraccionamiento',
-    label: 'Fraccionamiento'
-  },
-  {
-    value: 'Pago a cuenta',
-    label: 'Pago a cuenta'
-  },
-  {
-    value: 'Pago total',
-    label: 'Pago total'
+    value: 'deposito',
+    label: 'DEPÓSITO'
   }
 ]
 
@@ -32,7 +21,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
   const router = useRouter()
 
   const [formData, setFormData] = useState({
-    formPay: '',
+    formPay: 'deposito',
     amountPaid: '',
     cuotes: '1',
     ticket: '',
@@ -61,7 +50,6 @@ const RegisterPay: NextPageWithLayout = ({}) => {
             </label>
 
             <Select
-              defaultValue="Pronto pago"
               value={formPay}
               onChange={(e) => setFormData((prev) => ({ ...prev, typePay: e }))}
               className="w-[200px] border-[#69B2E8]  "
@@ -90,6 +78,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
             </label>
 
             <Input
+              maxLength={3}
               className="w-[200px] border-[#69B2E8]text-center"
               value={cuotes}
               onChange={(e) =>
@@ -105,7 +94,6 @@ const RegisterPay: NextPageWithLayout = ({}) => {
               Nº de recibo / operación{' '}
             </label>
             <Input
-              disabled
               className="w-[200px] border-[#69B2E8]  text-center"
               value={ticket}
               onChange={(e) => setFormData((prev) => ({ ...prev, ticket: e.target.value }))}
@@ -119,7 +107,6 @@ const RegisterPay: NextPageWithLayout = ({}) => {
               Banco
             </label>
             <Input
-              disabled
               className="w-[200px] border-[#69B2E8]  text-center"
               value={bank}
               onChange={(e) => setFormData((prev) => ({ ...prev, bank: e.target.value }))}
@@ -131,12 +118,10 @@ const RegisterPay: NextPageWithLayout = ({}) => {
             <label htmlFor="tipo" className="text-gray-600">
               Fecha y hora del pago
             </label>
-            {/* <Input
-              disabled
-              className="w-[200px] border-[#69B2E8]  text-center"
-              value={ticket}
-              onChange={(e) => setFormData((prev) => ({ ...prev, ticket: e.target.value }))}
-            /> */}
+            <div className="flex gap-5">
+              <DatePicker className="w-32" format={'DD/MM/YYYY'} />
+              <TimePicker className="w-32" format={'HH:mm'} />
+            </div>
           </div>
         </div>
 

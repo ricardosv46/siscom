@@ -155,12 +155,12 @@ const api = {
         }: IResponseProcessesDetail = await apiService.get(`processes/${id}/tracking/`)
 
         if (data === undefined || success === undefined || message === undefined) {
-          return { data: [] }
+          return { processes: [] }
         } else {
           return { processes: data, message, success }
         }
       } else {
-        return { data: [] }
+        return { processes: [] }
       }
     },
 

@@ -144,12 +144,22 @@ const columns = [
             <IconPen /> Tipo de pago
           </button>
         </Link>
-        <button className="text-[#828282] w-[130px] flex items-center gap-1">
-          <IconCalculator /> Registro de pago
-        </button>
-        <button className="text-[#0073CF] w-[60px] flex items-center gap-1">
-          <IconEye /> Detalle
-        </button>
+
+        <Link href={`/registerpay?id=${item?.numero}`}>
+          <button className="text-[#828282] w-[130px] flex items-center gap-1">
+            <IconCalculator /> Registro de pago
+          </button>
+        </Link>
+
+        <Link href={`/detailpay?id=${item?.numero}`}>
+          <button
+            className="text-[#0073CF] w-[60px] flex items-center gap-1"
+            onClick={() => {
+              localStorage.setItem('itemDetailPay', JSON.stringify(item))
+            }}>
+            <IconEye /> Detalle
+          </button>{' '}
+        </Link>
       </div>
     )
   }

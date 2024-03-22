@@ -213,6 +213,7 @@ const TypePay: NextPageWithLayout = ({}) => {
                   Cuotas
                 </label>
                 <Input
+                  maxLength={3}
                   className="w-[200px] border-[#69B2E8]text-center"
                   value={cuotes}
                   onChange={(e) =>
