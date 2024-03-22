@@ -234,8 +234,8 @@ const Listadopas: NextPageWithLayout = () => {
 
   const getApiProcessesByDate = async (start_at: string, end_at: string) => {
     try {
-      const newData = await api.listpas.getProcessesByDate(IdSelectedProcess, 'all', start_at, end_at)
-      return newData
+      const { processes } = await api.listpas.getProcessesByDate(IdSelectedProcess, 'all', start_at, end_at)
+      return processes
     } catch (error) {
       return []
     }
