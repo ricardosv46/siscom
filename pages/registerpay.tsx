@@ -61,6 +61,14 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     }
   }
 
+  const disabledDate = (current: any) => {
+    // Obten la fecha actual
+    const today = new Date()
+
+    // Devuelve true si la fecha actual es mayor que la fecha seleccionada
+    return current && current > today
+  }
+
   const onChangeDate = (date: any, dateString: string) => {
     const parts = dateString.split('-')
     const datef = `${parts[2]}-${parts[1]}-${parts[0]}`
@@ -158,7 +166,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
               Fecha y hora del pago
             </label>
             <div className="flex gap-5">
-              <DatePicker className="w-32" format={'DD-MM-YYYY'} onChange={onChangeDate} />
+              <DatePicker className="w-32" format={'DD-MM-YYYY'} onChange={onChangeDate} disabledDate={disabledDate} />
               <TimePicker className="w-32" format={'HH:mm'} onChange={onChangeHours} />
             </div>
           </div>
