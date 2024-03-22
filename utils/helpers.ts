@@ -18,3 +18,10 @@ export const convertNumber = (number: string, decimals?: number) => {
 
   return formattedValue
 }
+
+export const convertAlphaNumber = (str: string) => {
+  let inputValue = str
+  inputValue = inputValue.replace(/[^a-zA-Z0-9\/-]/g, '')
+  const parts = inputValue.split('.')
+  return parts[0]
+}

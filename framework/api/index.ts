@@ -18,6 +18,8 @@ import { utils, writeFile } from 'xlsx'
 import { GetAuthService } from 'services/auth/ServiceAuth'
 import { Modal } from 'antd'
 import { FormDataTypePay } from 'pages/typepay'
+import { FormDataRegisterPay } from 'pages/registerpay'
+import dayjs from 'dayjs'
 
 const api = {
   login: async (body: any) => {
@@ -71,6 +73,31 @@ const api = {
         return { data, message, success }
       } else {
         return { data: {} }
+      }
+    },
+    register: async (form: FormDataRegisterPay, process: string) => {
+      const tok = GetTokenAuthService()
+      if (tok) {
+        const formData = new FormData()
+        const currentDateTime = dayjs()
+        const formattedDateTime = currentDateTime.format('YYYY-MM-DD HH:mm:ss')
+
+        formData.append('payment_method', form?.formPay)
+        formData.append('process_id', String(process))
+        formData.append('created_at', formattedDateTime)
+        formData.append('amount', form?.amountPaid.replaceAll(',', ''))
+
+        formData.append('receipt_number', form?.ticket.replaceAll(',', ''))
+
+        formData.append('bank', form?.bank.replaceAll(',', ''))
+        formData.append('payment_date', form?.date + ' ' + form.hour + ':00')
+
+        const {
+          data: { data, message, success }
+        }: IPayment = await apiService.post(`/payments/payment/create/`, formData)
+        return { data, message, success }
+      } else {
+        return { data: { rj_amount: 0 } }
       }
     }
   },

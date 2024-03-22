@@ -17,6 +17,7 @@ export interface FormDataTypePay {
   initialCuote: string
   showModal: boolean
 }
+
 const optionsTypePay = [
   {
     value: 'Pronto pago',
