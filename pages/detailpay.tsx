@@ -53,9 +53,9 @@ const DetailPay = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Card title="Listado de personal de ODPE">
-        <div className="mb-[0.4rem]">
-          <h1 className="text-2xl text-[#4F5172]">{headerName}</h1>
+      <Card title="">
+        <div style={{ marginBottom: '0.4rem' }}>
+          <h1 style={{ fontSize: 25, color: '#4F5172' }}>{headerName}</h1>
         </div>
 
         <hr style={{ marginBottom: '0.9rem', borderTop: '2px solid #A8CFEB' }} />

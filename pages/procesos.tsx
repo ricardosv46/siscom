@@ -40,9 +40,8 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
   const listYearApi = async () => {
     const { data } = await api.processes.getYear()
     if (profile === 'GAD') {
-      const newData = [...data]
-      newData.shift()
-      setOptionsYear(newData as any)
+      const newData = data.filter((i: any) => i !== '2020' || i !== '2021')
+      setOptionsYear(newData)
     } else {
       setOptionsYear(data)
     }
