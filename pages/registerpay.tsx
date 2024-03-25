@@ -42,7 +42,22 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     hour: '',
     showModal: false
   })
+
+  const {
+    data: initialAmount,
+    isLoading,
+    isError,
+    refetch
+  } = useQuery({
+    queryKey: ['processes'],
+    queryFn: () => api.payments.getAmount(id),
+    retry: false,
+    refetchOnWindowFocus: false,
+    enabled: !!id
+  })
+
   const [dateMoment, setDateMoment] = useState<Moment | null>(null)
+  const [hourMoment, setHourMoment] = useState<Moment | null>(null)
 
   const { typePay, amount, cuotes, ticket, bank, showModal, date, hour } = formData
 
@@ -64,10 +79,8 @@ const RegisterPay: NextPageWithLayout = ({}) => {
   }
 
   const disabledDate = (current: any) => {
-    // Obten la fecha actual
     const today = new Date()
 
-    // Devuelve true si la fecha actual es mayor que la fecha seleccionada
     return current && current > today
   }
 
@@ -78,7 +91,6 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     const currentHourActive = moment(current).hour()
     const currentMinute = now.minute()
 
-    // Si la fecha es hoy, deshabilita horas y minutos futuros
     if (dateMoment && dateMoment.isSame(now, 'day')) {
       if (currentHourActive === currentHour) {
         return {
@@ -89,14 +101,15 @@ const RegisterPay: NextPageWithLayout = ({}) => {
 
       return {
         disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour)
-        // disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute),
       }
+    } else {
+      return {}
     }
-
-    return {}
   }
 
   const onChangeDate = (date: any, dateString: string) => {
+    setDateMoment(date)
+    setHourMoment(null)
     const parts = dateString.split('-')
     const datef = `${parts[2]}-${parts[1]}-${parts[0]}`
 
@@ -104,6 +117,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
   }
 
   const onChangeHours = (date: any, dateString: string) => {
+    setHourMoment(date)
     setFormData((prev) => ({ ...prev, hour: dateString }))
   }
 
@@ -132,16 +146,21 @@ const RegisterPay: NextPageWithLayout = ({}) => {
           </div>
         </div>
 
-        <div className="w-1/2 py-5">
-          <div className="grid items-center grid-cols-3 gap-5 mb-5">
+        <div className="w-4/6 py-5 ">
+          <div className="grid items-center grid-cols-4 gap-5 mb-5 ">
             <label htmlFor="tipo" className="text-gray-600">
               Monto abonado (S/)
             </label>
             <Input
+              className="w-[200px] border-[#69B2E8]text-center"
               value={amount}
               onChange={(e) => setFormData((prev) => ({ ...prev, amount: convertNumber(e.target.value) }))}
-              className="w-[200px] border-[#69B2E8] text-center"
             />
+            <p className="col-span-2 text-red-500">
+              {initialAmount?.data?.rj_amount && Number(convertNumber(amount).replaceAll(',', '')) >= initialAmount?.data?.rj_amount
+                ? 'El monto registrado supera el monto consignado en la RJ de Sanción.'
+                : ''}
+            </p>
           </div>
         </div>
 
@@ -193,8 +212,15 @@ const RegisterPay: NextPageWithLayout = ({}) => {
               Fecha y hora del pago
             </label>
             <div className="flex gap-5">
-              <DatePicker className="w-32" format={'DD-MM-YYYY'} onChange={onChangeDate} disabledDate={disabledDate} />
-              <TimePicker className="w-32" format={'HH:mm'} onChange={onChangeHours} disabledTime={disabledTime} disabled={!dateMoment} />
+              <DatePicker className="w-32" format={'DD-MM-YYYY'} value={dateMoment} onChange={onChangeDate} disabledDate={disabledDate} />
+              <TimePicker
+                className="w-32"
+                format={'HH:mm'}
+                value={hourMoment}
+                onChange={onChangeHours}
+                disabledTime={disabledTime}
+                disabled={!dateMoment}
+              />
             </div>
           </div>
         </div>
