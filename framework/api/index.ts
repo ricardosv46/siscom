@@ -85,7 +85,7 @@ const api = {
         formData.append('payment_method', form?.typePay)
         formData.append('process_id', String(process))
         formData.append('created_at', formattedDateTime)
-        formData.append('amount', form?.initialCuote.replaceAll(',', ''))
+        formData.append('amount', form?.amount.replaceAll(',', ''))
 
         formData.append('receipt_number', form?.ticket.replaceAll(',', ''))
 

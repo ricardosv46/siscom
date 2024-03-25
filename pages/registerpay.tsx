@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query'
 import api from '@framework/api'
 import { convertAlphaNumber, convertNumber } from 'utils/helpers'
 import dayjs from 'dayjs'
-import moment from 'moment'
+import moment, { Moment } from 'moment'
 
 const optionsFormPay = [
   {
@@ -19,7 +19,7 @@ const optionsFormPay = [
 ]
 export interface FormDataRegisterPay {
   typePay: string
-  initialCuote: string
+  amount: string
   cuotes: string
   ticket: string
   bank: string
@@ -34,7 +34,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
 
   const [formData, setFormData] = useState<FormDataRegisterPay>({
     typePay: 'deposito',
-    initialCuote: '',
+    amount: '',
     cuotes: '1',
     ticket: '',
     bank: '',
@@ -42,8 +42,9 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     hour: '',
     showModal: false
   })
+  const [dateMoment, setDateMoment] = useState<Moment | null>(null)
 
-  const { typePay, initialCuote, cuotes, ticket, bank, showModal, date, hour } = formData
+  const { typePay, amount, cuotes, ticket, bank, showModal, date, hour } = formData
 
   const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -78,7 +79,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     const currentMinute = now.minute()
 
     // Si la fecha es hoy, deshabilita horas y minutos futuros
-    if (current && current.isSame(now, 'day')) {
+    if (dateMoment && dateMoment.isSame(now, 'day')) {
       if (currentHourActive === currentHour) {
         return {
           disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
@@ -106,7 +107,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     setFormData((prev) => ({ ...prev, hour: dateString }))
   }
 
-  const disableButton = !initialCuote || !cuotes || !ticket || !bank || !date || !hour
+  const disableButton = !amount || !cuotes || !ticket || !bank || !date || !hour
 
   return (
     <form onSubmit={handleSubmit}>
@@ -137,8 +138,8 @@ const RegisterPay: NextPageWithLayout = ({}) => {
               Monto abonado (S/)
             </label>
             <Input
-              value={initialCuote}
-              onChange={(e) => setFormData((prev) => ({ ...prev, initialCuote: convertNumber(e.target.value) }))}
+              value={amount}
+              onChange={(e) => setFormData((prev) => ({ ...prev, amount: convertNumber(e.target.value) }))}
               className="w-[200px] border-[#69B2E8] text-center"
             />
           </div>
@@ -193,7 +194,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
             </label>
             <div className="flex gap-5">
               <DatePicker className="w-32" format={'DD-MM-YYYY'} onChange={onChangeDate} disabledDate={disabledDate} />
-              <TimePicker className="w-32" format={'HH:mm'} onChange={onChangeHours} disabledTime={disabledTime} />
+              <TimePicker className="w-32" format={'HH:mm'} onChange={onChangeHours} disabledTime={disabledTime} disabled={!dateMoment} />
             </div>
           </div>
         </div>
@@ -248,7 +249,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
             </article>
             <article className="flex flex-col">
               <p>{'DEPÓSITO'}</p>
-              <p>{initialCuote}</p>
+              <p>{amount}</p>
               <p>{cuotes}</p>
               <p>{ticket}</p>
               <p>{bank}</p>

@@ -8,7 +8,7 @@ import { useRouter } from 'next/router'
 import { useQuery } from '@tanstack/react-query'
 import api from '@framework/api'
 import { convertAlphaNumber, convertNumber } from 'utils/helpers'
-import moment from 'moment'
+import moment, { Moment } from 'moment'
 
 export interface FormDataTypePay {
   amount: string
@@ -58,6 +58,7 @@ const TypePay: NextPageWithLayout = ({}) => {
     date: '',
     hour: ''
   })
+  const [dateMoment, setDateMoment] = useState<Moment | null>(null)
 
   const { amount, typePay, discount, cuotes, initialCuote, ticket, bank, date, hour, showModal } = formData
 
@@ -167,6 +168,7 @@ const TypePay: NextPageWithLayout = ({}) => {
   }
 
   const onChangeDate = (date: any, dateString: string) => {
+    setDateMoment(date)
     const parts = dateString.split('-')
     const datef = `${parts[2]}-${parts[1]}-${parts[0]}`
 
@@ -190,7 +192,8 @@ const TypePay: NextPageWithLayout = ({}) => {
     const currentHourActive = moment(current).hour()
     const currentMinute = now.minute()
 
-    if (current && current.isSame(now, 'day')) {
+    // Si la fecha es hoy, deshabilita horas y minutos futuros
+    if (dateMoment && dateMoment.isSame(now, 'day')) {
       if (currentHourActive === currentHour) {
         return {
           disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
@@ -200,12 +203,12 @@ const TypePay: NextPageWithLayout = ({}) => {
 
       return {
         disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour)
+        // disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute),
       }
+    } else {
+      return {}
     }
-
-    return {}
   }
-
   return (
     <form onSubmit={handleSubmit}>
       <Card title="Crear usuario">
@@ -400,7 +403,7 @@ const TypePay: NextPageWithLayout = ({}) => {
             </label>
             <div className="flex gap-5">
               <DatePicker className="w-32" format={'DD-MM-YYYY'} onChange={onChangeDate} disabledDate={disabledDate} />
-              <TimePicker className="w-32" format={'HH:mm'} onChange={onChangeHours} disabledTime={disabledTime} />
+              <TimePicker className="w-32" format={'HH:mm'} onChange={onChangeHours} disabledTime={disabledTime} disabled={!dateMoment} />
             </div>
           </div>
         </div>
@@ -424,7 +427,7 @@ const TypePay: NextPageWithLayout = ({}) => {
       <Modal
         bodyStyle={{
           margin: 10,
-          height: 280,
+          height: 330,
           whiteSpace: 'nowrap',
           width: 700
         }}
@@ -444,7 +447,7 @@ const TypePay: NextPageWithLayout = ({}) => {
         <div className="flex flex-col items-center justify-center gap-5 mt-5">
           <p className="text-lg text-[#2B3674] font-semibold">Atención:</p>
           <p className="text-[#4F4F4F] text-sm ">Desea establecer lo siguiente para la operación</p>
-          <div className="flex w-3/6 mx-auto text-lg font-semibold ">
+          <div className="flex w-4/6 mx-auto text-lg font-semibold ">
             <article className="flex flex-col w-3/5">
               <p>Tipo de pago:</p>
               {typePay === 'Pronto pago' && (
@@ -468,6 +471,9 @@ const TypePay: NextPageWithLayout = ({}) => {
                 </>
               )}
               {typePay === 'Pago total' && <p>Monto abonado</p>}
+              <p>Nº recibo / orden:</p>
+              <p>Banco:</p>
+              <p>Fecha y hora del pago</p>
             </article>
             <article className="flex flex-col">
               <p>{typePay}</p>
@@ -493,6 +499,12 @@ const TypePay: NextPageWithLayout = ({}) => {
                 </>
               )}
               {typePay === 'Pago total' && <p>S/{amount}</p>}
+
+              <p>S/{ticket}</p>
+              <p>S/{bank}</p>
+              <p>
+                {date} {hour}
+              </p>
             </article>{' '}
           </div>
         </div>
