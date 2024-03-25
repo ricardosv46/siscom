@@ -76,13 +76,7 @@ const TypePay: NextPageWithLayout = ({}) => {
   })
 
   useEffect(() => {
-    if (!isLoading) {
-      if (initialAmount?.data?.rj_amount) {
-        return
-      }
-
-      // setFormData((prev) => ({ ...prev, showModalError: true }))
-
+    if (isError) {
       const instance = Modal.info({
         icon: '',
         content: (
@@ -98,7 +92,7 @@ const TypePay: NextPageWithLayout = ({}) => {
         centered: true
       })
     }
-  }, [initialAmount, isLoading])
+  }, [isError])
 
   useEffect(() => {
     if (!initialAmount?.data?.rj_amount) {
