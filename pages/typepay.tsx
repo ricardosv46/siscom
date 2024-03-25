@@ -185,7 +185,14 @@ const TypePay: NextPageWithLayout = ({}) => {
     try {
       await api.payments.create(formData, id)
 
-      await api.payments.register(formData, id)
+      if (typePay === 'Fraccionamiento') {
+        await api.payments.register({ ...formData, amount: String(initialCuote) }, id)
+      }
+
+      if (typePay === 'Pago a cuenta') {
+        await api.payments.register({ ...formData, amount: String(initialCuote) }, id)
+      }
+
       router.push('/listadopasgad')
       setFormData((prev) => ({ ...prev, showModal: false }))
     } catch (error) {
