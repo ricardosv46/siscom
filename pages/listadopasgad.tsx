@@ -181,6 +181,7 @@ const optionsTypeProcess = [
 
 const Listadopas: NextPageWithLayout = () => {
   const { IdSelectedProcess } = useMenuStore()
+  console.log({ IdSelectedProcess })
   const { user } = useAuthStore()
   const [search, setSearch] = useState('')
   const [date, setDate] = useState<any>('')
@@ -200,8 +201,29 @@ const Listadopas: NextPageWithLayout = () => {
     queryKey: ['processes'],
     queryFn: () => getApi(),
     retry: false,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    enabled: !!IdSelectedProcess
   })
+
+  useEffect(() => {
+    const instance = Modal
+
+    if (isLoading) {
+      instance.info({
+        title: 'Espere',
+        content: (
+          <div>
+            <p>Cargando información....</p>
+          </div>
+        ),
+        onOk() {},
+        okButtonProps: { disabled: true, style: { backgroundColor: '#0874cc', display: 'none' } },
+        centered: true
+      })
+    } else {
+      instance.destroyAll()
+    }
+  }, [isLoading])
 
   const getApi = async () => {
     const filters1 = {
@@ -523,6 +545,7 @@ const Listadopas: NextPageWithLayout = () => {
     const today = new Date()
     return current && current > today
   }
+
   const dataOptionsSelect =
     new Date(localStorage.getItem('IdSelectedYear')!).valueOf() < new Date('2022').valueOf() ? optionsEstado : optionsEstado.slice(0, -1)
 

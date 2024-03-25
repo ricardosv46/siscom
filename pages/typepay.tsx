@@ -3,11 +3,12 @@ import { LayoutFirst } from '@components/common'
 import { NextPageWithLayout } from 'pages/_app'
 import { Card } from '@components/ui'
 
-import { Input, InputNumber, Modal, Select } from 'antd'
+import { DatePicker, Input, InputNumber, Modal, Select, TimePicker } from 'antd'
 import { useRouter } from 'next/router'
 import { useQuery } from '@tanstack/react-query'
 import api from '@framework/api'
-import { convertNumber } from 'utils/helpers'
+import { convertAlphaNumber, convertNumber } from 'utils/helpers'
+import moment from 'moment'
 
 export interface FormDataTypePay {
   amount: string
@@ -16,6 +17,10 @@ export interface FormDataTypePay {
   cuotes: string
   initialCuote: string
   showModal: boolean
+  ticket: string
+  bank: string
+  date: string
+  hour: string
 }
 
 const optionsTypePay = [
@@ -47,10 +52,14 @@ const TypePay: NextPageWithLayout = ({}) => {
     discount: '25%',
     cuotes: '1',
     initialCuote: '',
-    showModal: false
+    showModal: false,
+    ticket: '',
+    bank: '',
+    date: '',
+    hour: ''
   })
 
-  const { amount, typePay, discount, cuotes, initialCuote, showModal } = formData
+  const { amount, typePay, discount, cuotes, initialCuote, ticket, bank, date, hour, showModal } = formData
 
   const {
     data: initialAmount,
@@ -113,27 +122,30 @@ const TypePay: NextPageWithLayout = ({}) => {
   useEffect(() => {
     if (typePay === 'Fraccionamiento') {
       setFormData((prev) => ({ ...prev, cuotes: '1', initialCuote: '' }))
+      setFormData((prev) => ({ ...prev, ticket: '', bank: '', date: '', hour: '' }))
     }
 
     if (typePay === 'Pago a cuenta') {
       setFormData((prev) => ({ ...prev, amount: '', initialCuote: '' }))
+      setFormData((prev) => ({ ...prev, ticket: '', bank: '', date: '', hour: '' }))
     }
     if (typePay === 'Pago total') {
       setFormData((prev) => ({ ...prev, amount: '' }))
+      setFormData((prev) => ({ ...prev, ticket: '', bank: '', date: '', hour: '' }))
     }
   }, [typePay])
 
   const disableButton = () => {
     if (typePay === 'Pronto pago' || typePay === 'Pago total') {
-      return !amount
+      return !amount || !ticket || !bank || !date || !hour
     }
 
     if (typePay === 'Fraccionamiento') {
-      return !cuotes || !initialCuote || !amount
+      return !cuotes || !initialCuote || !amount || !ticket || !bank || !date || !hour
     }
 
     if (typePay === 'Pago a cuenta') {
-      return !initialAmount || !amount
+      return !initialAmount || !amount || !ticket || !bank || !date || !hour
     }
   }
 
@@ -145,11 +157,53 @@ const TypePay: NextPageWithLayout = ({}) => {
   const handleOk = async () => {
     try {
       await api.payments.create(formData, id)
+
+      await api.payments.register(formData, id)
       router.push('/listadopasgad')
       setFormData((prev) => ({ ...prev, showModal: false }))
     } catch (error) {
       console.log({ error })
     }
+  }
+
+  const onChangeDate = (date: any, dateString: string) => {
+    const parts = dateString.split('-')
+    const datef = `${parts[2]}-${parts[1]}-${parts[0]}`
+
+    setFormData((prev) => ({ ...prev, date: datef }))
+  }
+
+  const onChangeHours = (date: any, dateString: string) => {
+    setFormData((prev) => ({ ...prev, hour: dateString }))
+  }
+
+  const disabledDate = (current: any) => {
+    const today = new Date()
+
+    return current && current > today
+  }
+
+  const disabledTime = (current: any) => {
+    let now = moment()
+
+    const currentHour = now.hour()
+    const currentHourActive = moment(current).hour()
+    const currentMinute = now.minute()
+
+    if (current && current.isSame(now, 'day')) {
+      if (currentHourActive === currentHour) {
+        return {
+          disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
+          disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute)
+        }
+      }
+
+      return {
+        disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour)
+      }
+    }
+
+    return {}
   }
 
   return (
@@ -313,6 +367,43 @@ const TypePay: NextPageWithLayout = ({}) => {
             </div>
           </>
         )}
+
+        <div className="w-1/2 py-5">
+          <div className="grid items-center grid-cols-3 gap-5 mb-5">
+            <label htmlFor="tipo" className="text-gray-600">
+              Nº de recibo / operación
+            </label>
+            <Input
+              className="w-[200px] border-[#69B2E8]  text-center"
+              value={ticket}
+              onChange={(e) => setFormData((prev) => ({ ...prev, ticket: convertAlphaNumber(e.target.value) }))}
+            />
+          </div>
+        </div>
+
+        <div className="w-1/2 py-5">
+          <div className="grid items-center grid-cols-3 gap-5 mb-5">
+            <label htmlFor="tipo" className="text-gray-600">
+              Banco
+            </label>
+            <Input
+              className="w-[200px] border-[#69B2E8]  text-center"
+              value={bank}
+              onChange={(e) => setFormData((prev) => ({ ...prev, bank: convertAlphaNumber(e.target.value) }))}
+            />
+          </div>
+        </div>
+        <div className="w-1/2 py-5">
+          <div className="grid items-center grid-cols-3 gap-5 mb-5">
+            <label htmlFor="tipo" className="text-gray-600">
+              Fecha y hora del pago
+            </label>
+            <div className="flex gap-5">
+              <DatePicker className="w-32" format={'DD-MM-YYYY'} onChange={onChangeDate} disabledDate={disabledDate} />
+              <TimePicker className="w-32" format={'HH:mm'} onChange={onChangeHours} disabledTime={disabledTime} />
+            </div>
+          </div>
+        </div>
 
         <hr className="mb-[0.9rem] border-t-2 border-[#A8CFEB]" />
         <div className="flex gap-5">

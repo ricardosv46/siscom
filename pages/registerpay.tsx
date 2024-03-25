@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query'
 import api from '@framework/api'
 import { convertAlphaNumber, convertNumber } from 'utils/helpers'
 import dayjs from 'dayjs'
+import moment from 'moment'
 
 const optionsFormPay = [
   {
@@ -17,8 +18,8 @@ const optionsFormPay = [
   }
 ]
 export interface FormDataRegisterPay {
-  formPay: string
-  amountPaid: string
+  typePay: string
+  initialCuote: string
   cuotes: string
   ticket: string
   bank: string
@@ -32,8 +33,8 @@ const RegisterPay: NextPageWithLayout = ({}) => {
   const id: string = String(router?.query?.id ?? '')
 
   const [formData, setFormData] = useState<FormDataRegisterPay>({
-    formPay: 'deposito',
-    amountPaid: '',
+    typePay: 'deposito',
+    initialCuote: '',
     cuotes: '1',
     ticket: '',
     bank: '',
@@ -42,7 +43,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     showModal: false
   })
 
-  const { formPay, amountPaid, cuotes, ticket, bank, showModal, date, hour } = formData
+  const { typePay, initialCuote, cuotes, ticket, bank, showModal, date, hour } = formData
 
   const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -69,6 +70,31 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     return current && current > today
   }
 
+  const disabledTime = (current: any) => {
+    let now = moment()
+
+    const currentHour = now.hour()
+    const currentHourActive = moment(current).hour()
+    const currentMinute = now.minute()
+
+    // Si la fecha es hoy, deshabilita horas y minutos futuros
+    if (current && current.isSame(now, 'day')) {
+      if (currentHourActive === currentHour) {
+        return {
+          disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
+          disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute)
+        }
+      }
+
+      return {
+        disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour)
+        // disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute),
+      }
+    }
+
+    return {}
+  }
+
   const onChangeDate = (date: any, dateString: string) => {
     const parts = dateString.split('-')
     const datef = `${parts[2]}-${parts[1]}-${parts[0]}`
@@ -80,7 +106,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     setFormData((prev) => ({ ...prev, hour: dateString }))
   }
 
-  const disableButton = !amountPaid || !cuotes || !ticket || !bank || !date || !hour
+  const disableButton = !initialCuote || !cuotes || !ticket || !bank || !date || !hour
 
   return (
     <form onSubmit={handleSubmit}>
@@ -97,7 +123,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
 
             <Select
               disabled
-              value={formPay}
+              value={typePay}
               onChange={(e) => setFormData((prev) => ({ ...prev, typePay: e }))}
               className="w-[200px] border-[#69B2E8]  "
               options={optionsFormPay}
@@ -111,8 +137,8 @@ const RegisterPay: NextPageWithLayout = ({}) => {
               Monto abonado (S/)
             </label>
             <Input
-              value={amountPaid}
-              onChange={(e) => setFormData((prev) => ({ ...prev, amountPaid: convertNumber(e.target.value) }))}
+              value={initialCuote}
+              onChange={(e) => setFormData((prev) => ({ ...prev, initialCuote: convertNumber(e.target.value) }))}
               className="w-[200px] border-[#69B2E8] text-center"
             />
           </div>
@@ -167,7 +193,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
             </label>
             <div className="flex gap-5">
               <DatePicker className="w-32" format={'DD-MM-YYYY'} onChange={onChangeDate} disabledDate={disabledDate} />
-              <TimePicker className="w-32" format={'HH:mm'} onChange={onChangeHours} />
+              <TimePicker className="w-32" format={'HH:mm'} onChange={onChangeHours} disabledTime={disabledTime} />
             </div>
           </div>
         </div>
@@ -222,7 +248,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
             </article>
             <article className="flex flex-col">
               <p>{'DEPÓSITO'}</p>
-              <p>{amountPaid}</p>
+              <p>{initialCuote}</p>
               <p>{cuotes}</p>
               <p>{ticket}</p>
               <p>{bank}</p>

@@ -75,17 +75,17 @@ const api = {
         return { data: {} }
       }
     },
-    register: async (form: FormDataRegisterPay, process: string) => {
+    register: async (form: FormDataRegisterPay | FormDataTypePay, process: string) => {
       const tok = GetTokenAuthService()
       if (tok) {
         const formData = new FormData()
         const currentDateTime = dayjs()
         const formattedDateTime = currentDateTime.format('YYYY-MM-DD HH:mm:ss')
 
-        formData.append('payment_method', form?.formPay)
+        formData.append('payment_method', form?.typePay)
         formData.append('process_id', String(process))
         formData.append('created_at', formattedDateTime)
-        formData.append('amount', form?.amountPaid.replaceAll(',', ''))
+        formData.append('amount', form?.initialCuote.replaceAll(',', ''))
 
         formData.append('receipt_number', form?.ticket.replaceAll(',', ''))
 

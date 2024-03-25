@@ -6,6 +6,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { IDetailItem, IPropsItem } from './detallepas'
+import moment from 'moment'
 
 const DetailPay = () => {
   const router = useRouter()
@@ -40,10 +41,6 @@ const DetailPay = () => {
       : ({} as IDetailItem)
 
   const rj_remakeDatail: IDetailItem = dataRemake
-
-  //   const getDetailInfo = async (id: string) => {
-  //     const { processes } = await api.listpas.getProcessesByTracking(+id)
-  //   }
 
   return (
     <>
