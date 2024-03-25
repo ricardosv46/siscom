@@ -59,6 +59,7 @@ const TypePay: NextPageWithLayout = ({}) => {
     hour: ''
   })
   const [dateMoment, setDateMoment] = useState<Moment | null>(null)
+  const [hourMoment, setHourMoment] = useState<Moment | null>(null)
 
   const { amount, typePay, discount, cuotes, initialCuote, ticket, bank, date, hour, showModal } = formData
 
@@ -95,6 +96,26 @@ const TypePay: NextPageWithLayout = ({}) => {
   }, [isError])
 
   useEffect(() => {
+    const dataNum = initialAmount?.data?.rj_amount && initialAmount?.data?.rj_amount
+    if (dataNum === 0) {
+      const instance = Modal.info({
+        icon: '',
+        content: (
+          <div>
+            <p>La Resolución Jefatural de Sanción no presenta un monto especificado. Se requiere su actualización</p>
+          </div>
+        ),
+        onOk() {
+          instance.destroy()
+          router.push('/listadopasgad')
+        },
+        okButtonProps: { style: { backgroundColor: '#0874cc' } },
+        centered: true
+      })
+    }
+  }, [isLoading])
+
+  useEffect(() => {
     if (!initialAmount?.data?.rj_amount) {
       return
     }
@@ -118,15 +139,26 @@ const TypePay: NextPageWithLayout = ({}) => {
     if (typePay === 'Fraccionamiento') {
       setFormData((prev) => ({ ...prev, cuotes: '1', initialCuote: '' }))
       setFormData((prev) => ({ ...prev, ticket: '', bank: '', date: '', hour: '' }))
+      setDateMoment(null)
+      setHourMoment(null)
     }
 
     if (typePay === 'Pago a cuenta') {
       setFormData((prev) => ({ ...prev, amount: '', initialCuote: '' }))
       setFormData((prev) => ({ ...prev, ticket: '', bank: '', date: '', hour: '' }))
+      setDateMoment(null)
+      setHourMoment(null)
     }
     if (typePay === 'Pago total') {
       setFormData((prev) => ({ ...prev, amount: '' }))
       setFormData((prev) => ({ ...prev, ticket: '', bank: '', date: '', hour: '' }))
+      setDateMoment(null)
+      setHourMoment(null)
+    }
+    if (typePay === 'Pronto pago') {
+      setFormData((prev) => ({ ...prev, ticket: '', bank: '', date: '', hour: '' }))
+      setDateMoment(null)
+      setHourMoment(null)
     }
   }, [typePay])
 
@@ -163,6 +195,7 @@ const TypePay: NextPageWithLayout = ({}) => {
 
   const onChangeDate = (date: any, dateString: string) => {
     setDateMoment(date)
+    setHourMoment(null)
     const parts = dateString.split('-')
     const datef = `${parts[2]}-${parts[1]}-${parts[0]}`
 
@@ -170,6 +203,7 @@ const TypePay: NextPageWithLayout = ({}) => {
   }
 
   const onChangeHours = (date: any, dateString: string) => {
+    setHourMoment(date)
     setFormData((prev) => ({ ...prev, hour: dateString }))
   }
 
@@ -186,7 +220,6 @@ const TypePay: NextPageWithLayout = ({}) => {
     const currentHourActive = moment(current).hour()
     const currentMinute = now.minute()
 
-    // Si la fecha es hoy, deshabilita horas y minutos futuros
     if (dateMoment && dateMoment.isSame(now, 'day')) {
       if (currentHourActive === currentHour) {
         return {
@@ -197,7 +230,6 @@ const TypePay: NextPageWithLayout = ({}) => {
 
       return {
         disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour)
-        // disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute),
       }
     } else {
       return {}
@@ -320,8 +352,8 @@ const TypePay: NextPageWithLayout = ({}) => {
 
         {typePay === 'Pago a cuenta' && (
           <>
-            <div className="w-1/2 py-5">
-              <div className="grid items-center grid-cols-3 gap-5 mb-5">
+            <div className="w-4/6 py-5 ">
+              <div className="grid items-center grid-cols-4 gap-5 mb-5 ">
                 <label htmlFor="tipo" className="text-gray-600">
                   Monto abonado (S/)
                 </label>
@@ -330,6 +362,12 @@ const TypePay: NextPageWithLayout = ({}) => {
                   value={initialCuote}
                   onChange={(e) => setFormData((prev) => ({ ...prev, initialCuote: convertNumber(e.target.value) }))}
                 />
+                <p className="col-span-2 text-red-500">
+                  {initialAmount?.data?.rj_amount &&
+                  Number(convertNumber(initialCuote).replaceAll(',', '')) >= initialAmount?.data?.rj_amount
+                    ? 'El monto registrado supera el monto consignado en la RJ de Sanción.'
+                    : ''}
+                </p>
               </div>
             </div>
 
@@ -350,8 +388,8 @@ const TypePay: NextPageWithLayout = ({}) => {
 
         {typePay === 'Pago total' && (
           <>
-            <div className="w-1/2 py-5">
-              <div className="grid items-center grid-cols-3 gap-5 mb-5">
+            <div className="w-4/6 py-5 ">
+              <div className="grid items-center grid-cols-4 gap-5 mb-5 ">
                 <label htmlFor="tipo" className="text-gray-600">
                   Monto (S/)
                 </label>
@@ -360,6 +398,11 @@ const TypePay: NextPageWithLayout = ({}) => {
                   value={amount}
                   onChange={(e) => setFormData((prev) => ({ ...prev, amount: convertNumber(e.target.value) }))}
                 />
+                <p className="col-span-2 text-red-500">
+                  {initialAmount?.data?.rj_amount && Number(convertNumber(amount).replaceAll(',', '')) >= initialAmount?.data?.rj_amount
+                    ? 'El monto registrado supera el monto consignado en la RJ de Sanción.'
+                    : ''}
+                </p>
               </div>
             </div>
           </>
@@ -396,8 +439,15 @@ const TypePay: NextPageWithLayout = ({}) => {
               Fecha y hora del pago
             </label>
             <div className="flex gap-5">
-              <DatePicker className="w-32" format={'DD-MM-YYYY'} onChange={onChangeDate} disabledDate={disabledDate} />
-              <TimePicker className="w-32" format={'HH:mm'} onChange={onChangeHours} disabledTime={disabledTime} disabled={!dateMoment} />
+              <DatePicker className="w-32" format={'DD-MM-YYYY'} value={dateMoment} onChange={onChangeDate} disabledDate={disabledDate} />
+              <TimePicker
+                className="w-32"
+                format={'HH:mm'}
+                value={hourMoment}
+                onChange={onChangeHours}
+                disabledTime={disabledTime}
+                disabled={!dateMoment}
+              />
             </div>
           </div>
         </div>
@@ -494,8 +544,8 @@ const TypePay: NextPageWithLayout = ({}) => {
               )}
               {typePay === 'Pago total' && <p>S/{amount}</p>}
 
-              <p>S/{ticket}</p>
-              <p>S/{bank}</p>
+              <p>{ticket}</p>
+              <p>{bank}</p>
               <p>
                 {date} {hour}
               </p>
