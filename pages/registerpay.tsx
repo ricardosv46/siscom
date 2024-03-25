@@ -268,10 +268,10 @@ const RegisterPay: NextPageWithLayout = ({}) => {
             <article className="flex flex-col w-3/6">
               <p>Forma de pago: </p>
               <p>Monto abonado: </p>
-              <p>Número de cuota</p>
+              <p>Número de cuota:</p>
               <p>Nº recibo / orden:</p>
               <p>Banco:</p>
-              <p>Fecha y hora del pago</p>
+              <p>Fecha y hora del pago:</p>
             </article>
             <article className="flex flex-col">
               <p>{'DEPÓSITO'}</p>

@@ -496,28 +496,29 @@ const TypePay: NextPageWithLayout = ({}) => {
               <p>Tipo de pago:</p>
               {typePay === 'Pronto pago' && (
                 <>
-                  <p>Descuento</p>
+                  <p>Descuento:</p>
                   <p>Monto:</p>
                 </>
               )}
 
               {typePay === 'Fraccionamiento' && (
                 <>
-                  <p>Número de cuotas</p>
-                  <p>Cuota inicial</p>
+                  <p>Número de cuotas:</p>
+                  <p>Cuota inicial:</p>
                   <p>Monto:</p>
                 </>
               )}
               {typePay === 'Pago a cuenta' && (
                 <>
-                  <p>Monto abonado</p>
-                  <p>Nuevo monto (S/)</p>
+                  <p>Monto abonado:</p>
+                  <p>Nuevo monto (S/):</p>
                 </>
               )}
-              {typePay === 'Pago total' && <p>Monto abonado</p>}
-              <p>Nº recibo / orden:</p>
+              {typePay === 'Pago total' && <p>Monto abonado:</p>}
+
+              <p>Nº de recibo / operación:</p>
               <p>Banco:</p>
-              <p>Fecha y hora del pago</p>
+              <p>Fecha y hora del pago:</p>
             </article>
             <article className="flex flex-col">
               <p>{typePay}</p>
@@ -544,8 +545,8 @@ const TypePay: NextPageWithLayout = ({}) => {
               )}
               {typePay === 'Pago total' && <p>S/{amount}</p>}
 
-              <p>{ticket}</p>
-              <p>{bank}</p>
+              <p>{ticket ?? '-'}</p>
+              <p>{bank ?? '-'}</p>
               <p>
                 {date} {hour}
               </p>
