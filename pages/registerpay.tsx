@@ -121,7 +121,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     setFormData((prev) => ({ ...prev, hour: dateString }))
   }
 
-  const disableButton = !amount || !cuotes || !ticket || !bank || !date || !hour
+  const disableButton = !amount || !cuotes || !date || !hour
 
   return (
     <form onSubmit={handleSubmit}>

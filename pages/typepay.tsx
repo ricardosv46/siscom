@@ -164,15 +164,15 @@ const TypePay: NextPageWithLayout = ({}) => {
 
   const disableButton = () => {
     if (typePay === 'Pronto pago' || typePay === 'Pago total') {
-      return !amount || !ticket || !bank || !date || !hour
+      return !amount || !date || !hour
     }
 
     if (typePay === 'Fraccionamiento') {
-      return !cuotes || !initialCuote || !amount || !ticket || !bank || !date || !hour
+      return !cuotes || !initialCuote || !amount || !date || !hour
     }
 
     if (typePay === 'Pago a cuenta') {
-      return !initialAmount || !amount || !ticket || !bank || !date || !hour
+      return !initialAmount || !amount || !date || !hour
     }
   }
 
