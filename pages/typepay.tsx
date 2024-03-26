@@ -552,8 +552,8 @@ const TypePay: NextPageWithLayout = ({}) => {
               )}
               {typePay === 'Pago total' && <p>S/{amount}</p>}
 
-              <p>{ticket ?? '-'}</p>
-              <p>{bank ?? '-'}</p>
+              <p>{ticket || '-'}</p>
+              <p>{bank || '-'}</p>
               <p>
                 {date} {hour}
               </p>

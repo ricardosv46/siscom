@@ -277,8 +277,8 @@ const RegisterPay: NextPageWithLayout = ({}) => {
               <p>{'DEPÓSITO'}</p>
               <p>{amount}</p>
               <p>{cuotes}</p>
-              <p>{ticket}</p>
-              <p>{bank}</p>
+              <p>{ticket || '-'}</p>
+              <p>{bank || '-'}</p>
               <p>
                 {date} {hour}
               </p>
