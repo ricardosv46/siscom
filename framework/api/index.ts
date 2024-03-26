@@ -101,6 +101,84 @@ const api = {
       } else {
         return { data: { rj_amount: 0 } }
       }
+    },
+    loadExcelTypePay: async (excelFile: any, refetch: () => void) => {
+      const tok = GetTokenAuthService()
+      if (tok) {
+        const { user } = GetAuthService()
+        const formData = new FormData()
+        formData.append('xlsx_file', excelFile)
+        formData.append('user_id', user.id)
+        try {
+          const token = localStorage.getItem('token')
+          const resultApi = await apiService.post(`payments/type-payment/import/`, formData, {
+            headers: { 'x-access-tokens': token }
+          })
+          const response = resultApi.data
+
+          if (response) {
+            const instance = Modal.info({
+              content: response.message,
+              centered: true,
+              async onOk() {
+                instance.destroy()
+                refetch()
+              }
+            })
+          }
+          if (response?.data) {
+            return { data: response?.data }
+          }
+        } catch (error) {
+          const instance = Modal.info({
+            content: 'Ocurrió un error al procesar el archivo!',
+            centered: true,
+            async onOk() {
+              instance.destroy()
+            }
+          })
+          return { data: [] }
+        }
+      }
+    },
+    loadExcelRegisterPay: async (excelFile: any, refetch: () => void) => {
+      const tok = GetTokenAuthService()
+      if (tok) {
+        const { user } = GetAuthService()
+        const formData = new FormData()
+        formData.append('xlsx_file', excelFile)
+        formData.append('user_id', user.id)
+        try {
+          const token = localStorage.getItem('token')
+          const resultApi = await apiService.post(`payments/payment/import/`, formData, {
+            headers: { 'x-access-tokens': token }
+          })
+          const response = resultApi.data
+
+          if (response) {
+            const instance = Modal.info({
+              content: response.message,
+              centered: true,
+              async onOk() {
+                instance.destroy()
+                refetch()
+              }
+            })
+          }
+          if (response?.data) {
+            return { data: response?.data }
+          }
+        } catch (error) {
+          const instance = Modal.info({
+            content: 'Ocurrió un error al procesar el archivo!',
+            centered: true,
+            async onOk() {
+              instance.destroy()
+            }
+          })
+          return { data: [] }
+        }
+      }
     }
   },
   home: {

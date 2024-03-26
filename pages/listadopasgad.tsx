@@ -406,10 +406,22 @@ const Listadopas: NextPageWithLayout = () => {
     instance.destroy()
   }
 
-  const handleFileChange = async (info: { file: UploadFile }) => {
+  const handleFileChangeRegister = async (info: { file: UploadFile }) => {
     try {
       if (info.file) {
-        processFile(info.file)
+        processFile(info.file, 'register')
+        // Puedes realizar acciones adicionales después de cargar el archivo, si es necesario
+        console.log('Archivo cargado correctamente:', info.file)
+      }
+    } catch (error) {
+      console.log({ error })
+    }
+  }
+
+  const handleFileChangeType = async (info: { file: UploadFile }) => {
+    try {
+      if (info.file) {
+        processFile(info.file, 'type')
         // Puedes realizar acciones adicionales después de cargar el archivo, si es necesario
         console.log('Archivo cargado correctamente:', info.file)
       }
@@ -428,71 +440,19 @@ const Listadopas: NextPageWithLayout = () => {
     setFile(file)
     return false // Retornar false para evitar la carga automática
   }
-  const loadExcelApi = async (excelFile: any) => {
-    const instanceProcesando = Modal.info({
-      title: 'Procesando',
-      content: (
-        <div>
-          <p>Espere mientras termine la carga...</p>
-        </div>
-      ),
-      okButtonProps: { hidden: true },
-      centered: true
+  const loadExcelTypePay = async (excelFile: any) => {
+    await api.payments.loadExcelTypePay(excelFile, async () => {
+      refetch()
     })
-
-    const res = await api.listpas.validateFile({ excelFile, id: user.id })
-
-    if (res?.data?.message === '1') {
-      instanceProcesando.destroy()
-      const instance = Modal.confirm({
-        icon: '',
-        content: (
-          <div>
-            <p>El excel contiene registros de finalizaciones de procedimientos PAS. ¿Desea continuar?</p>
-          </div>
-        ),
-        okText: 'Si',
-        cancelText: 'No',
-        async onOk() {
-          instance.destroy()
-          await api.listpas.loadExcelInformation(excelFile, async () => {
-            refetch()
-          })
-        },
-        async onCancel() {
-          instance.destroy()
-        },
-        okButtonProps: { style: { backgroundColor: '#0874cc' } },
-        centered: true
-      })
-    }
-
-    if (res?.data?.message === '2') {
-      instanceProcesando.destroy()
-      const instance = Modal.info({
-        icon: '',
-        content: (
-          <div>
-            <p>Su usuario no tiene permitido realizar registro de finalizaciones de procedimientos PAS</p>
-          </div>
-        ),
-        onOk() {
-          instance.destroy()
-        },
-        okButtonProps: { style: { backgroundColor: '#0874cc' } },
-        centered: true
-      })
-    }
-
-    if (res?.data?.message === '3') {
-      instanceProcesando.destroy()
-      await api.listpas.loadExcelInformation(excelFile, async () => {
-        refetch()
-      })
-    }
   }
 
-  function processFile(plainFile: any) {
+  const loadExcelRegisterPay = async (excelFile: any) => {
+    await api.payments.loadExcelRegisterPay(excelFile, async () => {
+      refetch()
+    })
+  }
+
+  function processFile(plainFile: any, type: 'register' | 'type') {
     if (plainFile.type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
       const instance = Modal.info({
         title: 'Error',
@@ -509,7 +469,14 @@ const Listadopas: NextPageWithLayout = () => {
 
       return
     }
-    loadExcelApi(plainFile)
+
+    if (type === 'register') {
+      loadExcelRegisterPay(plainFile)
+    }
+
+    if (type === 'type') {
+      loadExcelTypePay(plainFile)
+    }
     // clear()
   }
 
@@ -621,10 +588,26 @@ const Listadopas: NextPageWithLayout = () => {
               <button className="flex items-center justify-center p-2 bg-[#083474]  text-white " onClick={clearFilters}>
                 <span className="text-base">Limpiar Filtros</span>
               </button>
-              <Upload beforeUpload={beforeUpload} onChange={handleFileChange} multiple={false} showUploadList={false} accept=".xls,.xlsx">
+              <Upload
+                beforeUpload={beforeUpload}
+                onChange={handleFileChangeType}
+                multiple={false}
+                showUploadList={false}
+                accept=".xls,.xlsx">
                 <button className="flex items-center justify-center p-2 bg-[#78bc44] text-white">
                   <img src="assets/images/cargar.svg" className="w-6 h-6" />
-                  <span className="text-base">Cargar Información</span>
+                  <span className="text-base">Cargar tipo de pago</span>
+                </button>
+              </Upload>
+              <Upload
+                beforeUpload={beforeUpload}
+                onChange={handleFileChangeRegister}
+                multiple={false}
+                showUploadList={false}
+                accept=".xls,.xlsx">
+                <button className="flex items-center justify-center p-2 bg-[#78bc44] text-white">
+                  <img src="assets/images/cargar.svg" className="w-6 h-6" />
+                  <span className="text-base">Cargar registro de pago</span>
                 </button>
               </Upload>
               <button className="flex items-center justify-center p-2 bg-[#083474]  text-white cursor-pointer" onClick={reportePAS}>
