@@ -87,6 +87,8 @@ const api = {
         formData.append('created_at', formattedDateTime)
         formData.append('amount', form?.amount.replaceAll(',', ''))
 
+        formData.append('fees', form?.cuotes)
+
         formData.append('receipt_number', form?.ticket.replaceAll(',', ''))
 
         formData.append('bank', form?.bank.replaceAll(',', ''))
