@@ -72,7 +72,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
       await api.payments.register(formData, id)
       setFormData((prev) => ({ ...prev, showModal: false }))
       const instance = Modal.info({
-        title: 'Cargando',
+        icon: '',
         content: (
           <div>
             <p>Se registro correctamente</p>

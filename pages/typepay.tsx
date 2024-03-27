@@ -195,7 +195,7 @@ const TypePay: NextPageWithLayout = ({}) => {
 
       setFormData((prev) => ({ ...prev, showModal: false }))
       const instance = Modal.info({
-        title: 'Cargando',
+        icon: '',
         content: (
           <div>
             <p>Se registro correctamente</p>
