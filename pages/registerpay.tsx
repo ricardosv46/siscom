@@ -31,11 +31,12 @@ export interface FormDataRegisterPay {
 const RegisterPay: NextPageWithLayout = ({}) => {
   const router = useRouter()
   const id: string = String(router?.query?.id ?? '')
+  const fees: string = String(router?.query?.fees ?? '')
 
   const [formData, setFormData] = useState<FormDataRegisterPay>({
     typePay: 'deposito',
     amount: '',
-    cuotes: '1',
+    cuotes: fees ? '1' : '',
     ticket: '',
     bank: '',
     date: '',
@@ -68,9 +69,21 @@ const RegisterPay: NextPageWithLayout = ({}) => {
 
   const handleConfirmOk = async () => {
     try {
-      const res = await api.payments.register(formData, id)
-      console.log({ res })
-      router.push('/listadopasgad')
+      await api.payments.register(formData, id)
+      setFormData((prev) => ({ ...prev, showModal: false }))
+      const instance = Modal.info({
+        title: 'Cargando',
+        content: (
+          <div>
+            <p>Se registro correctamente</p>
+          </div>
+        ),
+        onOk() {
+          instance.destroy()
+          router.push('/listadopasgad')
+        },
+        centered: true
+      })
     } catch (error) {
       console.log({ error })
     } finally {
@@ -121,7 +134,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     setFormData((prev) => ({ ...prev, hour: dateString }))
   }
 
-  const disableButton = !amount || !cuotes || !date || !hour
+  const disableButton = !amount || !date || !hour || (fees ? !cuotes : false)
 
   return (
     <form onSubmit={handleSubmit}>
@@ -152,7 +165,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
               Monto abonado (S/)
             </label>
             <Input
-              className="w-[200px] border-[#69B2E8]text-center"
+              className="w-[200px] border-[#69B2E8] text-center"
               value={amount}
               onChange={(e) => setFormData((prev) => ({ ...prev, amount: convertNumber(e.target.value) }))}
             />
@@ -164,22 +177,38 @@ const RegisterPay: NextPageWithLayout = ({}) => {
           </div>
         </div>
 
-        <div className="w-1/2 py-5">
-          <div className="grid items-center grid-cols-3 gap-5 mb-5">
-            <label htmlFor="tipo" className="text-gray-600">
-              Número de cuota
-            </label>
+        {fees && (
+          <div className="w-1/2 py-5">
+            <div className="grid items-center grid-cols-3 gap-5 mb-5">
+              <label htmlFor="tipo" className="text-gray-600">
+                Número de cuota
+              </label>
 
-            <Input
-              maxLength={3}
-              className="w-[200px] border-[#69B2E8] text-center"
-              value={cuotes}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, cuotes: convertNumber(e.target.value, 0).replaceAll(',', '').replaceAll('.', '') }))
-              }
-            />
+              <Input
+                maxLength={3}
+                className="w-[200px] border-[#69B2E8] text-center"
+                value={cuotes}
+                // onChange={(e) =>
+                //   setFormData((prev) => ({ ...prev, cuotes: convertNumber(e.target.value, 0).replaceAll(',', '').replaceAll('.', '') }))
+                // }
+
+                onChange={(e) =>
+                  setFormData((prev) => {
+                    const newNumber = fees ? Number(fees) : 0
+                    const number = Number(convertNumber(e.target.value, 0).replaceAll(',', '').replaceAll('.', ''))
+                    const res = number >= newNumber ? convertNumber(String(newNumber)) : convertNumber(e.target.value)
+                    const data = {
+                      ...prev,
+                      cuotes: res
+                    }
+
+                    return data
+                  })
+                }
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="w-1/2 py-5">
           <div className="grid items-center grid-cols-3 gap-5 mb-5">

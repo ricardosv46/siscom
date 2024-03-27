@@ -14,7 +14,7 @@ import { EyeOutlined, SearchOutlined } from '@ant-design/icons'
 import locale from 'antd/lib/date-picker/locale/es_ES'
 import { IconCalculator, IconEye, IconPen } from '@components/icons'
 import { useQuery } from '@tanstack/react-query'
-import { useRouter } from 'next/router'
+import Router, { useRouter } from 'next/router'
 import { ExportExcel } from '@components/ui/ExportExcel/ExportExcel'
 import useAuthStore from 'store/auth/auth'
 import Link from 'next/link'
@@ -139,17 +139,25 @@ const columns = [
     key: 'acciones',
     render: (_: any, item: any) => (
       <div className="flex items-center justify-center gap-2">
-        <Link href={`/typepay?id=${item?.numero}`}>
-          <button className="text-[#76BD43] w-[110px] flex items-center gap-1">
-            <IconPen /> Tipo de pago
-          </button>
-        </Link>
+        <>{console.log({ item })}</>
 
-        <Link href={`/registerpay?id=${item?.numero}`}>
-          <button className="text-[#828282] w-[130px] flex items-center gap-1">
-            <IconCalculator /> Registro de pago
-          </button>
-        </Link>
+        <button
+          disabled={item?.type_payment?.id}
+          className="disabled:text-[#828282] text-[#76BD43] w-[110px] flex items-center gap-1"
+          onClick={() => {
+            Router.push(`/typepay?id=${item?.numero}`)
+          }}>
+          <IconPen className="" /> Tipo de pago
+        </button>
+
+        <button
+          disabled={!item?.type_payment?.id || item?.type_payment?.type === 'Pronto pago' || item?.type_payment?.type === 'Pago total'}
+          className="disabled:text-[#828282] text-[#76BD43] w-[130px] flex items-center gap-1"
+          onClick={() => {
+            Router.push(`/registerpay?id=${item?.numero}${item?.type_payment?.fees ? `&fees=${item?.type_payment?.fees}` : ''} `)
+          }}>
+          <IconCalculator /> Registro de pago
+        </button>
 
         <Link href={`/detailpay?id=${item?.numero}`}>
           <button
@@ -158,7 +166,7 @@ const columns = [
               localStorage.setItem('itemDetailPay', JSON.stringify(item))
             }}>
             <IconEye /> Detalle
-          </button>{' '}
+          </button>
         </Link>
       </div>
     )

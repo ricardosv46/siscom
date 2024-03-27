@@ -193,8 +193,20 @@ const TypePay: NextPageWithLayout = ({}) => {
         await api.payments.register({ ...formData, amount: String(initialCuote) }, id)
       }
 
-      router.push('/listadopasgad')
       setFormData((prev) => ({ ...prev, showModal: false }))
+      const instance = Modal.info({
+        title: 'Cargando',
+        content: (
+          <div>
+            <p>Se registro correctamente</p>
+          </div>
+        ),
+        onOk() {
+          instance.destroy()
+          router.push('/listadopasgad')
+        },
+        centered: true
+      })
     } catch (error) {
       console.log({ error })
     }
