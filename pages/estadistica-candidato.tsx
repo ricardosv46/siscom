@@ -91,7 +91,6 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = () => {
 const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   const valuesChartTodos = (valueinfo: any) => [
     { label: "Iniciado con RG", value: valueinfo?.iniciado_rg.total ?? 0 },
-    { label: "No iniciado", value: valueinfo?.no_iniciado ?? 0 },
   ];
 
   const valuesChartAllTodos = (valueinfo: any) => [
@@ -102,7 +101,6 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
     { label: "Fase Instructiva", value: valueinfo?.iniciado_rg.notificado.en_proceso.instructiva ?? 0 },
     { label: "Fuera del plazo", value: valueinfo?.iniciado_rg.notificado.fuera_plazo ?? 0 },
     { label: "Pendiente Notificar", value: valueinfo?.iniciado_rg.no_notificado ?? 0 },
-    { label: "No iniciado", value: valueinfo?.no_iniciado ?? 0 },
   ];
 
   const router = useRouter();
@@ -250,7 +248,6 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   const getTodos = () => {
     const newData = [
       { label: "Iniciado con RG", value: dataInfo?.iniciado_rg.total ?? 0 },
-      { label: "No iniciado", value: dataInfo?.no_iniciado ?? 0 },
     ];
 
     setValuesChart(newData);
@@ -432,7 +429,6 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   useEffect(() => {
     setValuesChart([
       { label: "Iniciado con RG", value: dataInfo?.iniciado_rg.total ?? 0 },
-      { label: "No iniciado", value: dataInfo?.no_iniciado ?? 0 },
     ]);
     setValuesChartType("todos");
   }, [checkInteraction]);
@@ -591,7 +587,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
         </Button>
       </Card>
       <div className="flex gap-[26px]">
-        <div className="w-[413px]">
+        {/*<div className="w-[413px]">
           <Card title="Listado de personal de ODPE" className="bg-white py-[16px]  px-[17px] rounded-[15px] ">
             <div className="">
               <h2 className="text-[#2B3674] text-lg font-semibold">Datos generales</h2>
@@ -610,7 +606,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
               </div>
             </div>
           </Card>
-        </div>
+        </div>*/}
         <Card title="Listado de personal de ODPE" className="bg-white py-6 px-[33px] rounded-[15px] flex-1 overflow-auto ">
           <div className="flex-1">
             <h2 className="text-[#2B3674] text-lg font-semibold">ETAPA INSTRUCTIVA - RESOLUTIVA - RECURSIVA : 15 896</h2>
@@ -897,13 +893,10 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                       {!checkInteraction && <div className="w-6 h-6 rounded-full bg-[#FF6B38]"></div>}
                     </td>
                   </tr>
-                  <tr className="border-b border-[#BDBDBD] ">
+                  {/*<tr className="border-b border-[#BDBDBD] ">
                     <td className="pl-3 py-1.5">2. No iniciado</td>
                     <td className="text-center py-1.5">
-                      <div
-                      // onClick={() => dataInfo && dataInfo?.no_iniciado > 0 && handleFilterListadoPas("no_iniciado")}
-                      // className={dataInfo && dataInfo?.no_iniciado > 0 ? "hover:underline" : ""}
-                      >
+                      <div>
                         {dataInfo?.no_iniciado}
                       </div>
                     </td>
@@ -918,7 +911,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                         {!checkInteraction && <div className="w-6 h-6 rounded-full bg-[#FFF] border border-[#003770]"></div>}
                       </td>
                     </td>
-                  </tr>
+                        </tr>*/}
                 </tbody>
               </table>
             </div>

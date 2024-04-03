@@ -91,7 +91,6 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = () => {
 const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   const valuesChartTodos = (valueinfo: any) => [
     { label: "Iniciado con RG", value: valueinfo?.iniciado_rg.total ?? 0 },
-    { label: "No iniciado", value: valueinfo?.no_iniciado ?? 0 },
   ];
 
   const valuesChartAllTodos = (valueinfo: any) => [
@@ -102,7 +101,6 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
     { label: "Fase Instructiva", value: valueinfo?.iniciado_rg.notificado.en_proceso.instructiva ?? 0 },
     { label: "Fuera del plazo", value: valueinfo?.iniciado_rg.notificado.fuera_plazo ?? 0 },
     { label: "Pendiente Notificar", value: valueinfo?.iniciado_rg.no_notificado ?? 0 },
-    { label: "No iniciado", value: valueinfo?.no_iniciado ?? 0 },
   ];
 
   const router = useRouter();
@@ -248,7 +246,6 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   const getTodos = () => {
     const newData = [
       { label: "Iniciado con RG", value: dataInfo?.iniciado_rg.total ?? 0 },
-      { label: "No iniciado", value: dataInfo?.no_iniciado ?? 0 },
     ];
 
     setValuesChart(newData);
@@ -430,7 +427,6 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   useEffect(() => {
     setValuesChart([
       { label: "Iniciado con RG", value: dataInfo?.iniciado_rg.total ?? 0 },
-      { label: "No iniciado", value: dataInfo?.no_iniciado ?? 0 },
     ]);
     setValuesChartType("todos");
   }, [checkInteraction]);
@@ -892,7 +888,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                       {!checkInteraction && <div className="w-6 h-6 rounded-full bg-[#FF6B38]"></div>}
                     </td>
                   </tr>
-                  <tr className="border-b border-[#BDBDBD] ">
+                  {/*<tr className="border-b border-[#BDBDBD] ">
                     <td className="pl-3 py-1.5">2. No iniciado</td>
                     <td className="text-center py-1.5">
                       <div
@@ -913,7 +909,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                         {!checkInteraction && <div className="w-6 h-6 rounded-full bg-[#FFF] border border-[#003770]"></div>}
                       </td>
                     </td>
-                  </tr>
+                    </tr>*/}
                 </tbody>
               </table>
             </div>
