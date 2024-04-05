@@ -53,7 +53,8 @@ type DataInfo = {
     };
     total: number;
   };
-  no_iniciado: number;
+  //no_iniciado: number;
+  nombre_proceso: string;
 };
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 const Estadistica: NextPageWithLayout<EstadisticaProps> = () => {
@@ -453,7 +454,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
     <div ref={componentRef} className="flex flex-col gap-3.5">
       <Card title="Listado de personal de ODPE" border={false} className="bg-white p-[2rem] rounded-[15px]">
         <div>
-          <h2 className="text-[#2B3674] text-lg font-semibold">Elecciones Regionales y Municipales 2022</h2>
+          <h2 className="text-[#2B3674] text-lg font-semibold">Proceso: {dataInfo?.nombre_proceso}</h2>
           <hr style={{ marginTop: "10px", borderTop: "2px solid #A8CFEB" }} />
         </div>
 
@@ -582,7 +583,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
         </Button>
       </Card>
       <div className="flex gap-[26px]">
-        <div className="w-[413px]">
+        {/*<div className="w-[413px]">
           <Card title="Listado de personal de ODPE" className="bg-white py-[16px]  px-[17px] rounded-[15px] ">
             <div className="">
               <h2 className="text-[#2B3674] text-lg font-semibold">Datos generales</h2>
@@ -601,12 +602,12 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
               </div>
             </div>
           </Card>
-        </div>
+        </div>*/}
         <Card title="Listado de personal de ODPE" className="bg-white py-6 px-[33px] rounded-[15px] flex-1">
-          <div className="flex-1">
-            <h2 className="text-[#2B3674] text-lg font-semibold">ETAPA INSTRUCTIVA - RESOLUTIVA - RECURSIVA : 15 896</h2>
+          {/*<div className="flex-1">
+            <h2 className="text-[#2B3674] text-lg font-semibold">TOTAL DE PAS: {console.log(dataInfo)}</h2>
             <hr style={{ marginTop: "10px", borderTop: "2px solid #A8CFEB" }} />
-          </div>
+      </div>*/}
           <div className=" flex gap-5">
             <div className="w-[448px]">
               <table>
@@ -619,7 +620,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                 </thead>
                 <tbody>
                   <tr className="border-b border-[#BDBDBD] ">
-                    <td className="pl-3 py-1.5">1. Iniciado con RG</td>
+                    <td className="pl-3 py-1.5">Iniciado con RG</td>
                     <td className="text-center py-1.5">
                       <button
                         onClick={() => dataInfo && dataInfo?.iniciado_rg?.total > 0 && handleFilterListadoPas("iniciado_rg")}
