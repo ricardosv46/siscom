@@ -1,40 +1,37 @@
-[ 
+[
   {
     "id": 1,
     "key": "procesos",
     "icon": "KeyOutlined",
     "label": "Procesos",
-    "role":  "user"
+    "role": "user"
   },
   {
     "id": 2,
     "key": "nuevoacceso",
     "icon": "UserOutlined",
     "label": "Nuevo acceso",
-    "role":  "admin"
+    "role": "admin"
   },
   {
     "id": 3,
     "key": "listadoacceso",
     "icon": "KeyOutlined",
     "label": "Listado de accesos",
-    "role":  "admin"
+    "role": "admin"
   },
   {
     "id": 4,
     "key": "estadistica-op",
     "icon": "BarChartOutlined",
     "label": "Estadística OP",
-    "role":  "admin"
+    "role": "admin"
   },
   {
     "id": 4,
     "key": "estadistica-candidato",
     "icon": "BarChartOutlined",
     "label": "Estadística Candidato",
-    "role":  "admin"
+    "role": "admin"
   }
-
-
-  
 ]

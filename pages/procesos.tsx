@@ -9,6 +9,7 @@ import { useRouter } from 'next/router'
 import 'moment/locale/es'
 import { Button, Modal } from 'antd'
 import useMenuStore from 'store/menu/menu'
+import useAuthStore from 'store/auth/auth'
 
 interface ProcesosProps {
   pageNum: number
@@ -28,7 +29,8 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
   const [procesoSelectedOption, setProcesoSelectedOption] = useState('')
   const [options, setOptions] = useState([])
   const [optionsYear, setOptionsYear] = useState([])
-  const [processGlobal, setProcessGlobal] = useState('')
+  const { user } = useAuthStore()
+  const profile = user?.profile?.toUpperCase()
   const { changeStateSelectedProcess } = useMenuStore()
   const listProcessApi = async (año: any) => {
     const { data } = await api.processes.getProcesses(año)
@@ -37,7 +39,12 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
 
   const listYearApi = async () => {
     const { data } = await api.processes.getYear()
-    setOptionsYear(data)
+    if (profile === 'GAD') {
+      const newData = data.filter((i: any) => i !== '2020' || i !== '2021')
+      setOptionsYear(newData)
+    } else {
+      setOptionsYear(data)
+    }
   }
 
   useEffect(() => {
@@ -61,7 +68,11 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
     }
     localStorage.setItem('IdSelectedYear', añoSelectedOption)
     changeStateSelectedProcess(procesoSelectedOption)
-    router.push('/')
+    if (profile === 'GAD') {
+      router.push('/listadopasgad')
+    } else {
+      router.push('/')
+    }
   }
 
   const handleChange = async (event: { target: { value: any } }) => {
@@ -85,12 +96,12 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
       </Head>
 
       <Card title="Listado de personal de ODPE">
-        <div style={{ marginBottom: '0.4rem' }}>
-          <h2 style={{ fontSize: 25, color: '#4F5172' }}>Seleccionar proceso a revisar:</h2>
-          <hr style={{ marginBottom: '0.9rem', borderTop: '2px solid #A8CFEB' }} />
+        <div className="mb-[0.4rem]">
+          <h2 className="text-2xl text-[#4F5172]">Seleccionar proceso a revisar:</h2>
+          <hr className="mb-[0.9rem] border-2 border-[#A8CFEB]" />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <div style={{ display: 'flex', marginRight: '40px' }}>
+        <div className="flex items-center">
+          <div className="flex mr-10">
             <select
               name="nieve"
               className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'}

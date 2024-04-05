@@ -1,5 +1,6 @@
 import { Status, responseLogin } from '@framework/types'
 import {
+  IPayment,
   IResponseAnexos,
   IResponseAnexosDetail,
   IResponseProcesses,
@@ -16,6 +17,9 @@ import { utils, writeFile } from 'xlsx'
 
 import { GetAuthService } from 'services/auth/ServiceAuth'
 import { Modal } from 'antd'
+import { FormDataTypePay } from 'pages/typepay'
+import { FormDataRegisterPay } from 'pages/registerpay'
+import dayjs from 'dayjs'
 
 const api = {
   login: async (body: any) => {
@@ -23,6 +27,159 @@ const api = {
       data: { data, message, success }
     }: responseLogin = await authService.post(`login/`, body)
     return { data, message, success }
+  },
+  payments: {
+    getAmount: async (id: string) => {
+      const tok = GetTokenAuthService()
+      if (tok) {
+        const {
+          data: { data, message, success }
+        }: IPayment = await apiService.get(`payments/type-payment/process/${id}/amount/`)
+        return { data, message, success }
+      } else {
+        return { data: { rj_amount: 0 } }
+      }
+    },
+    create: async (form: FormDataTypePay, process: string) => {
+      const tok = GetTokenAuthService()
+      if (tok) {
+        const formData = new FormData()
+
+        if (form?.typePay === 'Pronto pago' || form?.typePay === 'Pago total') {
+          formData.append('amount', form?.amount.replaceAll(',', ''))
+          formData.append('process_id', String(process))
+          formData.append('payment_type', form?.typePay)
+        }
+        if (form?.typePay === 'Fraccionamiento') {
+          formData.append('amount', form?.amount.replaceAll(',', ''))
+          formData.append('process_id', process)
+          formData.append('payment_type', form?.typePay)
+
+          formData.append('fee', form?.cuotes.replaceAll(',', ''))
+          formData.append('fee_initial', form?.initialCuote.replaceAll(',', ''))
+        }
+
+        if (form?.typePay === 'Pago a cuenta') {
+          formData.append('amount', form?.amount.replaceAll(',', ''))
+          formData.append('process_id', String(process))
+          formData.append('payment_type', form?.typePay)
+
+          formData.append('amount_paid', form?.initialCuote.replaceAll(',', ''))
+        }
+
+        const {
+          data: { data, message, success }
+        }: IPayment = await apiService.post(`payments/type-payment/create/`, formData)
+        return { data, message, success }
+      } else {
+        return { data: {} }
+      }
+    },
+    register: async (form: FormDataRegisterPay | FormDataTypePay, process: string) => {
+      const tok = GetTokenAuthService()
+      if (tok) {
+        const formData = new FormData()
+        const currentDateTime = dayjs()
+        const formattedDateTime = currentDateTime.format('YYYY-MM-DD HH:mm:ss')
+
+        formData.append('payment_method', form?.typePay)
+        formData.append('process_id', String(process))
+        formData.append('created_at', formattedDateTime)
+        formData.append('amount', form?.amount.replaceAll(',', ''))
+
+        formData.append('fees', form?.cuotes)
+
+        formData.append('receipt_number', form?.ticket.replaceAll(',', ''))
+
+        formData.append('bank', form?.bank.replaceAll(',', ''))
+        formData.append('payment_date', form?.date + ' ' + form.hour + ':00')
+
+        const {
+          data: { data, message, success }
+        }: IPayment = await apiService.post(`/payments/payment/create/`, formData)
+        return { data, message, success }
+      } else {
+        return { data: { rj_amount: 0 } }
+      }
+    },
+    loadExcelTypePay: async (excelFile: any, refetch: () => void) => {
+      const tok = GetTokenAuthService()
+      if (tok) {
+        const { user } = GetAuthService()
+        const formData = new FormData()
+        formData.append('xlsx_file', excelFile)
+        formData.append('user_id', user.id)
+        try {
+          const token = localStorage.getItem('token')
+          const resultApi = await apiService.post(`payments/type-payment/import/`, formData, {
+            headers: { 'x-access-tokens': token }
+          })
+          const response = resultApi.data
+
+          if (response) {
+            const instance = Modal.info({
+              content: response.message,
+              centered: true,
+              async onOk() {
+                instance.destroy()
+                refetch()
+              }
+            })
+          }
+          if (response?.data) {
+            return { data: response?.data }
+          }
+        } catch (error) {
+          const instance = Modal.info({
+            content: 'Ocurrió un error al procesar el archivo!',
+            centered: true,
+            async onOk() {
+              instance.destroy()
+            }
+          })
+          return { data: [] }
+        }
+      }
+    },
+    loadExcelRegisterPay: async (excelFile: any, refetch: () => void) => {
+      const tok = GetTokenAuthService()
+      if (tok) {
+        const { user } = GetAuthService()
+        const formData = new FormData()
+        formData.append('xlsx_file', excelFile)
+        formData.append('user_id', user.id)
+        try {
+          const token = localStorage.getItem('token')
+          const resultApi = await apiService.post(`payments/payment/import/`, formData, {
+            headers: { 'x-access-tokens': token }
+          })
+          const response = resultApi.data
+
+          if (response) {
+            const instance = Modal.info({
+              content: response.message,
+              centered: true,
+              async onOk() {
+                instance.destroy()
+                refetch()
+              }
+            })
+          }
+          if (response?.data) {
+            return { data: response?.data }
+          }
+        } catch (error) {
+          const instance = Modal.info({
+            content: 'Ocurrió un error al procesar el archivo!',
+            centered: true,
+            async onOk() {
+              instance.destroy()
+            }
+          })
+          return { data: [] }
+        }
+      }
+    }
   },
   home: {
     getProcessesGrouped: async (savedProcess: any) => {
@@ -105,12 +262,12 @@ const api = {
         }: IResponseProcessesDetail = await apiService.get(`processes/${id}/tracking/`)
 
         if (data === undefined || success === undefined || message === undefined) {
-          return { data: [] }
+          return { processes: [] }
         } else {
           return { processes: data, message, success }
         }
       } else {
-        return { data: [] }
+        return { processes: [] }
       }
     },
 
@@ -169,15 +326,15 @@ const api = {
         link.remove()
       }
     },
-    downloadReportePass: async (electoral_process: string, estado: string, ) => {
-        const {
-          data: { data, message, success }
-        }: IResponseProcesses = await apiService.get(`/processes/download/?electoral_process=${electoral_process}&estado=${estado}`)
-        if (data === undefined || success === undefined || message === undefined) {
-          return { processes: [] }
-        } else {
-          return {  data, message, success }
-        }
+    downloadReportePass: async (electoral_process: string, estado: string) => {
+      const {
+        data: { data, message, success }
+      }: IResponseProcesses = await apiService.get(`/processes/download/?electoral_process=${electoral_process}&estado=${estado}`)
+      if (data === undefined || success === undefined || message === undefined) {
+        return { processes: [] }
+      } else {
+        return { data, message, success }
+      }
     },
     loadExcelInformation: async (excelFile: any, refetch: () => void) => {
       const tok = GetTokenAuthService()

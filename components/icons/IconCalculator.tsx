@@ -1,0 +1,15 @@
+import * as React from 'react'
+import { SVGProps } from 'react'
+const IconCalculator = (props: SVGProps<SVGSVGElement>) => (
+  <svg width={16} height={16} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <path
+      d="M12.6667 1.33301H3.33333C2.598 1.33301 2 1.93101 2 2.66634V13.333C2 14.0683 2.598 14.6663 3.33333 14.6663H12.6667C13.402 14.6663 14 14.0683 14 13.333V2.66634C14 1.93101 13.402 1.33301 12.6667 1.33301ZM3.33333 13.333V2.66634H12.6667L12.6673 13.333H3.33333Z"
+      fill="currentColor"
+    />
+    <path
+      d="M4.66699 8H6.00033V9.33333H4.66699V8ZM4.66699 10.6667H6.00033V12H4.66699V10.6667ZM7.33366 8H8.66699V9.33333H7.33366V8ZM4.66699 4H11.3337V6.66667H4.66699V4ZM7.33366 10.6667H8.66699V12H7.33366V10.6667ZM10.0003 8H11.3337V12H10.0003V8Z"
+      fill="currentColor"
+    />
+  </svg>
+)
+export { IconCalculator }

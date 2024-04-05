@@ -22,6 +22,9 @@ export interface IPropsItem {
   numero: number
   responsable: string
   estado: string
+  related_document: string
+  resolution_number: string
+  num_expediente: string
 }
 
 export interface IDetailItem {

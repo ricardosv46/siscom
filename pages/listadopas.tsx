@@ -40,20 +40,6 @@ interface ListadopasProps {
   total: number
 }
 
-interface IPropsItem {
-  actualizacion: string
-  etapa: string | number | null
-  fecha_fin: string | null
-  fecha_inicio: string | null
-  name: string
-  numero: number
-  resolution_number: string | null
-  responsable: string | null
-  type: string | null
-  estado_proceso: string | null
-  sgd: boolean
-}
-
 const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, total }) => {
   const router = useRouter()
   const [process, setProcess] = useState<any>()
@@ -62,7 +48,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
   const { user } = useAuthStore()
   const profile = user?.profile?.toUpperCase()
   let label: string | string[] | undefined
-  const [isCheckedTodos, setIsCheckedTodos] = useState(false)
   const [operationSelectedOption, setOperationSelectedOption] = useState('')
   const [dataResponsable, setDataResponsable] = useState<any>()
   const [estado, setEstado] = useState('')
@@ -208,16 +193,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
     try {
       const { processes } = await api.listpas.getProcesses(IdSelectedProcess, 'all')
-
-      const statusImg: any = {
-        less_3_months: 'less_3_months',
-        less_6_months: 'less_6_months',
-        more_6_months: 'more_6_months',
-        finalized: 'finalized',
-        out_of_date: 'out_of_date',
-        to_start: 'to_start',
-        undefined: 'undefined'
-      }
 
       const newData = processes.map((item) => {
         const { estado, responsable } = item
@@ -513,7 +488,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     multiple: false
   })
   useEffect(() => {
-    setIsCheckedTodos(true)
     const labelIndex = router?.query
     const filters: any = router?.query?.filters
     const filtersParse = filters ? JSON.parse(filters) : null
@@ -846,55 +820,49 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     }
   ]
 
-  const reportePAS = async()=>{
-    console.log({process,dataProccess});
-    
-      const instance = Modal.info({
-        title: 'Cargando',
+  const reportePAS = async () => {
+    const instance = Modal.info({
+      title: 'Cargando',
+      content: (
+        <div>
+          <p>Espere mientras termine la descarga...</p>
+        </div>
+      ),
+      onOk() {},
+      okButtonProps: { disabled: true, style: { backgroundColor: '#0874cc', display: 'none' } },
+      centered: true
+    })
+
+    if (process?.length === 0) {
+      instance.destroy()
+
+      const excelVacio = Modal.info({
         content: (
           <div>
-            <p>Espere mientras termine la descarga...</p>
+            <p>No hay registros para descargar</p>
           </div>
         ),
-        onOk() {},
-        okButtonProps: { disabled: true, style: { backgroundColor: '#0874cc', display: 'none' } },
-        centered: true
+        centered: true,
+        onOk() {
+          excelVacio.destroy()
+        }
       })
 
-      if (process?.length === 0) {
-        instance.destroy()
+      return
+    }
 
-        const excelVacio = Modal.info({
-          content: (
-            <div>
-              <p>No hay registros para descargar</p>
-            </div>
-          ),
-          centered: true,
-          onOk() {
-            excelVacio.destroy()
-          }
-        })
-
-        return
-      }
-
-      // ExportExcel(inputValue ? filterData : process);
-      // console.log({process,dataProccess});
-      try {
-      const res = await api.listpas.downloadReportePass(IdSelectedProcess,'all' )
-      const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory:res?.data })
+    // ExportExcel(inputValue ? filterData : process);
+    // console.log({process,dataProccess});
+    try {
+      const res = await api.listpas.downloadReportePass(IdSelectedProcess, 'all')
+      const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: res?.data })
 
       ExportExcel(dataFilter)
       instance.destroy()
-
-      } catch (error) {
+    } catch (error) {
       instance.destroy()
-        
-      }
-      
+    }
   }
-
 
   const clearFilters = async () => {
     setDate('')
@@ -905,7 +873,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     setEstadoRj('')
     processApi(IdSelectedProcess, 'all')
   }
-  
+
   const dataOptionsSelect =
     new Date(localStorage.getItem('IdSelectedYear')!).valueOf() < new Date('2022').valueOf() ? optionsEstado : optionsEstado.slice(0, -1)
 
