@@ -179,6 +179,17 @@ const api = {
           return { data: [] }
         }
       }
+    },
+    getPay: async (id: string) => {
+      const tok = GetTokenAuthService()
+      if (tok) {
+        const {
+          data: { data, message, success }
+        }: IPayment = await apiService.get(`/payments/search_payment/${id}`)
+        return { data, message, success }
+      } else {
+        return { data: {} }
+      }
     }
   },
   home: {
@@ -260,7 +271,6 @@ const api = {
         const {
           data: { data, message, success }
         }: IResponseProcessesDetail = await apiService.get(`processes/${id}/tracking/`)
-
         if (data === undefined || success === undefined || message === undefined) {
           return { processes: [] }
         } else {

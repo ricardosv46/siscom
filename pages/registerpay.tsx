@@ -57,6 +57,16 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     enabled: !!id
   })
 
+  const { data: pay } = useQuery({
+    queryKey: ['getPay'],
+    queryFn: () => api.payments.getPay(id),
+    retry: false,
+    refetchOnWindowFocus: false,
+    enabled: !!id
+  })
+
+  console.log({ pay })
+
   const [dateMoment, setDateMoment] = useState<Moment | null>(null)
   const [hourMoment, setHourMoment] = useState<Moment | null>(null)
 

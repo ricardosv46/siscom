@@ -15,12 +15,12 @@ import 'moment/locale/es'
 import locale from 'antd/lib/date-picker/locale/es_ES'
 import { useFilePicker } from 'use-file-picker'
 import useMenuStore from 'store/menu/menu'
-import { Resizable } from 'react-resizable'
 import { IAnexos, IAnexosDetail, ITracking, ITrackingDetail } from '@framework/types'
 import { ExportExcel } from '@components/ui/ExportExcel/ExportExcel'
 import 'react-resizable/css/styles.css' // Importa los estilos de react-resizable
 import { ModalAnexos } from '@components/ui/Modals'
-import { list } from 'postcss'
+import Leyend from '@components/ui/Leyend/Leyend'
+import TranckingDetailCard from '@components/common/TranckingDetail'
 
 moment.locale('es')
 const { RangePicker } = DatePicker
@@ -195,18 +195,16 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       const { processes } = await api.listpas.getProcesses(IdSelectedProcess, 'all')
 
       const newData = processes.map((item) => {
-        const { estado, responsable } = item
+        const { responsable } = item
         if (responsable == profile || user.is_admin) {
           return {
             ...item,
             btnDisabled: false
-            // iconEstado: <img src={`assets/images/${statusImg[estado]}.png`} />c
           }
         } else {
           return {
             ...item,
             btnDisabled: true
-            // iconEstado: <img src={`assets/images/${statusImg[estado]}.png`} />
           }
         }
       })
@@ -256,18 +254,16 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
         const newInfo = await api.estadistica.listPas(filterBarras)
 
         const newInfoList = newInfo?.data.map((item: any) => {
-          const { estado, responsable } = item
+          const { responsable } = item
           if (responsable == profile || user.is_admin) {
             return {
               ...item,
               btnDisabled: false
-              // iconEstado: <img src={`assets/images/${statusImg[estado]}.png`} />
             }
           } else {
             return {
               ...item,
               btnDisabled: true
-              // iconEstado: <img src={`assets/images/${statusImg[estado]}.png`} />
             }
           }
         })
@@ -298,18 +294,16 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     const { processes } = await api.listpas.getProcessesByDate(globalProcess, 'all', start_at, end_at)
 
     const newData = processes.map((item) => {
-      const { estado, responsable } = item
+      const { responsable } = item
       if (responsable == profile || user.is_admin) {
         return {
           ...item,
           btnDisabled: false
-          // iconEstado: <img src={`assets/images/${statusImg[estado]}.png`} />
         }
       } else {
         return {
           ...item,
           btnDisabled: true
-          // iconEstado: <img src={`assets/images/${statusImg[estado]}.png`} />
         }
       }
     })
@@ -445,12 +439,12 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     }
   }
 
-  const getTrackingDetailAnexos = async (tracking: any) => {
-    const { trackingDetailAnexos } = await api.listpas.getTrackingDetailAnexos(tracking.nu_ann, tracking.nu_emi)
-    if (trackingDetailAnexos) {
-      console.log({ trackingDetailAnexos })
-    }
-  }
+  // const getTrackingDetailAnexos = async (tracking: any) => {
+  //   const { trackingDetailAnexos } = await api.listpas.getTrackingDetailAnexos(tracking.nu_ann, tracking.nu_emi)
+  //   if (trackingDetailAnexos) {
+  //     console.log({ trackingDetailAnexos })
+  //   }
+  // }
 
   const getAnexos = async (props: any) => {
     const { estado, ...res } = props.item
@@ -700,8 +694,6 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     setProcess(dataFilter)
   }
 
-  // const [value, setValue] = useState(1);
-
   async function loadFile() {
     try {
       openFileSelector()
@@ -885,71 +877,34 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Card title="Listado de personal de ODPE">
-        <div style={{ marginBottom: '0.4rem' }}>
-          <h2 style={{ fontSize: 25, color: '#4F5172' }}>Listado de PAS </h2>
-          <hr style={{ marginBottom: '0.9rem', borderTop: '2px solid #A8CFEB' }} />
+        <div className="mb-[0.4rem]">
+          <h2 className="text-2xl text-[#4F5172]">Listado de PAS </h2>
+          <hr className="mb-[0.9rem] border-t-2 border-[#A8CFEB]" />
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{ marginRight: '40px', display: 'flex', alignItems: 'center' }}>
-              <img style={{ marginRight: '10px' }} src="assets/images/to_start.png" />
-              <label className="form-checkbottom">Por iniciar</label>
-            </div>
-            <div style={{ marginRight: '40px', display: 'flex', alignItems: 'center' }}>
-              <img style={{ marginRight: '10px' }} src="assets/images/out_of_date.png" />
-              <label className="form-checkbottom">Fuera de fecha</label>
-            </div>
-            <div style={{ marginRight: '40px', display: 'flex', alignItems: 'center' }}>
-              <img style={{ marginRight: '10px' }} src="assets/images/finalized.png" />
-              <label className="form-checkbottom">Finalizado</label>
-            </div>
-            <div style={{ marginRight: '40px', display: 'flex', alignItems: 'center' }}>
-              <img style={{ marginRight: '10px' }} src="assets/images/more_6_months.png" />
-              <label className="form-checkbottom">Más de 6 meses</label>
-            </div>
-            <div style={{ marginRight: '40px', display: 'flex', alignItems: 'center' }}>
-              <img style={{ marginRight: '10px' }} src="assets/images/less_6_months.png" />
-              <label className="form-checkbottom">De 3 a 6 meses</label>
-            </div>
-            <div style={{ marginRight: '40px', display: 'flex', alignItems: 'center' }}>
-              <img style={{ marginRight: '10px' }} src="assets/images/less_3_months.png" />
-              <label className="form-checkbottom">Menos de 3 meses</label>
-            </div>
+            <Leyend color="bg-white border-[#0073CF] border-2" label="Por iniciar" />
+            <Leyend color="bg-black" label="Fuera de fecha" />
+            <Leyend color="bg-gray-500" label="Finalizado" />
+            <Leyend color="bg-[#76BD43]" label="Más de 6 meses" />
+            <Leyend color="bg-[#FFB81C]" label="De 3 a 6 meses" />
+            <Leyend color="bg-[#E3002B]" label="Menos de 3 meses" />
 
-            {user.is_admin && (
-              <div style={{ marginRight: '40px', display: 'flex', alignItems: 'center' }}>
-                <div className="w-[24px] h-[24px] rounded-full bg-blue-600 mr-2"></div>
-                <label className="form-checkbottom">Inhabilitado</label>
-              </div>
-            )}
+            {user.is_admin && <Leyend color="bg-blue-600" label="Inhabilitado" />}
 
             {new Date(localStorage.getItem('IdSelectedYear')!).valueOf() < new Date('2022').valueOf() && (
-              <div style={{ marginRight: '40px', display: 'flex', alignItems: 'center' }}>
-                <img style={{ marginRight: '10px' }} src="assets/images/undefined.png" />
-                <label className="form-checkbottom">Indefinido</label>
-              </div>
+              <Leyend color="bg-purple-700" label="Indefinido" />
             )}
           </div>
           {estadoRj.length > 0 && (
             <div className="flex items-center gap-3">
               Estado RG :{' '}
-              <Button
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '8px 8px',
-                  backgroundColor: '#083474',
-                  border: 'none',
-                  color: 'white',
-                  marginRight: '10px',
-                  cursor: 'pointer'
-                }}>
+              <div className="flex items-center justify-center bg-[#083474] p-2 border-none mr-2.5 text-white">
                 <span className="font-normal uppercase">{estadoRj}</span>
                 <button className="ml-3 font-bold" onClick={clearFilters}>
                   x
                 </button>
-              </Button>
+              </div>
             </div>
           )}
         </div>
@@ -1012,86 +967,32 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               Por Fecha de inicio:
               <RangePicker locale={locale} value={date} onChange={onChangeDate} disabledDate={disabledDate} />
             </div>
-            <div style={{ display: 'flex' }}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                {
-                  <Button
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: '8px 8px',
-                      backgroundColor: '#083474',
-                      border: 'none',
-                      color: 'white',
-                      cursor: 'pointer'
-                    }}
-                    onClick={clearFilters}>
-                    <span style={{ fontSize: '16px' }}>Limpiar Filtros</span>
-                  </Button>
-                }
-              </div>{' '}
-            </div>
-            <div style={{ display: 'flex' }}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                {
-                  <Button
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: '8px 8px',
-                      backgroundColor: '#78bc44',
-                      border: 'none',
-                      color: 'white',
-                      marginRight: '10px',
-                      cursor: 'pointer'
-                    }}
-                    onClick={() => loadFile()}>
-                    <img src="assets/images/cargar.svg" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
-                    <span style={{ fontSize: '16px' }}>Cargar Información</span>
-                  </Button>
-                }
-                {filesContent.length == 1 && (processFile(plainFiles[0]) as any)}
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Button
-                  hidden={!process}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '8px 8px',
-                    backgroundColor: '#083474',
-                    border: 'none',
-                    color: 'white',
-                    marginRight: '10px',
-                    cursor: 'pointer'
-                  }}
-                  onClick={reportePAS}>
-                  <img src="assets/images/reporte_pas.svg" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
-                  <span style={{ fontSize: '16px' }}>Reporte PAS</span>
-                </Button>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Button
-                  hidden={!process}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '8px 8px',
-                    backgroundColor: '#0874cc',
-                    border: 'none',
-                    color: 'white',
-                    marginRight: '10px',
-                    cursor: 'pointer'
-                  }}
-                  onClick={() => DescargarExcel()}>
-                  <img src="assets/images/icono_detalle.svg" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
-                  <span style={{ fontSize: '16px' }}>Detalle</span>
-                </Button>
-              </div>
+            <div className="flex gap-3" style={{ display: 'flex', alignItems: 'center' }}>
+              <button
+                className="flex items-center justify-center p-2 bg-[#083474] border-none text-white cursor-pointer"
+                onClick={clearFilters}>
+                <span style={{ fontSize: '16px' }}>Limpiar Filtros</span>
+              </button>
+
+              <button
+                className="flex items-center justify-center p-2 bg-[#78bc44] border-none text-white cursor-pointer"
+                onClick={() => loadFile()}>
+                <img src="assets/images/cargar.svg" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
+                <span style={{ fontSize: '16px' }}>Cargar Información</span>
+              </button>
+              {filesContent.length == 1 && (processFile(plainFiles[0]) as any)}
+              <button
+                className="flex items-center justify-center p-2 bg-[#083474] border-none text-white cursor-pointer"
+                onClick={reportePAS}>
+                <img src="assets/images/reporte_pas.svg" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
+                <span style={{ fontSize: '16px' }}>Reporte PAS</span>
+              </button>
+              <button
+                className="flex items-center justify-center p-2 bg-[#0874cc] border-none text-white cursor-pointer"
+                onClick={() => DescargarExcel()}>
+                <img src="assets/images/icono_detalle.svg" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
+                <span style={{ fontSize: '16px' }}>Detalle</span>
+              </button>
             </div>
           </div>
         </div>
@@ -1161,175 +1062,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
             {dataTrackingDetail?.length &&
               dataTrackingDetail.map((item: ITrackingDetail, index: number) => (
-                <>
-                  <tr key={index}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      <div>
-                        <label style={{ color: '#083474', fontSize: '16px' }}>Remitente</label>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <div style={{ marginRight: '80px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>Fecha Emisión: {item.fecha_emi}</label>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>Elaboró: {item.elaboro}</label>
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <div style={{ marginRight: '30px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>Emisor:</label>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>{item.emisor}</label>
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <div style={{ marginRight: '30px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>Tipo Doc.: {item.tipo_doc}</label>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>Nro. Doc.: {item.nro_doc}</label>
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <div style={{ marginRight: '30px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>Estado:</label>
-                        </div>
-                        <div style={{ marginRight: '50px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>{item?.estado}</label>
-                        </div>
-                        <div style={{ marginRight: '30px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>Folios:</label>
-                        </div>
-                        <div style={{ marginRight: '90px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>{item.nu_des}</label>
-                        </div>
-                        <div style={{ marginRight: '5px', display: 'flex', alignItems: 'center' }}>
-                          <Button
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              padding: '8px 8px',
-                              backgroundColor: '#78bc44',
-                              border: 'none',
-                              color: 'white',
-                              marginRight: '10px',
-                              cursor: 'pointer'
-                            }}
-                            onClick={() => donwloadAnexosDetailPdf(item)}>
-                            <img src="assets/images/abrir_archivo.svg" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
-                            <span style={{ fontSize: '16px' }}>Abrir Documento</span>
-                          </Button>
-                        </div>
-                        {/* <div>
-                          <Button
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              padding: "8px 8px",
-                              backgroundColor: "#0874cc",
-                              border: "none",
-                              color: "white",
-                              marginRight: "10px",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => {
-                              getTrackingDetailAnexos(item);
-                              setOpenTrackingAnexos(true);
-                            }}
-                          >
-                            <img src="assets/images/adjunto_1.svg" style={{ width: "24px", height: "24px", marginRight: "8px" }} />
-                            <span style={{ fontSize: "16px" }}>Doc. Anexos</span>
-                          </Button>
-                        </div> */}
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <div style={{ marginRight: '30px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>Asunto:</label>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <textarea
-                            style={{
-                              borderWidth: 4,
-                              fontSize: '16px',
-                              width: '700px',
-                              height: '80px',
-                              padding: '0px 8px',
-                              marginBottom: '5px'
-                            }}
-                            disabled>
-                            {item.asunto}
-                          </textarea>
-                        </div>
-                      </div>
-                    </div>
-                  </tr>
-
-                  <tr key={index}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '20px' }}>
-                      <div>
-                        <label style={{ color: '#083474', fontSize: '16px' }}>Destinatario</label>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <div style={{ marginRight: '50px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>Receptor:</label>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>{item.receptor}</label>
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <div style={{ marginRight: '65px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>Estado:</label>
-                        </div>
-                        <div style={{ marginRight: '90px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>{item.estado_destinatario}</label>
-                        </div>
-                        <div style={{ marginRight: '20px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>Fecha Recepción:</label>
-                        </div>
-                        <div style={{ marginRight: '60px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>{item.fecha_rec}</label>
-                        </div>
-                        <div style={{ marginRight: '20px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>Fecha Atención.:</label>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>{item.fecha_ate}</label>
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <div style={{ marginRight: '60px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>Trámite:</label>
-                        </div>
-                        <div style={{ marginRight: '40px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>{item.tramite}</label>
-                        </div>
-                        <div style={{ marginRight: '20px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>Prioridad:</label>
-                        </div>
-                        <div style={{ marginRight: '40px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>{item.prioridad}</label>
-                        </div>
-                        <div style={{ marginRight: '20px', display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>Indicaciones:</label>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <label style={{ fontSize: '16px' }}>{item.indicaciones}</label>
-                        </div>
-                      </div>
-                    </div>
-                  </tr>
-                </>
+                <TranckingDetailCard {...{ item, index, donwloadAnexosDetailPdf }} />
               ))}
           </Modal>
         )}
