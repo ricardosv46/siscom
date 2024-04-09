@@ -139,8 +139,6 @@ const columns = [
     key: 'acciones',
     render: (_: any, item: any) => (
       <div className="flex items-center justify-center gap-2">
-        <>{console.log({ item })}</>
-
         <button
           disabled={item?.type_payment?.id}
           className="disabled:text-[#828282] text-[#76BD43] w-[110px] flex items-center gap-1"
@@ -523,6 +521,13 @@ const Listadopas: NextPageWithLayout = () => {
 
   const dataOptionsSelect =
     new Date(localStorage.getItem('IdSelectedYear')!).valueOf() < new Date('2022').valueOf() ? optionsEstado : optionsEstado.slice(0, -1)
+
+  useEffect(() => {
+    if (user?.profile !== 'gad') {
+      router.push('/')
+      Modal.destroyAll()
+    }
+  }, [])
 
   return (
     <>

@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { GetAuthService } from 'services/auth/ServiceAuth';
-  
+import { GetAuthService } from 'services/auth/ServiceAuth'
+
 // This function can be marked `async` if using `await` inside
-export async function middleware(request: NextRequest) {
- 
-}
+export async function middleware(request: NextRequest) {}
 
 export const config = {
-  matcher: ["/procesos", "/", '/listadopas', '/nuevoacceso', '/listadoacceso'],
-};
+  matcher: ['/procesos', '/', '/listadopas', '/listadopasgad', '/nuevoacceso', '/listadoacceso']
+}
