@@ -347,13 +347,15 @@ const api = {
         return { data, message, success }
       }
     },
-    loadExcelInformation: async (excelFile: any, refetch: () => void) => {
+    loadExcelInformation: async (excelFile: File, IdSelectedProcess: string, refetch: () => void) => {
       const tok = GetTokenAuthService()
       if (tok) {
         const { user } = GetAuthService()
         const formData = new FormData()
         formData.append('xlsx_file', excelFile)
         formData.append('user_id', user.id)
+        formData.append('electoral_process', IdSelectedProcess)
+
         try {
           const token = localStorage.getItem('token')
           const resultApi = await axios.post(`${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/processes/bulk/tracking/create/`, formData, {

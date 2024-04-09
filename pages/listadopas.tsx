@@ -324,7 +324,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       return { id: uniqueId, ...obj }
     })
   }
-  const loadExcelApi = async (excelFile: any) => {
+  const loadExcelApi = async (excelFile: File) => {
     const instanceProcesando = Modal.info({
       title: 'Procesando',
       content: (
@@ -351,7 +351,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
         cancelText: 'No',
         async onOk() {
           instance.destroy()
-          await api.listpas.loadExcelInformation(excelFile, async () => {
+          await api.listpas.loadExcelInformation(excelFile, IdSelectedProcess, async () => {
             const newData = await processApi(IdSelectedProcess, 'all')
             const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData })
             setProcess(dataFilter)
@@ -384,7 +384,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
 
     if (res?.data?.message === '3') {
       instanceProcesando.destroy()
-      await api.listpas.loadExcelInformation(excelFile, async () => {
+      await api.listpas.loadExcelInformation(excelFile, IdSelectedProcess, async () => {
         const newData = await processApi(IdSelectedProcess, 'all')
         const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData })
         setProcess(dataFilter)
