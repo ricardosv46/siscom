@@ -67,17 +67,12 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     enabled: !!id
   })
 
-  console.log({ pay })
-
-  const pays = pay?.filter((i: any) => i?.payment_date).map((i: any) => i?.fees)
-  console.log({ pays })
+  const pays = pay?.filter((i: any) => i?.payment_date && i?.fees).map((i: any) => i?.fees)
 
   const totalFees = Array.from({ length: +fees }, (_, index) => ({
     label: index + 1,
     value: index + 1
   }))
-
-  console.log({ totalFees })
 
   const finalFees = totalFees.map((fee) => {
     if (pays?.includes(fee.value)) {
@@ -87,7 +82,28 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     }
   })
 
-  console.log({ finalFees, pays })
+  useEffect(() => {
+    const dataNum = +fees === pays?.length
+
+    console.log({ fees: +fees, pays: pays?.length, paysa: pays, pay, dataNum })
+    if (dataNum) {
+      const instance = Modal.info({
+        icon: '',
+        content: (
+          <div>
+            <p>No existen cuotas pendientes para este expediente.</p>
+          </div>
+        ),
+        onOk() {
+          instance.destroy()
+          router.push('/listadopasgad')
+        },
+        okButtonProps: { style: { backgroundColor: '#0874cc' } },
+        centered: true
+      })
+    }
+  }, [finalFees, fees, pays])
+
   const [dateMoment, setDateMoment] = useState<Moment | null>(null)
   const [hourMoment, setHourMoment] = useState<Moment | null>(null)
 
