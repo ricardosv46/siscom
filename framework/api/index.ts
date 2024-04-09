@@ -186,7 +186,7 @@ const api = {
       if (tok) {
         const {
           data: { data, message, success }
-        }: IPayment = await apiService.get(`/payments/search_payment/${id}`)
+        }: IPayment = await apiService.get(`/payments/search_payment/${id}/`)
         return { data, message, success }
       } else {
         return { data: {} }
