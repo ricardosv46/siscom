@@ -50,7 +50,7 @@ const TypePay: NextPageWithLayout = ({}) => {
     amount: '',
     typePay: 'Pronto pago',
     discount: '25%',
-    cuotes: '1',
+    cuotes: '',
     initialCuote: '',
     showModal: false,
     ticket: '',
@@ -185,12 +185,12 @@ const TypePay: NextPageWithLayout = ({}) => {
     try {
       await api.payments.create(formData, id)
 
-      if (typePay === 'Fraccionamiento') {
-        await api.payments.register({ ...formData, amount: String(initialCuote) }, id)
+      if (typePay === 'Fraccionamiento' || typePay === 'Pago a cuenta') {
+        await api.payments.register({ ...formData, cuotes: '', amount: String(initialCuote) }, id)
       }
 
-      if (typePay === 'Pago a cuenta') {
-        await api.payments.register({ ...formData, amount: String(initialCuote) }, id)
+      if (typePay === 'Pronto pago' || typePay === 'Pago total') {
+        await api.payments.register({ ...formData, cuotes: '', amount: String(amount) }, id)
       }
 
       setFormData((prev) => ({ ...prev, showModal: false }))
