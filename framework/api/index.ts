@@ -86,8 +86,9 @@ const api = {
         formData.append('process_id', String(process))
         formData.append('created_at', formattedDateTime)
         formData.append('amount', form?.amount.replaceAll(',', ''))
-
-        formData.append('fees', form?.cuotes)
+        if (form?.cuotes) {
+          formData.append('fees', form?.cuotes)
+        }
 
         formData.append('receipt_number', form?.ticket.replaceAll(',', ''))
 
