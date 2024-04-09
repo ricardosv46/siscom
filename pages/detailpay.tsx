@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { IDetailItem, IPropsItem } from './detallepas'
 import moment from 'moment'
+import { IDetailPay } from '@framework/types/processes.interface'
 
 const DetailPay = () => {
   const router = useRouter()
@@ -25,6 +26,32 @@ const DetailPay = () => {
     refetchOnWindowFocus: false,
     enabled: !!id
   })
+
+  const { data: pay } = useQuery({
+    queryKey: ['getPay'],
+    queryFn: () => api.payments.getPay(id),
+    retry: false,
+    refetchOnWindowFocus: false,
+    enabled: !!id
+  })
+
+  console.log({ pay })
+
+  const pays = pay
+    ?.map((i: IDetailItem | IDetailPay) => {
+      let date
+      if ('payment_date' in i) {
+        date = new Date(i.payment_date)
+      }
+      if ('created_at_dt' in i) {
+        date = new Date(i.created_at_dt)
+      }
+      return { ...i, date }
+    })
+    .sort((a: any, b: any) => a.date.getTime() - b.date.getTime())
+
+  console.log({ pays })
+
   useEffect(() => {
     const itemDetailPay = localStorage.getItem('itemDetailPay')
     const resItemDetailPay = itemDetailPay ? JSON.parse(itemDetailPay) : {}

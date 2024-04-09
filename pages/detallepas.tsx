@@ -31,6 +31,7 @@ export interface IDetailItem {
   key: number
   comment: string
   created_at: string
+  created_at_dt: string
   current_responsible: string
   document: string
   id: number

@@ -10,6 +10,8 @@ import api from '@framework/api'
 import { convertAlphaNumber, convertNumber } from 'utils/helpers'
 import dayjs from 'dayjs'
 import moment, { Moment } from 'moment'
+import { IDetailItem } from './detallepas'
+import { IDetailPay } from '@framework/types/processes.interface'
 
 const optionsFormPay = [
   {
@@ -36,7 +38,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
   const [formData, setFormData] = useState<FormDataRegisterPay>({
     typePay: 'deposito',
     amount: '',
-    cuotes: fees ? '1' : '',
+    cuotes: '',
     ticket: '',
     bank: '',
     date: '',
@@ -57,7 +59,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     enabled: !!id
   })
 
-  const { data: pay } = useQuery({
+  const { data: pay, isLoading: isLoadingPay } = useQuery({
     queryKey: ['getPay'],
     queryFn: () => api.payments.getPay(id),
     retry: false,
@@ -67,6 +69,25 @@ const RegisterPay: NextPageWithLayout = ({}) => {
 
   console.log({ pay })
 
+  const pays = pay?.filter((i: any) => i?.payment_date).map((i: any) => i?.fees)
+  console.log({ pays })
+
+  const totalFees = Array.from({ length: +fees }, (_, index) => ({
+    label: index + 1,
+    value: index + 1
+  }))
+
+  console.log({ totalFees })
+
+  const finalFees = totalFees.map((fee) => {
+    if (pays?.includes(fee.value)) {
+      return { ...fee, disabled: true }
+    } else {
+      return { ...fee }
+    }
+  })
+
+  console.log({ finalFees, pays })
   const [dateMoment, setDateMoment] = useState<Moment | null>(null)
   const [hourMoment, setHourMoment] = useState<Moment | null>(null)
 
@@ -193,8 +214,15 @@ const RegisterPay: NextPageWithLayout = ({}) => {
               <label htmlFor="tipo" className="text-gray-600">
                 Número de cuota
               </label>
+              <Select
+                placeholder="Selecciona"
+                value={cuotes}
+                onChange={(e) => setFormData((prev) => ({ ...prev, cuotes: e }))}
+                className="w-[200px] border-[#69B2E8]  "
+                options={finalFees}
+              />
 
-              <Input
+              {/* <Input
                 maxLength={3}
                 className="w-[200px] border-[#69B2E8] text-center"
                 value={cuotes}
@@ -215,7 +243,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
                     return data
                   })
                 }
-              />
+              /> */}
             </div>
           </div>
         )}
