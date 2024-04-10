@@ -12,6 +12,7 @@ import dayjs from 'dayjs'
 import moment, { Moment } from 'moment'
 import { IDetailItem } from './detallepas'
 import { IDetailPay } from '@framework/types/processes.interface'
+import locale from 'antd/lib/date-picker/locale/es_ES'
 
 const optionsFormPay = [
   {
@@ -173,13 +174,14 @@ const RegisterPay: NextPageWithLayout = ({}) => {
 
   const disabledTime = (current: any) => {
     let now = moment()
+    let nowinit = moment(bloquedate?.payment_date)
 
     const currentHour = now.hour()
     const currentHourActive = moment(current).hour()
     const currentMinute = now.minute()
 
     // Si la fecha es hoy, deshabilita horas y minutos futuros
-    if (current && current.isSame(now, 'day')) {
+    if (dateMoment && dateMoment.isSame(now, 'day')) {
       if (currentHourActive === currentHour) {
         return {
           disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
@@ -193,12 +195,10 @@ const RegisterPay: NextPageWithLayout = ({}) => {
       }
     }
 
-    let nowinit = moment(bloquedate?.payment_date)
-
     const currentHourinit = nowinit.hour()
     const currentMinuteinit = nowinit.minute()
 
-    if (current && current.isSame(nowinit, 'day')) {
+    if (dateMoment && dateMoment.isSame(nowinit, 'day')) {
       return {
         disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour < currentHourinit),
         disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit)
@@ -335,8 +335,16 @@ const RegisterPay: NextPageWithLayout = ({}) => {
               Fecha y hora del pago
             </label>
             <div className="flex gap-5">
-              <DatePicker className="w-32" format={'DD-MM-YYYY'} value={dateMoment} onChange={onChangeDate} disabledDate={disabledDate} />
+              <DatePicker
+                locale={locale}
+                className="w-32"
+                format={'DD-MM-YYYY'}
+                value={dateMoment}
+                onChange={onChangeDate}
+                disabledDate={disabledDate}
+              />
               <TimePicker
+                locale={locale}
                 className="w-32"
                 format={'HH:mm'}
                 value={hourMoment}
@@ -344,6 +352,15 @@ const RegisterPay: NextPageWithLayout = ({}) => {
                 disabledTime={disabledTime}
                 disabled={!dateMoment}
               />
+
+              {/* <DatePicker
+                locale={locale}
+                showTime={{ format: 'HH:mm' }}
+                // showNow={false}
+                disabledDate={disabledDate}
+                disabledTime={disabledTime}
+                // disabled={!dateMoment}
+              /> */}
             </div>
           </div>
         </div>
