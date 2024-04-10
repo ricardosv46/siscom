@@ -82,7 +82,9 @@ const DetailPay = () => {
           <p className="text-xl">Los registros con (*) quedan sin efecto por Resolución Jefatural {rj_remakeDatail?.document}.</p>
         )}
 
-        <p>Tipo de pago : {typepay}</p>
+        <p className="text-xl">
+          El tipo de pago registrado en el expediente es: <span className="uppercase">{typepay}</span>{' '}
+        </p>
 
         <div className="relative h-full p-10 overflow-hidden wrap">
           <div className="absolute h-full border border-2 border-gray-700 border-opacity-20" style={{ left: '50%' }}></div>
