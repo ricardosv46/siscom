@@ -67,8 +67,13 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     enabled: !!id
   })
 
-  const pays = pay?.filter((i: any) => i?.payment_date && i?.fees).map((i: any) => i?.fees)
+  const newpays = pay?.filter((i: any) => i?.payment_date && i?.fees)
 
+  const bloquedate = pay?.filter((i: any) => i?.payment_method === 'Cuota inicial' || i?.payment_method === 'Monto abonado')[0]
+
+  console.log({ bloquedate, newpays })
+
+  const pays = newpays?.map((i: any) => i?.fees)
   const totalFees = Array.from({ length: +fees }, (_, index) => ({
     label: index + 1,
     value: index + 1
@@ -85,7 +90,6 @@ const RegisterPay: NextPageWithLayout = ({}) => {
   useEffect(() => {
     const dataNum = +fees === pays?.length
 
-    console.log({ fees: +fees, pays: pays?.length, paysa: pays, pay, dataNum })
     if (dataNum) {
       const instance = Modal.info({
         icon: '',
@@ -139,10 +143,33 @@ const RegisterPay: NextPageWithLayout = ({}) => {
   }
 
   const disabledDate = (current: any) => {
-    const today = new Date()
-
-    return current && current > today
+    const date = moment(bloquedate?.payment_date).startOf('day')
+    const isOutOfRange = !moment(current).isBetween(date, moment())
+    return isOutOfRange
   }
+
+  // const disabledTime = (current: any) => {
+  //   let now = moment()
+
+  //   const currentHour = now.hour()
+  //   const currentHourActive = moment(current).hour()
+  //   const currentMinute = now.minute()
+
+  //   if (dateMoment && dateMoment.isSame(now, 'day')) {
+  //     if (currentHourActive === currentHour) {
+  //       return {
+  //         disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
+  //         disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute)
+  //       }
+  //     }
+
+  //     return {
+  //       disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour)
+  //     }
+  //   } else {
+  //     return {}
+  //   }
+  // }
 
   const disabledTime = (current: any) => {
     let now = moment()
@@ -151,7 +178,8 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     const currentHourActive = moment(current).hour()
     const currentMinute = now.minute()
 
-    if (dateMoment && dateMoment.isSame(now, 'day')) {
+    // Si la fecha es hoy, deshabilita horas y minutos futuros
+    if (current && current.isSame(now, 'day')) {
       if (currentHourActive === currentHour) {
         return {
           disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
@@ -161,10 +189,22 @@ const RegisterPay: NextPageWithLayout = ({}) => {
 
       return {
         disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour)
+        // disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute),
       }
-    } else {
-      return {}
     }
+
+    let nowinit = moment(bloquedate?.payment_date)
+
+    const currentHourinit = nowinit.hour()
+    const currentMinuteinit = nowinit.minute()
+
+    if (current && current.isSame(nowinit, 'day')) {
+      return {
+        disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour < currentHourinit),
+        disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit)
+      }
+    }
+    return {}
   }
 
   const onChangeDate = (date: any, dateString: string) => {

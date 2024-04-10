@@ -185,8 +185,12 @@ const TypePay: NextPageWithLayout = ({}) => {
     try {
       await api.payments.create(formData, id)
 
-      if (typePay === 'Fraccionamiento' || typePay === 'Pago a cuenta') {
-        await api.payments.register({ ...formData, cuotes: '', amount: String(initialCuote) }, id)
+      if (typePay === 'Fraccionamiento') {
+        await api.payments.register({ ...formData, typePay: 'Cuota inicial', cuotes: '', amount: String(initialCuote) }, id)
+      }
+
+      if (typePay === 'Pago a cuenta') {
+        await api.payments.register({ ...formData, typePay: 'Monto abonado', cuotes: '', amount: String(initialCuote) }, id)
       }
 
       if (typePay === 'Pronto pago' || typePay === 'Pago total') {

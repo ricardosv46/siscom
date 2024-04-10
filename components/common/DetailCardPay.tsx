@@ -7,6 +7,8 @@ import router from 'next/router'
 import { IDetailItem } from 'pages/detallepas'
 import React, { ReactElement, FC, useState } from 'react'
 import { GetAuthService } from 'services/auth/ServiceAuth'
+import 'dayjs/locale/es'
+dayjs.locale('es')
 
 interface IDetailItemName extends IDetailItem {
   headerName: string
@@ -68,10 +70,10 @@ const DetailCardPay: FC<IProps> = (props): ReactElement => {
           Tipo Registro: <span className="uppercase">{payment_method}</span>
         </h3>
         <h3 className="font-bold text-gray-500 ">Fecha: {dayjs(payment_date).format('DD MMM YYYY')}</h3>
-        {amount && <h3 className="font-bold text-gray-500">Monto: {amount}</h3>}
+        {amount && <h3 className="font-bold text-gray-500">Monto Abonado: S/. {amount}</h3>}
         {fees && <h3 className="font-bold text-gray-500">Cuotas: {fees}</h3>}
         {bank && <h3 className="font-bold text-gray-500">Banco: {bank}</h3>}
-        {receipt_number && <h3 className="font-bold text-gray-500">Ticket: {receipt_number}</h3>}
+        {receipt_number && <h3 className="font-bold text-gray-500">Número de operación: {receipt_number}</h3>}
 
         {created_at && <h3 className="font-bold text-gray-500 ">Fecha de Actualización: {dayjs(created_at).format('DD MMM YYYY')} </h3>}
       </div>
