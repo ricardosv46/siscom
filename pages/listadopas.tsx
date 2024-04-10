@@ -336,7 +336,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       centered: true
     })
 
-    const res = await api.listpas.validateFile({ excelFile, id: user.id })
+    const res = await api.listpas.validateFile({ excelFile, id: user.id, IdSelectedProcess })
 
     if (res?.data?.message === '1') {
       instanceProcesando.destroy()

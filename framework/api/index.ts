@@ -559,6 +559,8 @@ const api = {
         const formData = new FormData()
         formData.set('user_id', payload?.id)
         formData.set('xlsx_file', payload?.excelFile)
+        formData.set('electoral_process', payload?.IdSelectedProcess)
+
         const { data } = await apiService.post(`/processes/validateExcel/`, formData, {
           headers: {
             'x-access-tokens': tok,
