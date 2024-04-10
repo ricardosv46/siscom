@@ -127,8 +127,27 @@ const api = {
               }
             })
           }
-          if (response?.data) {
-            return { data: response?.data }
+
+          if (response.data.length > 0) {
+            let dataExcel = []
+            let headers: any[]
+            headers = ['FILA', 'DNI', 'ERROR']
+            console.log({ response })
+            for (let i = 0; i < response.data.length; i++) {
+              dataExcel.push({
+                fila: response.data[i].FILA,
+                dni: response.data[i].DNI,
+                error: response.data[i].ERROR
+              })
+            }
+
+            const ws = utils.book_new()
+            utils.sheet_add_aoa(ws, [headers])
+            utils.sheet_add_json(ws, dataExcel, { origin: 'A2', skipHeader: true })
+            const wb = { Sheets: { LidadoDatos: ws }, SheetNames: ['LidadoDatos'] }
+            const filename = 'erroresCarga.xlsx'
+            utils.book_append_sheet(wb, dataExcel)
+            writeFile(wb, `${filename}`)
           }
         } catch (error) {
           const instance = Modal.info({
@@ -166,8 +185,26 @@ const api = {
               }
             })
           }
-          if (response?.data) {
-            return { data: response?.data }
+          if (response.data.length > 0) {
+            let dataExcel = []
+            let headers: any[]
+            headers = ['FILA', 'DNI', 'ERROR']
+            console.log({ response })
+            for (let i = 0; i < response.data.length; i++) {
+              dataExcel.push({
+                fila: response.data[i].FILA,
+                dni: response.data[i].DNI,
+                error: response.data[i].ERROR
+              })
+            }
+
+            const ws = utils.book_new()
+            utils.sheet_add_aoa(ws, [headers])
+            utils.sheet_add_json(ws, dataExcel, { origin: 'A2', skipHeader: true })
+            const wb = { Sheets: { LidadoDatos: ws }, SheetNames: ['LidadoDatos'] }
+            const filename = 'erroresCarga.xlsx'
+            utils.book_append_sheet(wb, dataExcel)
+            writeFile(wb, `${filename}`)
           }
         } catch (error) {
           const instance = Modal.info({

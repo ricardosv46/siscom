@@ -6,26 +6,24 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { ReactElement, useEffect, useState } from 'react'
 import { IDetailItem, IPropsItem } from './detallepas'
-import moment from 'moment'
 import { IDetailPay } from '@framework/types/processes.interface'
 
 const DetailPay = () => {
   const router = useRouter()
   const id: string = String(router?.query?.id ?? '')
   const [dataItem, setDataItem] = useState<IPropsItem>()
-  console.log({ dataItem })
-  const {
-    data: data,
-    isLoading,
-    isError,
-    refetch
-  } = useQuery<{ processes: IDetailItem[] }>({
-    queryKey: ['processes'],
-    queryFn: () => api.listpas.getProcessesByTracking(Number(id)),
-    retry: false,
-    refetchOnWindowFocus: false,
-    enabled: !!id
-  })
+  // const {
+  //   data: data,
+  //   isLoading,
+  //   isError,
+  //   refetch
+  // } = useQuery<{ processes: IDetailItem[] }>({
+  //   queryKey: ['processes'],
+  //   queryFn: () => api.listpas.getProcessesByTracking(Number(id)),
+  //   retry: false,
+  //   refetchOnWindowFocus: false,
+  //   enabled: !!id
+  // })
 
   const { data: pay } = useQuery({
     queryKey: ['getPay'],
@@ -58,14 +56,12 @@ const DetailPay = () => {
     setDataItem(resItemDetailPay)
   }, [])
 
-  const detailEmi = data?.processes?.filter((item) => item.tracking_action === 'EMISION')[0]
-  const arrayNoti = data?.processes?.filter((item) => item.tracking_action === 'NOTIFICACION')
+  const detailEmi = pays?.filter((item: any) => item.tracking_action === 'EMISION')[0]
+  const arrayNoti = pays?.filter((item: any) => item.tracking_action === 'NOTIFICACION')
   const headerName = `${dataItem?.name} - R.G. ${dataItem?.resolution_number} - Exp. ${dataItem?.num_expediente}`
 
   const dataRemake =
-    id && data && data?.processes?.length > 0
-      ? data?.processes?.filter((item) => item.rj_type === 'REHACER' && item.rj_remake)[0]
-      : ({} as IDetailItem)
+    id && pays && pays?.length > 0 ? pays?.filter((item: any) => item.rj_type === 'REHACER' && item.rj_remake)[0] : ({} as IDetailItem)
 
   const rj_remakeDatail: IDetailItem = dataRemake
 
@@ -91,7 +87,7 @@ const DetailPay = () => {
         <div className="relative h-full p-10 overflow-hidden wrap">
           <div className="absolute h-full border border-2 border-gray-700 border-opacity-20" style={{ left: '50%' }}></div>
           {id &&
-            data?.processes?.map((item, key) => {
+            pays?.map((item: any, key: any) => {
               return (
                 <DetailCard
                   key={key}
