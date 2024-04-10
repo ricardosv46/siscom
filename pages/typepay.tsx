@@ -378,6 +378,14 @@ const TypePay: NextPageWithLayout = ({}) => {
             <div className="w-4/6 py-5 ">
               <div className="grid items-center grid-cols-4 gap-5 mb-5 ">
                 <label htmlFor="tipo" className="text-gray-600">
+                  Monto registrado en la RJ de Sancion (S/)
+                </label>
+                <Input disabled className="w-[200px] border-[#69B2E8]text-center" defaultValue={initialAmount?.data?.rj_amount} />
+              </div>
+            </div>
+            <div className="w-4/6 py-5 ">
+              <div className="grid items-center grid-cols-4 gap-5 mb-5 ">
+                <label htmlFor="tipo" className="text-gray-600">
                   Monto abonado (S/)
                 </label>
                 <Input
@@ -387,7 +395,7 @@ const TypePay: NextPageWithLayout = ({}) => {
                 />
                 <p className="col-span-2 text-red-500">
                   {initialAmount?.data?.rj_amount &&
-                  Number(convertNumber(initialCuote).replaceAll(',', '')) >= initialAmount?.data?.rj_amount
+                  Number(convertNumber(initialCuote).replaceAll(',', '')) > initialAmount?.data?.rj_amount
                     ? 'El monto registrado supera el monto consignado en la RJ de Sanción.'
                     : ''}
                 </p>
@@ -414,6 +422,14 @@ const TypePay: NextPageWithLayout = ({}) => {
             <div className="w-4/6 py-5 ">
               <div className="grid items-center grid-cols-4 gap-5 mb-5 ">
                 <label htmlFor="tipo" className="text-gray-600">
+                  Monto registrado en la RJ de Sancion (S/)
+                </label>
+                <Input disabled className="w-[200px] border-[#69B2E8]text-center" defaultValue={initialAmount?.data?.rj_amount} />
+              </div>
+            </div>
+            <div className="w-4/6 py-5 ">
+              <div className="grid items-center grid-cols-4 gap-5 mb-5 ">
+                <label htmlFor="tipo" className="text-gray-600">
                   Monto (S/)
                 </label>
                 <Input
@@ -422,7 +438,7 @@ const TypePay: NextPageWithLayout = ({}) => {
                   onChange={(e) => setFormData((prev) => ({ ...prev, amount: convertNumber(e.target.value) }))}
                 />
                 <p className="col-span-2 text-red-500">
-                  {initialAmount?.data?.rj_amount && Number(convertNumber(amount).replaceAll(',', '')) >= initialAmount?.data?.rj_amount
+                  {initialAmount?.data?.rj_amount && Number(convertNumber(amount).replaceAll(',', '')) > initialAmount?.data?.rj_amount
                     ? 'El monto registrado supera el monto consignado en la RJ de Sanción.'
                     : ''}
                 </p>
