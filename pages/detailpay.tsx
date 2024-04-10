@@ -11,6 +11,8 @@ import { IDetailPay } from '@framework/types/processes.interface'
 const DetailPay = () => {
   const router = useRouter()
   const id: string = String(router?.query?.id ?? '')
+  const typepay: string = String(router?.query?.typepay ?? '')
+
   const [dataItem, setDataItem] = useState<IPropsItem>()
   // const {
   //   data: data,
@@ -33,8 +35,6 @@ const DetailPay = () => {
     enabled: !!id
   })
 
-  console.log({ pay })
-
   const pays = pay
     ?.map((i: IDetailItem | IDetailPay) => {
       let date
@@ -47,8 +47,6 @@ const DetailPay = () => {
       return { ...i, date }
     })
     .sort((a: any, b: any) => a.date.getTime() - b.date.getTime())
-
-  console.log({ pays })
 
   useEffect(() => {
     const itemDetailPay = localStorage.getItem('itemDetailPay')
@@ -83,6 +81,8 @@ const DetailPay = () => {
         {rj_remakeDatail?.document && (
           <p className="text-xl">Los registros con (*) quedan sin efecto por Resolución Jefatural {rj_remakeDatail?.document}.</p>
         )}
+
+        <p>Tipo de pago : {typepay}</p>
 
         <div className="relative h-full p-10 overflow-hidden wrap">
           <div className="absolute h-full border border-2 border-gray-700 border-opacity-20" style={{ left: '50%' }}></div>

@@ -152,12 +152,12 @@ const columns = [
           disabled={!item?.type_payment?.id || item?.type_payment?.type === 'Pronto pago' || item?.type_payment?.type === 'Pago total'}
           className="disabled:text-[#828282] text-[#76BD43] w-[130px] flex items-center gap-1"
           onClick={() => {
-            Router.push(`/registerpay?id=${item?.numero}${item?.type_payment?.fees ? `&fees=${item?.type_payment?.fees}` : ''} `)
+            Router.push(`/registerpay?id=${item?.numero}${item?.type_payment?.fees ? `&fees=${item?.type_payment?.fees}` : ''}`)
           }}>
           <IconCalculator /> Registro de pago
         </button>
 
-        <Link href={`/detailpay?id=${item?.numero}`}>
+        <Link href={`/detailpay?id=${item?.numero}&typepay=${item?.type_payment?.type}`}>
           <button
             className="text-[#0073CF] w-[60px] flex items-center gap-1"
             onClick={() => {
