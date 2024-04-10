@@ -1,6 +1,8 @@
 import { CheckOutlined, CloseOutlined, EditOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import api from '@framework/api'
+import { IDetailPay } from '@framework/types/processes.interface'
 import { Button, Modal, Switch } from 'antd'
+import dayjs from 'dayjs'
 import router from 'next/router'
 import { IDetailItem } from 'pages/detallepas'
 import React, { ReactElement, FC, useState } from 'react'
@@ -10,7 +12,7 @@ interface IDetailItemName extends IDetailItem {
   headerName: string
 }
 interface IProps {
-  item: IDetailItemName
+  item: IDetailPay
   idx: number
   detailEmi: any
   arrayNoti: any
@@ -26,54 +28,11 @@ const onGoDetail = (page: string, props: any) => {
   history.pushState({ arrayNoti: props.arrayNoti, detailEmi: props.detailEmi, ...newDatos }, '', page)
 }
 
-const DetailCard: FC<IProps> = (props): ReactElement => {
+const DetailCardPay: FC<IProps> = (props): ReactElement => {
   const { user } = GetAuthService()
   const [loading, setLoading] = useState(false)
   const { item, idx, par, onHidden, estado, ...prev } = props
-  const {
-    id,
-    comment,
-    current_responsible,
-    created_at,
-    document,
-    new_responsible,
-    related_document,
-    resolution_number,
-    start_at,
-    tracking_action,
-    register_user,
-    rj_type,
-    is_hidden,
-    rj_remake,
-    rj_amount,
-    months,
-    days
-  } = item
-
-  console.log({ rj_type })
-
-  const showCard = async () => {
-    try {
-      setLoading(true)
-      await api.listpas.trackingHide(id, !is_hidden)
-
-      Modal.info({
-        content: (
-          <div>
-            <p>{!is_hidden ? 'El registro ahora esta oculto' : 'El registro ahora es visible'}</p>
-          </div>
-        ),
-        // okButtonProps: { hidden: true },
-        centered: true
-      })
-    } catch (error) {
-      console.log({ error })
-    } finally {
-      onHidden()
-      setLoading(false)
-    }
-  }
-  const disabledShow = props?.arrayNoti[0]?.id === item.id || rj_type === 'REHACER'
+  const { amount, bank, created_at, date, fees, payment_date, payment_method, receipt_number, user_id } = item
 
   return (
     <div className={`${par ? '' : 'flex-row-reverse'} mb-8 flex  justify-between items-center w-full right-timeline`}>
@@ -84,8 +43,8 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
       </div>
 
       <div
-        className={`${!is_hidden ? 'bg-white' : 'bg-gray-200'}
-            relative order-1 border-t-4 border-[#A8CFEB]  rounded-lg shadow-xl w-5/12 px-6 py-4 `}>
+        className={`${'bg-white'}
+            relative order-1 border-t-4 border-[#134144]  rounded-lg shadow-xl w-5/12 px-6 py-4 `}>
         {par && (
           <div className="flex justify-start w-full">
             <div className="relative">
@@ -105,74 +64,19 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
             </div>
           </div>
         )}
-        {rj_remake && <p className="absolute text-6xl font-bold text-right top-1 right-5">*</p>}
-        <h3 className="font-bold text-gray-500 text-x">Tipo Registro: {tracking_action}</h3>
-        <h3 className="font-bold text-gray-500 text-x">Fecha: {start_at}</h3>
-        <h3 className="font-bold text-gray-500 text-x">Creado por: {current_responsible} </h3>
-        {new_responsible && <h3 className="font-bold text-gray-500 text-x">Asignado a: {new_responsible} </h3>}
-        {related_document && <h3 className="font-bold text-gray-500 text-x">Tipo documento: {related_document} </h3>}
-        {document && <h3 className="font-bold text-gray-500 text-x">Documento: {document} </h3>}
-        {rj_type && <h3 className="font-bold text-gray-500 text-x">Tipo RJ: {rj_type} </h3>}
-        {rj_type === 'SANCION' && <h3 className="font-bold text-gray-500 text-x">Monto en UIT: {rj_amount} </h3>}
-        {rj_type === 'AMPLIACION' && (
-          <h3 className="font-bold text-gray-500 text-x">
-            Plazo de ampliación: {months} Meses - {days} Dias
-          </h3>
-        )}
+        <h3 className="font-bold text-gray-500 ">
+          Tipo Registro: <span className="uppercase">{payment_method}</span>
+        </h3>
+        <h3 className="font-bold text-gray-500 ">Fecha: {dayjs(payment_date).format('DD MMM YYYY')}</h3>
+        {amount && <h3 className="font-bold text-gray-500">Monto: {amount}</h3>}
+        {fees && <h3 className="font-bold text-gray-500">Cuotas: {fees}</h3>}
+        {bank && <h3 className="font-bold text-gray-500">Banco: {bank}</h3>}
+        {receipt_number && <h3 className="font-bold text-gray-500">Ticket: {receipt_number}</h3>}
 
-        {comment && (
-          <p className="mt-2 text-sm font-medium leading-snug tracking-wide text-gray-500 text-opacity-100">Comentario: {comment}</p>
-        )}
-        {created_at && <h3 className="font-bold text-gray-500 text-x">Fecha de Actualización: {created_at} </h3>}
-        {register_user && <h3 className="font-bold text-gray-500 text-x">Usuario Registrador: {register_user} </h3>}
-
-        <br></br>
-        <div className="flex gap-5">
-          {rj_type !== 'REHACER' && (
-            <Button
-              type="dashed"
-              hidden={idx === 0 || !user?.is_admin}
-              disabled={is_hidden || estado === 'inactive'}
-              icon={<EditOutlined />}
-              onClick={() => onGoDetail('/actualiza-detalle', { item, detailEmi: props.detailEmi, arrayNoti: props.arrayNoti })}>
-              Editar
-            </Button>
-          )}
-          {!disabledShow && (
-            <>
-              {idx === 0 || !user?.is_admin ? (
-                <></>
-              ) : (
-                <div className="flex items-center text-black">
-                  <Switch
-                    // checkedChildren={<EyeInvisibleOutlined className="mb-2 text-black" />}
-                    // unCheckedChildren={<EyeOutlined className="mb-2 text-black" />}
-                    checkedChildren={<EyeOutlined className="mb-2 text-white" />}
-                    unCheckedChildren={<EyeInvisibleOutlined className="mb-2 text-gray-700" />}
-                    className={`${!is_hidden ? 'bg-blue-500' : 'bg-gray-300'} text-black flex items-center`}
-                    loading={loading}
-                    checked={!is_hidden}
-                    defaultChecked={!is_hidden}
-                    disabled={estado === 'inactive'}
-                    onChange={showCard}
-                  />
-                </div>
-
-                // <button
-                //   disabled={loading}
-                //   className={`${
-                //     is_hidden ? 'text-red-400 border-red-400' : 'text-blue-400 border-blue-400'
-                //   } border-dashed border flex justify-center items-center w-8 h-8`}
-                //   onClick={showCard}>
-                //   {is_hidden ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-                // </button>
-              )}
-            </>
-          )}
-        </div>
+        {created_at && <h3 className="font-bold text-gray-500 ">Fecha de Actualización: {dayjs(created_at).format('DD MMM YYYY')} </h3>}
       </div>
     </div>
   )
 }
 
-export { DetailCard }
+export { DetailCardPay }

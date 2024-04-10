@@ -1,4 +1,4 @@
-import { DetailCard, LayoutFirst } from '@components/common'
+import { DetailCard, DetailCardPay, LayoutFirst } from '@components/common'
 import api from '@framework/api'
 import { useQuery } from '@tanstack/react-query'
 import { Card } from 'antd'
@@ -88,21 +88,36 @@ const DetailPay = () => {
           <div className="absolute h-full border border-2 border-gray-700 border-opacity-20" style={{ left: '50%' }}></div>
           {id &&
             pays?.map((item: any, key: any) => {
-              return (
-                <DetailCard
-                  key={key}
-                  par={(key + 1) % 2 === 0}
-                  item={{ ...item, headerName }}
-                  idx={key}
-                  estado=""
-                  detailEmi={detailEmi}
-                  arrayNoti={arrayNoti}
-                  onHidden={() => {}}
-                  //   onHidden={() => {
-                  //     getDetailInfo(id!)
-                  //   }}
-                />
-              )
+              if (!item?.payment_date) {
+                return (
+                  <DetailCard
+                    key={key}
+                    par={(key + 1) % 2 === 0}
+                    item={{ ...item, headerName }}
+                    idx={key}
+                    estado=""
+                    detailEmi={detailEmi}
+                    arrayNoti={arrayNoti}
+                    onHidden={() => {}}
+                    //   onHidden={() => {
+                    //     getDetailInfo(id!)
+                    //   }}
+                  />
+                )
+              } else {
+                return (
+                  <DetailCardPay
+                    key={key}
+                    par={(key + 1) % 2 === 0}
+                    item={{ ...item, headerName }}
+                    idx={key}
+                    estado=""
+                    detailEmi={detailEmi}
+                    arrayNoti={arrayNoti}
+                    onHidden={() => {}}
+                  />
+                )
+              }
             })}
         </div>
         <hr style={{ marginBottom: '0.9rem', borderTop: '2px solid #A8CFEB' }} />
