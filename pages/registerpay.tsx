@@ -34,6 +34,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
   const router = useRouter()
   const id: string = String(router?.query?.id ?? '')
   const fees: string = String(router?.query?.fees ?? '')
+  const typepay: string = String(router?.query?.typepay ?? '')
 
   const [formData, setFormData] = useState<FormDataRegisterPay>({
     typePay: 'deposito',
@@ -89,7 +90,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
   useEffect(() => {
     const dataNum = +fees === pays?.length
 
-    if (dataNum) {
+    if (dataNum && typepay === 'Fraccionamiento') {
       const instance = Modal.info({
         icon: '',
         content: (
