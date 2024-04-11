@@ -41,8 +41,8 @@ const DetailPay = () => {
       if ('payment_date' in i) {
         date = new Date(i.payment_date)
       }
-      if ('created_at_dt' in i) {
-        date = new Date(i.created_at_dt)
+      if ('start_at_dt' in i) {
+        date = new Date(i.start_at_dt)
       }
       return { ...i, date }
     })

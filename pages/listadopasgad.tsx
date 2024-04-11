@@ -157,15 +157,14 @@ const columns = [
           <IconCalculator /> Registro de pago
         </button>
 
-        <Link href={`/detailpay?id=${item?.numero}&typepay=${item?.type_payment?.type}`}>
-          <button
-            className="text-[#0073CF] w-[60px] flex items-center gap-1"
-            onClick={() => {
-              localStorage.setItem('itemDetailPay', JSON.stringify(item))
-            }}>
-            <IconEye /> Detalle
-          </button>
-        </Link>
+        <button
+          className="text-[#0073CF] w-[60px] flex items-center gap-1"
+          onClick={() => {
+            Router.push(`/detailpay?id=${item?.numero ?? ''}&typepay=${item?.type_payment?.type ?? ''}`)
+            localStorage.setItem('itemDetailPay', JSON.stringify(item))
+          }}>
+          <IconEye /> Detalle
+        </button>
       </div>
     )
   }

@@ -39,6 +39,7 @@ export interface IDetailItem {
   related_document: string
   resolution_number: string
   start_at: string
+  start_at_dt: string
   tracking_action: string
   register_user: string
   rj_type: string
