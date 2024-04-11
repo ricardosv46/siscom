@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query'
 import api from '@framework/api'
 import { convertAlphaNumber, convertNumber } from 'utils/helpers'
 import moment, { Moment } from 'moment'
-
+import locale from 'antd/lib/date-picker/locale/es_ES'
 export interface FormDataTypePay {
   amount: string
   typePay: string
@@ -20,7 +20,6 @@ export interface FormDataTypePay {
   ticket: string
   bank: string
   date: string
-  hour: string
 }
 
 const optionsTypePay = [
@@ -55,13 +54,12 @@ const TypePay: NextPageWithLayout = ({}) => {
     showModal: false,
     ticket: '',
     bank: '',
-    date: '',
-    hour: ''
+    date: ''
   })
   const [dateMoment, setDateMoment] = useState<Moment | null>(null)
   const [hourMoment, setHourMoment] = useState<Moment | null>(null)
 
-  const { amount, typePay, discount, cuotes, initialCuote, ticket, bank, date, hour, showModal } = formData
+  const { amount, typePay, discount, cuotes, initialCuote, ticket, bank, date, showModal } = formData
 
   const {
     data: initialAmount,
@@ -164,15 +162,15 @@ const TypePay: NextPageWithLayout = ({}) => {
 
   const disableButton = () => {
     if (typePay === 'Pronto pago' || typePay === 'Pago total') {
-      return !amount || !date || !hour
+      return !amount || !date
     }
 
     if (typePay === 'Fraccionamiento') {
-      return !cuotes || !initialCuote || !amount || !date || !hour
+      return !cuotes || !initialCuote || !amount || !date
     }
 
     if (typePay === 'Pago a cuenta') {
-      return !initialAmount || !amount || !date || !hour
+      return !initialAmount || !amount || !date
     }
   }
 
@@ -218,22 +216,12 @@ const TypePay: NextPageWithLayout = ({}) => {
 
   const onChangeDate = (date: any, dateString: string) => {
     setDateMoment(date)
-    setHourMoment(null)
-    const parts = dateString.split('-')
-    const datef = `${parts[2]}-${parts[1]}-${parts[0]}`
-
-    setFormData((prev) => ({ ...prev, date: datef }))
-  }
-
-  const onChangeHours = (date: any, dateString: string) => {
-    setHourMoment(date)
-    setFormData((prev) => ({ ...prev, hour: dateString }))
+    setFormData((prev) => ({ ...prev, date: dateString }))
   }
 
   const disabledDate = (current: any) => {
-    const today = new Date()
-
-    return current && current > today
+    const isOutOfRange = moment(current).startOf('day').isAfter(moment().startOf('day'))
+    return isOutOfRange
   }
 
   const disabledTime = (current: any) => {
@@ -243,7 +231,7 @@ const TypePay: NextPageWithLayout = ({}) => {
     const currentHourActive = moment(current).hour()
     const currentMinute = now.minute()
 
-    if (dateMoment && dateMoment.isSame(now, 'day')) {
+    if (current && current.isSame(now, 'day')) {
       if (currentHourActive === currentHour) {
         return {
           disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
@@ -478,7 +466,7 @@ const TypePay: NextPageWithLayout = ({}) => {
               Fecha y hora del pago
             </label>
             <div className="flex gap-5">
-              <DatePicker className="w-32" format={'DD-MM-YYYY'} value={dateMoment} onChange={onChangeDate} disabledDate={disabledDate} />
+              {/* <DatePicker className="w-32" format={'DD-MM-YYYY'} value={dateMoment} onChange={onChangeDate} disabledDate={disabledDate} />
               <TimePicker
                 className="w-32"
                 format={'HH:mm'}
@@ -486,6 +474,19 @@ const TypePay: NextPageWithLayout = ({}) => {
                 onChange={onChangeHours}
                 disabledTime={disabledTime}
                 disabled={!dateMoment}
+              /> */}
+
+              <DatePicker
+                className="w-[200px]"
+                locale={locale}
+                showTime={{ format: 'HH:mm' }}
+                format={'YYYY-MM-DD HH:mm'}
+                showNow={false}
+                disabledDate={disabledDate}
+                disabledTime={disabledTime}
+                onChange={onChangeDate}
+                value={dateMoment}
+                // disabled={!dateMoment}
               />
             </div>
           </div>
@@ -586,9 +587,7 @@ const TypePay: NextPageWithLayout = ({}) => {
 
               <p>{ticket || '-'}</p>
               <p>{bank || '-'}</p>
-              <p>
-                {date} {hour}
-              </p>
+              <p>{date + ':00'}</p>
             </article>{' '}
           </div>
         </div>

@@ -93,7 +93,7 @@ const api = {
         formData.append('receipt_number', form?.ticket.replaceAll(',', ''))
 
         formData.append('bank', form?.bank.replaceAll(',', ''))
-        formData.append('payment_date', form?.date + ' ' + form.hour + ':00')
+        formData.append('payment_date', form?.date + ':00')
 
         const {
           data: { data, message, success }

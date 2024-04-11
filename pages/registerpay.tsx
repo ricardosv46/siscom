@@ -27,7 +27,6 @@ export interface FormDataRegisterPay {
   ticket: string
   bank: string
   date: string
-  hour: string
   showModal: boolean
 }
 
@@ -43,7 +42,6 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     ticket: '',
     bank: '',
     date: '',
-    hour: '',
     showModal: false
   })
 
@@ -110,9 +108,8 @@ const RegisterPay: NextPageWithLayout = ({}) => {
   }, [finalFees, fees, pays])
 
   const [dateMoment, setDateMoment] = useState<Moment | null>(null)
-  const [hourMoment, setHourMoment] = useState<Moment | null>(null)
 
-  const { typePay, amount, cuotes, ticket, bank, showModal, date, hour } = formData
+  const { typePay, amount, cuotes, ticket, bank, showModal, date } = formData
 
   const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -149,56 +146,48 @@ const RegisterPay: NextPageWithLayout = ({}) => {
     return isOutOfRange
   }
 
-  // const disabledTime = (current: any) => {
-  //   let now = moment()
-
-  //   const currentHour = now.hour()
-  //   const currentHourActive = moment(current).hour()
-  //   const currentMinute = now.minute()
-
-  //   if (dateMoment && dateMoment.isSame(now, 'day')) {
-  //     if (currentHourActive === currentHour) {
-  //       return {
-  //         disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
-  //         disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute)
-  //       }
-  //     }
-
-  //     return {
-  //       disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour)
-  //     }
-  //   } else {
-  //     return {}
-  //   }
-  // }
-
   const disabledTime = (current: any) => {
     let now = moment()
-    let nowinit = moment(bloquedate?.payment_date)
 
     const currentHour = now.hour()
     const currentHourActive = moment(current).hour()
     const currentMinute = now.minute()
 
+    let nowinit = moment(bloquedate?.payment_date)
+    const currentHourinit = nowinit.hour()
+    const currentMinuteinit = nowinit.minute()
+    console.log({ currentHourActive, currentHour })
     // Si la fecha es hoy, deshabilita horas y minutos futuros
-    if (dateMoment && dateMoment.isSame(now, 'day')) {
+    if (current && current.isSame(now, 'day')) {
+      if (currentHourActive === currentHourinit && currentHourActive === currentHour) {
+        return {
+          disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour || hour < currentHourinit),
+          disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit || minute > currentMinute)
+        }
+      }
+
       if (currentHourActive === currentHour) {
         return {
-          disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour),
+          disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour || hour < currentHourinit),
           disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute)
         }
       }
 
+      if (currentHourActive === currentHourinit) {
+        return {
+          disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour || hour < currentHourinit),
+          disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit)
+        }
+      }
+
       return {
-        disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour)
-        // disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute > currentMinute),
+        disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour > currentHour || hour < currentHourinit)
+
+        // disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute)
       }
     }
 
-    const currentHourinit = nowinit.hour()
-    const currentMinuteinit = nowinit.minute()
-
-    if (dateMoment && dateMoment.isSame(nowinit, 'day')) {
+    if (current && current.isSame(nowinit, 'day')) {
       return {
         disabledHours: () => [...(Array(24).keys() as any)].filter((hour) => hour < currentHourinit),
         disabledMinutes: () => [...(Array(60).keys() as any)].filter((minute) => minute < currentMinuteinit)
@@ -209,19 +198,12 @@ const RegisterPay: NextPageWithLayout = ({}) => {
 
   const onChangeDate = (date: any, dateString: string) => {
     setDateMoment(date)
-    setHourMoment(null)
-    const parts = dateString.split('-')
-    const datef = `${parts[2]}-${parts[1]}-${parts[0]}`
-
-    setFormData((prev) => ({ ...prev, date: datef }))
+    setFormData((prev) => ({ ...prev, date: dateString }))
   }
 
-  const onChangeHours = (date: any, dateString: string) => {
-    setHourMoment(date)
-    setFormData((prev) => ({ ...prev, hour: dateString }))
-  }
+  const disableButton = !amount || !date || (fees ? !cuotes : false)
 
-  const disableButton = !amount || !date || !hour || (fees ? !cuotes : false)
+  console.log({ date })
 
   return (
     <form onSubmit={handleSubmit}>
@@ -335,7 +317,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
               Fecha y hora del pago
             </label>
             <div className="flex gap-5">
-              <DatePicker
+              {/* <DatePicker
                 locale={locale}
                 className="w-32"
                 format={'DD-MM-YYYY'}
@@ -351,16 +333,19 @@ const RegisterPay: NextPageWithLayout = ({}) => {
                 onChange={onChangeHours}
                 disabledTime={disabledTime}
                 disabled={!dateMoment}
-              />
+              /> */}
 
-              {/* <DatePicker
+              <DatePicker
+                className="w-[200px]"
                 locale={locale}
                 showTime={{ format: 'HH:mm' }}
-                // showNow={false}
+                format={'YYYY-MM-DD HH:mm'}
+                showNow={false}
                 disabledDate={disabledDate}
                 disabledTime={disabledTime}
-                // disabled={!dateMoment}
-              /> */}
+                onChange={onChangeDate}
+                value={dateMoment}
+              />
             </div>
           </div>
         </div>
@@ -419,9 +404,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
               <p>{cuotes}</p>
               <p>{ticket || '-'}</p>
               <p>{bank || '-'}</p>
-              <p>
-                {date} {hour}
-              </p>
+              <p>{date + ':00'}</p>
             </article>
           </div>
         </div>
