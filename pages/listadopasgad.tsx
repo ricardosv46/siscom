@@ -612,10 +612,10 @@ const Listadopas: NextPageWithLayout = () => {
                 accept=".xls,.xlsx">
                 <button className="flex items-center justify-center p-2 bg-[#78bc44] text-white">
                   <img src="assets/images/cargar.svg" className="w-6 h-6" />
-                  <span className="text-base">Cargar tipo de pago</span>
+                  <span className="text-base">Cargar información</span>
                 </button>
               </Upload>
-              <Upload
+              {/* <Upload
                 beforeUpload={beforeUpload}
                 onChange={handleFileChangeRegister}
                 multiple={false}
@@ -625,7 +625,7 @@ const Listadopas: NextPageWithLayout = () => {
                   <img src="assets/images/cargar.svg" className="w-6 h-6" />
                   <span className="text-base">Cargar registro de pago</span>
                 </button>
-              </Upload>
+              </Upload> */}
               <button className="flex items-center justify-center p-2 bg-[#083474]  text-white cursor-pointer" onClick={reportePAS}>
                 <img src="assets/images/reporte_pas.svg" className="w-6 h-6" />
                 <span className="text-base">Reporte PAS</span>
