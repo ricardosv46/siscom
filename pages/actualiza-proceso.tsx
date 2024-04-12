@@ -16,9 +16,16 @@ import useAuthStore from 'store/auth/auth'
 import apiService from 'services/axios/configAxios'
 import moment from 'moment'
 import locale from 'antd/lib/date-picker/locale/es_ES'
+import { useQuery } from '@tanstack/react-query'
 // import locale from "antd/es/date-picker/locale/es_ES";
 // import "moment/locale/es";
 // moment.locale("es");
+
+export interface IRjtype {
+  rj_value: string
+  rj_label: string
+  status: number
+}
 
 interface IPropsItem {
   actualizacion: string
@@ -53,6 +60,18 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const router = useRouter()
 
   const { user } = useAuthStore()
+
+  const {
+    data: arrayrj_type = [],
+    isLoading,
+    isError,
+    refetch
+  } = useQuery<IRjtype[]>({
+    queryKey: ['typeRj'],
+    queryFn: () => api.getTypeRj(),
+    retry: false,
+    refetchOnWindowFocus: false
+  })
 
   const getTypeDocumentsApi = async () => {
     const { data } = await api.update_process.getTypeDocuments()
@@ -312,6 +331,15 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       setGerenciaInicialSelectedOption('JN')
     }
   }
+
+  // <option value="SANCION">Sanción</option>
+  // <option value="NULIDAD">Nulidad</option>
+  // <option value="ARCHIVO">Archivo</option>
+  // <option value="CONCEDE RECURSO">Concede Recurso</option>
+  // <option value="DENIEGA RECURSO">Deniega Recurso</option>
+  // {user.is_admin && <option value="AMPLIACION">Ampliación de plazo</option>}
+
+  // {(user.is_admin || responsable_actual === 'JN') && <option value="REHACER">Rehacer</option>}
 
   function limpiarDatos() {
     setDocumentoRelacionadoinputValue('')
@@ -660,14 +688,40 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                   onChange={handleRjType}
                   id="rj_type">
                   <option value="">Seleccione tipo de resolución jefatural</option>
-                  <option value="SANCION">Sanción</option>
+
+                  {arrayrj_type?.map((opcion, index) => {
+                    // Renderizamos la opción solo si el usuario es admin o si es responsable_actual es 'JN' y la opción es 'REHACER'
+                    if ((user.is_admin || responsable_actual === 'JN') && opcion?.rj_value === 'REHACER') {
+                      return (
+                        <option key={index} value={opcion?.rj_value}>
+                          {opcion?.rj_label}
+                        </option>
+                      )
+                    }
+                    // Renderizamos la opción solo si el usuario es admin y la opción no es 'REHACER'
+                    if (user.is_admin && opcion?.rj_value !== 'REHACER') {
+                      return (
+                        <option key={index} value={opcion?.rj_value}>
+                          {opcion?.rj_label}
+                        </option>
+                      )
+                    }
+                    // Renderizamos la opción si ninguna de las condiciones anteriores se cumple
+                    return (
+                      <option key={index} value={opcion?.rj_value}>
+                        {opcion?.rj_label}
+                      </option>
+                    )
+                  })}
+
+                  {/* <option value="SANCION">Sanción</option>
                   <option value="NULIDAD">Nulidad</option>
                   <option value="ARCHIVO">Archivo</option>
                   <option value="CONCEDE RECURSO">Concede Recurso</option>
                   <option value="DENIEGA RECURSO">Deniega Recurso</option>
                   {user.is_admin && <option value="AMPLIACION">Ampliación de plazo</option>}
 
-                  {(user.is_admin || responsable_actual === 'JN') && <option value="REHACER">Rehacer</option>}
+                  {(user.is_admin || responsable_actual === 'JN') && <option value="REHACER">Rehacer</option>} */}
                 </select>
               </div>
             </div>

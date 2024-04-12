@@ -14,6 +14,9 @@ import { GetTokenAuthService } from 'services/auth/ServiceAuth'
 import apiService from 'services/axios/configAxios'
 import moment from 'moment'
 import locale from 'antd/lib/date-picker/locale/es_ES'
+import { IRjtype } from './actualiza-proceso'
+import { useQuery } from '@tanstack/react-query'
+
 interface IPropsItem {
   id: string | number | null
   resolution_number: string | null
@@ -59,6 +62,19 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     const { data } = await api.update_process.getOrganizations()
     setGerenciaOtions(data)
   }
+
+  const {
+    data: arrayrj_type = [],
+    isLoading,
+    isError,
+    refetch
+  } = useQuery<IRjtype[]>({
+    queryKey: ['typeRj'],
+    queryFn: () => api.getTypeRj(),
+    retry: false,
+    refetchOnWindowFocus: false
+  })
+
   let itemprop: any
   let detailEmi: any
   let arrayNoti: any
@@ -588,12 +604,12 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
               </label>
               <select className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} value={rj_type} onChange={handleRjType}>
                 <option value="">Seleccione tipo de resolución jefatural</option>
-                <option value="SANCION">Sanción</option>
-                <option value="NULIDAD">Nulidad</option>
-                <option value="ARCHIVO">Archivo</option>
-                <option value="CONCEDE RECURSO">Concede Recurso</option>
-                <option value="DENIEGA RECURSO">Deniega Recurso</option>
-                <option value="AMPLIACION">Ampliación de plazo</option>
+
+                {arrayrj_type
+                  ?.filter((i) => i?.rj_value !== 'REHACER')
+                  ?.map((i) => (
+                    <option value={i?.rj_value}>{i?.rj_label}</option>
+                  ))}
               </select>
             </div>
           </div>

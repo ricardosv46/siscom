@@ -28,6 +28,18 @@ const api = {
     }: responseLogin = await authService.post(`login/`, body)
     return { data, message, success }
   },
+  getTypeRj: async () => {
+    const tok = GetTokenAuthService()
+    if (tok) {
+      const {
+        data: { data, message, success }
+      }: any = await apiService.post(`/processes/rj_type/`)
+      return data
+    } else {
+      return {}
+    }
+  },
+
   payments: {
     getAmount: async (id: string) => {
       const tok = GetTokenAuthService()
