@@ -600,24 +600,25 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
-        {tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' && operationSelectedOption === 'ACTUALIZACION' && (
-          <div className="w-1/2 py-5">
-            <div className="grid items-center grid-cols-2 gap-5 mb-5">
-              <label htmlFor="nuevo_responsable" className="text-gray-600">
-                Tipo de resolución jefatural:
-              </label>
-              <select className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} value={rj_type} onChange={handleRjType}>
-                <option value="">Seleccione tipo de resolución jefatural</option>
+        {(tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' || tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL') &&
+          operationSelectedOption === 'ACTUALIZACION' && (
+            <div className="w-1/2 py-5">
+              <div className="grid items-center grid-cols-2 gap-5 mb-5">
+                <label htmlFor="nuevo_responsable" className="text-gray-600">
+                  Tipo de resolución jefatural:
+                </label>
+                <select className={'border p-2 rounded-md outline-none focus:border-[#0073CF]'} value={rj_type} onChange={handleRjType}>
+                  <option value="">Seleccione tipo de resolución jefatural</option>
 
-                {arrayrj_type
-                  ?.filter((i) => i?.rj_value !== 'REHACER' && i?.rj_value !== 'AMPLIACION')
-                  ?.map((i) => (
-                    <option value={i?.rj_value}>{i?.rj_label}</option>
-                  ))}
-              </select>
+                  {arrayrj_type
+                    ?.filter((i) => i?.rj_value !== 'REHACER' && i?.rj_value !== 'AMPLIACION')
+                    ?.map((i) => (
+                      <option value={i?.rj_value}>{i?.rj_label}</option>
+                    ))}
+                </select>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {rj_type === 'AMPLIACION' && (
           <div className="w-1/2 py-5">
