@@ -315,6 +315,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
   const handleTipoDocumentoSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setTipoDocumentoSelectedOption(event.target.value)
+    setRj_type('')
   }
 
   const handleTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -674,7 +675,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
-        {tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' &&
+        {(tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' || tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL') &&
           (operationSelectedOption === 'actualizado' || operationSelectedOption === 'observado') &&
           (user?.profile === 'jn' || user?.is_admin) && (
             <div className="w-1/2 py-5">
@@ -691,27 +692,36 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
                   {arrayrj_type?.map((opcion, index) => {
                     // Renderizamos la opción solo si el usuario es admin o si es responsable_actual es 'JN' y la opción es 'REHACER'
-                    if ((user.is_admin || responsable_actual === 'JN') && opcion?.rj_value === 'REHACER') {
+                    if (user.is_admin && user.profile === 'jn' && opcion?.rj_value === 'REHACER') {
                       return (
                         <option key={index} value={opcion?.rj_value}>
                           {opcion?.rj_label}
                         </option>
                       )
                     }
-                    // Renderizamos la opción solo si el usuario es admin y la opción no es 'REHACER'
-                    if (user.is_admin && opcion?.rj_value !== 'REHACER') {
+
+                    if (user.is_admin && user.profile === 'jn' && opcion?.rj_value === 'AMPLIACION') {
                       return (
                         <option key={index} value={opcion?.rj_value}>
                           {opcion?.rj_label}
                         </option>
                       )
                     }
+                    // // Renderizamos la opción solo si el usuario es admin y la opción no es 'REHACER'
+                    if (opcion?.rj_value !== 'REHACER' && opcion?.rj_value !== 'AMPLIACION') {
+                      return (
+                        <option key={index} value={opcion?.rj_value}>
+                          {opcion?.rj_label}
+                        </option>
+                      )
+                    }
+
                     // Renderizamos la opción si ninguna de las condiciones anteriores se cumple
-                    return (
-                      <option key={index} value={opcion?.rj_value}>
-                        {opcion?.rj_label}
-                      </option>
-                    )
+                    // return (
+                    //   <option key={index} value={opcion?.rj_value}>
+                    //     {opcion?.rj_label}
+                    //   </option>
+                    // )
                   })}
 
                   {/* <option value="SANCION">Sanción</option>

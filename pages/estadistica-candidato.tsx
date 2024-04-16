@@ -1,76 +1,77 @@
-import Head from "next/head";
-import { Button, Select, Switch } from "antd";
-import React, { ReactElement, forwardRef, useEffect, useMemo, useRef, useState } from "react";
-import { LayoutFirst } from "@components/common";
-import { NextPageWithLayout } from "pages/_app";
-import { Card } from "@components/ui";
-import "moment/locale/es";
-import "react-resizable/css/styles.css"; // Importa los estilos de react-resizable
-import { RollbackOutlined, SearchOutlined } from "@ant-design/icons";
-import moment, { Moment } from "moment";
-import { Bar, getElementAtEvent } from "react-chartjs-2";
-import { Chart as ChartJS, Legend, Title, Tooltip, BarElement, CategoryScale, LinearScale } from "chart.js";
-import api from "@framework/api";
-import { useReactToPrint } from "react-to-print";
-import { useRouter } from "next/router";
+import Head from 'next/head'
+import { Button, Select, Switch } from 'antd'
+import React, { ReactElement, forwardRef, useEffect, useMemo, useRef, useState } from 'react'
+import { LayoutFirst } from '@components/common'
+import { NextPageWithLayout } from 'pages/_app'
+import { Card } from '@components/ui'
+import 'moment/locale/es'
+import 'react-resizable/css/styles.css' // Importa los estilos de react-resizable
+import { RollbackOutlined, SearchOutlined } from '@ant-design/icons'
+import moment, { Moment } from 'moment'
+import { Bar, getElementAtEvent } from 'react-chartjs-2'
+import { Chart as ChartJS, Legend, Title, Tooltip, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import api from '@framework/api'
+import { useReactToPrint } from 'react-to-print'
+import { useRouter } from 'next/router'
 interface EstadisticaProps {
-  pageNum: number;
-  pageSize: number;
-  total: number;
+  pageNum: number
+  pageSize: number
+  total: number
 }
 
 interface IPropsItem {
-  actualizacion: string;
-  etapa: string | number | null;
-  fecha_fin: string | null;
-  fecha_inicio: string | null;
-  name: string;
-  numero: number;
-  resolution_number: string | null;
-  responsable: string | null;
-  type: string | null;
-  estado_proceso: string | null;
-  sgd: boolean;
+  actualizacion: string
+  etapa: string | number | null
+  fecha_fin: string | null
+  fecha_inicio: string | null
+  name: string
+  numero: number
+  resolution_number: string | null
+  responsable: string | null
+  type: string | null
+  estado_proceso: string | null
+  sgd: boolean
 }
 
 type DataInfo = {
   iniciado_rg: {
-    no_notificado: number;
+    no_notificado: number
     notificado: {
       con_rj: {
-        archivo: number;
-        nulidad: number;
-        sancion: number;
-        total: number;
-      };
+        concluido: number
+        archivo: number
+        nulidad: number
+        sancion: number
+        total: number
+      }
       en_proceso: {
-        instructiva: number;
-        resolutiva: number;
-        total: number;
-      };
-      fuera_plazo: number;
-      total: number;
-    };
-    total: number;
-  };
-  nombre_proceso: string;
+        instructiva: number
+        resolutiva: number
+        total: number
+      }
+      fuera_plazo: number
+      total: number
+    }
+    total: number
+  }
+  nombre_proceso: string
   //no_iniciado: number;
-};
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+}
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const Estadistica: NextPageWithLayout<EstadisticaProps> = () => {
-  const componentRef = useRef<any>();
+  const componentRef = useRef<any>()
   const printOptions = {
     pageStyle: `
       @page {
         size: A3 landscape; /* Configura la orientación del papel como landscape */
         margin:0;
       }
-    `,
-  };
+    `
+  }
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
-    pageStyle: printOptions.pageStyle,
-  });
+    pageStyle: printOptions.pageStyle
+  })
 
   return (
     <>
@@ -82,141 +83,140 @@ const Estadistica: NextPageWithLayout<EstadisticaProps> = () => {
       <ComponentToPrint
         {...{
           handlePrint,
-          componentRef,
+          componentRef
         }}
       />
     </>
-  );
-};
+  )
+}
 
 const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
-  const valuesChartTodos = (valueinfo: any) => [
-    { label: "Iniciado con RG", value: valueinfo?.iniciado_rg.total ?? 0 },
-  ];
+  const valuesChartTodos = (valueinfo: any) => [{ label: 'Iniciado con RG', value: valueinfo?.iniciado_rg.total ?? 0 }]
 
   const valuesChartAllTodos = (valueinfo: any) => [
-    { label: "RJ Sanción", value: valueinfo?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
-    { label: "RJ Archivo", value: valueinfo?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
-    { label: "RJ Nulidad", value: valueinfo?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
-    { label: "Fase Resolutiva", value: valueinfo?.iniciado_rg.notificado.en_proceso.resolutiva ?? 0 },
-    { label: "Fase Instructiva", value: valueinfo?.iniciado_rg.notificado.en_proceso.instructiva ?? 0 },
-    { label: "Fuera del plazo", value: valueinfo?.iniciado_rg.notificado.fuera_plazo ?? 0 },
-    { label: "Pendiente Notificar", value: valueinfo?.iniciado_rg.no_notificado ?? 0 },
-  ];
+    { label: 'RJ Sanción', value: valueinfo?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
+    { label: 'RJ Archivo', value: valueinfo?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
+    { label: 'RJ Nulidad', value: valueinfo?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
+    { label: 'RJ Dar por concluido', value: valueinfo?.iniciado_rg.notificado.con_rj.concluido ?? 0 },
+    { label: 'Fase Resolutiva', value: valueinfo?.iniciado_rg.notificado.en_proceso.resolutiva ?? 0 },
+    { label: 'Fase Instructiva', value: valueinfo?.iniciado_rg.notificado.en_proceso.instructiva ?? 0 },
+    { label: 'Fuera del plazo', value: valueinfo?.iniciado_rg.notificado.fuera_plazo ?? 0 },
+    { label: 'Pendiente Notificar', value: valueinfo?.iniciado_rg.no_notificado ?? 0 }
+  ]
 
-  const router = useRouter();
-  const [dateInit, setDateInit] = useState<Moment | null>(null);
-  const [dataInfo, setDatainfo] = useState<DataInfo>();
-  const [departamentos, setDepartamentos] = useState<{ label: string; value: string }[]>([]);
-  const [departamento, setDepartamento] = useState<string[]>([]);
-  const [provincias, setProvincias] = useState<{ label: string; value: string }[]>([]);
-  const [provincia, setProvincia] = useState<string[]>([]);
-  const [distritos, setDistritos] = useState<{ label: string; value: string }[]>([]);
-  const [distrito, setDistrito] = useState<string[]>([]);
-  const [cargos, setCargos] = useState<{ label: string; value: number }[]>([]);
-  const [cargo, setCargo] = useState<string[]>([]);
-  const [ops, setOps] = useState<{ label: string; value: number }[]>([]);
-  const [op, setOp] = useState<string[]>([]);
-  const [checkInteraction, setCheckInteraction] = useState(false);
-  const [valuesChart, setValuesChart] = useState<{ label: string; value: number }[]>(valuesChartTodos(dataInfo));
-  const [valuesChartAll, setValuesChartAll] = useState<{ label: string; value: number }[]>(valuesChartAllTodos(dataInfo));
-  const [dataGeneralInfo, setDataGeneraiInfo] = useState<any>();
+  const router = useRouter()
+  const [dateInit, setDateInit] = useState<Moment | null>(null)
+  const [dataInfo, setDatainfo] = useState<DataInfo>()
+  const [departamentos, setDepartamentos] = useState<{ label: string; value: string }[]>([])
+  const [departamento, setDepartamento] = useState<string[]>([])
+  const [provincias, setProvincias] = useState<{ label: string; value: string }[]>([])
+  const [provincia, setProvincia] = useState<string[]>([])
+  const [distritos, setDistritos] = useState<{ label: string; value: string }[]>([])
+  const [distrito, setDistrito] = useState<string[]>([])
+  const [cargos, setCargos] = useState<{ label: string; value: number }[]>([])
+  const [cargo, setCargo] = useState<string[]>([])
+  const [ops, setOps] = useState<{ label: string; value: number }[]>([])
+  const [op, setOp] = useState<string[]>([])
+  const [checkInteraction, setCheckInteraction] = useState(false)
+  const [valuesChart, setValuesChart] = useState<{ label: string; value: number }[]>(valuesChartTodos(dataInfo))
+  const [valuesChartAll, setValuesChartAll] = useState<{ label: string; value: number }[]>(valuesChartAllTodos(dataInfo))
+  const [dataGeneralInfo, setDataGeneraiInfo] = useState<any>()
 
-  const [valuesChartType, setValuesChartType] = useState<string>("todos");
+  const [valuesChartType, setValuesChartType] = useState<string>('todos')
 
   useEffect(() => {
     const getStatsGeneral = async () => {
-      const proceso = localStorage.getItem("IdSelectedProcess")!;
+      const proceso = localStorage.getItem('IdSelectedProcess')!
 
-      const { data } = await api.estadistica.statsGeneralCandidato(proceso);
-      const { data: dataGeneral } = await api.estadistica.statsGeneralTotalCandidato(proceso);
-      setDatainfo(data);
-      setValuesChart(valuesChartTodos(data));
-      setDataGeneraiInfo(dataGeneral);
+      const { data } = await api.estadistica.statsGeneralCandidato(proceso)
+      const { data: dataGeneral } = await api.estadistica.statsGeneralTotalCandidato(proceso)
+      setDatainfo(data)
+      setValuesChart(valuesChartTodos(data))
+      setDataGeneraiInfo(dataGeneral)
 
-      setValuesChartAll(valuesChartAllTodos(data));
+      setValuesChartAll(valuesChartAllTodos(data))
 
-      const datadeps = (await api.estadistica.departamentos(proceso)) as any;
+      const datadeps = (await api.estadistica.departamentos(proceso)) as any
       const deps = datadeps?.data?.map((item: any) => ({
         value: item.cod_ubigeo,
-        label: item.name_ubigeo,
-      }));
-      setDepartamentos(deps);
+        label: item.name_ubigeo
+      }))
+      setDepartamentos(deps)
 
-      const datacargos = (await api.estadistica.cargos(proceso)) as any;
+      const datacargos = (await api.estadistica.cargos(proceso)) as any
       const crg = datacargos?.data?.map((item: any) => ({
         value: item.id,
-        label: item.nombre_cargo,
-      }));
-      setCargos(crg);
-    };
+        label: item.nombre_cargo
+      }))
+      setCargos(crg)
+    }
 
-    getStatsGeneral();
-  }, []);
+    getStatsGeneral()
+  }, [])
 
   const getDashboard = async () => {
-    const proceso = localStorage.getItem("IdSelectedProcess")!;
+    const proceso = localStorage.getItem('IdSelectedProcess')!
 
-    const { data } = await api.estadistica.statsGeneralFiltro(departamento, provincia, distrito, cargo, op, proceso, "CANDIDATO");
-    setDatainfo(data);
-    setValuesChart(valuesChartTodos(data));
+    const { data } = await api.estadistica.statsGeneralFiltro(departamento, provincia, distrito, cargo, op, proceso, 'CANDIDATO')
+    setDatainfo(data)
+    setValuesChart(valuesChartTodos(data))
 
-    setValuesChartAll(valuesChartAllTodos(data));
+    setValuesChartAll(valuesChartAllTodos(data))
 
-    setDateInit(moment());
-  };
+    setDateInit(moment())
+  }
   const getProvincias = async () => {
-    const proceso = localStorage.getItem("IdSelectedProcess")!;
-    const datadeps = (await api.estadistica.provincias(departamento, proceso)) as any;
+    const proceso = localStorage.getItem('IdSelectedProcess')!
+    const datadeps = (await api.estadistica.provincias(departamento, proceso)) as any
     const deps = datadeps?.data?.map((item: any) => ({
       value: item.cod_ubigeo,
-      label: item.name_ubigeo,
-    }));
-    setProvincias(deps);
-  };
+      label: item.name_ubigeo
+    }))
+    setProvincias(deps)
+  }
   const getDistritos = async () => {
-    const proceso = localStorage.getItem("IdSelectedProcess")!;
-    const datadeps = (await api.estadistica.distritos(provincia, proceso)) as any;
+    const proceso = localStorage.getItem('IdSelectedProcess')!
+    const datadeps = (await api.estadistica.distritos(provincia, proceso)) as any
     const deps = datadeps?.data?.map((item: any) => ({
       value: item.cod_ubigeo,
-      label: item.name_ubigeo,
-    }));
-    setDistritos(deps);
-  };
+      label: item.name_ubigeo
+    }))
+    setDistritos(deps)
+  }
   const getOps = async () => {
-    const proceso = localStorage.getItem("IdSelectedProcess")!;
-    const datadeps = (await api.estadistica.op(departamento, provincia, distrito, proceso)) as any;
+    const proceso = localStorage.getItem('IdSelectedProcess')!
+    const datadeps = (await api.estadistica.op(departamento, provincia, distrito, proceso)) as any
     const dataops = datadeps?.data?.map((item: any) => ({
       value: item.id_op,
-      label: item.nombre_op,
-    }));
-    setOps(dataops);
-  };
+      label: item.nombre_op
+    }))
+    setOps(dataops)
+  }
   useEffect(() => {
     if (departamento.length > 0) {
-      getProvincias();
+      getProvincias()
     } else {
-      setProvincias([]);
-      setDistritos([]);
-      setCargo([]);
-      setOps([]);
+      setProvincias([])
+      setDistritos([])
+      setCargo([])
+      setOps([])
       // setOp([]);
     }
-  }, [departamento]);
+  }, [departamento])
 
   useEffect(() => {
     if (provincia.length > 0) {
-      getDistritos();
+      getDistritos()
     } else {
-      setDistritos([]);
+      setDistritos([])
     }
-  }, [provincia]);
+  }, [provincia])
 
   useEffect(() => {
     if (departamento.length > 0 || provincia.length > 0 || distrito.length > 0) {
-      getOps();
+      getOps()
     }
-  }, [departamento, provincia, distrito]);
+  }, [departamento, provincia, distrito])
 
   // useEffect(() => {
   //   if (departamento.length > 0) {
@@ -224,82 +224,81 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
   //   }
   // }, [departamento, provincia, distrito]);
   useEffect(() => {
-    const newData = provincia.filter((ubigeo) => provincias.some((objeto) => objeto.value === ubigeo));
-    setProvincia(newData);
-  }, [provincias]);
+    const newData = provincia.filter((ubigeo) => provincias.some((objeto) => objeto.value === ubigeo))
+    setProvincia(newData)
+  }, [provincias])
 
   useEffect(() => {
-    const newData = distrito.filter((ubigeo) => distritos.some((objeto) => objeto.value === ubigeo));
-    setDistrito(newData);
-  }, [distritos]);
+    const newData = distrito.filter((ubigeo) => distritos.some((objeto) => objeto.value === ubigeo))
+    setDistrito(newData)
+  }, [distritos])
 
   useEffect(() => {
-    const newData = op.filter((value) => ops.some((objeto) => objeto.value === +value));
-    setOp(newData);
-  }, [ops]);
+    const newData = op.filter((value) => ops.some((objeto) => objeto.value === +value))
+    setOp(newData)
+  }, [ops])
 
   useEffect(() => {
-    setDateInit(moment());
+    setDateInit(moment())
 
     return () => {
-      setDateInit(null);
-    };
-  }, []);
+      setDateInit(null)
+    }
+  }, [])
 
   const getTodos = () => {
-    const newData = [
-      { label: "Iniciado con RG", value: dataInfo?.iniciado_rg.total ?? 0 },
-    ];
+    const newData = [{ label: 'Iniciado con RG', value: dataInfo?.iniciado_rg.total ?? 0 }]
 
-    setValuesChart(newData);
-    setValuesChartType("todos");
-  };
+    setValuesChart(newData)
+    setValuesChartType('todos')
+  }
 
   const getIniciados = () => {
     const newData = [
-      { label: "Notificados", value: dataInfo?.iniciado_rg.notificado.total ?? 0 },
-      { label: "Pendiente Notificar", value: dataInfo?.iniciado_rg.no_notificado ?? 0 },
-    ];
+      { label: 'Notificados', value: dataInfo?.iniciado_rg.notificado.total ?? 0 },
+      { label: 'Pendiente Notificar', value: dataInfo?.iniciado_rg.no_notificado ?? 0 }
+    ]
 
-    setValuesChart(newData);
-    setValuesChartType("iniciados");
-  };
+    setValuesChart(newData)
+    setValuesChartType('iniciados')
+  }
 
   const getNotificados = () => {
     const newData = [
-      { label: "RJ Emitida", value: dataInfo?.iniciado_rg.notificado.con_rj.total ?? 0 },
-      { label: "En proceso", value: dataInfo?.iniciado_rg.notificado.en_proceso.total ?? 0 },
-      { label: "Fuera del plazo", value: dataInfo?.iniciado_rg.notificado.fuera_plazo ?? 0 },
-    ];
-    setValuesChart(newData);
-    setValuesChartType("notificados");
-  };
+      { label: 'RJ Emitida', value: dataInfo?.iniciado_rg.notificado.con_rj.total ?? 0 },
+      { label: 'En proceso', value: dataInfo?.iniciado_rg.notificado.en_proceso.total ?? 0 },
+      { label: 'Fuera del plazo', value: dataInfo?.iniciado_rg.notificado.fuera_plazo ?? 0 }
+    ]
+    setValuesChart(newData)
+    setValuesChartType('notificados')
+  }
 
   const getRJ = () => {
     const newData = [
-      { label: "RJ Sanción", value: dataInfo?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
-      { label: "RJ Archivo", value: dataInfo?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
-      { label: "RJ Nulidad", value: dataInfo?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
-    ];
-    setValuesChart(newData);
-    setValuesChartType("rj");
-  };
+      { label: 'RJ Sanción', value: dataInfo?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
+      { label: 'RJ Archivo', value: dataInfo?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
+      { label: 'RJ Nulidad', value: dataInfo?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
+      { label: 'RJ Dar por concluido', value: dataInfo?.iniciado_rg.notificado.con_rj.concluido ?? 0 }
+    ]
+    setValuesChart(newData)
+    setValuesChartType('rj')
+  }
   const getProceso = () => {
     const newData = [
-      { label: "Fase Resolutiva", value: dataInfo?.iniciado_rg.notificado.en_proceso.resolutiva ?? 0 },
-      { label: "Fase Instructiva", value: dataInfo?.iniciado_rg.notificado.en_proceso.instructiva ?? 0 },
-    ];
-    setValuesChart(newData);
-    setValuesChartType("proceso");
-  };
+      { label: 'Fase Resolutiva', value: dataInfo?.iniciado_rg.notificado.en_proceso.resolutiva ?? 0 },
+      { label: 'Fase Instructiva', value: dataInfo?.iniciado_rg.notificado.en_proceso.instructiva ?? 0 }
+    ]
+    setValuesChart(newData)
+    setValuesChartType('proceso')
+  }
 
   const getPlazo = () => {
-    const newData = [{ label: "Fuera del plazo", value: dataInfo?.iniciado_rg.notificado.fuera_plazo ?? 0 }];
-    setValuesChart(newData);
-    setValuesChartType("plazo");
-  };
+    const newData = [{ label: 'Fuera del plazo', value: dataInfo?.iniciado_rg.notificado.fuera_plazo ?? 0 }]
+    setValuesChart(newData)
+    setValuesChartType('plazo')
+  }
   const handleFilterListadoPas = (filter: string) => {
-    const proceso = localStorage.getItem("IdSelectedProcess")!;
+    const proceso = localStorage.getItem('IdSelectedProcess')!
 
     const filters = JSON.stringify({
       departamentos: departamento,
@@ -309,155 +308,153 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
       cargos: cargo,
       proceso_electoral: proceso,
       filter,
-      tipo_pas: "CANDIDATO",
-    });
-    router.push(`/listadopas?filters=${filters}`);
-  };
+      tipo_pas: 'CANDIDATO'
+    })
+    router.push(`/listadopas?filters=${filters}`)
+  }
   const options1 = {
     responsive: true,
     plugins: {
       legend: {
-        display: false,
-      },
+        display: false
+      }
     },
     onClick: (event: any, elements: any) => {
-      const index = elements[0]?.element.$context.index;
-
+      const index = elements[0]?.element.$context.index
+      console.log({ index, valuesChart, valuesChartType })
       // const value = elements[0].element.$context.raw;
 
-      if (valuesChart.length === 2 && valuesChartType === "todos") {
+      if (valuesChart.length === 1 && valuesChartType === 'todos') {
         if (index === 0) {
-          getIniciados();
+          getIniciados()
         }
       }
 
-      if (valuesChart.length === 2 && valuesChartType === "iniciados") {
+      if (valuesChart.length === 2 && valuesChartType === 'iniciados') {
         if (index === 0) {
-          getNotificados();
+          getNotificados()
         }
       }
 
-      if (valuesChartType === "plazo" || valuesChartType === "proceso" || valuesChartType === "rj") {
-        return null;
+      if (valuesChartType === 'plazo' || valuesChartType === 'proceso' || valuesChartType === 'rj') {
+        return null
       }
-      if (valuesChart.length === 3 && valuesChartType === "notificados") {
+      if (valuesChart.length === 3 && valuesChartType === 'notificados') {
         if (index === 0) {
-          getRJ();
+          getRJ()
         }
         if (index === 1) {
-          getProceso();
+          getProceso()
         }
       }
       if (index === 2) {
-        getPlazo();
+        getPlazo()
       }
 
-      return null;
-    },
-  };
+      return null
+    }
+  }
 
   const handleBack = () => {
-    if (valuesChartType === "iniciados") {
-      getTodos();
+    if (valuesChartType === 'iniciados') {
+      getTodos()
     }
-    if (valuesChartType === "notificados") {
-      getIniciados();
+    if (valuesChartType === 'notificados') {
+      getIniciados()
     }
-    if (valuesChartType === "proceso" || valuesChartType === "plazo" || valuesChartType === "rj") {
-      getNotificados();
+    if (valuesChartType === 'proceso' || valuesChartType === 'plazo' || valuesChartType === 'rj') {
+      getNotificados()
     }
-  };
+  }
 
   const labels = useMemo(() => {
     if (dataInfo) {
-      return valuesChart.map((item) => item.label);
+      return valuesChart.map((item) => item.label)
     }
-  }, [dataInfo, valuesChart]);
+  }, [dataInfo, valuesChart])
 
   const datasets = useMemo(() => {
     if (dataInfo) {
-      return valuesChart.map((item) => item.value);
+      return valuesChart.map((item) => item.value)
     }
-  }, [dataInfo, valuesChart]);
+  }, [dataInfo, valuesChart])
 
   const labelsAll = useMemo(() => {
     if (dataInfo) {
-      return valuesChartAll.map((item) => item.label);
+      return valuesChartAll.map((item) => item.label)
     }
-  }, [dataInfo, valuesChartAll]);
+  }, [dataInfo, valuesChartAll])
 
   const datasetsAll = useMemo(() => {
     if (dataInfo) {
-      return valuesChartAll.map((item) => item.value);
+      return valuesChartAll.map((item) => item.value)
     }
-  }, [dataInfo, valuesChartAll]);
+  }, [dataInfo, valuesChartAll])
 
   const data = {
     labels,
     datasets: [
       {
-        label: "Cantidad",
+        label: 'Cantidad',
         data: datasets,
-        backgroundColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#E25266", "#000000", "#FF6B38", "#FFFFFF"],
-        borderColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#E25266", "#000000", "#FF6B38", "#003770"],
+        backgroundColor: ['#0073CF', '#9B51E0', '#E3002B', '#1F9B9C', '#76BD43', '#E25266', '#000000', '#FF6B38', '#FFFFFF'],
+        borderColor: ['#0073CF', '#9B51E0', '#E3002B', '#1F9B9C', '#76BD43', '#E25266', '#000000', '#FF6B38', '#003770'],
         borderWidth: 1,
-        info: [],
-      },
-    ],
-  };
+        info: []
+      }
+    ]
+  }
 
   const dataAll = {
     labels: labelsAll,
     datasets: [
       {
-        label: "Cantidad",
+        label: 'Cantidad',
         data: datasetsAll,
-        backgroundColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#E25266", "#000000", "#FF6B38", "#FFFFFF"],
-        borderColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#E25266", "#000000", "#FF6B38", "#003770"],
-        borderWidth: 1,
-      },
-    ],
-  };
+        backgroundColor: ['#0073CF', '#9B51E0', '#E3002B', '#1F9B9C', '#76BD43', '#E25266', '#000000', '#FF6B38', '#FFFFFF'],
+        borderColor: ['#0073CF', '#9B51E0', '#E3002B', '#1F9B9C', '#76BD43', '#E25266', '#000000', '#FF6B38', '#003770'],
+        borderWidth: 1
+      }
+    ]
+  }
   const options2 = {
     responsive: true,
     plugins: {
       legend: {
-        display: false,
-      },
-    },
-  };
+        display: false
+      }
+    }
+  }
 
   useEffect(() => {
-    setValuesChart([
-      { label: "Iniciado con RG", value: dataInfo?.iniciado_rg.total ?? 0 },
-    ]);
-    setValuesChartType("todos");
-  }, [checkInteraction]);
+    setValuesChart([{ label: 'Iniciado con RG', value: dataInfo?.iniciado_rg.total ?? 0 }])
+    setValuesChartType('todos')
+  }, [checkInteraction])
 
   const clear = async () => {
-    const proceso = localStorage.getItem("IdSelectedProcess")!;
-    setDepartamento([]);
-    setProvincia([]);
-    setProvincias([]);
-    setDistrito([]);
-    setDistritos([]);
-    setCargo([]);
-    setOp([]);
-    setOps([]);
-    const { data } = await api.estadistica.statsGeneralCandidato(proceso);
-    setDatainfo(data);
-    setValuesChartType("todos");
-    setValuesChart(valuesChartTodos(data));
-    setValuesChartAll(valuesChartAllTodos(data));
-    setDateInit(moment());
-  };
+    const proceso = localStorage.getItem('IdSelectedProcess')!
+    setDepartamento([])
+    setProvincia([])
+    setProvincias([])
+    setDistrito([])
+    setDistritos([])
+    setCargo([])
+    setOp([])
+    setOps([])
+    const { data } = await api.estadistica.statsGeneralCandidato(proceso)
+    setDatainfo(data)
+    setValuesChartType('todos')
+    setValuesChart(valuesChartTodos(data))
+    setValuesChartAll(valuesChartAllTodos(data))
+    setDateInit(moment())
+  }
 
   return (
     <div ref={componentRef} className="flex flex-col gap-3.5">
       <Card title="Listado de personal de ODPE" border={false} className="bg-white p-[2rem] rounded-[15px]">
         <div>
           <h2 className="text-[#2B3674] text-lg font-semibold">Proceso: {dataInfo?.nombre_proceso}</h2>
-          <hr style={{ marginTop: "10px", borderTop: "2px solid #A8CFEB" }} />
+          <hr style={{ marginTop: '10px', borderTop: '2px solid #A8CFEB' }} />
         </div>
 
         <div className="pt-8  pb-4 gap-[17px] flex-col w-full grid grid-cols-3">
@@ -503,7 +500,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
           </div>
           {/* </div> */}
           {/* <div className="flex gap-[17px]"> */}
-          <div className="flex flex-col  font-poppins flex-1">
+          <div className="flex flex-col flex-1 font-poppins">
             <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Cargo</p>
             <Select
               className="w-full"
@@ -517,7 +514,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
               options={cargos}
             />
           </div>
-          <div className="flex flex-col  flex-1 col-span-2">
+          <div className="flex flex-col flex-1 col-span-2">
             <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Org. Política</p>
             <Select
               className="w-full"
@@ -536,8 +533,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
               <Button
                 className="flex justify-center items-center max-w-[600px] w-full  mt-8"
                 disabled={departamento.length === 0}
-                onClick={getDashboard}
-              >
+                onClick={getDashboard}>
                 <SearchOutlined />
               </Button>
             </div>
@@ -562,22 +558,21 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
             />
             <path d="M21 28V21M21 14H21.0175" stroke="#0073CF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
-          <p className="text-[#003770] font-semibold">Reporte Generado: {dateInit?.format("D/M/YY h:mm:ss a")}</p>
+          <p className="text-[#003770] font-semibold">Reporte Generado: {dateInit?.format('D/M/YY h:mm:ss a')}</p>
         </div>
         <Button
           color="#78bc44"
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "21px",
-            backgroundColor: "#78bc44",
-            border: "none",
+            display: 'flex',
+            alignItems: 'center',
+            gap: '21px',
+            backgroundColor: '#78bc44',
+            border: 'none',
             width: 150,
-            color: "white",
-            cursor: "pointer",
+            color: 'white',
+            cursor: 'pointer'
           }}
-          onClick={handlePrint}
-        >
+          onClick={handlePrint}>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path
               d="M16 8V5H8V8H6V3H18V8H16ZM18 12.5C18.2833 12.5 18.521 12.404 18.713 12.212C18.905 12.02 19.0007 11.7827 19 11.5C19 11.2167 18.904 10.979 18.712 10.787C18.52 10.595 18.2827 10.4993 18 10.5C17.7167 10.5 17.479 10.596 17.287 10.788C17.095 10.98 16.9993 11.2173 17 11.5C17 11.7833 17.096 12.021 17.288 12.213C17.48 12.405 17.7173 12.5007 18 12.5ZM16 19V15H8V19H16ZM18 21H6V17H2V11C2 10.15 2.29167 9.43733 2.875 8.862C3.45833 8.28667 4.16667 7.99933 5 8H19C19.85 8 20.5627 8.28767 21.138 8.863C21.7133 9.43833 22.0007 10.1507 22 11V17H18V21ZM20 15V11C20 10.7167 19.904 10.479 19.712 10.287C19.52 10.095 19.2827 9.99933 19 10H5C4.71667 10 4.479 10.096 4.287 10.288C4.095 10.48 3.99933 10.7173 4 11V15H6V13H18V15H20Z"
@@ -613,7 +608,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
             <h2 className="text-[#2B3674] text-lg font-semibold">TOTAL DE PAS : 15896</h2>
             <hr style={{ marginTop: "10px", borderTop: "2px solid #A8CFEB" }} />
       </div>*/}
-          <div className=" flex gap-5">
+          <div className="flex gap-5 ">
             <div className="min-w-[448px] ">
               <table>
                 <thead>
@@ -628,14 +623,13 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                     <td className="pl-3 py-1.5">Iniciado con RG</td>
                     <td className="text-center py-1.5">
                       <button
-                        onClick={() => dataInfo && dataInfo?.iniciado_rg?.total > 0 && handleFilterListadoPas("iniciado_rg")}
-                        className={dataInfo && dataInfo?.iniciado_rg?.total > 0 ? "hover:underline" : ""}
-                      >
+                        onClick={() => dataInfo && dataInfo?.iniciado_rg?.total > 0 && handleFilterListadoPas('iniciado_rg')}
+                        className={dataInfo && dataInfo?.iniciado_rg?.total > 0 ? 'hover:underline' : ''}>
                         {dataInfo?.iniciado_rg.total}
                       </button>
                     </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
-                      {checkInteraction && valuesChartType === "todos" ? (
+                      {checkInteraction && valuesChartType === 'todos' ? (
                         <div className="w-6 h-6 rounded-full bg-[#0073CF]"></div>
                       ) : (
                         <div className="w-6 h-6"></div>
@@ -650,14 +644,13 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                     </td>
                     <td className="text-center py-1.5">
                       <button
-                        onClick={() => dataInfo && dataInfo?.iniciado_rg.notificado.total > 0 && handleFilterListadoPas("notificado")}
-                        className={dataInfo && dataInfo?.iniciado_rg.notificado.total > 0 ? "hover:underline" : ""}
-                      >
+                        onClick={() => dataInfo && dataInfo?.iniciado_rg.notificado.total > 0 && handleFilterListadoPas('notificado')}
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.total > 0 ? 'hover:underline' : ''}>
                         {dataInfo?.iniciado_rg.notificado.total}
                       </button>
                     </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
-                      {checkInteraction && valuesChartType === "iniciados" ? (
+                      {checkInteraction && valuesChartType === 'iniciados' ? (
                         <div className="w-6 h-6 rounded-full bg-[#0073CF]"></div>
                       ) : (
                         <div className="w-6 h-6"></div>
@@ -672,20 +665,20 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                     </td>
                     <td className="text-center py-1.5">
                       <button
-                        onClick={() => dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.total > 0 && handleFilterListadoPas("con_rj")}
-                        className={dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.total > 0 ? "hover:underline" : ""}
-                      >
+                        onClick={() => dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.total > 0 && handleFilterListadoPas('con_rj')}
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.total > 0 ? 'hover:underline' : ''}>
                         {dataInfo?.iniciado_rg.notificado.con_rj.total}
                       </button>
                     </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
-                      {checkInteraction && valuesChartType === "notificados" ? (
+                      {checkInteraction && valuesChartType === 'notificados' ? (
                         <div className="w-6 h-6 rounded-full bg-[#0073CF]"></div>
                       ) : (
                         <div className="w-6 h-6"></div>
                       )}
                     </td>
                   </tr>
+
                   <tr className="border-b border-[#BDBDBD] ">
                     <td className="pl-20 py-1.5">
                       <ul className="list-disc">
@@ -695,15 +688,14 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                     <td className="text-center py-1.5">
                       <button
                         onClick={() =>
-                          dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.sancion > 0 && handleFilterListadoPas("rj_sancion")
+                          dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.sancion > 0 && handleFilterListadoPas('rj_sancion')
                         }
-                        className={dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.sancion > 0 ? "hover:underline" : ""}
-                      >
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.sancion > 0 ? 'hover:underline' : ''}>
                         {dataInfo?.iniciado_rg.notificado.con_rj.sancion}
                       </button>
                     </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
-                      {checkInteraction && valuesChartType === "rj" ? (
+                      {checkInteraction && valuesChartType === 'rj' ? (
                         <div className="w-6 h-6 rounded-full bg-[#0073CF]"></div>
                       ) : (
                         <div className="h-6"></div>
@@ -721,15 +713,14 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                     <td className="text-center py-1.5">
                       <button
                         onClick={() =>
-                          dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.archivo > 0 && handleFilterListadoPas("rj_archivo")
+                          dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.archivo > 0 && handleFilterListadoPas('rj_archivo')
                         }
-                        className={dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.archivo > 0 ? "hover:underline" : ""}
-                      >
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.archivo > 0 ? 'hover:underline' : ''}>
                         {dataInfo?.iniciado_rg.notificado.con_rj.archivo}
                       </button>
                     </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
-                      {checkInteraction && valuesChartType === "rj" ? (
+                      {checkInteraction && valuesChartType === 'rj' ? (
                         <div className="w-6 h-6 rounded-full bg-[#9B51E0]"></div>
                       ) : (
                         <div className="h-6"></div>
@@ -747,21 +738,45 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                     <td className="text-center py-1.5">
                       <button
                         onClick={() =>
-                          dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.nulidad > 0 && handleFilterListadoPas("rj_nulidad")
+                          dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.nulidad > 0 && handleFilterListadoPas('rj_nulidad')
                         }
-                        className={dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.nulidad > 0 ? "hover:underline" : ""}
-                      >
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.con_rj.nulidad > 0 ? 'hover:underline' : ''}>
                         {dataInfo?.iniciado_rg.notificado.con_rj.nulidad}
                       </button>
                     </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
-                      {checkInteraction && valuesChartType === "rj" ? (
+                      {checkInteraction && valuesChartType === 'rj' ? (
                         <div className="w-6 h-6 rounded-full bg-[#E3002B]"></div>
                       ) : (
                         <div className="h-6"></div>
                       )}
 
                       {!checkInteraction && <div className="w-6 h-6 rounded-full bg-[#E3002B]"></div>}
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[#BDBDBD] ">
+                    <td className="pl-20 py-1.5">
+                      <ul className="list-disc">
+                        <li>RJ Dar por concluido</li>
+                      </ul>
+                    </td>
+                    <td className="text-center py-1.5">
+                      <button
+                        onClick={() =>
+                          dataInfo && dataInfo?.iniciado_rg.notificado.con_rj?.concluido > 0 && handleFilterListadoPas('rj_concluido')
+                        }
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.con_rj?.concluido > 0 ? 'hover:underline' : ''}>
+                        {dataInfo?.iniciado_rg.notificado.con_rj?.concluido}
+                      </button>
+                    </td>
+                    <td className="py-1.5 text-center flex justify-center items-center">
+                      {checkInteraction && valuesChartType === 'rj' ? (
+                        <div className="w-6 h-6 rounded-full bg-[#1F9B9C]"></div>
+                      ) : (
+                        <div className="h-6"></div>
+                      )}
+
+                      {!checkInteraction && <div className="w-6 h-6 rounded-full bg-[#1F9B9C]"></div>}
                     </td>
                   </tr>
                   <tr className="border-b border-[#BDBDBD] ">
@@ -773,15 +788,14 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                     <td className="text-center py-1.5">
                       <button
                         onClick={() =>
-                          dataInfo && dataInfo?.iniciado_rg.notificado.en_proceso.total > 0 && handleFilterListadoPas("en_proceso")
+                          dataInfo && dataInfo?.iniciado_rg.notificado.en_proceso.total > 0 && handleFilterListadoPas('en_proceso')
                         }
-                        className={dataInfo && dataInfo?.iniciado_rg.notificado.en_proceso.total > 0 ? "hover:underline" : ""}
-                      >
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.en_proceso.total > 0 ? 'hover:underline' : ''}>
                         {dataInfo?.iniciado_rg.notificado.en_proceso.total}
                       </button>
                     </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
-                      {checkInteraction && valuesChartType === "notificados" ? (
+                      {checkInteraction && valuesChartType === 'notificados' ? (
                         <div className="w-6 h-6 rounded-full bg-[#9B51E0]"></div>
                       ) : (
                         <div className="w-6 h-6"></div>
@@ -799,15 +813,14 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                         onClick={() =>
                           dataInfo &&
                           dataInfo?.iniciado_rg.notificado.en_proceso.resolutiva > 0 &&
-                          handleFilterListadoPas("fase_resolutiva")
+                          handleFilterListadoPas('fase_resolutiva')
                         }
-                        className={dataInfo && dataInfo?.iniciado_rg.notificado.en_proceso.resolutiva > 0 ? "hover:underline" : ""}
-                      >
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.en_proceso.resolutiva > 0 ? 'hover:underline' : ''}>
                         {dataInfo?.iniciado_rg.notificado.en_proceso.resolutiva}
                       </button>
                     </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
-                      {checkInteraction && valuesChartType === "proceso" ? (
+                      {checkInteraction && valuesChartType === 'proceso' ? (
                         <div className="w-6 h-6 rounded-full bg-[#0073CF]"></div>
                       ) : (
                         <div className="h-6"></div>
@@ -827,15 +840,14 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                         onClick={() =>
                           dataInfo &&
                           dataInfo?.iniciado_rg.notificado.en_proceso.instructiva > 0 &&
-                          handleFilterListadoPas("fase_instructiva")
+                          handleFilterListadoPas('fase_instructiva')
                         }
-                        className={dataInfo && dataInfo?.iniciado_rg.notificado.en_proceso.instructiva > 0 ? "hover:underline" : ""}
-                      >
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.en_proceso.instructiva > 0 ? 'hover:underline' : ''}>
                         {dataInfo?.iniciado_rg.notificado.en_proceso.instructiva}
                       </button>
                     </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
-                      {checkInteraction && valuesChartType === "proceso" ? (
+                      {checkInteraction && valuesChartType === 'proceso' ? (
                         <div className="w-6 h-6 rounded-full bg-[#9B51E0]"></div>
                       ) : (
                         <div className="h-6"></div>
@@ -853,15 +865,14 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                     <td className="text-center py-1.5">
                       <button
                         onClick={() =>
-                          dataInfo && dataInfo?.iniciado_rg.notificado.fuera_plazo > 0 && handleFilterListadoPas("fuera_plazo")
+                          dataInfo && dataInfo?.iniciado_rg.notificado.fuera_plazo > 0 && handleFilterListadoPas('fuera_plazo')
                         }
-                        className={dataInfo && dataInfo?.iniciado_rg.notificado.fuera_plazo > 0 ? "hover:underline" : ""}
-                      >
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.fuera_plazo > 0 ? 'hover:underline' : ''}>
                         {dataInfo?.iniciado_rg.notificado.fuera_plazo}
                       </button>
                     </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
-                      {checkInteraction && valuesChartType === "notificados" ? (
+                      {checkInteraction && valuesChartType === 'notificados' ? (
                         <div className="w-6 h-6 rounded-full bg-[#E3002B]"></div>
                       ) : (
                         <div className="h-6"></div>
@@ -878,14 +889,13 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                     </td>
                     <td className="text-center py-1.5">
                       <button
-                        onClick={() => dataInfo && dataInfo?.iniciado_rg.no_notificado > 0 && handleFilterListadoPas("no_notificado")}
-                        className={dataInfo && dataInfo?.iniciado_rg.no_notificado > 0 ? "hover:underline" : ""}
-                      >
+                        onClick={() => dataInfo && dataInfo?.iniciado_rg.no_notificado > 0 && handleFilterListadoPas('no_notificado')}
+                        className={dataInfo && dataInfo?.iniciado_rg.no_notificado > 0 ? 'hover:underline' : ''}>
                         {dataInfo?.iniciado_rg.no_notificado}
                       </button>
                     </td>
                     <td className="py-1.5 text-center flex justify-center items-center">
-                      {checkInteraction && valuesChartType === "iniciados" ? (
+                      {checkInteraction && valuesChartType === 'iniciados' ? (
                         <div className="w-6 h-6 rounded-full bg-[#9B51E0]"></div>
                       ) : (
                         <div className="h-6"></div>
@@ -916,31 +926,30 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                 </tbody>
               </table>
             </div>
-            <div className="flex-1 h-[350px] ">
-              <div className="my-5 mx-20 flex justify-between items-center">
-                <div className="flex items-center flex-col gap-2">
+            <div className="flex-1 h-[420px] ">
+              <div className="flex items-center justify-between mx-20 my-5">
+                <div className="flex flex-col items-center gap-2">
                   <p>Interacción</p>
                   <Switch
                     defaultChecked={false}
-                    className={`${checkInteraction ? "bg-blue-500" : "bg-gray-300"}`}
+                    className={`${checkInteraction ? 'bg-blue-500' : 'bg-gray-300'}`}
                     onChange={setCheckInteraction}
                   />
                 </div>
-                {checkInteraction && valuesChartType !== "todos" && valuesChartType.length > 0 && (
+                {checkInteraction && valuesChartType !== 'todos' && valuesChartType.length > 0 && (
                   <Button
                     color="#0073CF"
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "21px",
-                      backgroundColor: "#0073CF",
-                      border: "none",
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '21px',
+                      backgroundColor: '#0073CF',
+                      border: 'none',
                       width: 150,
-                      color: "white",
-                      cursor: "pointer",
+                      color: 'white',
+                      cursor: 'pointer'
                     }}
-                    onClick={handleBack}
-                  >
+                    onClick={handleBack}>
                     <RollbackOutlined />
                     Atrás
                   </Button>
@@ -952,13 +961,13 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
         </Card>
       </div>
     </div>
-  );
-});
+  )
+})
 
-ComponentToPrint.displayName = "ComponentToPrint";
+ComponentToPrint.displayName = 'ComponentToPrint'
 
 Estadistica.getLayout = function getLayout(page: ReactElement) {
-  return <LayoutFirst>{page}</LayoutFirst>;
-};
+  return <LayoutFirst>{page}</LayoutFirst>
+}
 
-export default Estadistica;
+export default Estadistica
