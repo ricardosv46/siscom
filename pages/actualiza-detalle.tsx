@@ -246,7 +246,10 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
         formData.append('document', documentoRelacionadoinputValue)
       }
 
-      if (tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' && operationSelectedOption === 'ACTUALIZACION') {
+      if (
+        (tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' || tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL') &&
+        operationSelectedOption === 'ACTUALIZACION'
+      ) {
         formData.append('rj_type', rj_type)
       }
 
@@ -301,6 +304,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
   const handleTipoDocumentoSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setTipoDocumentoSelectedOption(event.target.value)
+    setRj_type('')
   }
 
   const handleTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -606,7 +610,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 <option value="">Seleccione tipo de resolución jefatural</option>
 
                 {arrayrj_type
-                  ?.filter((i) => i?.rj_value !== 'REHACER')
+                  ?.filter((i) => i?.rj_value !== 'REHACER' && i?.rj_value !== 'AMPLIACION')
                   ?.map((i) => (
                     <option value={i?.rj_value}>{i?.rj_label}</option>
                   ))}

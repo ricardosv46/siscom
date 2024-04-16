@@ -221,7 +221,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     }
 
     if (
-      tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' &&
+      (tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL-PAS' || tipoDocumentoSelectedOption === 'RESOLUCION JEFATURAL') &&
       operationSelectedOption === 'actualizado' &&
       (user?.profile === 'jn' || user?.is_admin)
     ) {
