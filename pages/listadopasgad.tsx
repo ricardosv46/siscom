@@ -204,6 +204,7 @@ const Listadopas: NextPageWithLayout = () => {
   const {
     data: processes,
     isLoading,
+    isFetching,
     isError,
     refetch
   } = useQuery({
@@ -217,7 +218,7 @@ const Listadopas: NextPageWithLayout = () => {
   useEffect(() => {
     const instance = Modal
 
-    if (isLoading) {
+    if (isFetching) {
       instance.info({
         title: 'Espere',
         content: (
@@ -232,7 +233,7 @@ const Listadopas: NextPageWithLayout = () => {
     } else {
       instance.destroyAll()
     }
-  }, [isLoading])
+  }, [isFetching])
 
   const getApi = async () => {
     const filters1 = {

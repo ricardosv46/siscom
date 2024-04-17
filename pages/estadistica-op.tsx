@@ -41,6 +41,7 @@ type DataInfo = {
         archivo: number;
         nulidad: number;
         sancion: number;
+        concluido: number;
         total: number;
       };
       en_proceso: {
@@ -98,6 +99,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
     { label: "RJ Sanción", value: valueinfo?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
     { label: "RJ Archivo", value: valueinfo?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
     { label: "RJ Nulidad", value: valueinfo?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
+    { label: 'RJ Dar por concluido', value: valueinfo?.iniciado_rg.notificado.con_rj.concluido ?? 0 },
     { label: "Fase Resolutiva", value: valueinfo?.iniciado_rg.notificado.en_proceso.resolutiva ?? 0 },
     { label: "Fase Instructiva", value: valueinfo?.iniciado_rg.notificado.en_proceso.instructiva ?? 0 },
     { label: "Fuera del plazo", value: valueinfo?.iniciado_rg.notificado.fuera_plazo ?? 0 },
@@ -278,6 +280,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
       { label: "RJ Sanción", value: dataInfo?.iniciado_rg.notificado.con_rj.sancion ?? 0 },
       { label: "RJ Archivo", value: dataInfo?.iniciado_rg.notificado.con_rj.archivo ?? 0 },
       { label: "RJ Nulidad", value: dataInfo?.iniciado_rg.notificado.con_rj.nulidad ?? 0 },
+      { label: 'RJ Dar por concluido', value: dataInfo?.iniciado_rg.notificado.con_rj.concluido ?? 0 },
     ];
     setValuesChart(newData);
     setValuesChartType("rj");
@@ -323,7 +326,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
 
       // const value = elements[0].element.$context.raw;
 
-      if (valuesChart.length === 2 && valuesChartType === "todos") {
+      if (valuesChart.length === 1 && valuesChartType === "todos") {
         if (index === 0) {
           getIniciados();
         }
@@ -396,8 +399,8 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
       {
         label: "Cantidad",
         data: datasets,
-        backgroundColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#E25266", "#000000", "#FF6B38", "#FFFFFF"],
-        borderColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#E25266", "#000000", "#FF6B38", "#003770"],
+        backgroundColor: ['#0073CF', '#9B51E0', '#E3002B', '#1F9B9C', '#76BD43', '#E25266', '#000000', '#FF6B38', '#FFFFFF'],
+        borderColor: ['#0073CF', '#9B51E0', '#E3002B', '#1F9B9C', '#76BD43', '#E25266', '#000000', '#FF6B38', '#003770'],
         borderWidth: 1,
         info: [],
       },
@@ -410,8 +413,8 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
       {
         label: "Cantidad",
         data: datasetsAll,
-        backgroundColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#E25266", "#000000", "#FF6B38", "#FFFFFF"],
-        borderColor: ["#0073CF", "#9B51E0", "#E3002B", "#76BD43", "#E25266", "#000000", "#FF6B38", "#003770"],
+        backgroundColor: ['#0073CF', '#9B51E0', '#E3002B', '#1F9B9C', '#76BD43', '#E25266', '#000000', '#FF6B38', '#FFFFFF'],
+        borderColor: ['#0073CF', '#9B51E0', '#E3002B', '#1F9B9C', '#76BD43', '#E25266', '#000000', '#FF6B38', '#003770'],
         borderWidth: 1,
       },
     ],
@@ -500,7 +503,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
             </div>
           </div>
           <div className="flex gap-[17px]">
-            <div className="flex flex-col  font-poppins">
+            <div className="flex flex-col font-poppins">
               <p className="mb-3 ml-2 text-md font-semibold text[#333333]">Cargo</p>
               <Select
                 mode="multiple"
@@ -529,7 +532,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
             <div className="flex gap-[17px] min-w-[420px] max-w-[450px]">
               <div className="flex-1">
                 <Button
-                  className="flex justify-center items-center w-full mt-8"
+                  className="flex items-center justify-center w-full mt-8"
                   disabled={departamento.length === 0}
                   onClick={getDashboard}
                 >
@@ -537,7 +540,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                 </Button>
               </div>
               <div className="flex-1">
-                <Button color="#0073CF" className="flex justify-center items-center w-full  mt-8" onClick={clear}>
+                <Button color="#0073CF" className="flex items-center justify-center w-full mt-8" onClick={clear}>
                   Limpiar filtros
                 </Button>
               </div>
@@ -608,7 +611,7 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
             <h2 className="text-[#2B3674] text-lg font-semibold">TOTAL DE PAS: {console.log(dataInfo)}</h2>
             <hr style={{ marginTop: "10px", borderTop: "2px solid #A8CFEB" }} />
       </div>*/}
-          <div className=" flex gap-5">
+          <div className="flex gap-5 ">
             <div className="w-[448px]">
               <table>
                 <thead>
@@ -757,6 +760,31 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
                       )}
 
                       {!checkInteraction && <div className="w-6 h-6 rounded-full bg-[#E3002B]"></div>}
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[#BDBDBD] ">
+                    <td className="pl-20 py-1.5">
+                      <ul className="list-disc">
+                        <li>RJ Dar por concluido</li>
+                      </ul>
+                    </td>
+                    <td className="text-center py-1.5">
+                      <button
+                        onClick={() =>
+                          dataInfo && dataInfo?.iniciado_rg.notificado.con_rj?.concluido > 0 && handleFilterListadoPas('rj_concluido')
+                        }
+                        className={dataInfo && dataInfo?.iniciado_rg.notificado.con_rj?.concluido > 0 ? 'hover:underline' : ''}>
+                        {dataInfo?.iniciado_rg.notificado.con_rj?.concluido}
+                      </button>
+                    </td>
+                    <td className="py-1.5 text-center flex justify-center items-center">
+                      {checkInteraction && valuesChartType === 'rj' ? (
+                        <div className="w-6 h-6 rounded-full bg-[#1F9B9C]"></div>
+                      ) : (
+                        <div className="h-6"></div>
+                      )}
+
+                      {!checkInteraction && <div className="w-6 h-6 rounded-full bg-[#1F9B9C]"></div>}
                     </td>
                   </tr>
                   <tr className="border-b border-[#BDBDBD] ">
@@ -915,8 +943,8 @@ const ComponentToPrint = forwardRef(({ componentRef, handlePrint }: any) => {
               </table>
             </div>
             <div className="flex-1 h-[350px]">
-              <div className="my-5 mx-20 flex justify-between items-center">
-                <div className="flex items-center flex-col gap-2">
+              <div className="flex items-center justify-between mx-20 my-5">
+                <div className="flex flex-col items-center gap-2">
                   <p>Interacción</p>
                   <Switch
                     defaultChecked={false}
