@@ -149,7 +149,7 @@ const columns = [
         </button>
 
         <button
-          disabled={!item?.type_payment?.id || item?.type_payment?.type === 'Pronto pago' || item?.type_payment?.type === 'Pago total'}
+          disabled={!item?.type_payment?.id || item?.type_payment?.type === 'PRONTO PAGO' || item?.type_payment?.type === 'PAGO TOTAL'}
           className="disabled:text-[#828282] text-[#76BD43] w-[130px] flex items-center gap-1"
           onClick={() => {
             Router.push(

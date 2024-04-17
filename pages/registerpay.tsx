@@ -90,7 +90,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
   useEffect(() => {
     const dataNum = +fees === pays?.length
 
-    if (dataNum && typepay === 'Fraccionamiento') {
+    if (dataNum && typepay === 'FRACCIONAMIENTO') {
       const instance = Modal.info({
         icon: '',
         content: (

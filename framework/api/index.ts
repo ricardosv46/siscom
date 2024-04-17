@@ -57,12 +57,12 @@ const api = {
       if (tok) {
         const formData = new FormData()
 
-        if (form?.typePay === 'Pronto pago' || form?.typePay === 'Pago total') {
+        if (form?.typePay === 'PRONTO PAGO' || form?.typePay === 'PAGO TOTAL') {
           formData.append('amount', form?.amount.replaceAll(',', ''))
           formData.append('process_id', String(process))
           formData.append('payment_type', form?.typePay)
         }
-        if (form?.typePay === 'Fraccionamiento') {
+        if (form?.typePay === 'FRACCIONAMIENTO') {
           formData.append('amount', form?.amount.replaceAll(',', ''))
           formData.append('process_id', process)
           formData.append('payment_type', form?.typePay)
@@ -71,7 +71,7 @@ const api = {
           formData.append('fee_initial', form?.initialCuote.replaceAll(',', ''))
         }
 
-        if (form?.typePay === 'Pago a cuenta') {
+        if (form?.typePay === 'PAGO A CUENTA') {
           formData.append('amount', form?.amount.replaceAll(',', ''))
           formData.append('process_id', String(process))
           formData.append('payment_type', form?.typePay)

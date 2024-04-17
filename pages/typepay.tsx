@@ -24,20 +24,20 @@ export interface FormDataTypePay {
 
 const optionsTypePay = [
   {
-    value: 'Pronto pago',
-    label: 'Pronto pago'
+    value: 'PRONTO PAGO',
+    label: 'PRONTO PAGO'
   },
   {
-    value: 'Fraccionamiento',
-    label: 'Fraccionamiento'
+    value: 'FRACCIONAMIENTO',
+    label: 'FRACCIONAMIENTO'
   },
   {
-    value: 'Pago a cuenta',
-    label: 'Pago a cuenta'
+    value: 'PAGO A CUENTA',
+    label: 'PAGO A CUENTA'
   },
   {
-    value: 'Pago total',
-    label: 'Pago total'
+    value: 'PAGO TOTAL',
+    label: 'PAGO TOTAL'
   }
 ]
 
@@ -47,7 +47,7 @@ const TypePay: NextPageWithLayout = ({}) => {
 
   const [formData, setFormData] = useState<FormDataTypePay>({
     amount: '',
-    typePay: 'Pronto pago',
+    typePay: 'PRONTO PAGO',
     discount: '25%',
     cuotes: '',
     initialCuote: '',
@@ -118,14 +118,14 @@ const TypePay: NextPageWithLayout = ({}) => {
       return
     }
     const Initamount = initialAmount?.data?.rj_amount
-    if (typePay === 'Pronto pago') {
+    if (typePay === 'PRONTO PAGO') {
       const newDiscount = Initamount * 0.25
       const newAmount = Initamount - newDiscount
 
       setFormData((prev) => ({ ...prev, amount: convertNumber(String(newAmount)) }))
     }
 
-    if (typePay === 'Fraccionamiento') {
+    if (typePay === 'FRACCIONAMIENTO') {
       const newInitialCuote = Number(initialCuote.replaceAll(',', ''))
       const newAmount = Initamount - newInitialCuote
 
@@ -134,26 +134,26 @@ const TypePay: NextPageWithLayout = ({}) => {
   }, [typePay, initialAmount, initialCuote])
 
   useEffect(() => {
-    if (typePay === 'Fraccionamiento') {
+    if (typePay === 'FRACCIONAMIENTO') {
       setFormData((prev) => ({ ...prev, cuotes: '1', initialCuote: '' }))
       setFormData((prev) => ({ ...prev, ticket: '', bank: '', date: '', hour: '' }))
       setDateMoment(null)
       setHourMoment(null)
     }
 
-    if (typePay === 'Pago a cuenta') {
+    if (typePay === 'PAGO A CUENTA') {
       setFormData((prev) => ({ ...prev, amount: '', initialCuote: '' }))
       setFormData((prev) => ({ ...prev, ticket: '', bank: '', date: '', hour: '' }))
       setDateMoment(null)
       setHourMoment(null)
     }
-    if (typePay === 'Pago total') {
+    if (typePay === 'PAGO TOTAL') {
       setFormData((prev) => ({ ...prev, amount: '' }))
       setFormData((prev) => ({ ...prev, ticket: '', bank: '', date: '', hour: '' }))
       setDateMoment(null)
       setHourMoment(null)
     }
-    if (typePay === 'Pronto pago') {
+    if (typePay === 'PRONTO PAGO') {
       setFormData((prev) => ({ ...prev, ticket: '', bank: '', date: '', hour: '' }))
       setDateMoment(null)
       setHourMoment(null)
@@ -161,15 +161,15 @@ const TypePay: NextPageWithLayout = ({}) => {
   }, [typePay])
 
   const disableButton = () => {
-    if (typePay === 'Pronto pago' || typePay === 'Pago total') {
+    if (typePay === 'PRONTO PAGO' || typePay === 'PAGO TOTAL') {
       return !amount || !date
     }
 
-    if (typePay === 'Fraccionamiento') {
+    if (typePay === 'FRACCIONAMIENTO') {
       return !cuotes || !initialCuote || !amount || !date
     }
 
-    if (typePay === 'Pago a cuenta') {
+    if (typePay === 'PAGO A CUENTA') {
       return !initialAmount || !amount || !date
     }
   }
@@ -183,15 +183,15 @@ const TypePay: NextPageWithLayout = ({}) => {
     try {
       await api.payments.create(formData, id)
 
-      if (typePay === 'Fraccionamiento') {
+      if (typePay === 'FRACCIONAMIENTO') {
         await api.payments.register({ ...formData, typePay: 'Cuota inicial', cuotes: '', amount: String(initialCuote) }, id)
       }
 
-      if (typePay === 'Pago a cuenta') {
+      if (typePay === 'PAGO A CUENTA') {
         await api.payments.register({ ...formData, typePay: 'Monto abonado', cuotes: '', amount: String(initialCuote) }, id)
       }
 
-      if (typePay === 'Pronto pago' || typePay === 'Pago total') {
+      if (typePay === 'PRONTO PAGO' || typePay === 'PAGO TOTAL') {
         await api.payments.register({ ...formData, cuotes: '', amount: String(amount) }, id)
       }
 
@@ -260,7 +260,7 @@ const TypePay: NextPageWithLayout = ({}) => {
             </label>
 
             <Select
-              defaultValue="Pronto pago"
+              defaultValue="PRONTO PAGO"
               value={typePay}
               onChange={(e) => setFormData((prev) => ({ ...prev, typePay: e }))}
               className="w-[200px] border-[#69B2E8]  "
@@ -268,7 +268,7 @@ const TypePay: NextPageWithLayout = ({}) => {
             />
           </div>
         </div>
-        {typePay === 'Pronto pago' && (
+        {typePay === 'PRONTO PAGO' && (
           <>
             <div className="w-1/2 py-5">
               <div className="grid items-center grid-cols-3 gap-5 mb-5">
@@ -300,7 +300,7 @@ const TypePay: NextPageWithLayout = ({}) => {
           </>
         )}
 
-        {typePay === 'Fraccionamiento' && (
+        {typePay === 'FRACCIONAMIENTO' && (
           <>
             <div className="w-1/2 py-5">
               <div className="grid items-center grid-cols-3 gap-5 mb-5">
@@ -361,7 +361,7 @@ const TypePay: NextPageWithLayout = ({}) => {
           </>
         )}
 
-        {typePay === 'Pago a cuenta' && (
+        {typePay === 'PAGO A CUENTA' && (
           <>
             <div className="w-4/6 py-5 ">
               <div className="grid items-center grid-cols-4 gap-5 mb-5 ">
@@ -405,7 +405,7 @@ const TypePay: NextPageWithLayout = ({}) => {
           </>
         )}
 
-        {typePay === 'Pago total' && (
+        {typePay === 'PAGO TOTAL' && (
           <>
             <div className="w-4/6 py-5 ">
               <div className="grid items-center grid-cols-4 gap-5 mb-5 ">
@@ -534,27 +534,27 @@ const TypePay: NextPageWithLayout = ({}) => {
           <div className="flex w-4/6 mx-auto text-lg font-semibold ">
             <article className="flex flex-col w-3/5">
               <p>Tipo de pago:</p>
-              {typePay === 'Pronto pago' && (
+              {typePay === 'PRONTO PAGO' && (
                 <>
                   <p>Descuento:</p>
                   <p>Monto:</p>
                 </>
               )}
 
-              {typePay === 'Fraccionamiento' && (
+              {typePay === 'FRACCIONAMIENTO' && (
                 <>
                   <p>Número de cuotas:</p>
                   <p>Cuota inicial:</p>
                   <p>Monto:</p>
                 </>
               )}
-              {typePay === 'Pago a cuenta' && (
+              {typePay === 'PAGO A CUENTA' && (
                 <>
                   <p>Monto abonado:</p>
                   <p>Nuevo monto (S/):</p>
                 </>
               )}
-              {typePay === 'Pago total' && <p>Monto abonado:</p>}
+              {typePay === 'PAGO TOTAL' && <p>Monto abonado:</p>}
 
               <p>Nº de recibo / operación:</p>
               <p>Banco:</p>
@@ -563,27 +563,27 @@ const TypePay: NextPageWithLayout = ({}) => {
             <article className="flex flex-col">
               <p>{typePay}</p>
 
-              {typePay === 'Pronto pago' && (
+              {typePay === 'PRONTO PAGO' && (
                 <>
                   <p>{discount}</p>
                   <p>{amount}</p>
                 </>
               )}
 
-              {typePay === 'Fraccionamiento' && (
+              {typePay === 'FRACCIONAMIENTO' && (
                 <>
                   <p>{cuotes}</p>
                   <p>S/{initialCuote}</p>
                   <p>S/{amount}</p>
                 </>
               )}
-              {typePay === 'Pago a cuenta' && (
+              {typePay === 'PAGO A CUENTA' && (
                 <>
                   <p>S/{initialCuote}</p>
                   <p>S/{amount}</p>
                 </>
               )}
-              {typePay === 'Pago total' && <p>S/{amount}</p>}
+              {typePay === 'PAGO TOTAL' && <p>S/{amount}</p>}
 
               <p>{ticket || '-'}</p>
               <p>{bank || '-'}</p>
