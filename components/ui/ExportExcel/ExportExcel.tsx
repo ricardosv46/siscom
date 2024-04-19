@@ -1,4 +1,5 @@
 import { Modal } from 'antd'
+import moment from 'moment'
 import { utils, writeFile } from 'xlsx'
 
 export const ExportExcel = (body: any) => {
@@ -23,6 +24,12 @@ export const ExportExcel = (body: any) => {
 
   if (body.length > 0) {
     dataExport = body.map((item: any) => {
+
+      const fecha_inicio = item?.fecha_inicio_dt ? moment(item.fecha_inicio_dt).format('DD/MM/YYYY') : item?.fecha_inicio_dt 
+      const fecha_fin = item?.fecha_fin_dt ? moment(item.fecha_fin_dt).format('DD/MM/YYYY') : item?.fecha_fin_dt
+      const actualizacion =  item?.actualizacion_dt ? moment(item.actualizacion_dt).format('DD/MM/YYYY') :item?.actualizacion_dt
+
+
       return {
         num_expediente: item.num_expediente,
         resolucion_gerencial: item.resolution_number,
@@ -30,10 +37,10 @@ export const ExportExcel = (body: any) => {
         dni_candidato: item.dni_candidato,
         nombre: item.name,
         responsable: item.responsable,
-        etapa: item.etapa,
-        fecha_inicio: item.fecha_inicio,
-        fecha_fin: item.fecha_fin,
-        actualizacion: item.actualizacion,
+        etapa: item.estapa,
+        fecha_inicio: fecha_inicio,
+        fecha_fin: fecha_fin,
+        actualizacion: actualizacion,
         tipo_proceso: item.type,
         cargo: item.cargo,
         type_op: item.type_op,

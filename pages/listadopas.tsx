@@ -848,7 +848,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     try {
       const res = await api.listpas.downloadReportePass(IdSelectedProcess, 'all')
       const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: res?.data })
-
+      console.log({dataFilter})
       ExportExcel(dataFilter)
       instance.destroy()
     } catch (error) {
