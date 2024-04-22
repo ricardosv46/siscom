@@ -328,7 +328,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
     setOperationSelectedOption(event.target.value)
     limpiarDatos()
-    if (event.target.value === 'setGerenciaSelectedOption') {
+    if (event.target.value === 'finalizado') {
       setGerenciaInicialSelectedOption('JN')
       setGerenciaSelectedOption('JN')
     }
@@ -352,6 +352,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     //setGerenciaInicialSelectedOption('');
     setComentarioTextareaValue('')
   }
+  console.log({ gerenciaSelectedOption, gerenciaInicialSelectedOption })
 
   const disabledDate = (current: any) => {
     // const fecha = moment(current).startOf("day");
