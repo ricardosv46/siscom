@@ -328,8 +328,9 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>) {
     setOperationSelectedOption(event.target.value)
     limpiarDatos()
-    if (event.target.value === 'finalizado') {
+    if (event.target.value === 'setGerenciaSelectedOption') {
       setGerenciaInicialSelectedOption('JN')
+      setGerenciaSelectedOption('JN')
     }
   }
 
