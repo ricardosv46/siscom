@@ -134,7 +134,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       return
     } else if (
       operationSelectedOption == 'actualizado' &&
-      (!gerenciaSelectedOption || !documentoRelacionadoinputValue || !tipoDocumentoSelectedOption || !fechaInicioInputValue)
+      (!gerenciaSelectedOption || !documentoRelacionadoinputValue || !tipoDocumentoSelectedOption)
     ) {
       const instance = Modal.info({
         content: 'Por favor, ingrese los datos solicitados',
@@ -160,7 +160,8 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       })
       setConfirm(false)
       return
-    } else if (((user?.is_admin && ( operationSelectedOption == 'notificado' ||  operationSelectedOption == 'finalizado')) || operationSelectedOption == 'notificado') && !fechaInicioInputValue) {
+    } else if (user?.is_admin && operationSelectedOption === 'finalizado' && !fechaInicioInputValue) {
+      
       const instance = Modal.info({
         content: 'Por favor, ingrese los datos solicitados',
         centered: true,
