@@ -215,7 +215,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     }
     formData.set('resolution_number', resolucion_gerencial)
 
-    if (fechaInicioInputValue !== '') {
+    if (fechaInicioInputValue !== '' && ((user.is_admin && ( operationSelectedOption == 'notificado' ||  operationSelectedOption == 'finalizado')) || operationSelectedOption == 'notificado'  )) {
       const currentDate = moment(fechaInicioInputValue).format('YYYY-MM-DD HH:mm:ss')
       formData.set('start_at', currentDate)
     }
@@ -846,7 +846,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
-        {operationSelectedOption && (user.is_admin || operationSelectedOption !== 'finalizado') && (
+        {operationSelectedOption && ((user.is_admin && ( operationSelectedOption == 'notificado' ||  operationSelectedOption == 'finalizado')) || operationSelectedOption == 'notificado'  ) && (
           <div className="w-1/2 py-5">
             <div className="grid items-center grid-cols-2 gap-5 mb-5">
               <label htmlFor="fecha_inicio" className="text-gray-600">
@@ -865,6 +865,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
             </div>
           </div>
         )}
+
         {operationSelectedOption && (
           <div className="w-1/2 py-50">
             <div className="grid items-center grid-cols-2 gap-5 mb-5">
