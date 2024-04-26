@@ -160,7 +160,9 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       })
       setConfirm(false)
       return
-    } else if (user?.is_admin && operationSelectedOption === 'finalizado' && !fechaInicioInputValue) {
+    } else if ((user?.is_admin && ( operationSelectedOption == 'notificado' ||  operationSelectedOption == 'finalizado') || operationSelectedOption == 'notificado') && !fechaInicioInputValue) {
+
+
       const instance = Modal.info({
         content: 'Por favor, ingrese los datos solicitados',
         centered: true,
