@@ -275,6 +275,24 @@ const api = {
     }
   },
   listpas: {
+    resetProcess: async (process:number) => {
+      try {
+      const {data}  = await apiService.post(`/processes/${process}/restart/`)
+        return data
+      } catch (error) {
+        console.log({error})
+      }
+      
+    },
+    removeResponsible: async (process:number) => {
+      try {
+      const {data}  = await apiService.post(`/processes/${process}/remove-responsible/`)
+        return data
+      } catch (error) {
+        console.log({error})
+      }
+      
+    },
     status: async ({ motive, related_document, action, file, id, document }: Status) => {
       const formData = new FormData()
       if (motive) {

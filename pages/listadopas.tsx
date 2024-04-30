@@ -15,12 +15,13 @@ import 'moment/locale/es'
 import locale from 'antd/lib/date-picker/locale/es_ES'
 import { useFilePicker } from 'use-file-picker'
 import useMenuStore from 'store/menu/menu'
-import { IAnexos, IAnexosDetail, ITracking, ITrackingDetail } from '@framework/types'
+import { IAnexos, IAnexosDetail, ITracking, ITrackingDetail, Process } from '@framework/types'
 import { ExportExcel } from '@components/ui/ExportExcel/ExportExcel'
 import 'react-resizable/css/styles.css' // Importa los estilos de react-resizable
 import { ModalAnexos } from '@components/ui/Modals'
 import Leyend from '@components/ui/Leyend/Leyend'
 import TranckingDetailCard from '@components/common/TranckingDetail'
+import { IconWarning } from '@components/icons/IconWarning'
 
 moment.locale('es')
 const { RangePicker } = DatePicker
@@ -489,6 +490,40 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     processApi(IdSelectedProcess, label, filtersParse)
   }, [IdSelectedProcess])
 
+  const handleReset = async ( item: any)=>{
+    const instance = Modal.confirm({
+      icon: '',
+      content: (
+        <div>
+          <p>¿Desea reiniciar el procedimiento PAS con Expediente {item?.num_expediente}?​</p>
+        </div>
+      ),
+      okText: 'Si',
+      cancelText: 'No',
+      async onOk() {
+       const res = await api.listpas.resetProcess(item?.numero)
+       if(res?.success){
+        instance.destroy()
+        const newData = await processApi(IdSelectedProcess, 'all')
+        const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData })
+        setProcess(dataFilter)
+       }
+      },
+      async onCancel() {
+        const res = await api.listpas.removeResponsible(item?.numero)
+        if(res?.success){
+         instance.destroy()
+         const newData = await processApi(IdSelectedProcess, 'all')
+         const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData })
+         setProcess(dataFilter)
+        }
+      },
+      cancelButtonProps: { style: { width: '48.5%',marginLeft:0,paddingLeft:0} },
+      okButtonProps: { style: { width: '48.5%'}},
+      centered: true,
+    })
+  }
+
   const columns = [
     {
       title: 'Número de Expediente',
@@ -566,9 +601,16 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       dataIndex: 'acciones',
       key: 'acciones',
       render: (_: any, item: any) => (
-        <div className="flex items-center gap-2">
-          {item.btnDisabled && <div className="w-[40px] h-[20px]"></div>}
-
+        <div className="flex items-center gap-2 ">
+             {!user.is_admin && user.profile === 'gsfp' && <button
+                className="flex items-center justify-center w-10 h-8 border border-gray-300 rounded cursor-pointer hover:opacity-50"
+                onClick={()=>handleReset(item)}>
+              <IconWarning/>
+        </button>}
+          
+       {user.profile !== 'gsfp' && <>
+       {item.btnDisabled && <div className="w-[40px] h-[20px]"></div>}
+          
           {!item.btnDisabled && (
             <Tooltip title="Agregar Registro">
               <button
@@ -579,6 +621,9 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               </button>
             </Tooltip>
           )}
+       </>}
+       
+          
           <Tooltip title="Historial de Registros">
             <button className="w-10 h-8 cursor-pointer hover:opacity-50" onClick={() => onGoDetail('/detallepas', { item })}>
               <img src="assets/images/btn_historial.png" />
