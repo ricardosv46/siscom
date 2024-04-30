@@ -604,9 +604,8 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       key: 'acciones',
       render: (_: any, item: any) => (
         <div className="flex items-center gap-2 ">
-             {  }
           
-               { !user.is_admin && user.profile === 'gsfp' && item?.rj_type ==='NULIDAD' ? <button
+               { !user.is_admin && item.responsable === 'gsfp' && item?.rj_type ==='NULIDAD' ? <button
                 className="flex items-center justify-center w-10 h-8 border border-gray-300 rounded cursor-pointer hover:opacity-50"
                 onClick={()=>handleReset(item)}>
               <IconWarning/>
