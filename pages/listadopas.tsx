@@ -490,39 +490,38 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     processApi(IdSelectedProcess, label, filtersParse)
   }, [IdSelectedProcess])
 
-  const handleReset = async ( item: any)=>{
+  const handleReset = async (item: any) => {
     const instance = Modal.confirm({
       icon: '',
       content: (
-        <div className='relative '>
+        <div className="relative ">
           <p>¿Desea reiniciar el procedimiento PAS con Expediente {item?.num_expediente}?​</p>
-          <IocnClose className='absolute cursor-pointer -top-8 -right-6' onClick={()=>instance.destroy()}/>
+          <IocnClose className="absolute cursor-pointer -top-8 -right-6" onClick={() => instance.destroy()} />
         </div>
       ),
       okText: 'Si',
       cancelText: 'No',
       async onOk() {
-       const res = await api.listpas.resetProcess(item?.numero)
-       if(res?.success){
-        instance.destroy()
-        const newData = await processApi(IdSelectedProcess, 'all')
-        const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData })
-        setProcess(dataFilter)
-       }
+        const res = await api.listpas.resetProcess(item?.numero)
+        if (res?.success) {
+          instance.destroy()
+          const newData = await processApi(IdSelectedProcess, 'all')
+          const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData })
+          setProcess(dataFilter)
+        }
       },
       async onCancel() {
         const res = await api.listpas.removeResponsible(item?.numero)
-        if(res?.success){
-         instance.destroy()
-         const newData = await processApi(IdSelectedProcess, 'all')
-         const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData })
-         setProcess(dataFilter)
+        if (res?.success) {
+          instance.destroy()
+          const newData = await processApi(IdSelectedProcess, 'all')
+          const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData })
+          setProcess(dataFilter)
         }
       },
-      cancelButtonProps: { style: { width: '48.5%',marginLeft:0,paddingLeft:0} },
-      okButtonProps: { style: { width: '48.5%'}},
-      centered: true,
-
+      cancelButtonProps: { style: { width: '48.5%', marginLeft: 0, paddingLeft: 0 } },
+      okButtonProps: { style: { width: '48.5%' } },
+      centered: true
     })
   }
 
@@ -604,32 +603,29 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
       key: 'acciones',
       render: (_: any, item: any) => (
         <div className="flex items-center gap-2 ">
-          
-               { !user.is_admin && item.responsable === 'GSFP' && item?.rj_type ==='NULIDAD' ? <button
-                className="flex items-center justify-center w-10 h-8 border border-gray-300 rounded cursor-pointer hover:opacity-50"
-                onClick={()=>handleReset(item)}>
-              <IconWarning/>
-                </button> : 
-                <>
-                {item.btnDisabled && <div className="w-[40px] h-[20px]"></div>}
-                   
-                   {!item.btnDisabled && (
-                     <Tooltip title="Agregar Registro">
-                       <button
-                         disabled={item?.estado === 'inactive'}
-                         className="w-10 h-8 cursor-pointer hover:opacity-50"
-                         onClick={() => onGoDetail('/actualiza-proceso', { item })}>
-                         <img src="assets/images/btn_agregar_registros.png" />
-                       </button>
-                     </Tooltip>
-                   )}
-                </>
-                }
+          {!user.is_admin && user?.profile === 'gsfp' && item.responsable === 'GSFP' && item?.rj_type === 'NULIDAD' ? (
+            <button
+              className="flex items-center justify-center w-10 h-8 border border-gray-300 rounded cursor-pointer hover:opacity-50"
+              onClick={() => handleReset(item)}>
+              <IconWarning />
+            </button>
+          ) : (
+            <>
+              {item.btnDisabled && <div className="w-[40px] h-[20px]"></div>}
 
+              {!item.btnDisabled && (
+                <Tooltip title="Agregar Registro">
+                  <button
+                    disabled={item?.estado === 'inactive'}
+                    className="w-10 h-8 cursor-pointer hover:opacity-50"
+                    onClick={() => onGoDetail('/actualiza-proceso', { item })}>
+                    <img src="assets/images/btn_agregar_registros.png" />
+                  </button>
+                </Tooltip>
+              )}
+            </>
+          )}
 
-       
-       
-          
           <Tooltip title="Historial de Registros">
             <button className="w-10 h-8 cursor-pointer hover:opacity-50" onClick={() => onGoDetail('/detallepas', { item })}>
               <img src="assets/images/btn_historial.png" />
@@ -899,7 +895,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     try {
       const res = await api.listpas.downloadReportePass(IdSelectedProcess, 'all')
       const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: res?.data })
-      console.log({dataFilter})
+      console.log({ dataFilter })
       ExportExcel(dataFilter)
       instance.destroy()
     } catch (error) {
