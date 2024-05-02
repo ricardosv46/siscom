@@ -494,24 +494,14 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     const instance = Modal.confirm({
       icon: '',
       content: (
-        <div className="relative ">
+        <div className="">
           <p>¿Desea reiniciar el procedimiento PAS con Expediente {item?.num_expediente}?​</p>
-          <IocnClose className="absolute cursor-pointer -top-8 -right-6" onClick={() => instance.destroy()} />
         </div>
       ),
       okText: 'Si',
       cancelText: 'No',
       async onOk() {
         const res = await api.listpas.resetProcess(item?.numero)
-        if (res?.success) {
-          instance.destroy()
-          const newData = await processApi(IdSelectedProcess, 'all')
-          const dataFilter = filterUpdate({ search, estado, responsable, type: operationSelectedOption, memory: newData })
-          setProcess(dataFilter)
-        }
-      },
-      async onCancel() {
-        const res = await api.listpas.removeResponsible(item?.numero)
         if (res?.success) {
           instance.destroy()
           const newData = await processApi(IdSelectedProcess, 'all')
