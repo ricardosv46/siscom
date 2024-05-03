@@ -68,11 +68,14 @@ const Procesos: NextPageWithLayout<ProcesosProps> = ({ pageNum, pageSize, total 
     }
     localStorage.setItem('IdSelectedYear', añoSelectedOption)
     changeStateSelectedProcess(procesoSelectedOption)
-    if (profile === 'GAD') {
-      router.push('/listadopasgad')
-    } else {
-      router.push('/')
-    }
+
+    router.push('/')
+
+    // if (profile === 'GAD') {
+    //   router.push('/listadopasgad')
+    // } else {
+    //   router.push('/')
+    // }
   }
 
   const handleChange = async (event: { target: { value: any } }) => {

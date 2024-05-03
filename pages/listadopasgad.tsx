@@ -526,12 +526,12 @@ const Listadopas: NextPageWithLayout = () => {
   const dataOptionsSelect =
     new Date(localStorage.getItem('IdSelectedYear')!).valueOf() < new Date('2022').valueOf() ? optionsEstado : optionsEstado.slice(0, -1)
 
-  useEffect(() => {
-    if (user?.profile !== 'gad') {
-      router.push('/')
-      Modal.destroyAll()
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (user?.profile !== 'gad') {
+  //     router.push('/')
+  //     Modal.destroyAll()
+  //   }
+  // }, [])
 
   return (
     <>

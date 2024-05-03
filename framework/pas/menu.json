@@ -21,6 +21,13 @@
     "role": "user"
   },
   {
+    "id": 7,
+    "key": "listadopasgad",
+    "icon": "FileSearchOutlined",
+    "label": "Registro de Pago",
+    "role": "user"
+  },
+  {
     "id": 6,
     "key": "estadistica-op",
     "icon": "BarChartOutlined",
@@ -47,12 +54,6 @@
     "icon": "KeyOutlined",
     "label": "Listado de accesos",
     "role": "admin"
-  },
-  {
-    "id": 9,
-    "key": "listadopasgad",
-    "icon": "FileSearchOutlined",
-    "label": "Listado de PAS",
-    "role": "gad"
   }
+  
 ]
