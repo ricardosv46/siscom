@@ -33,5 +33,12 @@
     "icon": "BarChartOutlined",
     "label": "Estadística Candidato",
     "role": "admin"
+  },
+  {
+    "id": 5,
+    "key": "procesos",
+    "icon": "KeyOutlined",
+    "label": "Procesos",
+    "role": "gad"
   }
 ]

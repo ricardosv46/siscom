@@ -21,13 +21,6 @@
     "role": "user"
   },
   {
-    "id": 7,
-    "key": "listadopasgad",
-    "icon": "FileSearchOutlined",
-    "label": "Registro de Pago",
-    "role": "user"
-  },
-  {
     "id": 6,
     "key": "estadistica-op",
     "icon": "BarChartOutlined",
@@ -54,6 +47,49 @@
     "icon": "KeyOutlined",
     "label": "Listado de accesos",
     "role": "admin"
-  }
+  },
   
+
+  {
+    "id": 1,
+    "key": "procesos",
+    "icon": "KeyOutlined",
+    "label": "Procesos",
+    "role": "gad"
+  },
+  {
+    "id": 2,
+    "key": "/",
+    "icon": "HomeOutlined",
+    "label": "Inicio",
+    "role": "gad"
+  },
+  {
+    "id": 3,
+    "key": "listadopas",
+    "icon": "FileSearchOutlined",
+    "label": "Listado de PAS",
+    "role": "gad"
+  },
+  {
+    "id": 9,
+    "key": "listadopasgad",
+    "icon": "FileSearchOutlined",
+    "label": "Registro de Pago",
+    "role": "gad"
+  },
+  {
+    "id": 6,
+    "key": "estadistica-op",
+    "icon": "BarChartOutlined",
+    "label": "Estadística OP",
+    "role": "gad"
+  },
+  {
+    "id": 7,
+    "key": "estadistica-candidato",
+    "icon": "BarChartOutlined",
+    "label": "Estadística Candidato",
+    "role": "gad"
+  }
 ]
