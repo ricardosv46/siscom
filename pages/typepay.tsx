@@ -129,11 +129,38 @@ const TypePay: NextPageWithLayout = ({}) => {
 
     if (typePay === 'FRACCIONAMIENTO') {
       const newInitialCuote = Number(initialCuote.replaceAll(',', ''))
-      const newAmount = Initamount - newInitialCuote
-
-      setFormData((prev) => ({ ...prev, amount: convertNumber(String(newAmount)) }))
+      const amountInterests = Number(interests.replaceAll(',', ''))
+      const newAmount = Initamount + amountInterests - newInitialCuote
+      // const newInitialCuoteValue = newInitialCuote >= newAmount ? newAmount : newInitialCuote
+      setFormData((prev) => {
+        return { ...prev, amount: convertNumber(String(newAmount)) }
+      })
     }
   }, [typePay, initialAmount, initialCuote])
+
+  useEffect(() => {
+    if (!initialAmount?.data?.rj_amount) {
+      return
+    }
+    const Initamount = initialAmount?.data?.rj_amount
+
+    if (typePay === 'FRACCIONAMIENTO') {
+      const newInitialCuote = Number(initialCuote.replaceAll(',', ''))
+      const amountInterests = Number(interests.replaceAll(',', ''))
+      const newAmount = Initamount + amountInterests - newInitialCuote
+
+      console.log({ newAmount, amountInterests, newInitialCuote })
+      setFormData((prev) => {
+        return { ...prev, amount: convertNumber(String(newAmount)) }
+      })
+
+      if (newInitialCuote >= newAmount) {
+        setFormData((prev) => {
+          return { ...prev, initialCuote: convertNumber(String(newAmount)) }
+        })
+      }
+    }
+  }, [interests])
 
   useEffect(() => {
     if (typePay === 'FRACCIONAMIENTO') {
@@ -330,9 +357,11 @@ const TypePay: NextPageWithLayout = ({}) => {
                     value={initialCuote}
                     onChange={(e) =>
                       setFormData((prev) => {
-                        const newNumber = initialAmount?.data?.rj_amount ? initialAmount?.data?.rj_amount : 0
+                        const amountInit = initialAmount?.data?.rj_amount ? initialAmount?.data?.rj_amount : 0
+                        const interestsNumber = Number(convertNumber(interests).replaceAll(',', ''))
+                        const amountNumber = amountInit + interestsNumber
                         const number = Number(convertNumber(e.target.value).replaceAll(',', ''))
-                        const res = number >= newNumber ? convertNumber(String(newNumber)) : convertNumber(e.target.value)
+                        const res = number >= amountNumber ? convertNumber(String(amountNumber)) : convertNumber(e.target.value)
                         const data = {
                           ...prev,
                           initialCuote: res
@@ -355,7 +384,12 @@ const TypePay: NextPageWithLayout = ({}) => {
                 <Input
                   className="w-[200px] border-[#69B2E8]  text-center"
                   value={interests}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, interests: convertNumber(e.target.value) }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      interests: convertNumber(e.target.value)
+                    }))
+                  }
                 />
               </div>
             </div>
