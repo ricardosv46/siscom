@@ -66,7 +66,7 @@ const api = {
           formData.append('amount', form?.amount.replaceAll(',', ''))
           formData.append('process_id', process)
           formData.append('payment_type', form?.typePay)
-
+          formData.append('interests', form?.interests)
           formData.append('fee', form?.cuotes.replaceAll(',', ''))
           formData.append('fee_initial', form?.initialCuote.replaceAll(',', ''))
         }
@@ -275,23 +275,21 @@ const api = {
     }
   },
   listpas: {
-    resetProcess: async (process:number) => {
+    resetProcess: async (process: number) => {
       try {
-      const {data}  = await apiService.post(`/processes/${process}/restart/`)
+        const { data } = await apiService.post(`/processes/${process}/restart/`)
         return data
       } catch (error) {
-        console.log({error})
+        console.log({ error })
       }
-      
     },
-    removeResponsible: async (process:number) => {
+    removeResponsible: async (process: number) => {
       try {
-      const {data}  = await apiService.post(`/processes/${process}/remove-responsible/`)
+        const { data } = await apiService.post(`/processes/${process}/remove-responsible/`)
         return data
       } catch (error) {
-        console.log({error})
+        console.log({ error })
       }
-      
     },
     status: async ({ motive, related_document, action, file, id, document }: Status) => {
       const formData = new FormData()

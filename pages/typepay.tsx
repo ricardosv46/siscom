@@ -12,6 +12,7 @@ import moment, { Moment } from 'moment'
 import locale from 'antd/lib/date-picker/locale/es_ES'
 export interface FormDataTypePay {
   amount: string
+  interests: string
   typePay: string
   discount: string
   cuotes: string
@@ -47,6 +48,7 @@ const TypePay: NextPageWithLayout = ({}) => {
 
   const [formData, setFormData] = useState<FormDataTypePay>({
     amount: '',
+    interests: '',
     typePay: 'PRONTO PAGO',
     discount: '25%',
     cuotes: '',
@@ -59,7 +61,7 @@ const TypePay: NextPageWithLayout = ({}) => {
   const [dateMoment, setDateMoment] = useState<Moment | null>(null)
   const [hourMoment, setHourMoment] = useState<Moment | null>(null)
 
-  const { amount, typePay, discount, cuotes, initialCuote, ticket, bank, date, showModal } = formData
+  const { amount, typePay, discount, interests, cuotes, initialCuote, ticket, bank, date, showModal } = formData
 
   const {
     data: initialAmount,
@@ -342,6 +344,20 @@ const TypePay: NextPageWithLayout = ({}) => {
                     className="w-[200px] border-[#69B2E8]text-center"
                   />
                 )}
+              </div>
+            </div>
+
+            <div className="w-1/2 py-5">
+              <div className="grid items-center grid-cols-3 gap-5 mb-5">
+                <label htmlFor="tipo" className="text-gray-600">
+                  Intereses (S/)
+                </label>
+                <Input
+                  disabled
+                  className="w-[200px] border-[#69B2E8]  text-center"
+                  value={interests}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, interests: convertNumber(e.target.value) }))}
+                />
               </div>
             </div>
 
