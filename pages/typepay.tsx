@@ -353,7 +353,6 @@ const TypePay: NextPageWithLayout = ({}) => {
                   Intereses (S/)
                 </label>
                 <Input
-                  disabled
                   className="w-[200px] border-[#69B2E8]  text-center"
                   value={interests}
                   onChange={(e) => setFormData((prev) => ({ ...prev, interests: convertNumber(e.target.value) }))}
