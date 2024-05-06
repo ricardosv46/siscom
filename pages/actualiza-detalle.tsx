@@ -16,6 +16,7 @@ import moment from 'moment'
 import locale from 'antd/lib/date-picker/locale/es_ES'
 import { IRjtype } from './actualiza-proceso'
 import { useQuery } from '@tanstack/react-query'
+import useAuthStore from 'store/auth/auth'
 
 interface IPropsItem {
   id: string | number | null
@@ -169,11 +170,11 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [months, setMonths] = useState(0)
   const [rj_amount, setRj_amount] = useState('')
   const [days, setDays] = useState(0)
-
+  const { user } = useAuthStore()
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    if (fechaInicioInputValue === '') {
+    if ((operationSelectedOption === 'NOTIFICACION' || operationSelectedOption === 'FINALIZACION') && fechaInicioInputValue === '') {
       const instance = Modal.info({
         content: 'Por favor, ingrese la fecha',
         centered: true,
@@ -226,7 +227,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     }
     const formData = new FormData()
 
-    if (fechaInicioInputValue !== '') {
+    if (fechaInicioInputValue !== '' && (operationSelectedOption === 'NOTIFICACION' || operationSelectedOption === 'FINALIZACION')) {
       const currentDate = moment(fechaInicioInputValue).format('YYYY-MM-DD HH:mm:ss') // Formato de fecha: "2023-03-01"
 
       formData.append('start_at', currentDate)
@@ -480,38 +481,29 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         </div>
 
-        <div className="w-1/2 py-5">
-          <div className="grid items-center grid-cols-2 gap-5 mb-5">
-            <label htmlFor="fecha_inicio" className="text-gray-600">
-              Fecha:
-            </label>
-            {/* {dateEmi && (
-              <input
-                type="datetime-local"
-                min={dateEmi?.toISOString().slice(0, 16)}
-                max={new Date().toISOString().slice(0, 16)}
-                value={fechaInicioInputValue}
-                onChange={handleFechaInicioDateTimeChange}
-                id="fecha_inicio"
-                className={"border p-2 rounded-md outline-none focus:border-[#0073CF]"}
-              />
-            )} */}
+        {operationSelectedOption &&
+          ((user?.is_admin && (operationSelectedOption == 'NOTIFICACION' || operationSelectedOption == 'FINALIZACION')) ||
+            operationSelectedOption == 'NOTIFICACION') && (
+            <div className="w-1/2 py-5">
+              <div className="grid items-center grid-cols-2 gap-5 mb-5">
+                <label htmlFor="fecha_inicio" className="text-gray-600">
+                  Fecha:
+                </label>
 
-            <DatePicker
-              locale={locale}
-              showTime={{ format: 'HH:mm' }}
-              value={fechaInicioInputValue}
-              showNow={false}
-              onChange={handleFechaInicioDateTimeChange}
-              disabledDate={disabledDate}
-              disabledTime={disabledTime}
-              popupStyle={{ color: 'black' }}
-              style={{ color: 'black' }}
-            />
-
-            {/*</div>{fechaInicioInputValue}*/}
-          </div>
-        </div>
+                <DatePicker
+                  locale={locale}
+                  showTime={{ format: 'HH:mm' }}
+                  value={fechaInicioInputValue}
+                  showNow={false}
+                  onChange={handleFechaInicioDateTimeChange}
+                  disabledDate={disabledDate}
+                  disabledTime={disabledTime}
+                  popupStyle={{ color: 'black' }}
+                  style={{ color: 'black' }}
+                />
+              </div>
+            </div>
+          )}
         {operationSelectedOption !== 'FINALIZACION' && (
           <div className="w-1/2 py-5">
             <div className="grid items-center grid-cols-2 gap-5 mb-5">
