@@ -487,7 +487,7 @@ const TypePay: NextPageWithLayout = ({}) => {
         <div className="w-1/2 py-5">
           <div className="grid items-center grid-cols-3 gap-5 mb-5">
             <label htmlFor="tipo" className="text-gray-600">
-              Nº de recibo / operación
+              Nº de recibo / operación (Opcional)
             </label>
             <Input
               className="w-[200px] border-[#69B2E8]  text-center"
@@ -500,7 +500,7 @@ const TypePay: NextPageWithLayout = ({}) => {
         <div className="w-1/2 py-5">
           <div className="grid items-center grid-cols-3 gap-5 mb-5">
             <label htmlFor="tipo" className="text-gray-600">
-              Banco
+              Banco (Opcional)
             </label>
             <Input
               className="w-[200px] border-[#69B2E8]  text-center"
@@ -560,7 +560,7 @@ const TypePay: NextPageWithLayout = ({}) => {
       <Modal
         bodyStyle={{
           margin: 10,
-          height: 330,
+          height: 360,
           whiteSpace: 'nowrap',
           width: 700
         }}
@@ -594,6 +594,7 @@ const TypePay: NextPageWithLayout = ({}) => {
                 <>
                   <p>Número de cuotas:</p>
                   <p>Cuota inicial:</p>
+                  <p>Intereses:</p>
                   <p>Monto:</p>
                 </>
               )}
@@ -605,7 +606,7 @@ const TypePay: NextPageWithLayout = ({}) => {
               )}
               {typePay === 'PAGO TOTAL' && <p>Monto abonado:</p>}
 
-              <p>Nº de recibo / operación:</p>
+              {typePay !== 'PAGO A CUENTA' && <p>Nº de recibo / operación:</p>}
               <p>Banco:</p>
               <p>Fecha y hora del pago:</p>
             </article>
@@ -623,6 +624,7 @@ const TypePay: NextPageWithLayout = ({}) => {
                 <>
                   <p>{cuotes}</p>
                   <p>S/{initialCuote}</p>
+                  <p>S/{interests}</p>
                   <p>S/{amount}</p>
                 </>
               )}
@@ -634,7 +636,7 @@ const TypePay: NextPageWithLayout = ({}) => {
               )}
               {typePay === 'PAGO TOTAL' && <p>S/{amount}</p>}
 
-              <p>{ticket || '-'}</p>
+              {typePay !== 'PAGO A CUENTA' && <p>{ticket || '-'}</p>}
               <p>{bank || '-'}</p>
               <p>{date + ':00'}</p>
             </article>{' '}
