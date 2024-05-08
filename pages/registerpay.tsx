@@ -395,7 +395,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
             <article className="flex flex-col w-3/6">
               <p>Forma de pago: </p>
               <p>Monto abonado: </p>
-              {typePay !== 'PAGO A CUENTA' && <p>Número de cuota:</p>}
+              {typepay !== 'PAGO A CUENTA' && <p>Número de cuota:</p>}
               <p>Nº recibo / orden:</p>
               <p>Banco:</p>
               <p>Fecha y hora del pago:</p>
@@ -403,7 +403,7 @@ const RegisterPay: NextPageWithLayout = ({}) => {
             <article className="flex flex-col">
               <p>{'DEPÓSITO'}</p>
               <p>{amount}</p>
-              {typePay !== 'PAGO A CUENTA' && <p>{cuotes}</p>}
+              {typepay !== 'PAGO A CUENTA' && <p>{cuotes}</p>}
               <p>{ticket || '-'}</p>
               <p>{bank || '-'}</p>
               <p>{date + ':00'}</p>
