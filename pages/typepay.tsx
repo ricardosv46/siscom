@@ -606,7 +606,7 @@ const TypePay: NextPageWithLayout = ({}) => {
               )}
               {typePay === 'PAGO TOTAL' && <p>Monto abonado:</p>}
 
-              {typePay !== 'PAGO A CUENTA' && <p>Nº de recibo / operación:</p>}
+              <p>Nº de recibo / operación:</p>
               <p>Banco:</p>
               <p>Fecha y hora del pago:</p>
             </article>
@@ -636,7 +636,7 @@ const TypePay: NextPageWithLayout = ({}) => {
               )}
               {typePay === 'PAGO TOTAL' && <p>S/{amount}</p>}
 
-              {typePay !== 'PAGO A CUENTA' && <p>{ticket || '-'}</p>}
+              <p>{ticket || '-'}</p>
               <p>{bank || '-'}</p>
               <p>{date + ':00'}</p>
             </article>{' '}
