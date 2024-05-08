@@ -78,6 +78,7 @@ const api = {
 
           formData.append('amount_paid', form?.initialCuote.replaceAll(',', ''))
         }
+        formData.append('rj_amount', String(form?.rj_amount))
 
         const {
           data: { data, message, success }

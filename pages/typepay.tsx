@@ -21,6 +21,7 @@ export interface FormDataTypePay {
   ticket: string
   bank: string
   date: string
+  rj_amount?: number
 }
 
 const optionsTypePay = [
@@ -210,7 +211,7 @@ const TypePay: NextPageWithLayout = ({}) => {
 
   const handleOk = async () => {
     try {
-      await api.payments.create(formData, id)
+      await api.payments.create({ ...formData, rj_amount: initialAmount?.data?.rj_amount }, id)
 
       if (typePay === 'FRACCIONAMIENTO') {
         await api.payments.register({ ...formData, typePay: 'Cuota inicial', cuotes: '', amount: String(initialCuote) }, id)
