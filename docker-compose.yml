@@ -1,0 +1,41 @@
+version: '3.7'
+services:
+    app01:
+        shm_size: '1000000000'
+        build:
+            context: ./backend
+        tty: true
+    app02:
+        shm_size: '1000000000'
+        build:
+            context: ./backend
+        tty: true
+    app03:
+        shm_size: '1000000000'
+        build:
+            context: ./backend
+        tty: true
+    app04:
+        shm_size: '1000000000'
+        build:
+            context: ./backend
+        tty: true
+    frontend:
+        shm_size: '1000000000'
+        build:
+            context: ./frontend
+        tty: true
+    nginx:
+        build: ./frontend/nginx
+        tty: true
+        links:
+            - app01
+            - app02
+            - app03
+            - app04
+            - frontend
+        ports:
+            - '80:80'
+            - '443:443'
+        #volumes:
+        #    - './app/logs:/var/log/nginx'
