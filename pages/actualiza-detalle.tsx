@@ -174,7 +174,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    if ((operationSelectedOption === 'NOTIFICACION' || operationSelectedOption === 'FINALIZACION') && fechaInicioInputValue === '') {
+    if (fechaInicioInputValue === '') {
       const instance = Modal.info({
         content: 'Por favor, ingrese la fecha',
         centered: true,
@@ -227,7 +227,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     }
     const formData = new FormData()
 
-    if (fechaInicioInputValue !== '' && (operationSelectedOption === 'NOTIFICACION' || operationSelectedOption === 'FINALIZACION')) {
+    if (fechaInicioInputValue !== '') {
       const currentDate = moment(fechaInicioInputValue).format('YYYY-MM-DD HH:mm:ss') // Formato de fecha: "2023-03-01"
 
       formData.append('start_at', currentDate)
@@ -481,9 +481,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         </div>
 
-        {operationSelectedOption &&
-          ((user?.is_admin && (operationSelectedOption == 'NOTIFICACION' || operationSelectedOption == 'FINALIZACION')) ||
-            operationSelectedOption == 'NOTIFICACION') && (
             <div className="w-1/2 py-5">
               <div className="grid items-center grid-cols-2 gap-5 mb-5">
                 <label htmlFor="fecha_inicio" className="text-gray-600">
@@ -503,7 +500,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
                 />
               </div>
             </div>
-          )}
         {operationSelectedOption !== 'FINALIZACION' && (
           <div className="w-1/2 py-5">
             <div className="grid items-center grid-cols-2 gap-5 mb-5">
