@@ -17,6 +17,7 @@ import locale from 'antd/lib/date-picker/locale/es_ES'
 import { IRjtype } from './actualiza-proceso'
 import { useQuery } from '@tanstack/react-query'
 import useAuthStore from 'store/auth/auth'
+import dayjs from 'dayjs'
 
 interface IPropsItem {
   id: string | number | null
@@ -91,6 +92,10 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
     return new Date(year, month - 1, day)
   }
+
+  
+  
+  console.log({itemprop});
 
   useEffect(() => {
     getTypeDocumentsApi()
@@ -169,8 +174,56 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const [rj_type, setRj_type] = useState('')
   const [months, setMonths] = useState(0)
   const [rj_amount, setRj_amount] = useState('')
+  const [disabledUpdate, setdisabledUpdate] = useState(true)
+
   const [days, setDays] = useState(0)
   const { user } = useAuthStore()
+
+
+  useEffect(() => {
+
+    // operationSelectedOption === tracking_action &&
+    // (fechaInicioInputValue === start_atTMP || fechaInicioInputValue === start_at) &&
+    // gerenciaSelectedOption === current_responsible &&
+    // gerenciaAsignadaSelectedOption === new_responsible &&
+    // tipoDocumentoSelectedOption === related_document &&
+    // documentoRelacionadoinputValue === document &&
+    // comentarioTextareaValue === comment
+    // tipoDocumentoSelectedOption
+
+    console.log({months,days,itemprop});
+
+    if(operationSelectedOption!==itemprop?.tracking_action){
+      return setdisabledUpdate(false)
+    }
+    if(!(moment(itemprop?.start_at_dt).isSame(fechaInicioInputValue))){
+      return setdisabledUpdate(false)
+    } 
+    if(gerenciaSelectedOption !== itemprop?.current_responsible){
+      return setdisabledUpdate(false)
+    } 
+    if(tipoDocumentoSelectedOption !== itemprop?.related_document){
+      return setdisabledUpdate(false)
+    } 
+    if(documentoRelacionadoinputValue !== itemprop?.document){
+      return setdisabledUpdate(false)
+    } 
+
+    if(itemprop?.rj_type && rj_type !== itemprop?.rj_type){
+      return setdisabledUpdate(false)
+    } 
+    
+    if(gerenciaAsignadaSelectedOption !== itemprop?.new_responsible){
+      return setdisabledUpdate(false)
+    } 
+     
+    if(comentarioTextareaValue!==item?.comment){
+      return setdisabledUpdate(false)
+    }
+      setdisabledUpdate(true)
+    
+  }, [comentarioTextareaValue,operationSelectedOption,fechaInicioInputValue,gerenciaSelectedOption,tipoDocumentoSelectedOption,documentoRelacionadoinputValue,gerenciaAsignadaSelectedOption,rj_type])
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
@@ -225,6 +278,9 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
 
       return
     }
+
+    
+
     const formData = new FormData()
 
     if (fechaInicioInputValue !== '') {
@@ -716,12 +772,13 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           <button
             style={{
               color: 'white',
-              backgroundColor: '#2596be',
+              backgroundColor: disabledUpdate? '#BABABA' : '#2596be',
               borderRadius: '10px',
-              cursor: 'pointer',
+              cursor: disabledUpdate ? 'auto' :'pointer',
               fontSize: '1rem',
               padding: '10px 50px'
             }}
+            disabled={disabledUpdate}
             id="submit"
             type="submit">
             Actualizar

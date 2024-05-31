@@ -50,7 +50,6 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
     days
   } = item
 
-  console.log({ rj_type })
 
   const showCard = async () => {
     try {
@@ -128,7 +127,7 @@ const DetailCard: FC<IProps> = (props): ReactElement => {
 
         <br></br>
         <div className="flex gap-5">
-          {rj_type !== 'REHACER' && (
+          {rj_type !== 'REHACER' && rj_type !== 'AMPLIACION' && (
             <Button
               type="dashed"
               hidden={idx === 0 || !user?.is_admin}
