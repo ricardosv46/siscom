@@ -161,7 +161,6 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
       setConfirm(false)
       return
     } else if (user?.is_admin && operationSelectedOption === 'finalizado' && !fechaInicioInputValue) {
-      
       const instance = Modal.info({
         content: 'Por favor, ingrese los datos solicitados',
         centered: true,
@@ -216,7 +215,11 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
     }
     formData.set('resolution_number', resolucion_gerencial)
 
-    if (fechaInicioInputValue !== '' && ((user.is_admin && ( operationSelectedOption == 'notificado' ||  operationSelectedOption == 'finalizado')) || operationSelectedOption == 'notificado'  )) {
+    if (
+      fechaInicioInputValue !== '' &&
+      ((user.is_admin && (operationSelectedOption == 'notificado' || operationSelectedOption == 'finalizado')) ||
+        operationSelectedOption == 'notificado')
+    ) {
       const currentDate = moment(fechaInicioInputValue).format('YYYY-MM-DD HH:mm:ss')
       formData.set('start_at', currentDate)
     }
@@ -416,7 +419,7 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
   const onPickerChange = (date: any, dateString: any) => {
     console.log(date, dateString)
   }
-  const headrName = `${item?.name} - R.G. ${item?.resolution_number} - Exp. ${item?.num_expediente}`
+  const headrName = `${item?.name} - R.G. ${item?.resolution_number} ${item?.num_expediente ? `- Exp. ${item?.num_expediente}` : ''}`
 
   return (
     <form onSubmit={openModal}>
@@ -847,25 +850,27 @@ const Actualizaproceso: NextPageWithLayout = ({}) => {
           </div>
         )}
 
-        {operationSelectedOption && ((user.is_admin && ( operationSelectedOption == 'notificado' ||  operationSelectedOption == 'finalizado')) || operationSelectedOption == 'notificado'  ) && (
-          <div className="w-1/2 py-5">
-            <div className="grid items-center grid-cols-2 gap-5 mb-5">
-              <label htmlFor="fecha_inicio" className="text-gray-600">
-                Fecha y hora:
-              </label>
-              <DatePicker
-                locale={locale}
-                showTime={{ format: 'HH:mm' }}
-                value={fechaInicioInputValue}
-                onChange={handleFechaInicioDateTimeChange}
-                disabledDate={disabledDate}
-                disabledTime={disabledTime}
-                popupStyle={{ color: 'black' }}
-                style={{ color: 'black' }}
-              />
+        {operationSelectedOption &&
+          ((user.is_admin && (operationSelectedOption == 'notificado' || operationSelectedOption == 'finalizado')) ||
+            operationSelectedOption == 'notificado') && (
+            <div className="w-1/2 py-5">
+              <div className="grid items-center grid-cols-2 gap-5 mb-5">
+                <label htmlFor="fecha_inicio" className="text-gray-600">
+                  Fecha y hora:
+                </label>
+                <DatePicker
+                  locale={locale}
+                  showTime={{ format: 'HH:mm' }}
+                  value={fechaInicioInputValue}
+                  onChange={handleFechaInicioDateTimeChange}
+                  disabledDate={disabledDate}
+                  disabledTime={disabledTime}
+                  popupStyle={{ color: 'black' }}
+                  style={{ color: 'black' }}
+                />
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {operationSelectedOption && (
           <div className="w-1/2 py-50">
