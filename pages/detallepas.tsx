@@ -77,7 +77,11 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
       setNombre(itempropDetail.name)
       setRG(itempropDetail.resolution_number)
       setHeaderName(itempropDetail.num_expediente)
-      setHeaderName(`${itempropDetail?.name} - R.G. ${itempropDetail?.resolution_number} - Exp. ${itempropDetail?.num_expediente}`)
+      setHeaderName(
+        `${itempropDetail?.name} - R.G. ${itempropDetail?.resolution_number} ${
+          itempropDetail?.num_expediente ? `- Exp. ${itempropDetail?.num_expediente}` : ''
+        }`
+      )
     } else if (itempropBack && !itempropDetail) {
       setItem(itempropBack)
       getDetailInfo(itempropBack.process.numero)
@@ -103,8 +107,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
   }
   const rj_remakeDatail = (numero && detail?.filter((item) => item.rj_type === 'REHACER' && item.rj_remake)[0]) ?? ({} as IDetailItem)
 
-  const rj_remakeActive = (numero && detail?.some((item) =>item.rj_type && item.rj_type !== 'REHACER' &&  item.rj_remake ))
-    
+  const rj_remakeActive = numero && detail?.some((item) => item.rj_type && item.rj_type !== 'REHACER' && item.rj_remake)
 
   return (
     <>
@@ -125,9 +128,7 @@ const Detallepas: NextPageWithLayout<DetallepasProps> = ({ pageNum, pageSize, to
           <p className="text-xl">Los registros con (*) quedan sin efecto por Resolución Jefatural {rj_remakeDatail?.document}.</p>
         )}
 
-        {rj_remakeActive && (
-          <p className="text-xl">Los registros con (*) quedan sin efecto por reinicio del procedimiento PAS.</p>
-        )}
+        {rj_remakeActive && <p className="text-xl">Los registros con (*) quedan sin efecto por reinicio del procedimiento PAS.</p>}
 
         {/* <div>
           <p style={{ color: "rgb(256,188,28)" }}>
