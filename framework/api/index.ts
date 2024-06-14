@@ -530,6 +530,29 @@ const api = {
         link.remove()
       }
     },
+    downloadExcelInformationGad: async (payload: any) => {
+      const tok = GetTokenAuthService()
+      if (tok) {
+        const responseExcel = await apiService.post(
+          `/payments/download/`,
+          { processes: payload },
+          {
+            responseType: 'arraybuffer',
+            headers: { 'Content-Type': 'application/json' }
+          }
+        )
+        const outputFilename = `report_${new Date().getTime()}.xlsx`
+
+        // If you want to download file automatically using link attribute.
+        const url = window.URL.createObjectURL(new Blob([responseExcel.data]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', outputFilename)
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+      }
+    },
     downloadFileDetail: async (payload: any) => {
       const tok = GetTokenAuthService()
       if (tok) {

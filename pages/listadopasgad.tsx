@@ -389,7 +389,7 @@ const Listadopas: NextPageWithLayout = () => {
     })
 
     let dataExcel: any[] = []
-    processes?.map((item: any) => {
+    processesFilter?.map((item: any) => {
       dataExcel.push(item.numero)
     })
 
@@ -411,7 +411,7 @@ const Listadopas: NextPageWithLayout = () => {
       return
     }
 
-    await api.listpas.downloadExcelInformation(dataExcel)
+    await api.listpas.downloadExcelInformationGad(dataExcel)
 
     instance.destroy()
   }
