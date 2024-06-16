@@ -4,8 +4,8 @@ import { Controller, ControllerRenderProps } from 'react-hook-form'
 
 interface FormInputProps extends InputProps {
   control: any
-  error: boolean
-  helperText: string
+  error?: boolean
+  helperText?: string
   placeholder: string
   name: string
   type?: 'password' | 'text'
@@ -23,7 +23,7 @@ export const FormInput = ({ control, error, helperText, placeholder, name, type 
   return (
     <>
       {type === 'text' && (
-        <div>
+        <>
           <Controller
             name={name}
             control={control}
@@ -41,10 +41,10 @@ export const FormInput = ({ control, error, helperText, placeholder, name, type 
           />
           {helperText && <p className="text-red-500">{helperText}</p>}
           {!helperText && <p className="py-3 "></p>}
-        </div>
+        </>
       )}
       {type === 'password' && (
-        <div>
+        <>
           <Controller
             name={name}
             control={control}
@@ -55,7 +55,7 @@ export const FormInput = ({ control, error, helperText, placeholder, name, type 
           />
           {helperText && <p className="text-red-500">{helperText}</p>}
           {!helperText && <p className="py-3 "></p>}
-        </div>
+        </>
       )}
     </>
   )

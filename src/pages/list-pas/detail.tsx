@@ -23,7 +23,9 @@ const DetailPas = () => {
     enabled: !!selectedProcess
   })
 
-  const headerName = `${selectedProcess?.name} - R.G. ${selectedProcess?.resolution_number} - Exp. ${selectedProcess?.num_expediente}`
+  const num_expediente = selectedProcess?.num_expediente ? `- Exp. ${selectedProcess?.num_expediente}` : ''
+
+  const headerName = `${selectedProcess?.name} - R.G. ${selectedProcess?.resolution_number} ${num_expediente}`
 
   const rj_remakeDatail: Tracking = tranckings?.filter((item) => item.rj_type === 'REHACER' && item.rj_remake)[0]
 
@@ -60,12 +62,12 @@ const DetailPas = () => {
         </div>
 
         <hr className="border-2 border-sky-blue" />
-        <div className="flex gap-5 mt-3">
-          <button className="bg-cyan text-white rounded-[10px] px-14 py-2.5" onClick={() => router.push('/list-pas')}>
+        <div className="flex gap-10 mt-3">
+          <button className="bg-cyan text-white rounded-[10px] px-14 py-3" onClick={() => router.push('/list-pas')}>
             Regresar
           </button>
 
-          <button className="bg-cyan text-white rounded-[10px] px-14 py-2.5" onClick={() => router.push('/list-pas/create')}>
+          <button className="bg-cyan text-white rounded-[10px] px-14 py-3" onClick={() => router.push('/list-pas/create')}>
             Agregar
           </button>
         </div>

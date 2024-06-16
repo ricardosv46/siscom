@@ -66,3 +66,105 @@ export interface RjType {
   rj_label: string
   status: number
 }
+
+export interface CreateProcessReq {
+  id: number
+  payload: FormData
+}
+
+export interface StatusReq {
+  motive: string
+  related_document: string
+  action: string
+  file: File | null
+  id: number
+  document: string
+}
+
+export interface Annexe {
+  id?: string
+  document_type?: string
+  document?: string
+  from?: string
+  name?: string
+  nu_ann?: string
+  nu_emi?: string
+  nu_emi_ref?: string
+  references?: Annexe[]
+  to?: string
+}
+
+export interface AnnexeDetail {
+  id?: string
+  asunto?: string
+  año?: string
+  destino?: string
+  emite?: string
+  fecha_emi?: string
+  indicaciones?: string
+  nro_doc?: string
+  nu_ann?: string
+  nu_ann_exp?: string
+  nu_des?: string
+  nu_emi?: string
+  nu_sec_exp?: string
+  prioridad?: string
+  tipo_doc?: string
+  tramite?: string
+  docs: Docs[]
+}
+
+export interface TrackingDetail {
+  id?: string
+  asunto: string
+  de_ruta_origen: string
+  dependencia: string
+  documento: null | string
+  elaboro: string
+  emisor: string
+  estado: string
+  estado_destinatario: string
+  fecha_ate: string
+  fecha_emi: string
+  fecha_rec: string
+  indicaciones: null | string
+  nro_doc: string
+  nu_ann: string
+  nu_ann_exp: string
+  nu_des: string
+  nu_emi: string
+  nu_sec_exp: string
+  prioridad: string
+  receptor: string
+  tipo_doc: string
+  tramite: string
+  iconEstado: string
+}
+export interface Docs {
+  asunto: string
+  año: string
+  de_det: string
+  de_rut_ori: string
+  destino: string
+  emite: string
+  fecha_emi: string
+  id_archivo: number
+  indicaciones: string
+  nro_doc: string
+  nu_ane: number
+  nu_ann: string
+  nu_ann_exp: string
+  nu_des: string
+  nu_emi: string
+  nu_sec_exp: string
+  prioridad: string
+  tipo_doc: string
+  tramite: string
+}
+
+export interface ReqAnnexeDetail {
+  nu_ann: string
+  nu_emi_ref?: string
+  nu_emi?: string
+  id?: string
+}

@@ -1,4 +1,4 @@
-import { IconOnpe } from '@components/icons'
+import { IconOnpe } from '@components/icons/IconOnpe'
 import { useAuth } from '@store/auth'
 import React from 'react'
 import { menuAdmin, menuGad, menuSelect } from './Menu'

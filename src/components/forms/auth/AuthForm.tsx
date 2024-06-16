@@ -21,6 +21,7 @@ export const AuthForm = () => {
     handleSubmit,
     formState: { errors }
   } = useForm({
+    defaultValues: { username: '', password: '' },
     resolver: yupResolver(schema)
   })
 

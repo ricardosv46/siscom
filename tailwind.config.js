@@ -21,11 +21,10 @@ module.exports = {
         purple: '#9B51E0',
         'dark-cyan': '#1F9B9C',
         pink: '#E25266',
-        orange: '#FF6B38'
+        orange: '#FF6B38',
+        'gray-light': '#BABABA'
       }
-    },
-    
+    }
   },
-  plugins: [],
+  plugins: []
 }
-

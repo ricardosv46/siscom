@@ -5,8 +5,9 @@ import { useSelectedProcess } from '@store/selectedProcess'
 
 const CreateProcess = () => {
   const { selectedProcess } = useSelectedProcess()
+  const num_expediente = selectedProcess?.num_expediente ? `- Exp. ${selectedProcess?.num_expediente}` : ''
 
-  const headerName = `${selectedProcess?.name} - R.G. ${selectedProcess?.resolution_number} - Exp. ${selectedProcess?.num_expediente}`
+  const headerName = `${selectedProcess?.name} - R.G. ${selectedProcess?.resolution_number} ${num_expediente}`
 
   return (
     <DashboardLayout>

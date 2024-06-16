@@ -17,7 +17,11 @@ const ListPas = () => {
   const { filters } = useFilterProcesses()
   const { search, date, responsible, status, statusRJ, typeProcess } = filters
   const [processesFiltered, setProcessesFiltered] = useState<ListadoPas[]>([])
-  const { data: processes = [], isFetching } = useQuery<ListadoPas[]>({
+  const {
+    data: processes = [],
+    isFetching,
+    refetch
+  } = useQuery<ListadoPas[]>({
     queryKey: ['getProcesses'],
     queryFn: () => getProcesses(electoralProcess, 'all'),
     retry: false,
@@ -139,9 +143,9 @@ const ListPas = () => {
     <DashboardLayout>
       <Card title="Listado de PAS">
         <LeyendProcesses />
-        <ProcesesFiltersForm processes={processes} />
+        <ProcesesFiltersForm processes={processes} refetch={refetch} filterUpdate={filterUpdate} />
 
-        <TableProcessesFilter processes={processesFiltered} />
+        <TableProcessesFilter processes={processesFiltered} refetch={refetch} />
       </Card>
     </DashboardLayout>
   )

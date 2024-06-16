@@ -18,7 +18,7 @@ export const FormSelect = ({ control, error, helperText, placeholder, name, type
   }
 
   return (
-    <div>
+    <>
       <Controller
         name={name}
         control={control}
@@ -36,6 +36,6 @@ export const FormSelect = ({ control, error, helperText, placeholder, name, type
       />
       {helperText && <p className="text-red-500">{helperText}</p>}
       {!helperText && <p className="py-3"></p>}
-    </div>
+    </>
   )
 }
