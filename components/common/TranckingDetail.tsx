@@ -59,7 +59,7 @@ const TranckingDetailCard = ({
             </div>
             <div style={{ marginRight: '5px', display: 'flex', alignItems: 'center' }}>
               <button
-                className="flex items-center justify-center p-2 bg-[##78bc44] border-none text-white cursor-pointer"
+                className="flex items-center justify-center p-2 bg-[#78bc44] border-none text-white cursor-pointer"
                 onClick={() => donwloadAnexosDetailPdf(item)}>
                 <img src="assets/images/abrir_archivo.svg" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
                 <span style={{ fontSize: '16px' }}>Abrir Documento</span>
