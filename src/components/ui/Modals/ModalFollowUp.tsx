@@ -1,20 +1,18 @@
-import React from 'react'
-import { AnnexeItem } from '../ViewFiles/AnnexeItem'
-import { IconPdfModal } from '@components/icons/IconPdfModal'
-import { IconOpenFile } from '@components/icons/IconOpenFile'
-import { Annexe, AnnexeDetail, ReqAnnexeDetail } from '@interfaces/listadoPas'
-import { downloadFileDetail, downloadFileDetailPdf } from '@services/processes'
+import { Annexe, ReqAnnexeDetail, TrackingDetail } from '@interfaces/listadoPas'
 import { Modal } from 'antd'
+import React from 'react'
+import { TrackingItem } from '../ViewFiles/TrackingItem'
+import { IconOpenFile } from '@components/icons/IconOpenFile'
 
 interface Props {
-  isOpenAnnexes: boolean
-  closeAnnexes: () => void
-  annexes: Annexe[]
-  annexeDetail: AnnexeDetail[]
-  mutateGetAnnexesDetail: (payload: ReqAnnexeDetail) => void
+  isOpenTracking: boolean
+  closeTracking: () => void
+  tracking: Annexe[]
+  trackingDetail: TrackingDetail[]
+  mutateGetTrackingDetail: (payload: ReqAnnexeDetail) => void
 }
 
-export const ModalFollowUp = ({ annexes, annexeDetail, mutateGetAnnexesDetail, isOpenAnnexes, closeAnnexes }: Props) => {
+export const ModalFollowUp = ({ isOpenTracking, closeTracking, tracking, trackingDetail, mutateGetTrackingDetail }: Props) => {
   return (
     <Modal
       styles={{
@@ -28,152 +26,166 @@ export const ModalFollowUp = ({ annexes, annexeDetail, mutateGetAnnexesDetail, i
         }
       }}
       width={'auto'}
-      title={<p className="font-bold text-center">Documentos Anexos</p>}
+      title={<p style={{ textAlign: 'center', fontWeight: 'bold' }}>Seguimiento de documento </p>}
       centered
-      open={isOpenAnnexes}
+      open={isOpenTracking}
       okText="Cerrar"
       cancelButtonProps={{ hidden: true }}
-      onOk={closeAnnexes}
-      onCancel={closeAnnexes}>
+      onOk={closeTracking}
+      onCancel={closeTracking}
+      okButtonProps={{ style: { backgroundColor: '#0874cc' }, className: 'ant-btn-primary' }}>
       <div className="py-10">
         <tr>
-          <div className="border-4 p-[5px] m-2.5 overflow-x-scroll overflow-y-scroll w-[880px] h-[200px] whitespace-nowrap resize-both">
-            {annexes?.length > 0 &&
-              annexes.map((item, index) => (
-                <AnnexeItem key={index} item={item} mutateGetAnnexesDetail={mutateGetAnnexesDetail} annexeDetail={annexeDetail} />
+          <div
+            style={{
+              borderWidth: 4,
+              padding: 5,
+              margin: 10,
+              width: 880,
+              overflow: 'scroll',
+              height: 200,
+              whiteSpace: 'nowrap',
+              resize: 'both'
+            }}>
+            {tracking?.length &&
+              tracking.map((item, index) => (
+                <TrackingItem key={index} item={item} mutateGetTrackingDetail={mutateGetTrackingDetail} trackingDetail={trackingDetail} />
               ))}
           </div>
         </tr>
         <br></br>
 
-        {annexeDetail?.length &&
-          annexeDetail.map((item, index) => (
-            <tr key={index}>
-              <div className="flex flex-col gap-2">
-                <div>
-                  <label className="font-normal text-dark-blue">Detalles</label>
-                </div>
-                {item.nro_doc}
-                <div className="flex items-center">
-                  <div className="mr-[55px] flex items-center">
-                    <label className="font-normal">Año:</label>
-                  </div>
-                  <div className="mr-[60px] flex items-center">
-                    <label className="font-normal">{item.año}</label>
-                  </div>
-                  <div className="mr-[30px] flex items-center">
-                    <label className="font-normal">Fecha Emisión:</label>
-                  </div>
-                  <div className="flex items-center">
-                    <label className="font-normal">{item.fecha_emi}</label>
-                  </div>
-                </div>
-
-                <div className="flex items-center">
-                  <div className="mr-[45px] flex items-center">
-                    <label className="font-normal">Emite:</label>
-                  </div>
-                  <div className="flex items-center">
-                    <label className="font-normal">{item.emite}</label>
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <div className="mr-[30px] flex items-center">
-                    <label className="font-normal">Destino:</label>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <label className="font-normal">{item.destino}</label>
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <div className="mr-[20px] flex items-center">
-                    <label className="font-normal">Tipo Doc.:</label>
-                  </div>
-                  <div className="mr-[60px] flex items-center">
-                    <label className="font-normal">{item.tipo_doc}</label>
-                  </div>
-                  <div className="mr-[80px] flex items-center">
-                    <label className="font-normal">Nro. Doc.: {item.nro_doc}</label>
-                  </div>
-                  <div className="mr-[5px] flex items-center">
-                    <button
-                      className="flex items-center justify-center gap-2 p-2 text-white bg-red bg-less_3_months"
-                      onClick={async () => {
-                        downloadFileDetailPdf(item)
-                      }}>
-                      <IconPdfModal className="w-6 h-6" />
-                      <p className="font-normal">Abrir Documento</p>
-                    </button>
-                  </div>
-                </div>
-                <div className="flex items-center ">
-                  <div className="mr-[40px] flex items-center">
-                    <label className="font-normal">Asunto:</label>
-                  </div>
-                  <div className="flex items-center">
-                    <textarea
-                      defaultValue={item.asunto}
-                      className="border-4 font-normal w-[700px] h-[80px] px-2 mt-[5px]"
-                      disabled></textarea>
-                  </div>
-                </div>
-                <div className="flex items-center ">
-                  <div className="mr-[40px] flex items-center">
-                    <label className="font-normal">Trámite:</label>
-                  </div>
-                  <div className="mr-[40px] flex items-center">
-                    <label className="font-normal">{item.tramite}</label>
-                  </div>
-                  <div className="mr-[20px] flex items-center">
-                    <label className="font-normal">Prioridad:</label>
-                  </div>
-                  <div className="mr-[40px] flex items-center">
-                    <label className="font-normal">{item.prioridad}</label>
-                  </div>
-                  <div className="mr-[20px] flex items-center">
-                    <label className="font-normal">Indicaciones:</label>
-                  </div>
-                  <div className="flex items-center ">
-                    <label className="font-normal">{item.indicaciones}</label>
-                  </div>
-                </div>
-                <div>
-                  <label className="font-normal text-dark-blue">Documentos Anexos</label>
-                </div>
-                {item?.docs.length ? (
-                  <table>
-                    <thead>
-                      <tr className="border">
-                        <th className="border border-black flex-1 pl-2 py-1.5 bg-light-blue text-dark-blue">Descripción</th>
-                        <th className="border border-black flex-1 pl-2 py-1.5 bg-light-blue text-dark-blue">Nombre de Anexo</th>
-                        <th className="border border-black w-28 pl-2 py-1.5 bg-light-blue text-dark-blue">Opciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {item?.docs?.map((i) => (
-                        <tr key={i.id_archivo} className="border">
-                          <td className="py-1 pl-2 border">{i.de_det}</td>
-                          <td className="py-1 pl-2 border">{i.de_rut_ori}</td>
-                          <td className="py-1 pl-2 border">
-                            <button
-                              className="px-1 border rounded"
-                              onClick={async () => {
-                                downloadFileDetail({ idArchivo: String(i.id_archivo), nombreArchivo: i.de_rut_ori })
-                              }}>
-                              <IconOpenFile className="text-less_6_months" />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                ) : (
+        {trackingDetail?.length &&
+          trackingDetail.map((item, index) => (
+            <div key={index}>
+              <tr>
+                <div className="flex flex-col gap-2">
                   <div>
-                    <label className="font-normal">No se encuentran registros</label>
+                    <label className="font-normal text-dark-blue">Remitente</label>
                   </div>
-                )}
-              </div>
-            </tr>
+
+                  <div className="flex items-center">
+                    <div className="mr-[80px] flex items-center">
+                      <label className="font-normal">Fecha Emisión: {item.fecha_emi}</label>
+                    </div>
+                    <div className="flex items-center">
+                      <label className="font-normal">Elaboró: {item.elaboro}</label>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center">
+                    <div className="mr-[30px] flex items-center">
+                      <label className="font-normal">Emisor:</label>
+                    </div>
+                    <div className="flex items-center">
+                      <label className="font-normal">{item.emisor}</label>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="mr-[30px] flex items-center">
+                      <label className="font-normal">Tipo Doc.: {item.tipo_doc}</label>
+                    </div>
+                    <div className="flex items-center">
+                      <label className="font-normal">Nro. Doc.: {item.nro_doc}</label>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center">
+                    <div className="mr-[30px] flex items-center">
+                      <label className="font-normal">Estado:</label>
+                    </div>
+                    <div className="mr-[50px] flex items-center">
+                      <label className="font-normal">{item?.estado}</label>
+                    </div>
+                    <div className="mr-[30px] flex items-center">
+                      <label className="font-normal">Folios:</label>
+                    </div>
+                    <div className="mr-[90px] flex items-center">
+                      <label className="font-normal">{item.nu_des}</label>
+                    </div>
+                    <div className="mr-[5px] flex items-center">
+                      <button
+                        className="flex items-center justify-center p-2 text-white border-none cursor-pointer bg-more_6_months"
+                        // onClick={() => donwloadAnexosDetailPdf(item)}
+                      >
+                        {/* <img src="assets/images/abrir_archivo.svg" style={{ width: '24px', height: '24px', marginRight: '8px' }} /> */}
+                        <IconOpenFile className="w-6 h-6 mr-2 text-white" />
+                        <span className="font-normal">Abrir Documento</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center">
+                    <div className="mr-[30px] flex items-center">
+                      <label className="font-normal">Asunto:</label>
+                    </div>
+                    <div className="flex items-center">
+                      <textarea className="border-4 font-normal w-[700px] h-[80px] px-2 mb-[5px]" disabled>
+                        {item.asunto}
+                      </textarea>
+                    </div>
+                  </div>
+                </div>
+              </tr>
+              <tr>
+                <div className="flex flex-col gap-2 mt-5">
+                  <div>
+                    <label className="font-normal text-dark-blue">Destinatario</label>
+                  </div>
+
+                  <div className="flex items-center">
+                    <div className="mr-[50px] flex items-center">
+                      <label className="font-normal">Receptor:</label>
+                    </div>
+                    <div className="flex items-center">
+                      <label className="font-normal">{item.receptor}</label>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center">
+                    <div className="mr-[65px] flex items-center">
+                      <label className="font-normal">Estado:</label>
+                    </div>
+                    <div className="mr-[90px] flex items-center">
+                      <label className="font-normal">{item.estado_destinatario}</label>
+                    </div>
+                    <div className="mr-[20px] flex items-center">
+                      <label className="font-normal">Fecha Recepción:</label>
+                    </div>
+                    <div className="mr-[60px] flex items-center">
+                      <label className="font-normal">{item.fecha_rec}</label>
+                    </div>
+                    <div className="mr-[20px] flex items-center">
+                      <label className="font-normal">Fecha Atención.:</label>
+                    </div>
+                    <div className="flex items-center">
+                      <label className="font-normal">{item.fecha_ate}</label>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center">
+                    <div className="mr-[60px] flex items-center">
+                      <label className="font-normal">Trámite:</label>
+                    </div>
+                    <div className="mr-[40px] flex items-center">
+                      <label className="font-normal">{item.tramite}</label>
+                    </div>
+                    <div className="mr-[20px] flex items-center">
+                      <label className="font-normal">Prioridad:</label>
+                    </div>
+                    <div className="mr-[40px] flex items-center">
+                      <label className="font-normal">{item.prioridad}</label>
+                    </div>
+                    <div className="mr-[20px] flex items-center">
+                      <label className="font-normal">Indicaciones:</label>
+                    </div>
+                    <div className="flex items-center">
+                      <label className="font-normal">{item.indicaciones}</label>
+                    </div>
+                  </div>
+                </div>
+              </tr>
+            </div>
           ))}
       </div>
     </Modal>
