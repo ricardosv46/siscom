@@ -15,6 +15,7 @@ export const ExportExcel = (body: any) => {
     'Fecha fin',
     'Actualización',
     'Tipo Proceso',
+    'Forma de Conclusion',
     'Cargo al que Postulo',
     'Tipo de OP',
     'Nombre de OP'
@@ -37,11 +38,12 @@ export const ExportExcel = (body: any) => {
         dni_candidato: item.dni_candidato,
         nombre: item.name,
         responsable: item.responsable,
-        etapa: item.estapa,
+        etapa: item.etapa,
         fecha_inicio: fecha_inicio,
         fecha_fin: fecha_fin,
         actualizacion: actualizacion,
         tipo_proceso: item.type,
+        rj_type: item.rj_type,
         cargo: item.cargo,
         type_op: item.type_op,
         op: item.op
