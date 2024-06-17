@@ -78,7 +78,7 @@ const LayoutFirst: FC<LayoutFirstProps> = ({ children }) => {
           label: `${item.label}`
         }
       )
-    } else if (profile == 'GAD') {
+    } else if (profile == 'GAD' || user.is_admin) {
       return (
         item.role == 'gad' && {
           key: item.key,

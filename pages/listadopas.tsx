@@ -1010,26 +1010,31 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                 onClick={clearFilters}>
                 <span style={{ fontSize: '16px' }}>Limpiar Filtros</span>
               </button>
-
-              <button
-                className="flex items-center justify-center p-2 bg-[#78bc44] border-none text-white cursor-pointer"
-                onClick={() => loadFile()}>
-                <img src="assets/images/cargar.svg" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
-                <span style={{ fontSize: '16px' }}>Cargar Información</span>
-              </button>
+              <Tooltip title="Importar registros">
+                <button
+                  className="flex items-center justify-center p-2 bg-[#78bc44] border-none text-white cursor-pointer"
+                  onClick={() => loadFile()}>
+                  <img src="assets/images/cargar.svg" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
+                  <span style={{ fontSize: '16px' }}>Cargar Información</span>
+                </button>
+              </Tooltip>
               {filesContent.length == 1 && (processFile(plainFiles[0]) as any)}
-              <button
-                className="flex items-center justify-center p-2 bg-[#083474] border-none text-white cursor-pointer"
-                onClick={reportePAS}>
-                <img src="assets/images/reporte_pas.svg" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
-                <span style={{ fontSize: '16px' }}>Reporte PAS</span>
-              </button>
-              <button
-                className="flex items-center justify-center p-2 bg-[#0874cc] border-none text-white cursor-pointer"
-                onClick={() => DescargarExcel()}>
-                <img src="assets/images/icono_detalle.svg" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
-                <span style={{ fontSize: '16px' }}>Detalle</span>
-              </button>
+              <Tooltip title="Descargar listado de expedientes">
+                <button
+                  className="flex items-center justify-center p-2 bg-[#083474] border-none text-white cursor-pointer"
+                  onClick={reportePAS}>
+                  <img src="assets/images/reporte_pas.svg" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
+                  <span style={{ fontSize: '16px' }}>Reporte PAS</span>
+                </button>
+              </Tooltip>
+              <Tooltip title="Descargar consolidado de registros por expediente">
+                <button
+                  className="flex items-center justify-center p-2 bg-[#0874cc] border-none text-white cursor-pointer"
+                  onClick={() => DescargarExcel()}>
+                  <img src="assets/images/icono_detalle.svg" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
+                  <span style={{ fontSize: '16px' }}>Detalle</span>
+                </button>
+              </Tooltip>
             </div>
           </div>
         </div>

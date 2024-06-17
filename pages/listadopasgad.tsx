@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { Table, DatePicker, Input, Select, Upload, UploadFile, Modal } from 'antd'
+import { Table, DatePicker, Input, Select, Upload, UploadFile, Modal, Tooltip } from 'antd'
 import React, { ReactElement, useEffect, useMemo, useState } from 'react'
 import { LayoutFirst } from '@components/common'
 import { NextPageWithLayout } from 'pages/_app'
@@ -605,17 +605,19 @@ const Listadopas: NextPageWithLayout = () => {
               <button className="flex items-center justify-center p-2 bg-[#083474]  text-white " onClick={clearFilters}>
                 <span className="text-base">Limpiar Filtros</span>
               </button>
-              <Upload
-                beforeUpload={beforeUpload}
-                onChange={handleFileChangeType}
-                multiple={false}
-                showUploadList={false}
-                accept=".xls,.xlsx">
-                <button className="flex items-center justify-center p-2 bg-[#78bc44] text-white">
-                  <img src="assets/images/cargar.svg" className="w-6 h-6" />
-                  <span className="text-base">Cargar información</span>
-                </button>
-              </Upload>
+              <Tooltip title="Importar registros">
+                <Upload
+                  beforeUpload={beforeUpload}
+                  onChange={handleFileChangeType}
+                  multiple={false}
+                  showUploadList={false}
+                  accept=".xls,.xlsx">
+                  <button className="flex items-center justify-center p-2 bg-[#78bc44] text-white">
+                    <img src="assets/images/cargar.svg" className="w-6 h-6" />
+                    <span className="text-base">Cargar información</span>
+                  </button>
+                </Upload>
+              </Tooltip>
               {/* <Upload
                 beforeUpload={beforeUpload}
                 onChange={handleFileChangeRegister}
@@ -627,14 +629,18 @@ const Listadopas: NextPageWithLayout = () => {
                   <span className="text-base">Cargar registro de pago</span>
                 </button>
               </Upload> */}
-              <button className="flex items-center justify-center p-2 bg-[#083474]  text-white cursor-pointer" onClick={reportePAS}>
-                <img src="assets/images/reporte_pas.svg" className="w-6 h-6" />
-                <span className="text-base">Reporte PAS</span>
-              </button>
-              <button className="flex items-center justify-center p-2 bg-[#0874cc] text-white" onClick={descargarExcel}>
-                <img src="assets/images/icono_detalle.svg" className="w-6 h-6" />
-                <span className="text-base">Detalle</span>
-              </button>
+              <Tooltip title="Descargar listado de expedientes">
+                <button className="flex items-center justify-center p-2 bg-[#083474]  text-white cursor-pointer" onClick={reportePAS}>
+                  <img src="assets/images/reporte_pas.svg" className="w-6 h-6" />
+                  <span className="text-base">Reporte PAS</span>
+                </button>
+              </Tooltip>
+              <Tooltip title="Descargar listado de sancionados">
+                <button className="flex items-center justify-center p-2 bg-[#0874cc] text-white" onClick={descargarExcel}>
+                  <img src="assets/images/icono_detalle.svg" className="w-6 h-6" />
+                  <span className="text-base">Sancionados</span>
+                </button>
+              </Tooltip>
             </div>
           </div>
         </div>
