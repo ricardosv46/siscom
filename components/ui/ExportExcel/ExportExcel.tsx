@@ -32,7 +32,7 @@ export const ExportExcel = (body: any) => {
       const fecha_fin = item?.fecha_fin_dt ? moment(item.fecha_fin_dt).format('DD/MM/YYYY') : item?.fecha_fin_dt
       const actualizacion = item?.actualizacion_dt ? moment(item.actualizacion_dt).format('DD/MM/YYYY') : item?.actualizacion_dt
 
-      const start_at = item.related_rj.start_att ? moment(item.related_rj.start_at).format('DD/MM/YYYY') : item.related_rj.start_at
+      const start_at = item?.related_rj?.start_att ? moment(item.related_rj.start_at).format('DD/MM/YYYY') : item?.related_rj?.start_at
 
       return {
         num_expediente: item.num_expediente,
