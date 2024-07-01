@@ -235,7 +235,7 @@ const TypePay: NextPageWithLayout = ({}) => {
         ),
         onOk() {
           instance.destroy()
-          router.push('/listadopasgad')
+          // router.push('/listadopasgad')
         },
         centered: true
       })

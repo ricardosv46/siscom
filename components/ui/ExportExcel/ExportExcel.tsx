@@ -16,6 +16,8 @@ export const ExportExcel = (body: any) => {
     'Actualización',
     'Tipo Proceso',
     'Forma de Conclusion',
+    'Número de RJ',
+    'Fecha de emisión de RJ',
     'Cargo al que Postulo',
     'Tipo de OP',
     'Nombre de OP'
@@ -25,11 +27,12 @@ export const ExportExcel = (body: any) => {
 
   if (body.length > 0) {
     dataExport = body.map((item: any) => {
-
-      const fecha_inicio = item?.fecha_inicio_dt ? moment(item.fecha_inicio_dt).format('DD/MM/YYYY') : item?.fecha_inicio_dt 
+      console.log({ item })
+      const fecha_inicio = item?.fecha_inicio_dt ? moment(item.fecha_inicio_dt).format('DD/MM/YYYY') : item?.fecha_inicio_dt
       const fecha_fin = item?.fecha_fin_dt ? moment(item.fecha_fin_dt).format('DD/MM/YYYY') : item?.fecha_fin_dt
-      const actualizacion =  item?.actualizacion_dt ? moment(item.actualizacion_dt).format('DD/MM/YYYY') :item?.actualizacion_dt
+      const actualizacion = item?.actualizacion_dt ? moment(item.actualizacion_dt).format('DD/MM/YYYY') : item?.actualizacion_dt
 
+      const start_at = item.related_rj.start_att ? moment(item.related_rj.start_at).format('DD/MM/YYYY') : item.related_rj.start_at
 
       return {
         num_expediente: item.num_expediente,
@@ -44,6 +47,8 @@ export const ExportExcel = (body: any) => {
         actualizacion: actualizacion,
         tipo_proceso: item.type,
         rj_type: item.rj_type,
+        document: item.related_rj.document,
+        start_at: start_at,
         cargo: item.cargo,
         type_op: item.type_op,
         op: item.op

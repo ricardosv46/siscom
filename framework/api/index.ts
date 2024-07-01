@@ -56,7 +56,6 @@ const api = {
       const tok = GetTokenAuthService()
       if (tok) {
         const formData = new FormData()
-
         if (form?.typePay === 'PRONTO PAGO' || form?.typePay === 'PAGO TOTAL') {
           formData.append('amount', form?.amount.replaceAll(',', ''))
           formData.append('process_id', String(process))
@@ -79,11 +78,13 @@ const api = {
           formData.append('amount_paid', form?.initialCuote.replaceAll(',', ''))
         }
         formData.append('rj_amount', String(form?.rj_amount))
-
-        const {
-          data: { data, message, success }
-        }: IPayment = await apiService.post(`payments/type-payment/create/`, formData)
-        return { data, message, success }
+        formData.forEach((element) => {
+          console.log({ element })
+        })
+        // const {
+        //   data: { data, message, success }
+        // }: IPayment = await apiService.post(`payments/type-payment/create/`, formData)
+        // return { data, message, success }
       } else {
         return { data: {} }
       }
@@ -107,11 +108,13 @@ const api = {
 
         formData.append('bank', form?.bank.replaceAll(',', ''))
         formData.append('payment_date', form?.date + ':00')
-
-        const {
-          data: { data, message, success }
-        }: IPayment = await apiService.post(`/payments/payment/create/`, formData)
-        return { data, message, success }
+        formData.forEach((element) => {
+          console.log({ element })
+        })
+        // const {
+        //   data: { data, message, success }
+        // }: IPayment = await apiService.post(`/payments/payment/create/`, formData)
+        // return { data, message, success }
       } else {
         return { data: { rj_amount: 0 } }
       }
