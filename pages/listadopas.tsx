@@ -801,6 +801,47 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
     instance.destroy()
   }
 
+  const descargarRjs = async () => {
+    const instance = Modal.info({
+      title: 'Cargando',
+      content: (
+        <div>
+          <p>Espere mientras termine la descarga...</p>
+        </div>
+      ),
+      onOk() {},
+      okButtonProps: { disabled: true, style: { backgroundColor: '#0874cc', display: 'none' } },
+      centered: true
+    })
+
+    let dataExcel: any[] = []
+    process.map((item: any) => {
+      dataExcel.push(item.numero)
+    })
+
+    if (dataExcel?.length === 0) {
+      instance.destroy()
+
+      const excelVacio = Modal.info({
+        content: (
+          <div>
+            <p>No hay registros para descargar</p>
+          </div>
+        ),
+        centered: true,
+        onOk() {
+          excelVacio.destroy()
+        }
+      })
+
+      return
+    }
+
+    await api.listpas.downloadExcelRjs(dataExcel)
+
+    instance.destroy()
+  }
+
   const disabledDate = (current: any) => {
     // Obten la fecha actual
     const today = new Date()
@@ -1033,6 +1074,13 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
                   onClick={() => DescargarExcel()}>
                   <img src="assets/images/icono_detalle.svg" style={{ width: '24px', height: '24px', marginRight: '8px' }} />
                   <span style={{ fontSize: '16px' }}>Detalle</span>
+                </button>
+              </Tooltip>
+              <Tooltip title="Descargar consolidado de RJs">
+                <button
+                  className="flex items-center justify-center p-2 text-white bg-purple-700 border-none cursor-pointer"
+                  onClick={() => DescargarExcel()}>
+                  <span style={{ fontSize: '16px' }}>RJs Emitidas</span>
                 </button>
               </Tooltip>
             </div>
