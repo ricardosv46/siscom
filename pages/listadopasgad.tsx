@@ -388,12 +388,13 @@ const Listadopas: NextPageWithLayout = () => {
       centered: true
     })
 
-    let dataExcel: any[] = []
-    processesFilter?.map((item: any) => {
-      dataExcel.push(item.numero)
-    })
+    const dataExcelNumeros = processesFilter?.map((item: any) =>  item.numero)
+    
+    const dataExcelDnis = processesFilter?.map((item: any) =>   item.dni_candidato)
 
-    if (dataExcel?.length === 0) {
+    
+
+    if (dataExcelNumeros?.length === 0) {
       instance.destroy()
 
       const excelVacio = Modal.info({
@@ -411,7 +412,7 @@ const Listadopas: NextPageWithLayout = () => {
       return
     }
 
-    await api.listpas.downloadExcelInformationGad(dataExcel)
+    await api.listpas.downloadExcelInformationGad(dataExcelNumeros,dataExcelDnis)
 
     instance.destroy()
   }

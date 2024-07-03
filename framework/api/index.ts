@@ -558,12 +558,12 @@ const api = {
       }
     },
 
-    downloadExcelInformationGad: async (payload: any) => {
+    downloadExcelInformationGad: async (numeros: number[],dnis:string[]) => {
       const tok = GetTokenAuthService()
       if (tok) {
         const responseExcel = await apiService.post(
           `/payments/download/`,
-          { processes: payload },
+          { processes: numeros,userdData:dnis },
           {
             responseType: 'arraybuffer',
             headers: { 'Content-Type': 'application/json' }
