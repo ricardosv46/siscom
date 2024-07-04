@@ -563,7 +563,7 @@ const api = {
       if (tok) {
         const responseExcel = await apiService.post(
           `/payments/download/`,
-          { processes: numeros,userdData:dnis },
+          { processes: numeros,userData:dnis },
           {
             responseType: 'arraybuffer',
             headers: { 'Content-Type': 'application/json' }
