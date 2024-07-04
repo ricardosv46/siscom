@@ -1079,7 +1079,7 @@ const Listadopas: NextPageWithLayout<ListadopasProps> = ({ pageNum, pageSize, to
               <Tooltip title="Descargar consolidado de RJs">
                 <button
                   className="flex items-center justify-center p-2 text-white bg-purple-700 border-none cursor-pointer"
-                  onClick={() => DescargarExcel()}>
+                  onClick={() => descargarRjs()}>
                   <span style={{ fontSize: '16px' }}>RJs Emitidas</span>
                 </button>
               </Tooltip>
