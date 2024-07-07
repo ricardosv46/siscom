@@ -78,13 +78,11 @@ const api = {
           formData.append('amount_paid', form?.initialCuote.replaceAll(',', ''))
         }
         formData.append('rj_amount', String(form?.rj_amount))
-        formData.forEach((element) => {
-          console.log({ element })
-        })
-        // const {
-        //   data: { data, message, success }
-        // }: IPayment = await apiService.post(`payments/type-payment/create/`, formData)
-        // return { data, message, success }
+
+        const {
+          data: { data, message, success }
+        }: IPayment = await apiService.post(`payments/type-payment/create/`, formData)
+        return { data, message, success }
       } else {
         return { data: {} }
       }
@@ -108,13 +106,11 @@ const api = {
 
         formData.append('bank', form?.bank.replaceAll(',', ''))
         formData.append('payment_date', form?.date + ':00')
-        formData.forEach((element) => {
-          console.log({ element })
-        })
-        // const {
-        //   data: { data, message, success }
-        // }: IPayment = await apiService.post(`/payments/payment/create/`, formData)
-        // return { data, message, success }
+
+        const {
+          data: { data, message, success }
+        }: IPayment = await apiService.post(`/payments/payment/create/`, formData)
+        return { data, message, success }
       } else {
         return { data: { rj_amount: 0 } }
       }
@@ -558,12 +554,12 @@ const api = {
       }
     },
 
-    downloadExcelInformationGad: async (numeros: number[],dnis:string[]) => {
+    downloadExcelInformationGad: async (numeros: number[], dnis: string[]) => {
       const tok = GetTokenAuthService()
       if (tok) {
         const responseExcel = await apiService.post(
           `/payments/download/`,
-          { processes: numeros,userData:dnis },
+          { processes: numeros, userData: dnis },
           {
             responseType: 'arraybuffer',
             headers: { 'Content-Type': 'application/json' }
