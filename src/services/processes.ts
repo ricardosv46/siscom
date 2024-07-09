@@ -20,7 +20,7 @@ import { valuesFormData, valuesFormDataExcel } from '@utils/valuesFormData'
 
 export const getProcesses = async (electoralProcess: string, label: string): Promise<ListadoPas[]> => {
   try {
-    const { data } = await apiService.get(`${label}/processes/?electoral_process=${electoralProcess}`)
+    const { data } = await apiService.get(`/${label}/processes/?electoral_process=${electoralProcess}`)
     return data?.data
   } catch (error: any) {
     throw error?.response?.data ?? error?.data?.message
@@ -29,7 +29,7 @@ export const getProcesses = async (electoralProcess: string, label: string): Pro
 
 export const getProcessesByDate = async ({ electoralProcess, dateStart, dateEnd }: ListadoPasByDateReq): Promise<ListadoPas[]> => {
   try {
-    const { data } = await apiService.get(`all/processes/${dateStart}/${dateEnd}/?electoral_process=${electoralProcess}`)
+    const { data } = await apiService.get(`/all/processes/${dateStart}/${dateEnd}/?electoral_process=${electoralProcess}`)
     return data?.data
   } catch (error: any) {
     throw error?.response?.data ?? error?.data?.message
@@ -162,7 +162,7 @@ export const downloadExcelRJs = async (processes: ListadoPas[]): Promise<Blob> =
 
 export const downloadDocuments = async (item: ListadoPas, id: number): Promise<Blob> => {
   try {
-    const { data, status } = await apiService.get(`processes/${id}/documents/download/`, {
+    const { data, status } = await apiService.get(`/processes/${id}/documents/download/`, {
       responseType: 'blob'
     })
 

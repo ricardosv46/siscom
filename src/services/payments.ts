@@ -13,7 +13,7 @@ import { valuesFormData, valuesFormDataExcel } from '@utils/valuesFormData'
 
 export const getAmount = async (id: string): Promise<ResponseDataMessage<Amount>> => {
   try {
-    const { data } = await apiService.get(`payments/type-payment/process/${id}/amount/`)
+    const { data } = await apiService.get(`/payments/type-payment/process/${id}/amount/`)
     return data
   } catch (error: any) {
     throw error?.response?.data ?? error?.data?.message
@@ -32,7 +32,7 @@ export const getPay = async (id: string): Promise<Pay[]> => {
 export const create = async (form: FormDataTypePay, process: string): Promise<ResponseMessage<string>> => {
   try {
     const formData = CreatePaymentFormData(form, process)
-    const { data } = await apiService.post(`payments/type-payment/create/`, formData)
+    const { data } = await apiService.post(`/payments/type-payment/create/`, formData)
 
     return data
   } catch (error: any) {
@@ -62,7 +62,7 @@ export const downloadExcelPayment = async (processes: number[], userData: string
 export const loadExcelTypePay = async (xlsx_file: File, user: User, refetch: () => void) => {
   try {
     const formData = valuesFormDataExcel({ user_id: user?.id }, xlsx_file)
-    const { data } = await apiService.post(`payments/type-payment/import/`, formData)
+    const { data } = await apiService.post(`/payments/type-payment/import/`, formData)
 
     if (data) modalOnlyConfirm('', data.message, refetch)
 

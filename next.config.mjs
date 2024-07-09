@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+  env: {
+    API_TRACKING_PAS: process.env.API_TRACKING_PAS
+  },
   pageExtensions: ['ts', 'tsx'],
   transpilePackages: [
     'antd',

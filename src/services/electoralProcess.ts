@@ -4,7 +4,7 @@ import apiService from '@lib/apiService'
 
 export const getYears = async (): Promise<Year[]> => {
   try {
-    const { data } = await apiService.get(`years/`)
+    const { data } = await apiService.get(`/years/`)
     return data?.message
   } catch (error: any) {
     throw error?.response?.data ?? error?.data?.message
@@ -13,7 +13,7 @@ export const getYears = async (): Promise<Year[]> => {
 
 export const getElectoralProcesses = async (year: string): Promise<ElectoralProcess[]> => {
   try {
-    const { data } = await apiService.get(`electoral-process/?year=${year}`)
+    const { data } = await apiService.get(`/electoral-process/?year=${year}`)
     return data?.message
   } catch (error: any) {
     throw error?.response?.data ?? error?.data?.message
