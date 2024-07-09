@@ -1,35 +1,75 @@
 import { ProcesesFiltersForm } from '@components/forms/processes/ProcesesFiltersForm'
+import { ProcesesRegisterPayFiltersForm } from '@components/forms/processes/ProcesesRegisterPayFiltersForm'
 import { DashboardLayout } from '@components/layout/DashboardLayotu'
 import { Card } from '@components/ui/Cards/Card'
 import { LeyendProcesses } from '@components/ui/LeyendProcesses'
 import { TableProcessesFilter } from '@components/ui/Tables/TableProcessesFilter'
+import { TableProcessesRegisterPayFilter } from '@components/ui/Tables/TableProcessesRegisterPayFilter'
 import { ListadoPas } from '@interfaces/listadoPas'
+import { ProcessesStatsReq } from '@interfaces/stats'
 import { getProcesses, getProcessesByDate } from '@services/processes'
-import { getProcessesStats } from '@services/stats'
+import { getProcessesOP, getProcessesStats } from '@services/stats'
 import { useElectoralProcess } from '@store/electoralProcess'
 import { Filters, useFilterProcesses } from '@store/filterProcess'
 import { useFilterStats } from '@store/filterStats'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { MutationCache, useIsMutating, useMutation, useMutationState, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Modal } from 'antd'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-const ListPas = () => {
+const RegisterPay = () => {
   const { electoralProcess } = useElectoralProcess()
   const { filters: filtersStats } = useFilterStats()
-  const { filters } = useFilterProcesses()
-  const { search, date, responsible, status, statusRJ, typeProcess } = filters
+
+  const { filters: filtersData } = useFilterProcesses()
+
+  const filters = { ...filtersData, statusRj: '' }
+
+  const { search, date, responsible, status, typeProcess } = filters
+
   const [processesFiltered, setProcessesFiltered] = useState<ListadoPas[]>([])
+
   const {
     data: processes = [],
+    isLoading,
     isFetching,
+    isError,
     refetch
-  } = useQuery<ListadoPas[]>({
+  } = useQuery({
     queryKey: ['getProcesses'],
-    queryFn: () => getProcesses(electoralProcess, 'all'),
+    queryFn: () => getApi(),
     retry: false,
     refetchOnWindowFocus: false,
     enabled: !!electoralProcess
   })
+
+  const getApi = async () => {
+    const filters1: ProcessesStatsReq = {
+      department: [],
+      province: [],
+      distric: [],
+      op: [],
+      position: [],
+      electoralProcess,
+      rj: 'rj_sancion',
+      type_pas: 'CANDIDATO'
+    }
+
+    const filters2: ProcessesStatsReq = {
+      department: [],
+      province: [],
+      distric: [],
+      op: [],
+      position: [],
+      electoralProcess,
+      rj: 'rj_sancion',
+      type_pas: 'OP'
+    }
+
+    const cadidates = await getProcessesStats(filters1)
+    const ops = await getProcessesStats(filters2)
+
+    return [...cadidates, ...ops]
+  }
 
   const {
     isPending,
@@ -57,7 +97,6 @@ const ListPas = () => {
 
   useEffect(() => {
     const instance = Modal
-
     if (filters.dateStart && filters.dateEnd) {
       Modal.info({
         title: 'Espere',
@@ -95,24 +134,6 @@ const ListPas = () => {
       }
     }
   }, [isFetching, isPending])
-
-  useEffect(() => {
-    const instance = Modal
-
-    if (isPendingProcessesRj) {
-      Modal.info({
-        title: 'Espere',
-        content: <p className="pb-5">Cargando información....</p>,
-        onOk() {},
-        footer: false,
-        centered: true
-      })
-    } else {
-      if (!isFetching && !isPending && !isPendingProcessesRj) {
-        instance.destroyAll()
-      }
-    }
-  }, [isPendingProcessesRj])
 
   function doesItemMatchSearch(item: ListadoPas, search: string) {
     return (
@@ -164,12 +185,17 @@ const ListPas = () => {
     <DashboardLayout>
       <Card title="Listado de PAS">
         <LeyendProcesses />
-        <ProcesesFiltersForm processes={processes} processesFiltered={processesFiltered} refetch={refetch} filterUpdate={filterUpdate} />
+        <ProcesesRegisterPayFiltersForm
+          processes={processes}
+          processesFiltered={processesFiltered}
+          refetch={refetch}
+          filterUpdate={filterUpdate}
+        />
 
-        <TableProcessesFilter processes={processesFiltered} refetch={refetch} />
+        <TableProcessesRegisterPayFilter processes={processesFiltered} refetch={refetch} />
       </Card>
     </DashboardLayout>
   )
 }
 
-export default ListPas
+export default RegisterPay

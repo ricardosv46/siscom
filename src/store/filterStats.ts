@@ -5,6 +5,7 @@ export interface FiltersStats {
   distric: string[]
   position: string[]
   op: string[]
+  type_pas: 'OP' | 'CANDIDATO' | ''
 }
 
 export interface FiltersStatsOption {
@@ -13,11 +14,13 @@ export interface FiltersStatsOption {
   distric?: string[]
   position?: string[]
   op?: string[]
+  type_pas?: 'OP' | 'CANDIDATO' | ''
 }
 
 interface FilterStatsStore {
   filters: FiltersStats
   filtersAction: (filters: FiltersStatsOption) => void
+  refreshFilterProcesses: () => void
   resetFilters: () => void
 }
 
@@ -26,15 +29,28 @@ const initialFilterStats: FiltersStats = {
   province: [],
   distric: [],
   position: [],
-  op: []
+  op: [],
+  type_pas: ''
 }
 
 export const useFilterStats = create<FilterStatsStore>((set) => ({
   filters: initialFilterStats,
   filtersAction: (filters: FiltersStatsOption) => {
-    set((state) => ({ filters: { ...state.filters, ...filters } }))
+    set((state) => {
+    localStorage.setItem('filtersStats', JSON.stringify({ ...state.filters, ...filters }))
+      return { filters: { ...state.filters, ...filters } }
+  })},
+  refreshFilterProcesses: () => {
+    const filtersLS = localStorage.getItem('filtersStats')
+    const filtersParse: FiltersStats = filtersLS ? JSON.parse(filtersLS) : null
+    if (filtersParse) {
+      set({ filters: filtersParse })
+    } else {
+      set({ filters: initialFilterStats })
+    }
   },
   resetFilters: () => {
+    localStorage.removeItem('filtersStats')
     set({ filters: initialFilterStats })
   }
 }))

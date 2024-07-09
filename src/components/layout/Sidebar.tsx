@@ -1,17 +1,16 @@
 import { IconOnpe } from '@components/icons/IconOnpe'
 import { useAuth } from '@store/auth'
 import React from 'react'
-import { menuAdmin, menuGad, menuSelect } from './Menu'
+import { menuAdmin, menuSelect } from './Menu'
 import { useRouter } from 'next/router'
 import { useElectoralProcess } from '@store/electoralProcess'
-import Link from 'next/link'
 
 export const Sidebar = () => {
   const { user } = useAuth()
   const router = useRouter()
   const { electoralProcess } = useElectoralProcess()
 
-  const menu = user?.profile === 'gad' ? menuGad : menuAdmin
+  const menu = user?.profile === 'gad' || user?.is_admin ? menuAdmin : menuAdmin.filter((item) => item.id !== 4)
 
   const items = !electoralProcess ? menuSelect : menu
 

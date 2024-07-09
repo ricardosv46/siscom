@@ -1,33 +1,33 @@
+import { IconDanger } from '@components/icons/IconDanger'
 import { FormCheckbox } from '@components/ui/Forms/FormCheckbox'
 import { FormDatePicker } from '@components/ui/Forms/FormDatePicker'
 import { FormInput } from '@components/ui/Forms/FormInput'
 import { FormInputArea } from '@components/ui/Forms/FormInputArea'
 import { FormInputNumber } from '@components/ui/Forms/FormInputNumber'
 import { FormSelect } from '@components/ui/Forms/FormSelect'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useToggle } from '@hooks/useToggle'
 import { RjType, Tracking, TypeDocument } from '@interfaces/listadoPas'
-import { createProcess, downloadExcelDetail, getRjType, getTrackings, getTypeDocuments } from '@services/processes'
+import { createProcess, getRjType, getTrackings, getTypeDocuments } from '@services/processes'
 import { useAuth } from '@store/auth'
 import { useSelectedProcess } from '@store/selectedProcess'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { convertOptionsSelect } from '@utils/convertOptionsSelect'
 import { convertToNumberDecimal } from '@utils/convertToNumberDecimal'
+import { disabledDate, disabledTime } from '@utils/dates/disabledCreateProcess'
 import { filterResponsible } from '@utils/filters/filterResponsible'
 import { FilterRj } from '@utils/filters/FilterRj'
 import { FilterTypeDocument } from '@utils/filters/FilterTypeDocument'
-import { toUpperCase } from '@utils/toUpperCase'
-import locale from 'antd/lib/date-picker/locale/es_ES'
-import dayjs, { Dayjs } from 'dayjs'
-import isBetween from 'dayjs/plugin/isBetween'
-import React, { ChangeEvent, useEffect } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { useRouter } from 'next/router'
+import { modalOnlyConfirm } from '@utils/modals'
 import { createProcessFormData } from '@utils/processes/createProcessFormData'
-import { Modal } from 'antd'
+import { toUpperCase } from '@utils/toUpperCase'
 import { validateCreateProcess } from '@validators/validateCreateProcess'
-import { disabledDate, disabledTime } from '@utils/dates/disabledCreateProcess'
-import { useToggle } from '@hooks/useToggle'
-import { IconDanger } from '@components/icons/IconDanger'
+import { Modal } from 'antd'
+import locale from 'antd/lib/date-picker/locale/es_ES'
+import { Dayjs } from 'dayjs'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
 
 export interface FormCreateProcess {
   status: 'finalizado' | 'notificado' | 'observado' | 'actualizado' | ''
@@ -164,14 +164,7 @@ export const CreateProcessForm = () => {
     mutationFn: createProcess,
     onSuccess: (data) => {
       if (data.success) {
-        const instance = Modal.info({
-          content: 'El registro se procesó correctamente!!!',
-          centered: true,
-          async onOk() {
-            instance.destroy()
-            router.push('/list-pas')
-          }
-        })
+        modalOnlyConfirm('', 'El registro se procesó correctamente!!!', () => router.push('/list-pas'))
       }
     }
   })
@@ -192,7 +185,7 @@ export const CreateProcessForm = () => {
   }
 
   return (
-    <form className="flex flex-col gap-5 py-5" onSubmit={handleSubmit(onSubmit)}>
+    <form className="flex flex-col py-5 gap-11" onSubmit={handleSubmit(onSubmit)}>
       <div className="grid items-center w-1/2 grid-cols-2 gap-5">
         <label className="text-gray-600">Número de Resolución Gerencial (RG)</label>
         <p className="pb-3">{selectedProcess?.resolution_number}</p>
@@ -372,7 +365,7 @@ export const CreateProcessForm = () => {
         </div>
       )}
 
-      {(status === 'notificado' || status === 'actualizado' || status === 'observado') && (
+      {status !== 'finalizado' && (
         <div className="grid items-center w-1/2 grid-cols-2 gap-5">
           <label>Designar nuevo responsable:</label>
           <FormSelect

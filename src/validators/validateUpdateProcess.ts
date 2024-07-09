@@ -1,16 +1,16 @@
 import dayjs from 'dayjs'
 import * as yup from 'yup'
 
-export const validateCreateProcess = yup.object().shape({
-  status: yup.string().oneOf(['finalizado', 'notificado', 'observado', 'actualizado', '']).required('La operación es obligatoria'),
+export const validateUpdateProcess = yup.object().shape({
+  status: yup.string().oneOf(['FINALIZACION', 'NOTIFICACION', 'OBSERVACION', 'ACTUALIZACION', '']).required('La operación es obligatoria'),
   current_responsible: yup.string().required('El responsable actual es obligatorio'),
   type_document: yup.string().when('status', {
-    is: (value: string) => value === 'observado' || value === 'actualizado',
+    is: (value: string) => value === 'OBSERVACION' || value === 'ACTUALIZACION',
     then: (schema) => schema.required('El tipo de documento es obligatorio'),
     otherwise: (schema) => schema.notRequired()
   }),
   document: yup.string().when('status', {
-    is: (value: string) => value === 'observado' || value === 'actualizado',
+    is: (value: string) => value === 'OBSERVACION' || value === 'ACTUALIZACION',
     then: (schema) => schema.required('El número de documento es obligatorio'),
     otherwise: (schema) => schema.notRequired()
   }),

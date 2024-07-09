@@ -6,6 +6,10 @@ export const apiService = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/`
 })
 
+export const authService = axios.create({
+  baseURL: `${process.env.NEXT_PUBLIC_API_TRACKING_PAS}/`
+})
+
 apiService.interceptors.request.use(function (config) {
   const token = localStorage.getItem('token')
   if (token) {

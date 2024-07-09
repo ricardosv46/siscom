@@ -26,15 +26,14 @@ export const FormInputArea = ({
   ...res
 }: FormInputProps) => {
   return (
-    <div>
+    <div className="relative">
       <Controller
         name={name}
         control={control}
         defaultValue=""
         render={({ field }) => <TextArea size="large" placeholder={placeholder} {...field} status={error ? 'error' : ''} {...res} />}
       />
-      {helperText && <p className="text-red-500">{helperText}</p>}
-      {!helperText && <p className="py-3 "></p>}
+      {helperText && <p className="absolute left-0 text-red-500 -bottom-6">{helperText}</p>}
     </div>
   )
 }

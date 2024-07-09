@@ -20,6 +20,7 @@ module.exports = {
         undefined: 'rgb(129, 71, 174)',
         purple: '#9B51E0',
         'dark-cyan': '#1F9B9C',
+        brown: '#134144',
         pink: '#E25266',
         orange: '#FF6B38',
         'gray-light': '#BABABA'

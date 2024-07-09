@@ -20,6 +20,7 @@ import ChartBarIteration, { getIniciados, getNotificados, getTodos } from '@comp
 import { TableStats } from '@components/ui/Tables/TableStats'
 import { useReactToPrint } from 'react-to-print'
 import { useFilterStats } from '@store/filterStats'
+import { useFilterProcesses } from '@store/filterProcess'
 
 const printOptions = {
   pageStyle: `
@@ -44,6 +45,7 @@ const StatsCandidate = ({ componentRef, handlePrint }: EstadisticaProps) => {
   const { electoralProcess } = useElectoralProcess()
   const [date, setDate] = useState<Dayjs | null>(null)
   const { resetFilters } = useFilterStats()
+  const { filters,filtersAction } = useFilterProcesses()
   const [checkIteration, setcheckIteration] = useState(false)
   const [valuesChart, setValuesChart] = useState<ValuesChart[]>([])
   const [valuesChartType, setValuesChartType] = useState<string>('todos')
@@ -103,9 +105,11 @@ const StatsCandidate = ({ componentRef, handlePrint }: EstadisticaProps) => {
   useEffect(() => {
     const day = dayjs()
     setDate(day)
+    resetFilters()
+    filtersAction({...filters,statusRJ:''})
     return () => {
       setDate(null)
-      resetFilters()
+      // resetFilters()
     }
   }, [])
 
@@ -129,7 +133,7 @@ const StatsCandidate = ({ componentRef, handlePrint }: EstadisticaProps) => {
         </div>
         <div className="bg-white pb-10 px-6 rounded-[15px] flex justify-between gap-24 overflow-auto">
           <div className="min-w-[448px] text-sm pt-10">
-            <TableStats {...{ checkIteration, stats: statsFilterData, valuesChartType }} />
+            <TableStats {...{ checkIteration, stats: statsFilterData, valuesChartType, type_pas: 'CANDIDATO' }} />
           </div>
           <div className="flex-1 h-[450px] ">
             <div className="flex items-center justify-between py-5 mx-20">

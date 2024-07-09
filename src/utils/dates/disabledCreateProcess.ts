@@ -1,9 +1,8 @@
 import dayjs, { Dayjs } from 'dayjs'
-import isBetween from 'dayjs/plugin/isBetween'
-dayjs.extend(isBetween)
+
 export const disabledDate = (current: Dayjs, dateIssue: string): boolean => {
   const date: Dayjs = dayjs(dateIssue).startOf('day')
-  const isOutOfRange: boolean = !dayjs(current).isBetween(date, dayjs(), null, '[]')
+  const isOutOfRange = dayjs(current).isBefore(date) || dayjs(current).isAfter(dayjs())
   return isOutOfRange
 }
 

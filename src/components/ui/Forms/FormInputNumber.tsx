@@ -15,7 +15,7 @@ interface FormInputProps extends InputNumberProps {
 
 export const FormInputNumber = ({ control, error, helperText, placeholder, name, replace, setter, ...res }: FormInputProps) => {
   return (
-    <div>
+    <div className="relative">
       <Controller
         name={name}
         control={control}
@@ -31,8 +31,7 @@ export const FormInputNumber = ({ control, error, helperText, placeholder, name,
           />
         )}
       />
-      {helperText && <p className="text-red-500">{helperText}</p>}
-      {!helperText && <p className="py-3 "></p>}
+      {helperText && <p className="absolute left-0 text-red-500 -bottom-6">{helperText}</p>}
     </div>
   )
 }

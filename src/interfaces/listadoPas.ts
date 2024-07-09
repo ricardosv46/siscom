@@ -5,6 +5,12 @@ export interface ListadoPas {
   etapa?: string
   fecha_fin?: string
   fecha_inicio?: string
+  fecha_inicio_dt?: string
+  fecha_fin_dt?: string
+  actualizacion_dt?: string
+  cargo?: string
+  type_op?: string
+  op?: string
   name?: string
   numero?: number
   resolution_number?: string
@@ -14,6 +20,10 @@ export interface ListadoPas {
   num_expediente?: string
   sgd?: boolean
   rj_type?: string
+  related_rj?: {
+    start_at?: string
+    document?: string
+  }
 }
 
 export interface Tracking {

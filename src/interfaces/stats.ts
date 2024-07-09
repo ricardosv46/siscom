@@ -42,6 +42,11 @@ export interface StatsOpReq {
   distric: string[]
 }
 
+export interface ProcessesStatsReq extends FiltersStats {
+  electoralProcess: string
+  rj: string
+}
+
 export interface ProvincesReq {
   electoralProcess: string
   department: string[]

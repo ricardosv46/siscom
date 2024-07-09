@@ -10,18 +10,18 @@ interface FormInputProps extends InputProps {
   name: string
   type?: 'password' | 'text'
   setter?: (value: string) => void
-  replace?: (value: string) => string
+  replace?: (value: string, decimals?: number) => string
 }
 
 export const FormInput = ({ control, error, helperText, placeholder, name, type = 'text', replace, setter, ...res }: FormInputProps) => {
   const onChange = (value: string, field: ControllerRenderProps) => {
-    const newValue = replace ? replace(value) : value
+    const newValue = replace ? replace(value, 5) : value
     if (setter) setter(newValue)
 
     return field.onChange(newValue)
   }
   return (
-    <>
+    <div className="relative">
       {type === 'text' && (
         <>
           <Controller
@@ -39,8 +39,7 @@ export const FormInput = ({ control, error, helperText, placeholder, name, type 
               />
             )}
           />
-          {helperText && <p className="text-red-500">{helperText}</p>}
-          {!helperText && <p className="py-3 "></p>}
+          {helperText && <p className="absolute left-0 text-red-500 -bottom-6">{helperText}</p>}
         </>
       )}
       {type === 'password' && (
@@ -53,10 +52,9 @@ export const FormInput = ({ control, error, helperText, placeholder, name, type 
               <Input.Password size="large" placeholder={placeholder} {...field} status={error ? 'error' : ''} {...res} />
             )}
           />
-          {helperText && <p className="text-red-500">{helperText}</p>}
-          {!helperText && <p className="py-3 "></p>}
+          {helperText && <p className="absolute left-0 text-red-500 -bottom-6">{helperText}</p>}
         </>
       )}
-    </>
+    </div>
   )
 }

@@ -1,6 +1,26 @@
 import { ListadoPas } from '@interfaces/listadoPas'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { utils, writeFile } from 'xlsx'
+
+interface ExportExcel {
+  num_expediente?: string
+  resolucion_gerencial?: string
+  estado?: string
+  dni_candidato?: string
+  nombre?: string
+  responsable?: string
+  etapa?: string
+  fecha_inicio?: string
+  fecha_fin?: string
+  actualizacion?: string
+  tipo_proceso?: string
+  rj_type?: string
+  document?: string
+  start_at?: string
+  cargo?: string
+  type_op?: string
+  op?: string
+}
 
 export const downloadExcelReportPas = (body: ListadoPas[]) => {
   const headers = [
@@ -15,18 +35,23 @@ export const downloadExcelReportPas = (body: ListadoPas[]) => {
     'Fecha fin',
     'Actualización',
     'Tipo Proceso',
+    'Forma de Conclusion',
+    'Número de RJ',
+    'Fecha de emisión de RJ',
     'Cargo al que Postulo',
     'Tipo de OP',
     'Nombre de OP'
   ]
 
-  let dataExport: ListadoPas[] = []
+  let dataExport: ExportExcel[] = []
 
   if (body.length > 0) {
-    dataExport = body.map((item: any) => {
-      const fecha_inicio = item?.fecha_inicio_dt ? moment(item.fecha_inicio_dt).format('DD/MM/YYYY') : item?.fecha_inicio_dt
-      const fecha_fin = item?.fecha_fin_dt ? moment(item.fecha_fin_dt).format('DD/MM/YYYY') : item?.fecha_fin_dt
-      const actualizacion = item?.actualizacion_dt ? moment(item.actualizacion_dt).format('DD/MM/YYYY') : item?.actualizacion_dt
+    dataExport = body.map((item: ListadoPas) => {
+      console.log({ item })
+      const fecha_inicio = item?.fecha_inicio_dt ? dayjs(item.fecha_inicio_dt).format('DD/MM/YYYY') : item?.fecha_inicio_dt
+      const fecha_fin = item?.fecha_fin_dt ? dayjs(item.fecha_fin_dt).format('DD/MM/YYYY') : item?.fecha_fin_dt
+      const actualizacion = item?.actualizacion_dt ? dayjs(item.actualizacion_dt).format('DD/MM/YYYY') : item?.actualizacion_dt
+      const start_at = item?.related_rj?.start_at ? dayjs(item.related_rj.start_at).format('DD/MM/YYYY') : item?.related_rj?.start_at
 
       return {
         num_expediente: item.num_expediente,
@@ -35,11 +60,14 @@ export const downloadExcelReportPas = (body: ListadoPas[]) => {
         dni_candidato: item.dni_candidato,
         nombre: item.name,
         responsable: item.responsable,
-        etapa: item.estapa,
+        etapa: item.etapa,
         fecha_inicio: fecha_inicio,
         fecha_fin: fecha_fin,
         actualizacion: actualizacion,
         tipo_proceso: item.type,
+        rj_type: item.rj_type,
+        document: item.related_rj?.document,
+        start_at: start_at,
         cargo: item.cargo,
         type_op: item.type_op,
         op: item.op

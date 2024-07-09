@@ -6,9 +6,10 @@ interface TableOPProps {
   stats: Stats
   checkIteration: boolean
   valuesChartType: string
+  type_pas: 'OP' | 'CANDIDATO' | ''
 }
 
-export const TableStats = ({ stats, checkIteration, valuesChartType }: TableOPProps) => {
+export const TableStats = ({ stats, checkIteration, valuesChartType, type_pas }: TableOPProps) => {
   return (
     <table>
       <thead>
@@ -21,6 +22,7 @@ export const TableStats = ({ stats, checkIteration, valuesChartType }: TableOPPr
       <tbody>
         <TdStats
           {...{
+            type_pas,
             number: stats?.iniciado_rg?.total,
             checkIteration,
             valuesChartType,
@@ -33,6 +35,7 @@ export const TableStats = ({ stats, checkIteration, valuesChartType }: TableOPPr
         />
         <TdStats
           {...{
+            type_pas,
             number: stats?.iniciado_rg?.notificado.total,
             checkIteration,
             valuesChartType,
@@ -46,6 +49,7 @@ export const TableStats = ({ stats, checkIteration, valuesChartType }: TableOPPr
         />
         <TdStats
           {...{
+            type_pas,
             number: stats?.iniciado_rg?.notificado?.con_rj?.total,
             checkIteration,
             valuesChartType,
@@ -59,6 +63,7 @@ export const TableStats = ({ stats, checkIteration, valuesChartType }: TableOPPr
         />
         <TdStats
           {...{
+            type_pas,
             number: stats?.iniciado_rg?.notificado?.con_rj?.sancion,
             checkIteration,
             valuesChartType,
@@ -73,6 +78,7 @@ export const TableStats = ({ stats, checkIteration, valuesChartType }: TableOPPr
         />
         <TdStats
           {...{
+            type_pas,
             number: stats?.iniciado_rg?.notificado?.con_rj?.archivo,
             checkIteration,
             valuesChartType,
@@ -87,6 +93,7 @@ export const TableStats = ({ stats, checkIteration, valuesChartType }: TableOPPr
         />
         <TdStats
           {...{
+            type_pas,
             number: stats?.iniciado_rg?.notificado?.con_rj?.nulidad,
             checkIteration,
             valuesChartType,
@@ -101,6 +108,7 @@ export const TableStats = ({ stats, checkIteration, valuesChartType }: TableOPPr
         />
         <TdStats
           {...{
+            type_pas,
             number: stats?.iniciado_rg?.notificado?.con_rj?.concluido,
             checkIteration,
             valuesChartType,
@@ -115,6 +123,7 @@ export const TableStats = ({ stats, checkIteration, valuesChartType }: TableOPPr
         />
         <TdStats
           {...{
+            type_pas,
             number: stats?.iniciado_rg?.notificado?.en_proceso?.total,
             checkIteration,
             valuesChartType,
@@ -128,6 +137,7 @@ export const TableStats = ({ stats, checkIteration, valuesChartType }: TableOPPr
         />
         <TdStats
           {...{
+            type_pas,
             number: stats?.iniciado_rg?.notificado?.en_proceso?.resolutiva,
             checkIteration,
             valuesChartType,
@@ -142,6 +152,7 @@ export const TableStats = ({ stats, checkIteration, valuesChartType }: TableOPPr
         />
         <TdStats
           {...{
+            type_pas,
             number: stats?.iniciado_rg?.notificado?.en_proceso?.instructiva,
             checkIteration,
             valuesChartType,
@@ -156,6 +167,7 @@ export const TableStats = ({ stats, checkIteration, valuesChartType }: TableOPPr
         />
         <TdStats
           {...{
+            type_pas,
             number: stats?.iniciado_rg?.notificado?.fuera_plazo,
             checkIteration,
             valuesChartType,
@@ -170,6 +182,7 @@ export const TableStats = ({ stats, checkIteration, valuesChartType }: TableOPPr
         />
         <TdStats
           {...{
+            type_pas,
             number: stats?.iniciado_rg?.no_notificado,
             checkIteration,
             valuesChartType,

@@ -21,6 +21,8 @@ export const FilterTypeDocument = ({
   const isStatusUpdated = status === 'actualizado'
   const isStatusObserved = status === 'observado'
   const isResponsibleNotGSFP = responsable !== 'GSFP'
+  const isCurrentResponsibleNotGSFP = current_responsible !== 'GSFP'
+  const isCurrentResponsibleGSFP = current_responsible === 'GSFP'
 
   return typeDocuments.filter((item: TypeDocument) => {
     const isResolucionJefatural = item.name === 'RESOLUCION JEFATURAL-PAS'
@@ -29,8 +31,8 @@ export const FilterTypeDocument = ({
     if (isResolucionJefatural) {
       if (
         (!isProfileJn && !isAdmin && (isStatusUpdated || isStatusObserved) && isResponsibleNotGSFP) ||
-        (isProfileJn && !isAdmin && status === 'observado') ||
-        (isAdmin && (current_responsible === 'GSFP' || current_responsible !== 'GSFP') && status === 'observado')
+        (isProfileJn && !isAdmin && isStatusObserved) ||
+        (isAdmin && (isCurrentResponsibleGSFP || isCurrentResponsibleNotGSFP) && isStatusObserved)
       ) {
         return false
       }
@@ -39,8 +41,8 @@ export const FilterTypeDocument = ({
     if (isInformeInstruccion) {
       if (
         (!isProfileJn && !isAdmin && (isStatusUpdated || isStatusObserved) && isResponsibleNotGSFP) ||
-        (isProfileJn && !isAdmin && (status === 'actualizado' || status === 'observado')) ||
-        (isAdmin && current_responsible !== 'GSFP' && (status === 'actualizado' || status === 'observado'))
+        (isProfileJn && !isAdmin && (isStatusUpdated || isStatusObserved)) ||
+        (isAdmin && isCurrentResponsibleNotGSFP && (isStatusUpdated || isStatusObserved))
       ) {
         return false
       }

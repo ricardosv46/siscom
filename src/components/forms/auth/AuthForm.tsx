@@ -4,6 +4,7 @@ import { LoginReq, LoginRes } from '@interfaces/login'
 import { login } from '@services/auth'
 import { useAuth } from '@store/auth'
 import { useMutation } from '@tanstack/react-query'
+import { modalOnlyConfirm } from '@utils/modals'
 import { onlyLetters } from '@utils/onlyLetters'
 import { Button, Modal } from 'antd'
 import { useForm } from 'react-hook-form'
@@ -31,13 +32,7 @@ export const AuthForm = () => {
       loginAction(data)
     },
     onError: () => {
-      const modalError = Modal.info({
-        content: 'Usuario y/o contraseña inválido !!!',
-        centered: true,
-        async onOk() {
-          modalError.destroy()
-        }
-      })
+      modalOnlyConfirm('', 'Usuario y/o contraseña inválido !!!')
     }
   })
 

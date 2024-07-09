@@ -2,6 +2,7 @@ import { EditOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/ico
 import { Tracking } from '@interfaces/listadoPas'
 import { trackingHide } from '@services/processes'
 import { useAuth } from '@store/auth'
+import { useSelectedTracking } from '@store/selectedTracking'
 import { useMutation } from '@tanstack/react-query'
 import { Button, Modal, Switch } from 'antd'
 import { useRouter } from 'next/router'
@@ -13,13 +14,13 @@ interface TranckingCardProps {
   status: string
   item: Tracking
   notifications: Tracking[]
-  firstIssue: Tracking
   refetch: () => void
 }
 
-const TranckingCard = ({ notifications, item, isEvenNumber, keyId, refetch, firstIssue, status }: TranckingCardProps) => {
+export const TranckingCard = ({ notifications, item, isEvenNumber, keyId, refetch, status }: TranckingCardProps) => {
   const { user } = useAuth()
   const router = useRouter()
+  const { selectedTrackingAction } = useSelectedTracking()
   const disabledShow = notifications[0]?.id === item?.id || item?.rj_type === 'REHACER'
   const {
     id,
@@ -57,6 +58,11 @@ const TranckingCard = ({ notifications, item, isEvenNumber, keyId, refetch, firs
 
   const showCard = async () => {
     mutatetrackingHide({ id, hide: !is_hidden })
+  }
+
+  const update = () => {
+    selectedTrackingAction(item)
+    router.push('/list-pas/update')
   }
 
   return (
@@ -112,13 +118,13 @@ const TranckingCard = ({ notifications, item, isEvenNumber, keyId, refetch, firs
 
         <br></br>
         <div className="flex gap-5">
-          {rj_type !== 'REHACER' && (
+          {rj_type !== 'REHACER' && rj_type !== 'AMPLIACION' && (
             <Button
               type="dashed"
               hidden={keyId === 0 || !user?.is_admin}
               disabled={is_hidden || status === 'inactive'}
               icon={<EditOutlined />}
-              onClick={() => router.push('/list-pas/update')}>
+              onClick={update}>
               Editar
             </Button>
           )}
@@ -147,5 +153,3 @@ const TranckingCard = ({ notifications, item, isEvenNumber, keyId, refetch, firs
     </div>
   )
 }
-
-export default TranckingCard

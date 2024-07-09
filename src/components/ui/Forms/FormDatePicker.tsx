@@ -3,28 +3,17 @@ import { Controller } from 'react-hook-form'
 
 interface FormInputProps extends DatePickerProps {
   control: any
-  error: boolean
-  helperText: string
+  error?: boolean
+  helperText?: string
   placeholder: string
   name: string
-  type?: 'password' | 'text'
   setter?: (value: string) => void
   replace?: (value: string) => string
 }
 
-export const FormDatePicker = ({
-  control,
-  error,
-  helperText,
-  placeholder,
-  name,
-  type = 'text',
-  replace,
-  setter,
-  ...res
-}: FormInputProps) => {
+export const FormDatePicker = ({ control, error, helperText, placeholder, name, replace, setter, ...res }: FormInputProps) => {
   return (
-    <div>
+    <div className="relative w-full">
       <Controller
         name={name}
         control={control}
@@ -40,8 +29,7 @@ export const FormDatePicker = ({
           />
         )}
       />
-      {helperText && <p className="text-red-500">{helperText}</p>}
-      {!helperText && <p className="py-3 "></p>}
+      {helperText && <p className="absolute left-0 text-red-500 -bottom-6">{helperText}</p>}
     </div>
   )
 }

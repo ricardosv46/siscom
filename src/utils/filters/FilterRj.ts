@@ -18,3 +18,11 @@ export const FilterRj = ({ user, rj_types }: FilterRjProps): RjType[] => {
 
   return data
 }
+
+export const FilterRjAdmin = ({ rj_types }: { rj_types: RjType[] }): RjType[] => {
+  const data = rj_types.filter((item) => {
+    return item?.rj_value !== 'REHACER' && item?.rj_value !== 'AMPLIACION'
+  })
+
+  return data
+}

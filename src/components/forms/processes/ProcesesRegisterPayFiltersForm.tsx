@@ -4,14 +4,15 @@ import { IconReport } from '@components/icons/IconReport'
 import { IconUploap } from '@components/icons/IconUploap'
 import { ListadoPas } from '@interfaces/listadoPas'
 import { optionsStatus, optionstypeProcess } from '@locales/optionsFiltersProcesses'
-import { downloadExcelDetail, downloadExcelRJs, downloadReportePas, loadExcelInformation, validateFile } from '@services/processes'
+import { downloadExcelPayment, loadExcelTypePay } from '@services/payments'
+import { downloadReportePas } from '@services/processes'
 import { useAuth } from '@store/auth'
 import { useElectoralProcess } from '@store/electoralProcess'
 import { Filters, useFilterProcesses } from '@store/filterProcess'
 import { convertOptionsSelectResponsible, isLess2022 } from '@utils/convertOptionsSelect'
 import { disabledDateNow } from '@utils/disabledDateNow'
 import { downloadExcelReportPas } from '@utils/excel/downloadExcelReportPas'
-import { modalConfirm, modalInfo, modalOnlyConfirm } from '@utils/modals'
+import { modalInfo, modalOnlyConfirm } from '@utils/modals'
 import { DatePicker, Input, Select, Tooltip, Upload } from 'antd'
 import locale from 'antd/lib/date-picker/locale/es_ES'
 import dayjs from 'dayjs'
@@ -26,7 +27,7 @@ interface ProcesesFiltersFormProps {
   filterUpdate: (filters: Filters, data: ListadoPas[]) => ListadoPas[]
 }
 
-export const ProcesesFiltersForm = ({ processes, refetch, filterUpdate, processesFiltered }: ProcesesFiltersFormProps) => {
+export const ProcesesRegisterPayFiltersForm = ({ processes, refetch, filterUpdate, processesFiltered }: ProcesesFiltersFormProps) => {
   const { filters, filtersAction, resetFilters } = useFilterProcesses()
   const { electoralProcess } = useElectoralProcess()
   const { user } = useAuth()
@@ -46,26 +47,7 @@ export const ProcesesFiltersForm = ({ processes, refetch, filterUpdate, processe
   const upLoadExcel = async (file: File) => {
     const instanceProcesando = modalInfo('Procesando', 'Espere mientras termine la carga...')
     try {
-      const res = await validateFile(String(user?.id!), file, electoralProcess)
-
-      if (res?.message === '1') {
-        instanceProcesando.destroy()
-        modalConfirm(
-          '',
-          'El excel contiene registros de finalizaciones de procedimientos PAS. ¿Desea continuar?',
-          async () => await loadExcelInformation(String(user?.id!), file, electoralProcess, refetch)
-        )
-      }
-
-      if (res?.message === '2') {
-        instanceProcesando.destroy()
-        modalOnlyConfirm('', 'Su usuario no tiene permitido realizar registro de finalizaciones de procedimientos PAS')
-      }
-
-      if (res?.message === '3') {
-        instanceProcesando.destroy()
-        await loadExcelInformation(String(user?.id!), file, electoralProcess, refetch)
-      }
+      await loadExcelTypePay(file, user!, refetch)
     } catch (error) {
       console.log({ error })
     } finally {
@@ -80,6 +62,7 @@ export const ProcesesFiltersForm = ({ processes, refetch, filterUpdate, processe
 
   const reportPAS = async () => {
     const instance = modalInfo('Cargando', 'Espere mientras termine la descarga...')
+
     if (processesFiltered?.length === 0) {
       instance.destroy()
       modalOnlyConfirm('', 'No hay registros para descargar')
@@ -100,24 +83,8 @@ export const ProcesesFiltersForm = ({ processes, refetch, filterUpdate, processe
   const downloadExcel = async () => {
     const instance = modalInfo('Cargando', 'Espere mientras termine la descarga...')
 
-    const processesIds = processesFiltered.map((item: any) => item.numero)
-
-    if (processesIds?.length === 0) {
-      instance.destroy()
-      modalOnlyConfirm('', 'No hay registros para descargar')
-
-      return
-    }
-
-    await downloadExcelDetail(processesIds)
-
-    instance.destroy()
-  }
-
-  const downloadRJs = async () => {
-    const instance = modalInfo('Cargando', 'Espere mientras termine la descarga...')
-
-    const processesIds = processesFiltered.map((item: any) => item.numero)
+    const processesIds = processesFiltered.map((item) => item?.numero!)
+    const processesDnis = processesFiltered.map((item) => item?.dni_candidato!)
 
     if (processesIds?.length === 0) {
       instance.destroy()
@@ -127,7 +94,7 @@ export const ProcesesFiltersForm = ({ processes, refetch, filterUpdate, processe
       return
     }
 
-    await downloadExcelRJs(processesIds)
+    await downloadExcelPayment(processesIds, processesDnis)
 
     instance.destroy()
   }
@@ -209,22 +176,12 @@ export const ProcesesFiltersForm = ({ processes, refetch, filterUpdate, processe
       </div>
 
       <div className="flex flex-col justify-end text-sm">
-        <Tooltip title="Descargar consolidado de registros por expediente">
+        <Tooltip title="Descargar listado de sancionados">
           <button
             className="flex items-center justify-center px-3 py-1.5 bg-blue border-none text-white cursor-pointer gap-2"
             onClick={downloadExcel}>
             <IconDetail className="h-6" />
-            Detalle
-          </button>
-        </Tooltip>
-      </div>
-
-      <div className="flex flex-col justify-end text-sm">
-        <Tooltip title="Descargar consolidado de RJs">
-          <button
-            className="flex items-center justify-center gap-2 px-3 py-2 text-white border-none cursor-pointer bg-purple"
-            onClick={downloadRJs}>
-            RJs Emitidads
+            Sancionados
           </button>
         </Tooltip>
       </div>

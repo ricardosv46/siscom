@@ -18,6 +18,8 @@ import { ChartBarAll } from '@components/ui/Charts/Stats/ChartBarAll'
 import ChartBarIteration, { getIniciados, getNotificados, getTodos } from '@components/ui/Charts/Stats/ChartBarIteration'
 import { TableStats } from '@components/ui/Tables/TableStats'
 import { useReactToPrint } from 'react-to-print'
+import { useFilterStats } from '@store/filterStats'
+import { useFilterProcesses } from '@store/filterProcess'
 
 const printOptions = {
   pageStyle: `
@@ -40,11 +42,15 @@ interface ValuesChart {
 
 const StatsOp = ({ componentRef, handlePrint }: EstadisticaProps) => {
   const { electoralProcess } = useElectoralProcess()
+  const { resetFilters } = useFilterStats()
   const [date, setDate] = useState<Dayjs | null>(null)
+  const { filters,filtersAction } = useFilterProcesses()
 
   useEffect(() => {
     const day = dayjs()
     setDate(day)
+    resetFilters()
+    filtersAction({...filters,statusRJ:''})
 
     return () => setDate(null)
   }, [])
@@ -96,7 +102,7 @@ const StatsOp = ({ componentRef, handlePrint }: EstadisticaProps) => {
         </div>
         <div className="bg-white pb-10 px-6 rounded-[15px] flex justify-between gap-24">
           <div className="w-[448px] text-sm pt-10">
-            <TableStats {...{ checkIteration, stats, valuesChartType }} />
+            <TableStats {...{ checkIteration, stats, valuesChartType, type_pas: 'OP' }} />
           </div>
           <div className="flex-1 h-[450px]  ">
             <div className="flex items-center justify-between py-5 mx-20">

@@ -1,6 +1,7 @@
 import { IconCircle } from '@components/icons/IconCircle'
 import { Stats } from '@interfaces/stats'
 import { useFilterProcesses } from '@store/filterProcess'
+import { useFilterStats } from '@store/filterStats'
 import { useRouter } from 'next/router'
 
 interface TdStatsProps {
@@ -14,14 +15,29 @@ interface TdStatsProps {
   number: number
   border?: string
   rj: string
+  type_pas: 'OP' | 'CANDIDATO' | ''
 }
 
-export const TdStats = ({ stats, checkIteration, valuesChartType, color, show, title, number, border, secondColor, rj }: TdStatsProps) => {
+export const TdStats = ({
+  stats,
+  checkIteration,
+  valuesChartType,
+  color,
+  show,
+  title,
+  number,
+  border,
+  secondColor,
+  rj,
+  type_pas
+}: TdStatsProps) => {
   const { filters, filtersAction, resetFilters } = useFilterProcesses()
-  const router = useRouter()
+  const { filters: filtersStats, filtersAction: filtersStatsAction } = useFilterStats()
 
+  const router = useRouter()
   const handleFilterListadoPas = (filter: string) => {
     resetFilters()
+    filtersStatsAction({ type_pas: type_pas })
     filtersAction({ ...filters, statusRJ: filter })
     router.push('/list-pas')
   }
