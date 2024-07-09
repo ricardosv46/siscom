@@ -88,14 +88,11 @@ export const ProcesesRegisterPayFiltersForm = ({ processes, refetch, filterUpdat
 
     if (processesIds?.length === 0) {
       instance.destroy()
-
       modalOnlyConfirm('', 'No hay registros para descargar')
-
       return
     }
 
     await downloadExcelPayment(processesIds, processesDnis)
-
     instance.destroy()
   }
 

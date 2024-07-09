@@ -10,14 +10,13 @@ import {
   Tracking,
   TypeDocument
 } from '@interfaces/listadoPas'
-import { User } from '@interfaces/login'
 import { Response, ResponseDataMessage, ResponseMessage } from '@interfaces/response'
 import apiService from '@lib/apiService'
-import { createExcel } from '@utils/createExcel'
 import { downloadExcel } from '@utils/downloadExcel'
 import { downloadExcelErrors } from '@utils/excel/downloadExcelErrors'
-import { valuesFormData } from '@utils/valuesFormData'
-import { Modal } from 'antd'
+import { modalOnlyConfirm } from '@utils/modals'
+import { statusFormData } from '@utils/processes/statusFormData'
+import { valuesFormData, valuesFormDataExcel } from '@utils/valuesFormData'
 
 export const getProcesses = async (electoralProcess: string, label: string): Promise<ListadoPas[]> => {
   try {
@@ -94,10 +93,7 @@ export const updateProcess = async ({ id, payload }: CreateProcessReq): Promise<
 
 export const validateFile = async (id: string, xlsx_file: File, electoral_process: string): Promise<ResponseMessage<string>> => {
   try {
-    const formData = new FormData()
-    formData.set('user_id', id)
-    formData.set('xlsx_file', xlsx_file)
-    formData.set('electoral_process', electoral_process)
+    const formData = valuesFormDataExcel({ user_id: id, electoral_process }, xlsx_file)
     const { data } = await apiService.post(`/processes/validateExcel/`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data' // Cambiar a 'multipart/form-data'
@@ -105,7 +101,6 @@ export const validateFile = async (id: string, xlsx_file: File, electoral_proces
     })
     return data
   } catch (error: any) {
-    console.log({ error })
     throw error?.response?.data ?? error?.data?.message
   }
 }
@@ -116,24 +111,13 @@ export const loadExcelInformation = async (
   electoral_process: string,
   refecth: () => void
 ): Promise<ResponseDataMessage<[]>> => {
-  const formData = new FormData()
-  formData.set('user_id', id)
-  formData.set('xlsx_file', xlsx_file)
-  formData.set('electoral_process', electoral_process)
-
   try {
+    const formData = valuesFormDataExcel({ user_id: id, electoral_process }, xlsx_file)
     const { data } = await apiService.post(`/processes/bulk/tracking/create/`, formData, {})
     const response = data
 
     if (response) {
-      const instance = Modal.info({
-        content: response.message,
-        centered: true,
-        async onOk() {
-          instance.destroy()
-          refecth()
-        }
-      })
+      modalOnlyConfirm('', response.message, refecth)
 
       if (response.data.length > 0) {
         downloadExcelErrors(response)
@@ -183,13 +167,7 @@ export const downloadDocuments = async (item: ListadoPas, id: number): Promise<B
     })
 
     if (status == 400 || data === undefined) {
-      const instance = Modal.info({
-        content: 'No se encontraron documentos para descargar',
-        centered: true,
-        async onOk() {
-          instance.destroy()
-        }
-      })
+      modalOnlyConfirm('', 'No se encontraron documentos para descargar')
     } else {
       const outputFilename =
         item?.dni_candidato?.length! > 0 ? `${item?.dni_candidato} ${item?.num_expediente}.zip` : `${item?.num_expediente}.zip`
@@ -204,19 +182,7 @@ export const downloadDocuments = async (item: ListadoPas, id: number): Promise<B
 
 export const status = async ({ motive, related_document, action, file, id, document }: StatusReq): Promise<ResponseDataMessage<[]>> => {
   try {
-    const formData = new FormData()
-    formData.append('motive', motive)
-    formData.append('action', action)
-
-    if (related_document) {
-      formData.append('related_document', related_document)
-    }
-    if (file) {
-      formData.append('file', file)
-    }
-    if (document) {
-      formData.append('document', document)
-    }
+    const formData = statusFormData({ motive, related_document, action, file, id, document })
     const { data } = await apiService.post(`/processes/${id}/status/`, formData)
     return data
   } catch (error: any) {
@@ -272,23 +238,20 @@ export const getTrackingDetail = async ({ nu_ann, nu_emi, id }: ReqAnnexeDetail)
 
 export const downloadFileDetailPdf = async (payload: AnnexeDetail) => {
   try {
-    const formData = new FormData()
-    formData.set('nu_ann_sgd', payload?.nu_ann!)
-    formData.set('nu_emi_sgd', payload?.nu_emi!)
+    const formData = valuesFormData({ nu_ann_sgd: payload?.nu_ann!, nu_emi_sgd: payload?.nu_emi! })
     const { data } = await apiService.post(`/processes/sgd/downloadFile2/`, formData, {
       responseType: 'arraybuffer'
     })
     const outputFilename = `${payload?.tipo_doc} ${payload?.nro_doc}.pdf`
 
     downloadExcel(data, outputFilename)
-  } catch (error: any) {}
+  } catch (error: any) {
+    throw error?.response?.data ?? error?.data?.message
+  }
 }
 export const downloadFileDetail = async (payload: { idArchivo: string; nombreArchivo: string }) => {
   try {
-    const formData = new FormData()
-
-    formData.set('idArchivo', payload?.idArchivo)
-    formData.set('nombreArchivo', payload?.nombreArchivo)
+    const formData = valuesFormData(payload)
     const { data } = await apiService.post(`/processes/sgd/downloadFile/`, formData, {
       responseType: 'arraybuffer'
     })

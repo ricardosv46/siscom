@@ -98,7 +98,7 @@ export const CreateProcessForm = () => {
   const firstIssueUser = tranckings?.pop()
   const dateIssue = user?.is_admin ? firstIssueAdmin?.created_at_dt : firstIssueUser?.start_at_dt
 
-  const { status, current_responsible, type_document, document, rj_type, months, days, amount, new_responsible } = watch()
+  const { status, current_responsible, type_document, rj_type, months, days } = watch()
 
   const { data: typeDocuments = [] as TypeDocument[] } = useQuery<TypeDocument[]>({
     queryKey: ['getElectoralProcess'],

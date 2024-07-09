@@ -17,6 +17,7 @@ import locale from 'antd/lib/date-picker/locale/es_ES'
 import { Dayjs } from 'dayjs'
 import { useRouter } from 'next/router'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { modalOnlyConfirm } from '@utils/modals'
 export interface FormDataTypePay {
   amount: string
   interests: string
@@ -98,40 +99,18 @@ const TypePay = () => {
 
   useEffect(() => {
     if (isError) {
-      const instance = Modal.info({
-        icon: '',
-        content: (
-          <div>
-            <p>La Resolución Jefatural de Sanción no presenta un monto especificado. Se requiere su actualización</p>
-          </div>
-        ),
-        onOk() {
-          instance.destroy()
-          router.push('/listadopasgad')
-        },
-        okButtonProps: { style: { backgroundColor: '#0874cc' } },
-        centered: true
-      })
+      modalOnlyConfirm('', 'La Resolución Jefatural de Sanción no presenta un monto especificado. Se requiere su actualización', () =>
+        router.push('/register-pay')
+      )
     }
   }, [isError])
 
   useEffect(() => {
     const dataNum = initialAmount?.data?.rj_amount && initialAmount?.data?.rj_amount
     if (dataNum === 0) {
-      const instance = Modal.info({
-        icon: '',
-        content: (
-          <div>
-            <p>La Resolución Jefatural de Sanción no presenta un monto especificado. Se requiere su actualización</p>
-          </div>
-        ),
-        onOk() {
-          instance.destroy()
-          router.push('/register-pay')
-        },
-        okButtonProps: { style: { backgroundColor: '#0874cc' } },
-        centered: true
-      })
+      modalOnlyConfirm('', 'La Resolución Jefatural de Sanción no presenta un monto especificado. Se requiere su actualización', () =>
+        router.push('/register-pay')
+      )
     }
   }, [isLoading])
 
@@ -152,7 +131,6 @@ const TypePay = () => {
       const newAmount = Initamount + amountInterests - newInitialCuote
       const sum = Initamount + amountInterests
       const res = sum - newInitialCuote
-      console.log({ newAmount, amountInterests, newInitialCuote, Initamount, sum, res })
       // const newInitialCuoteValue = newInitialCuote >= newAmount ? newAmount : newInitialCuote
       setValue('amount', convertToNumberDecimal(String(newAmount.toFixed(10))))
     }
@@ -170,7 +148,6 @@ const TypePay = () => {
       const amountInterests = Number(interests.replaceAll(',', ''))
       const newAmount = Initamount + amountInterests - newInitialCuote
 
-      console.log({ newAmount, amountInterests, newInitialCuote })
       setValue('amount', convertToNumberDecimal(String(newAmount)))
 
       if (newInitialCuote >= newAmount) {
@@ -239,19 +216,7 @@ const TypePay = () => {
         await register({ ...getValues(), cuotes: '', amount: String(amount) }, id)
       }
       close()
-      const instance = Modal.info({
-        icon: '',
-        content: (
-          <div>
-            <p>Se registro correctamente</p>
-          </div>
-        ),
-        onOk() {
-          instance.destroy()
-          router.push('/register-pay')
-        },
-        centered: true
-      })
+      modalOnlyConfirm('', 'Se registro correctamente', () => router.push('/register-pay'))
     } catch (error) {
       console.log({ error })
     } finally {

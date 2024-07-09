@@ -6,7 +6,6 @@ import { useSelectedTracking } from '@store/selectedTracking'
 import { useMutation } from '@tanstack/react-query'
 import { Button, Modal, Switch } from 'antd'
 import { useRouter } from 'next/router'
-import React, { Component } from 'react'
 
 interface TranckingCardProps {
   keyId: number

@@ -5,11 +5,9 @@ import { TranckingCard } from '@components/ui/Cards/TranckingCard'
 import { Tracking } from '@interfaces/listadoPas'
 import { Pay } from '@interfaces/payment'
 import { getPay } from '@services/payments'
-import { getTrackings } from '@services/processes'
 import { useSelectedProcess } from '@store/selectedProcess'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
-import React from 'react'
 
 const DetailPay = () => {
   const { selectedProcess } = useSelectedProcess()
@@ -44,7 +42,7 @@ const DetailPay = () => {
 
   const rj_remakeDatail: Tracking = tranckings?.filter((item) => item.rj_type === 'REHACER' && item.rj_remake)[0]
 
-  const rj_remakeActive = tranckings?.some((item) => item.rj_type && item.rj_type !== 'REHACER' && item.rj_remake)
+  // const rj_remakeActive = tranckings?.some((item) => item.rj_type && item.rj_type !== 'REHACER' && item.rj_remake)
 
   // const firstIssue = tranckings?.filter((item) => item.tracking_action === 'EMISION')[0]
   const notifications = tranckings?.filter((item) => item.tracking_action === 'NOTIFICACION')

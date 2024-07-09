@@ -1,5 +1,4 @@
 import { SearchOutlined } from '@ant-design/icons'
-import { ChartBarAll } from '@components/ui/Charts/Stats/ChartBarAll'
 import { Op, Position, StatsFilterReq, Ubigeo } from '@interfaces/stats'
 import { getDepartments, getDistrics, getOps, getpositions, getProvinces } from '@services/stats'
 import { useElectoralProcess } from '@store/electoralProcess'
@@ -7,7 +6,7 @@ import { useFilterStats } from '@store/filterStats'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { convertOptionsSelect } from '@utils/convertOptionsSelect'
 import { Button, Select } from 'antd'
-import { Dispatch, SetStateAction, useEffect } from 'react'
+import { useEffect } from 'react'
 
 interface StatsFilterForm {
   mutateStats: (props: StatsFilterReq) => void

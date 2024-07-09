@@ -16,6 +16,7 @@ import locale from 'antd/lib/date-picker/locale/es_ES'
 import { Dayjs } from 'dayjs'
 import { useRouter } from 'next/router'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { modalOnlyConfirm } from '@utils/modals'
 
 const optionsFormPay = [
   {
@@ -82,7 +83,6 @@ const RegisterPay = () => {
     refetchOnWindowFocus: false,
     enabled: !!id
   })
-  console.log({ typepay })
 
   const newpays = pay?.filter((i) => i?.payment_date && i?.fees)
 
@@ -106,20 +106,7 @@ const RegisterPay = () => {
     const dataNum = +fees === pays?.length
 
     if (dataNum && typepay === 'FRACCIONAMIENTO') {
-      const instance = Modal.info({
-        icon: '',
-        content: (
-          <div>
-            <p>No existen cuotas pendientes para este expediente.</p>
-          </div>
-        ),
-        onOk() {
-          instance.destroy()
-          router.push('/register-pay')
-        },
-        okButtonProps: { style: { backgroundColor: '#0874cc' } },
-        centered: true
-      })
+      modalOnlyConfirm('', 'No existen cuotas pendientes para este expediente.', () => router.push('/register-pay'))
     }
   }, [finalFees, fees, pays])
 
@@ -133,19 +120,7 @@ const RegisterPay = () => {
     try {
       await register(getValues(), id)
       close()
-      const instance = Modal.info({
-        icon: '',
-        content: (
-          <div>
-            <p>Se registro correctamente</p>
-          </div>
-        ),
-        onOk() {
-          instance.destroy()
-          router.push('/register-pay')
-        },
-        centered: true
-      })
+      modalOnlyConfirm('', 'Se registro correctamente', () => router.push('/register-pay'))
     } catch (error) {
       console.log({ error })
     } finally {

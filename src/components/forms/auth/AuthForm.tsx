@@ -6,7 +6,7 @@ import { useAuth } from '@store/auth'
 import { useMutation } from '@tanstack/react-query'
 import { modalOnlyConfirm } from '@utils/modals'
 import { onlyLetters } from '@utils/onlyLetters'
-import { Button, Modal } from 'antd'
+import { Button } from 'antd'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 

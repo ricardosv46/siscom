@@ -32,8 +32,6 @@ export interface FormUpdateProcess {
   document: string
   rj_type: string
   start_at: Dayjs | null
-  months: number
-  days: number
   amount: string
   new_responsible: string
   comment: string
@@ -76,8 +74,6 @@ export const UpdateProcessForm = () => {
       document: '',
       rj_type: '',
       start_at: null,
-      months: 0,
-      days: 0,
       amount: '',
       new_responsible: '',
       comment: ''
@@ -95,8 +91,7 @@ export const UpdateProcessForm = () => {
   const firstIssue = tranckings?.filter((item) => item.tracking_action === 'EMISION')[0]
   const notifications = tranckings?.filter((item) => item.tracking_action === 'NOTIFICACION')
 
-  const { status, current_responsible, type_document, document, rj_type, comment, months, days, amount, new_responsible, start_at } =
-    watch()
+  const { status, current_responsible, type_document, document, rj_type, comment, new_responsible, start_at } = watch()
 
   const { data: typeDocuments = [] as TypeDocument[] } = useQuery<TypeDocument[]>({
     queryKey: ['getElectoralProcess'],

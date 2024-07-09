@@ -83,7 +83,6 @@ export const ProcesesFiltersForm = ({ processes, refetch, filterUpdate, processe
     if (processesFiltered?.length === 0) {
       instance.destroy()
       modalOnlyConfirm('', 'No hay registros para descargar')
-
       return
     }
     try {
@@ -105,30 +104,24 @@ export const ProcesesFiltersForm = ({ processes, refetch, filterUpdate, processe
     if (processesIds?.length === 0) {
       instance.destroy()
       modalOnlyConfirm('', 'No hay registros para descargar')
-
       return
     }
 
     await downloadExcelDetail(processesIds)
-
     instance.destroy()
   }
 
   const downloadRJs = async () => {
     const instance = modalInfo('Cargando', 'Espere mientras termine la descarga...')
-
     const processesIds = processesFiltered.map((item: any) => item.numero)
 
     if (processesIds?.length === 0) {
       instance.destroy()
-
       modalOnlyConfirm('', 'No hay registros para descargar')
-
       return
     }
 
     await downloadExcelRJs(processesIds)
-
     instance.destroy()
   }
 
