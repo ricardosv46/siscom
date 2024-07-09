@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: url('/images/bg-login.png');
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+}
+
+.ant-modal-confirm-content {
+  text-align: center !important;
+  font-size: 20px !important;
+}
+.ant-modal-confirm-body > .anticon {
+  font-size: 32px !important;
+}
+
+.ant-modal-confirm-body {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.ant-modal-confirm-title {
+  font-size: 20px !important;
+}
+
+.ant-modal-content,
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-btn {
+  border-radius: 0 !important;
+}
+
+:where(.css-dev-only-do-not-override-1qfezbu).ant-select-single .ant-select-selector {
+  border-radius: 0 !important;
+}
+
+:where(.css-dev-only-do-not-override-1qfezbu).ant-picker {
+  border-radius: 0 !important;
+}
